@@ -1,2 +1,93 @@
 \section{Core of Matlab and R}
+
+\subsection*{MATLAB}
+
+The basic operations of MATLAB over matrices are:
+
+\begin{itemize}
+	\item \textbf{mldivide}(A, B): returns $x$ such that $Ax=B$.
+	\item \textbf{descomposition}(A): returns a decomposition or factorization $LU, LDL, QR,$ Cholesky, etc.
+	\item \textbf{inv}(A): returns $A^{-1}$.
+	\item \textbf{multiplication}: compute $A\cdot B$.
+	\item \textbf{transpose}(A): returns $A^T$.
+	\item \textbf{conjugate transpose}(A): returns $A'$.
+	\item \textbf{matrix power}(A, k): returns $A^k$.
+	\item \textbf{eigen}(A): returns the eigenvectors and the eigenvectors matrices of $A$.
+	\item \textbf{funm}(A, f): returns matrix $B$ with elements $b_{ij}=f(a_{ij})$.
+	\item \textbf{crossprod}(a, b): vectorial product, returns $c$ such that $c\perp a, b.$
+	\item \textbf{dotprod}(a,b): returns $a\cdot b$.
+	\item \textbf{diag}(v): $v$ vector. Returns the following matrix: 
+	\[
+\begin{bmatrix}
+    v_{1}       & 0 & 0 & \dots & 0 \\
+    0       & v_{2} & 0 & \dots & 0 \\
+    \hdotsfor{5} \\
+    0       & 0 & 0 & \dots & v_{n}
+\end{bmatrix}
+\]
+	\item \textbf{diag}(A): given matrix $A$, it returns
+	\[
+\begin{bmatrix}
+    a_{11} \\
+    a_{22} \\
+    \vdots \\
+    a_{nn}
+\end{bmatrix}
+\]
+	\item \textbf{det}(A): returns the determinant of $A$.
+	\item \textbf{zeros}(n, m): returns a $n\times m$ matrix full of zeros.
+	\item \textbf{ones}(n, m): returns a $n\times m$ matrix full of ones.
+	\item \textbf{A[i, j]}: you can get $A_{ij}$.
+\end{itemize}
+
+\subsection*{R}
+
+The basic operations of the language R over matrices are:
+
+\begin{itemize}
+	\item \textbf{A\%*\%B}: matrix multiplication.
+	\item \textbf{A*B}: pointwise multiplication.
+	\item \textbf{t(A)}: transpose.
+	\item \textbf{diag(v)}: returns the matrix 
+	\[
+\begin{bmatrix}
+    v_{1}       & 0 & 0 & \dots & 0 \\
+    0       & v_{2} & 0 & \dots & 0 \\
+    \hdotsfor{5} \\
+    0       & 0 & 0 & \dots & v_{n}
+\end{bmatrix}
+\]
+	\item \textbf{diag(A)}: Returns the vector
+	\[
+\begin{bmatrix}
+    a_{11} \\
+    a_{22} \\
+    \vdots \\
+    a_{nn}
+\end{bmatrix}
+\]
+	\item \textbf{diag(k)}: $k$ scalar. It creates the $k\times k$ identity matrix.
+	\item \textbf{matrix(k, n, m)}: returns the $n\times m$ matrix, where every entry is equal to $k$.
+	\item \textbf{solve(A, b)}: returns $x$ such that $Ax=b$.
+	\item \textbf{solve(A)}: returns $A^{-1}$.
+	\item \textbf{det(A)}: determinant of $A$.
+	\item \textbf{y}$<$-\textbf{eigen(A)}: stores de eigenvalues of $A$ in y\$val and the eigenvectors in y\$vec.
+	\item \textbf{y}$<$-\textbf{svd(A)}: it computes and stores the following:
+	\begin{itemize}
+		\item y\$d: vector of the singular values of $A$.
+		\item y\$u: matrix of the left singular vectors of $A$.
+		\item y\$v: matrix of the right singular vectors of $A$.
+	\end{itemize}
+	\item \textbf{R}$<$-\textbf{chol(A)}: Cholesky fatorization, $R'R=A$.
+	\item \textbf{y}$<$-\textbf{qr(A)}: $QR$ decomposition, strored in y\$qr.
+	\item \textbf{cbind(A,B, v, ...)}: joins matrices and vector horizontally, returns a matrix.
+	\item \textbf{rbind(A,B, v, ...)}: joins matrices and vector vertically, returns a matrix.
+	\item \textbf{rowMeans(A)}: returns the vector of the averages over the rows of $A$.
+	\item \textbf{colMeans(A)}: returns the vector of the averages over the columns of $A$.
+	\item \textbf{rowSums(A)}: returns the vector of the sums over the rows of $A$.
+	\item \textbf{colSums(A)}: returns the vector of the sums over the columns of $A$.
+	\item \textbf{outer(A, B, f)}: applies $f(\cdot, \cdot)$. Returns matrix $C$ of entries $c_{ij}=f(a_{ij}, b_{ij})$.
+	\item \textbf{A[i, j]}: you can get $A_{ij}$.
+\end{itemize}
+
 \label{sec:systems}
