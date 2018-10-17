@@ -1,1 +1,46 @@
 \section{Expressions as functions}
+
+Another way of looking at expressions in MATLANG is as functions between matrix spaces, this is $$e:(M_1, \ldots, M_k)\rightarrow M,$$ where $M,M_1,\ldots, M_k$ are matrix spaces, i.e., $M,M_1,\ldots, M_k\in\lbrace\mathcal{M}^{n\times m}: n,m\in\mathbb{N}^+\rbrace$. \\
+
+Some examples:
+
+\begin{itemize}
+	\item If $A$ is $n\times m$ then 
+		\begin{align*}
+			e(A)=t(A):\mathcal{M}_{n\times m}&\rightarrow \mathcal{M}_{m\times n} \\
+			A&\rightarrow A^*
+		\end{align*}
+	\item If $A$ is $n\times m$ then 
+		\begin{align*}
+			e(A)=\mathbf{1}(A):\mathcal{M}_{n\times m}&\rightarrow \mathcal{M}_{n\times 1} \\
+			A&\rightarrow n\text{ times}\begin{cases}\begin{bmatrix}
+    1 \\
+    \vdots \\
+    1 \\
+    \vdots \\
+    1
+\end{bmatrix}\end{cases}
+		\end{align*}
+	\item If $v$ is $n\times 1$ then 
+		\begin{align*}
+			e(v)=\text{diag}(v):\mathcal{M}_{n\times 1}&\rightarrow \mathcal{M}_{n\times n} \\
+			v&\rightarrow \begin{bmatrix}
+			    v_{1}       & 0 & 0 & \dots & 0 \\
+			    0       & v_{2} & 0 & \dots & 0 \\
+			    \hdotsfor{5} \\
+			    0       & 0 & 0 & \dots & v_{n}
+			\end{bmatrix}
+		\end{align*}
+	\item If $A$ is $n\times m$ and $B$ is $m\times p$ then 
+		\begin{align*}
+			e(A, B)=A\cdot B:\mathcal{M}_{n\times m}\times\mathcal{M}_{m\times p}&\rightarrow \mathcal{M}_{n\times p} \\
+			(A, B)&\rightarrow A\cdot B
+		\end{align*}
+	\item If $A^{(1)}, \ldots, A^{(n)}$ are $m\times p$ matrices then $$e(A^{(1)}, \ldots, A^{(n)})=\text{apply}[f](A^{(1)}, \ldots, A^{(n)})$$ has domains
+		\begin{align*}
+			\mathcal{M}_{m\times p}^n&\rightarrow \mathcal{M}_{m\times p} \\
+			(A^{(1)}, \ldots, A^{(n)})&\rightarrow C:C_{ij}=f(A^{(1)}_{ij}, \ldots, A^{(n)}_{ij}).
+		\end{align*}
+\end{itemize}
+
+We can start to analyze if this functions are increasing, decreasing, boolean, etc. Also, we can study the effects of disturbances on the input in the output of these functions.
