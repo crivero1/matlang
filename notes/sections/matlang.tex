@@ -50,4 +50,39 @@ The operations used in the semantics of the language are defined over complex nu
     \end{tabular}
 \end{center}
 
+For example, $$\text{let }N=\mathbf{1}(M)^*\text{ in apply}[c](\mathbf{1}(N)),$$ is an expression, where $c$ denotes the constant function $c:x\rightarrow c$. The result is a $1\times 1$ matrix with $c$ as its entry. This expression is equivalent to apply$[c](\mathbf{1}(\mathbf{1}(M)^*))$.
+
+An example of what can be computed in MATLANG is the mean of a vector:
+\begin{align*}
+	&\text{let }N=\mathbf{1}(v)^*\cdot\mathbf{1}(v)\text{ in} \\
+	&\text{let }S=v^*\cdot\mathbf{1}(v)\text{ in} \\
+	&\text{let }R=\text{apply}[\div](S, N)\text{ in } R.
+\end{align*}
+Here, $N$ is the $1\times 1$ matrix with the dimention of $v$ as its entry. S computes the sum of all the entries of $v$. Finally, in $R$ we store the result of the sum divided by the dimention. \\
+
+
+One thing that is worth keeping in mind is that pointwise function application is powerful. With the expression apply[$f$]($\cdot$) one can compute other elemental operations over matrices that can be studied separately, such as:
+\begin{itemize}
+	\item Scalar multiplication: we compute $c\cdot A$ as
+		\begin{align*}
+			&\text{let }C=\text{apply}[c](\mathbf{1}(\mathbf{1}(A)^*))\text{ in} \\
+			&\text{let }M=\mathbf{1}(A)\cdot C\cdot\mathbf{1}(A^*)^*\text{ in apply}[\times](M,A).
+		\end{align*}
+	\item Addition: we compute $A+B$ as $$\text{let apply}[+](A,B).$$
+	\item Trace: let 
+		\[
+  			m(x, y)=\begin{cases}
+               x \text{ if } x-y>0 \\
+               0 \text{ if }x-y\leq 0
+            \end{cases}
+		\]
+		Then we compute the trace of $A$, $tr(A)$, as
+		\begin{align*}
+			&\text{let }I=\text{diag}(\mathbf{1}(A))\text{ in} \\
+			&\text{let }B=\text{apply}[-](A, I)\text{ in} \\
+			&\text{let }C=\text{apply}[m](A,B)\text{ in} \\
+			&\text{let }T=\text{apply}[+](A,I)\text{ in } \mathbf{1}(A)^*\cdot T\cdot\mathbf{1}(A)\\
+		\end{align*}
+\end{itemize}
+
 \label{sec:matlang}
