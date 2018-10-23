@@ -30,7 +30,7 @@ We know show how to express the RRA operations in MATLANG.
 	\item \textbf{Identity:} let $R\in A$ be any relation. Then we express the constant relation $I$ as $M^I=\text{diag}(\mathbf{1}(M^R)).$
 	\item \textbf{Union:} let $R,S\in A$. Then $M^{R\cup S}=\text{apply}[x\vee y](M^R,M^S).$
 	\item \textbf{Set difference:} let $R,S\in A$. Then $M^{R-S}=\text{apply}[x\vee\neg y](M^R, M^S).$
-	\item \textbf{Converse:} let $R\in A$. Then we express $R^{-1}=\lbrace (u,v)\in U\times U: (v,u)\in R\rbrace$ as $M^{R^{-1}}=\mathbf{t}(M^R).$
+	\item \textbf{Converse:} let $R\in A$. Then we express $R^{-1}=\lbrace (u,v)\in U\times U: (v,u)\in R\rbrace$ as $M^{R^{-1}}=(M^R)^*.$
 	\item \textbf{Relational composition:} let $R,S\in A$, then $M^{R\circ S}=\text{apply}[x>0](M^R\cdot M^S).$ Where 
 	\[ x>0=
     \begin{cases} 
