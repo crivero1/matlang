@@ -1,1 +1,14 @@
 \section{Boolean MATLANG}
+
+Since we want to do queries over graphs with MATLANG. it is worth to consider the boolean case, this is, when the matrix entries are 1 or 0.
+
+For this purpose, we need to redefine the basic operations of MATLANG if necessary. Note that the only operations that need to be redefined are the matrix multiplication and function application, since the \textbf{transpose}, \textbf{one-vector} and \textbf{diag} of a boolean matrix or vector are boolean matrices or vectors.
+
+\begin{itemize}
+	\item \textbf{Matrix multiplication:} if $A$ is a $n\times m$ matrix and $B$ is a $m\times p$ matrix then $A\cdot B$ is a $n\times p$ matrix where $(A\cdot B)_{ij}=\bigvee_{k=1}^n A_{ik}\wedge B_{kj}$.
+	\item \textbf{Pointwise application:} f $A^{(1)}, \ldots, A^{(n)}$ are $m\times p$ matrices, then apply$\left[ f \right](A^{(1)}, \ldots, A^{(n)})$ is the $m\times p$ matrix $C$ where $C_{ij}=f(A^{(1)}_{ij}, \ldots, A^{(n)}_{ij})$.
+	
+	Note that in the boolean case we need $f:\lbrace 0,1\rbrace\rightarrow\lbrace 0,1\rbrace$. So, for a fixed $n$ there are finitely many functions to apply: $2^{2^n}$. Let's call this set $\mathcal{F}_n$. This is $|\mathcal{F}_n|=2^{2^{n}}$.
+	
+	Since we are in the boolean case, the following condition holds. $$\forall f\in\mathcal{F}_n\exists g\in\mathcal{F}_n: f(x_{1}, \ldots, x_{n}) = \neg g(x_{1}, \ldots, x_{n}),$$ so we can simulate all $2^{2^n}$ functions with a subset of $\mathcal{F}_n$ of $2^{2^n - 1}$ functions.
+\end{itemize}
