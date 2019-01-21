@@ -54,6 +54,31 @@ Now, note that
 
 So $$\sigma(P)=\prod_{e_i}\prod_{e_j}\mathbf{1}^*Z(Pe_i-Pe_j).$$
 
-Thus, given we can iterate over permutation matrices, we have $$det(A)=\sum_{P}\left(\prod_{e_i}\prod_{e_j}\mathbf{1}^*Z(Pe_i-Pe_j)\right)\left(\prod_v v^*\cdot A\cdot (Pv)\right)$$
+Thus, given we can iterate over permutation matrices, we have $$det(A)=\sum_{P}\left(\prod_{e_i}\prod_{e_j}\mathbf{1}^*Z(Pe_i-Pe_j)\right)\left(\prod_v v^*\cdot A\cdot (Pv)\right).$$
+
+\subsection*{Escalar functions are enough}
+
+We have that 
+
+\begin{itemize}
+	\item \textbf{Pointwise application:} if $A^{(1)}, \ldots, A^{(n)}$ are $m\times p$ matrices, then apply$\left[ f \right](A^{(1)}, \ldots, A^{(n)})$ is the $m\times p$ matrix $C$ where $C_{ij}=f(A^{(1)}_{ij}, \ldots, A^{(n)}_{ij})$.
+\end{itemize}
+
+So, given the \textbf{sum} operator and the function $f$, we can compute $C$ in the following way: $$C=\sum_{v_i}\sum_{v_j}f\left( v_i^*A^{(1)}v_j, \cdots, v_i^*A^{(n)}v_j\right)\cdot v_iv_j^*$$
+
+Recall that $v_iv_j^*$ is the matrix that has a 1 in the position i, j and zero everywhere else.
+
+Thus, the operator apply$\left[ f \right]$ is no longer nedded.
+
+For example:
+
+\begin{itemize}
+	\item \textbf{Matrix sum:}$$\sum_{v_i}\sum_{v_j}\left( v_i^*A^{(1)}v_j+ \cdots + v_i^*A^{(n)}v_j\right)\cdot v_iv_j^*$$
+	\item \textbf{Matrix pointwise multiplication:} $$\sum_{v_i}\sum_{v_j}\left( v_i^*A^{(1)}v_j\times \cdots\times v_i^*A^{(n)}v_j\right)\cdot v_iv_j^*$$
+\end{itemize}
+
+\subsection*{Gaussian elimination}
+
+
 
 \label{sec:iteration}
