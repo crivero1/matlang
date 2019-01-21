@@ -81,6 +81,29 @@ For example:
 
 Let $A$ be a matrix and $\alpha$ a scalar. For computing Gaussian elimination we turn our attention in the elementary matrices of the form $$E=I + \alpha\cdot e_ie_j^*.$$ Note that $E\cdot A$ adds a $\alpha$-multiple of row $i$ to row $j$. It is worht noting that $E^{-1}= I - \alpha\cdot e_ie_j^*.$
 
-The key property is that, if $A$ is $LU$ factorizable without any row interchange, then $L=(E_1\cdots E_k)^{-1}=E_k^{-1}\cdots E_1^{-1}$ for some elementary matrices $E_i=I + \alpha_i\cdot e_ie_j^*.$
+The key property is that, if $A$ is $LU$ factorizable without any row interchange, then $A=LU$, for some upper diagonal matrix $U$ and $L=(E_1\cdots E_k)^{-1}=E_k^{-1}\cdots E_1^{-1}$ for some elementary matrices $E_i=I + \alpha_i\cdot e_ie_j^*.$
 
+For instance, assume that $A$ has no zero pivots (no row interchanging is necessary), we aim to reduce the first column. Let us do the first reduction, this is, substract a multiple of the first row to the second row. Let $\lbrace v_i\rbrace_i$ be the canonicale vectors. We first need to find the proper $\alpha$ to ponderate the first row. In gaussian elimination this is the first entry of the second row divided by the first entry of the first row, this is $$\alpha = \dfrac{v_2^*Av_1}{v_1^*Av_1}.$$
+So $$E_1= I - \alpha\cdot v_1v_2^*$$
+and $E_1A=A'$ where $A'$ has the second row reduced (first entry zero).
+
+Do this for the rest of the rows and we will have $$E_k\cdots E_1A=A'$$ and
+\[
+  			A'_{i1}=\begin{cases}
+               A_{11} \text{ if } i =1 \\
+               0 \text{ if } i > 1
+            \end{cases}
+		\]
+
+Note that
+
+\begin{align*}
+A'&=E_k\cdots E_1A \\
+&=\left( E_1^*\cdots E_k^*\right)^*A \\
+&=\left(\prod_{k}E_k^*\right)^*A \\
+&=\left(\prod_{v_k}\left(I-\alpha\cdot v_1v_k^*\right)^*\right)^*A \\
+&=\left(\prod_{v_k}\left(I-\dfrac{v_k^*Av_1}{v_1^*Av_1}\cdot v_1v_k^*\right)^*\right)^*A
+\end{align*}
+
+And we get $A$ with the first column reduced. All that is left to complete the gaussian elimination on $A=LU$ is to do this for all columns, this is $$U=\left(\prod_{v_i}\prod_{v_j}\left(I-\dfrac{v_j^*Av_i}{v_i^*Av_i}\cdot v_iv_j^*\right)^*\right)^*A$$
 \label{sec:iteration}
