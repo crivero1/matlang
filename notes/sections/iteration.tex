@@ -1,0 +1,59 @@
+\section{Iterations in MATLANG}
+It is natural for us to wish for some kind of iteration in MATLANG. There's a lot of matrix procedures and formulas that sums or multiplies results over an operation on the same matrix. Some examples:
+\begin{itemize}
+	\item The quantity $$\sum_{i=0}^nA^i=I+A+A^2+\ldots + A^n$$ it's used a lot in computing inverse or graph theory. This is a sum over the operation power to the $i$ of the matrix $A$.
+	\item In the LU factorization process the result is $$A=G_1^{-1}G_2^{-2}\cdots G_n^{-1}U=LU$$ for some upper triangular matrix $U$ and some pivot matrices $G_1, \ldots, G_n$. Note that $$L=\prod_{i=1}^nG_{i}^{-1}$$
+\end{itemize}
+
+With this in mind, we introduce the following operators:
+\begin{itemize}
+	\item Sum: $$\sum_{v\in e_1(X)}e_2(X,v)$$ means that, for every column vector $v$ of the matrix $e_1(X)$ do $e_2(X, v)$ and sum the result (pointwise).
+	\item Multiplication: $$\prod_{v\in e_1(X)}e_2(X,v)$$ means that, for every column vector $v_i$ of the matrix $e_1(X)$ do $e_2(X,v_i)$ and matrix multiply the results $R_i$ as they come up, this is, $R_1R_2\cdots R_n$.
+\end{itemize}
+
+Obviously, these operations are valid when the dimentions of the matrices match the wanted operation. \\
+
+Also, note that the definition is not ambiguous in taking column vectors instead of row vectors, or doing the aggregate matrix multiplication by right, because, if you want to take row vector you just need to do $$\sum_{v\in e_1(X)^*}e_2(X,v).$$ Or, if you want the result of the aggregate multiplication to be computed in the inverse order, note that, since $(AB)^*=B^*A^*$ we have $$\prod_{v\in e_1(X)}^{\text{left}}e_2(X,v)=\left(\prod_{v\in e_1(X)}e_2(X,v)^*\right)^*.$$
+
+
+In general, $e_1(X)=diag(\mathbf{1}(X))=I$, so we can iterate over canonical vectors of adecuate dimention. So, $\sum_v e(X,v)$ means $\sum_{v\in diag(\mathbf{1}(X))}e(X,v)$. \\
+
+Now, let's see what we can do with these new operators.
+
+\subsection*{Determinant}
+
+Recall that the determinant is define over permutations, this is $$det(A)=\sum_{p}\sigma(p)a_{1p_1}\cdots a_{np_n},$$ where the sum is taken over the $n!$ permutations of the natural order $(1, 2,\ldots, n)$ and 
+       \[
+  			\sigma(p)=\begin{cases}
+               +1 \text{ if p can be restored to natural order in an even number of steps} \\
+               -1 \text{ if p can be restored to natural order in an odd number of steps}
+            \end{cases}
+		\]
+In the case of MATLANG, the permutations are represented as permutation matrices, this is, permutations of the identity. In this context, note that, for a permutation matrix $P$, we compute $a_{1p_1}\cdots a_{np_n}$ as $$\prod_v v^*\cdot A\cdot (Pv).$$ See that $a_{ip_i}=v_i^*\cdot A\cdot (Pv_i)$, where $v_i$ is the $i$-th canonical vector. 
+
+
+We also need to compute $\sigma(P)$, to this end, note that $$\sigma(P)=(-1)^{\sum_{i<j}\lbrace p_i>p_j\rbrace}.$$ Also, let $e_i$ be the canonical vector with a $1$ in its $i$-th entry and 
+
+\[
+Z = \begin{bmatrix}
+    0 & 1 & \cdots &  1 \\
+    0 & \ddots & \ddots & \vdots \\
+    \hdotsfor{3} & 1 \\
+    0 & \cdots & \cdots & 0 
+\end{bmatrix}.
+\]
+
+Now, note that 
+
+ 		\[
+  			\mathbf{1}^*Z(e_i-e_j)=\begin{cases}
+               +1 \text{ if } i > j \\
+               -1 \text{ if } i \leq j
+            \end{cases}
+		\]
+
+So $$\sigma(P)=\prod_{e_i}\prod_{e_j}\mathbf{1}^*Z(Pe_i-Pe_j).$$
+
+Thus, given we can iterate over permutation matrices, we have $$det(A)=\sum_{P}\left(\prod_{e_i}\prod_{e_j}\mathbf{1}^*Z(Pe_i-Pe_j)\right)\left(\prod_v v^*\cdot A\cdot (Pv)\right)$$
+
+\label{sec:iteration}
