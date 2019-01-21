@@ -79,6 +79,8 @@ For example:
 
 \subsection*{Gaussian elimination}
 
+Let $A$ be a matrix and $\alpha$ a scalar. For computing Gaussian elimination we turn our attention in the elementary matrices of the form $$E=I + \alpha\cdot e_ie_j^*.$$ Note that $E\cdot A$ adds a $\alpha$-multiple of row $i$ to row $j$. It is worht noting that $E^{-1}= I - \alpha\cdot e_ie_j^*.$
 
+The key property is that, if $A$ is $LU$ factorizable without any row interchange, then $L=(E_1\cdots E_k)^{-1}=E_k^{-1}\cdots E_1^{-1}$ for some elementary matrices $E_i=I + \alpha_i\cdot e_ie_j^*.$
 
 \label{sec:iteration}
