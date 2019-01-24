@@ -122,15 +122,15 @@ A'&=E_k\cdots E_1A \\
 &=\left(\prod_{v_k\neq v_1}\left(I-\dfrac{v_k^*Av_1}{v_1^*Av_1}\cdot v_1v_k^*\right)^*\right)^*A
 \end{align*}
 
-And we get $A$ with the first column reduced. Note that we need $v_k\neq v_1$ because we don't want to reduce the first row since it will be set to all zeroes. This can be done with the function 
+And we get $A$ with the first column reduced. Note that we need $v_k\neq v_1$ because we don't want to reduce the first row since it will be set to all zeroes. Furthermore, we want to reduce only the downward rows. This can be done with the function 
 \[
-  			f(v_i, v_j)=1-v_i^*v_j=\begin{cases}
-               1 \text{ if } v_i \neq v_j \\
-               0 \text{ if } v_i = v_j
+  			f(v_i, v_j)=v_i^*Zv_j=\begin{cases}
+               1 \text{ if } i < j \\
+               0 \text{ if } i \geq j
             \end{cases}
 		\]
 
-Thus $$A'=\left(\prod_{v_k}\left(I-\dfrac{v_k^*Av_1}{v_1^*Av_1}\cdot v_1v_k^*\cdot\left(1-v_1^*v_k\right)\right)^*\right)^*A.$$
+Thus $$A'=\left(\prod_{v_k}\left(I-\dfrac{v_k^*Av_1}{v_1^*Av_1}\cdot v_1v_k^*\cdot\left(v_1^*Zv_k\right)\right)^*\right)^*A.$$
 
-All that is left to complete the gaussian elimination on $A=LU$ is to do this for all columns, this is $$U=\left(\prod_{v_i}\prod_{v_j}\left(I-\dfrac{v_j^*Av_i}{v_i^*Av_i}\cdot v_iv_j^*\cdot\left(1-v_i^*v_j\right)\right)^*\right)^*A.$$
+All that is left to complete the gaussian elimination on $A=LU$ is to do this for all columns, this is $$U=\left(\prod_{v_i}\prod_{v_j}\left(I-\dfrac{v_j^*Av_i}{v_i^*Av_i}\cdot v_iv_j^*\cdot\left(v_i^*Zv_j\right)\right)^*\right)^*A.$$
 \label{sec:iteration}
