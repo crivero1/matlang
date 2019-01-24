@@ -7,16 +7,13 @@ It is natural for us to wish for some kind of iteration in MATLANG. There's a lo
 
 With this in mind, we introduce the following operators:
 \begin{itemize}
-	\item Sum: $$\sum_{v\in e_1(X)}e_2(X,v)$$ means that, for every column vector $v$ of the matrix $e_1(X)$ do $e_2(X, v)$ and sum the result (pointwise).
-	\item Multiplication: $$\prod_{v\in e_1(X)}e_2(X,v)$$ means that, for every column vector $v_i$ of the matrix $e_1(X)$ do $e_2(X,v_i)$ and matrix multiply the results $R_i$ as they come up, this is, $R_1R_2\cdots R_n$.
+	\item Sum: $$\sum_{v}e(X,v)$$ means that, for every column vector $v$ of the identity of addecuate dimention (this is, $v$ are canonical vectors) do $e(X, v)$ and sum the result (pointwise).
+	\item Multiplication: $$\prod_{v}e(X,v)$$ means that, for every column vector $v$ of the identity of addecuate dimention do $e(X,v_i)$ and matrix multiply the results $R_i$ as they come up, this is, $R_1R_2\cdots R_n$.
 \end{itemize}
 
 Obviously, these operations are valid when the dimentions of the matrices match the wanted operation. \\
 
-Also, note that the definition is not ambiguous in taking column vectors instead of row vectors, or doing the aggregate matrix multiplication by right, because, if you want to take row vector you just need to do $$\sum_{v\in e_1(X)^*}e_2(X,v).$$ Or, if you want the result of the aggregate multiplication to be computed in the inverse order, note that, since $(AB)^*=B^*A^*$ we have $$\prod_{v\in e_1(X)}^{\text{left}}e_2(X,v)=\left(\prod_{v\in e_1(X)}e_2(X,v)^*\right)^*.$$
-
-
-In general, $e_1(X)=diag(\mathbf{1}(X))=I$, so we can iterate over canonical vectors of adecuate dimention. So, $\sum_v e(X,v)$ means $\sum_{v\in diag(\mathbf{1}(X))}e(X,v)$. \\
+Also, note that the definition is not ambiguous in taking column vectors instead of row vectors or doing the aggregate matrix multiplication by right, because row vectors are the canonical vectors as well. On the other hand, if you want the result of the aggregate multiplication to be computed in the inverse order, note that, since $(AB)^*=B^*A^*$ we have $$\prod_{v}^{\text{left}}e(X,v)=\left(\prod_{v}e(X,v)^*\right)^*.$$
 
 Now, let's see what we can do with these new operators.
 
@@ -100,8 +97,8 @@ Let $A$ be a matrix and $\alpha$ a scalar. For computing Gaussian elimination we
 
 The key property is that, if $A$ is $LU$ factorizable without any row interchange, then $A=LU$, for some upper diagonal matrix $U$ and $L=(E_1\cdots E_k)^{-1}=E_k^{-1}\cdots E_1^{-1}$ for some elementary matrices $E_i=I + \alpha_i\cdot e_ie_j^*.$
 
-For instance, assume that $A$ has no zero pivots (no row interchanging is necessary), we aim to reduce the first column. Let us do the first reduction, this is, substract a multiple of the first row to the second row. Let $\lbrace v_i\rbrace_i$ be the canonicale vectors. We first need to find the proper $\alpha$ to ponderate the first row. In gaussian elimination this is the first entry of the second row divided by the first entry of the first row, this is $$\alpha = \dfrac{v_2^*Av_1}{v_1^*Av_1}.$$
-So $$E_1= I - \alpha\cdot v_1v_2^*$$
+For instance, assume that $A$ has no zero pivots (no row interchanging is necessary), we aim to reduce the first column. Let us do the first reduction, this is, substract a multiple of the first row to the second row. Let $\lbrace v_i\rbrace_i$ be the canonical vectors. We first need to find the proper $\alpha$ to ponderate the first row. In gaussian elimination this is the first entry of the second row divided by the first entry of the first row, this is $$\alpha = \dfrac{v_2^*Av_1}{v_1^*Av_1}.$$
+So $$E_1= I - \alpha_1\cdot v_1v_2^*$$
 and $E_1A=A'$ where $A'$ has the second row reduced (first entry zero).
 
 Do this for the rest of the rows and we will have $$E_k\cdots E_1A=A'$$ and
@@ -118,7 +115,7 @@ Note that
 A'&=E_k\cdots E_1A \\
 &=\left( E_1^*\cdots E_k^*\right)^*A \\
 &=\left(\prod_{k}E_k^*\right)^*A \\
-&=\left(\prod_{v_k\neq v_1}\left(I-\alpha\cdot v_1v_k^*\right)^*\right)^*A \\
+&=\left(\prod_{v_k\neq v_1}\left(I-\alpha_k\cdot v_1v_k^*\right)^*\right)^*A \\
 &=\left(\prod_{v_k\neq v_1}\left(I-\dfrac{v_k^*Av_1}{v_1^*Av_1}\cdot v_1v_k^*\right)^*\right)^*A
 \end{align*}
 
