@@ -42,19 +42,36 @@ Z = \begin{bmatrix}
     0 & \cdots & \cdots & 0 
 \end{bmatrix}.
 \]
-
 Now, note that 
 
  		\[
-  			\mathbf{1}^*Z(e_i-e_j)=\begin{cases}
-               +1 \text{ if } i > j \\
-               -1 \text{ if } i \leq j
+  			2\cdot e_i^*Ze_j=\begin{cases}
+               2 \text{ if } i < j \\
+               0 \text{ if } i \geq j
+            \end{cases}
+		\]
+		
+Thus
+
+		\[
+  			1-2\cdot e_i^*Ze_j=\begin{cases}
+               -1 \text{ if } i < j \\
+               +1 \text{ if } i \geq j
             \end{cases}
 		\]
 
-So $$\sigma(P)=\prod_{e_i}\prod_{e_j}\mathbf{1}^*Z(Pe_i-Pe_j).$$
+So $$\sigma(P)=\prod_{e_i}\prod_{e_j:i<j}\left(1-2\cdot (Pe_i)^*Z(Pe_j)\right),$$ and since 
 
-Thus, given we can iterate over permutation matrices, we have $$det(A)=\sum_{P}\left(\prod_{e_i}\prod_{e_j}\mathbf{1}^*Z(Pe_i-Pe_j)\right)\left(\prod_v v^*\cdot A\cdot (Pv)\right).$$
+		\[
+  			e_i^*Ze_j=\begin{cases}
+               1 \text{ if } i < j \\
+               0 \text{ if } i \geq j
+            \end{cases}
+		\]
+
+Then we have that $$\sigma(P)=\prod_{e_i}\prod_{e_j}\left(1-2\cdot (Pe_i)^*Z(Pe_j)\cdot e_i^*Ze_j\right)$$
+
+Thus, given we can iterate over permutation matrices, we have $$det(A)=\sum_{P}\left(\prod_{e_i}\prod_{e_j}\left(1-2\cdot (Pe_i)^*Z(Pe_j)\cdot e_i^*Ze_j\right)\right)\left(\prod_v v^*\cdot A\cdot (Pv)\right).$$
 
 \subsection*{Escalar functions are enough}
 
@@ -68,7 +85,7 @@ So, given the \textbf{sum} operator and the function $f$, we can compute $C$ in 
 
 Recall that $v_iv_j^*$ is the matrix that has a 1 in the position i, j and zero everywhere else.
 
-Thus, the operator apply$\left[ f \right]$ is no longer nedded.
+Thus, the operator apply$\left[ f \right]$ is no longer needed.
 
 For example:
 
@@ -101,9 +118,19 @@ Note that
 A'&=E_k\cdots E_1A \\
 &=\left( E_1^*\cdots E_k^*\right)^*A \\
 &=\left(\prod_{k}E_k^*\right)^*A \\
-&=\left(\prod_{v_k}\left(I-\alpha\cdot v_1v_k^*\right)^*\right)^*A \\
-&=\left(\prod_{v_k}\left(I-\dfrac{v_k^*Av_1}{v_1^*Av_1}\cdot v_1v_k^*\right)^*\right)^*A
+&=\left(\prod_{v_k\neq v_1}\left(I-\alpha\cdot v_1v_k^*\right)^*\right)^*A \\
+&=\left(\prod_{v_k\neq v_1}\left(I-\dfrac{v_k^*Av_1}{v_1^*Av_1}\cdot v_1v_k^*\right)^*\right)^*A
 \end{align*}
 
-And we get $A$ with the first column reduced. All that is left to complete the gaussian elimination on $A=LU$ is to do this for all columns, this is $$U=\left(\prod_{v_i}\prod_{v_j}\left(I-\dfrac{v_j^*Av_i}{v_i^*Av_i}\cdot v_iv_j^*\right)^*\right)^*A$$
+And we get $A$ with the first column reduced. Note that we need $v_k\neq v_1$ because we don't want to reduce the first row since it will be set to all zeroes. This can be done with the function 
+\[
+  			f(v_i, v_j)=1-v_i^*v_j=\begin{cases}
+               1 \text{ if } v_i \neq v_j \\
+               0 \text{ if } v_i = v_j
+            \end{cases}
+		\]
+
+Thus $$A'=\left(\prod_{v_k}\left(I-\dfrac{v_k^*Av_1}{v_1^*Av_1}\cdot v_1v_k^*\cdot\left(1-v_1^*v_k\right)\right)^*\right)^*A.$$
+
+All that is left to complete the gaussian elimination on $A=LU$ is to do this for all columns, this is $$U=\left(\prod_{v_i}\prod_{v_j}\left(I-\dfrac{v_j^*Av_i}{v_i^*Av_i}\cdot v_iv_j^*\cdot\left(1-v_i^*v_j\right)\right)^*\right)^*A.$$
 \label{sec:iteration}
