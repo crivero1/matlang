@@ -156,6 +156,19 @@ X_i&=\phi(X_{i-1}, v_{i-1}),\hspace{1ex}i=2,\cdots, n \\
 X_1&=X
 \end{align*}
 
+Let's consider the following setting of the $A=LU$ factorization:
+
+\begin{align*}
+A_i&=T_{i-1}A_{i-1},\hspace{1ex}i=2, \cdots, n \\
+A_1&=A \\
+\end{align*}
+
+Note that $A_n=U$ and 
+\begin{align*}
+A_i&=T_{i-1}A_{i-1} \\
+&=\left(\prod_{v_k}\left(I-\dfrac{v_k^*A_{i-1}v_i}{v_i^*A_{i-1}v_i}\cdot v_iv_k^*\cdot\left(v_i^*Zv_k\right)\right)^*\right)^*A_{i-1}.
+\end{align*}
+
 Now, if $A=LU$ and $$\phi(X, v)=\left(\prod_{v_k}\left(I-\dfrac{v_k^*Xv}{v^*Xv}\cdot vv_k^*\cdot\left(v^*Zv_k\right)\right)^*\right)^*X,$$
 then $U=\mu_v\phi(A,v)$.
 \subsection*{Current main questions}
