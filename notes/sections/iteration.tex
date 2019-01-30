@@ -136,7 +136,28 @@ And we get $A$ with the first column reduced. Note that we need $v_k\neq v_1$ be
 
 Thus $$A'=\left(\prod_{v_k}\left(I-\dfrac{v_k^*Av_1}{v_1^*Av_1}\cdot v_1v_k^*\cdot\left(v_1^*Zv_k\right)\right)^*\right)^*A.$$
 
-All that is left to complete the gaussian elimination on $A=LU$ is to do this for all columns, this is $$U=\left(\prod_{v_i}\prod_{v_j}\left(I-\dfrac{v_j^*Av_i}{v_i^*Av_i}\cdot v_iv_j^*\cdot\left(v_i^*Zv_j\right)\right)^*\right)^*A.$$
+So we can reduce the column $i$ of $A$ as $$\left(\prod_{v_k}\left(I-\dfrac{v_k^*Av_i}{v_i^*Av_i}\cdot v_iv_k^*\cdot\left(v_i^*Zv_k\right)\right)^*\right)^*A.$$
+We could wrongfully think that all that is left to complete the gaussian elimination on $A=LU$ is to do this for all columns, this is $$U=\left(\prod_{v_i}\prod_{v_j}\left(I-\dfrac{v_j^*Av_i}{v_i^*Av_i}\cdot v_iv_j^*\cdot\left(v_i^*Zv_j\right)\right)^*\right)^*A.$$
+But note that here we obtain the multipliers $\alpha_{ij}$ from the original matrix $A$, a huge mistake.
+
+\subsection*{Recursive iteration}
+
+Given the above problem, we sort of need an operator that iterates over the canonical vectors and compute the same operation over the result of the previous iteration.
+
+Let $\phi(X,v)$ be an expression. We define
+
+$$\mu_v\phi(X,v)$$
+
+as the operator that iterates over the canonical vectors $\lbrace v_i\rbrace_{i=1}^n$ and successively computes $\phi(X_i,v_i)$ where $X_i=\phi(X_{i-1}, v_{i-1})$ and $X_1=X$. The value of $\mu_v\phi(X,v)$ is $\phi(X_n, v_n)$. This is
+
+\begin{align*}
+\mu_v\phi(X,v)&=\phi(X_n, v_n) \\
+X_i&=\phi(X_{i-1}, v_{i-1}),\hspace{1ex}i=2,\cdots, n \\
+X_1&=X
+\end{align*}
+
+Now, if $A=LU$ and $$\phi(X, v)=\left(\prod_{v_k}\left(I-\dfrac{v_k^*Xv}{v^*Xv}\cdot vv_k^*\cdot\left(v^*Zv_k\right)\right)^*\right)^*X,$$
+then $U=\mu_v\phi(A,v)$.
 \subsection*{Current main questions}
 \begin{itemize}
 
