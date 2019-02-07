@@ -175,6 +175,14 @@ then $U=\mu_v\phi(A,v)$.
 \begin{itemize}
 
 \item $PA=LU$ factorization: if $A$ needs row interchange, is there some way to compute $P$ beforehand?
+\begin{itemize}
+\item I am not sure whether you can do this beforehand.
+\item But, isn't it possible to simulate \emph{partial pivoting}, i.e., when dealing with canonical vector $v_i$, extract the $i$th column $X[*,i]$ from the current
+matrix, find the maximal elements in $X[i-n,i]$ and corresponding indicator vector for this (i.e., ones on positions where the max value occurs), then somehow
+reduce this to a vector in which, say only the smallest occurrence $k$ of ones is retained (smallest position), and then turn this into a permutation matrix that exchanges
+all rows $X[j,*]$ for $j\geq i$ with the $k$th row, resulting in permuted version of $X$, on which you can then proceed as before for the $i$th step? This will require nested
+recursion.
+\end{itemize}
 \item Study if we can express other factorizations ($LDU, LDL$,
 Cholesky, etc.).
 \item Starting from $A=LU$, can we compute $A^{-1}$ easily? It's possible that is the gaussian elimination upwards, this is, reduce $A$ to the identity.
