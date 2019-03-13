@@ -7,13 +7,13 @@ It is natural for us to wish for some kind of iteration in MATLANG. There's a lo
 
 With this in mind, we introduce the following operators:
 \begin{itemize}
-	\item Sum: $$\sum_{v}e(X,v)$$ means that, for every column vector $v$ of the identity of addecuate dimention (this is, $v$ are canonical vectors) do $e(X, v)$ and sum the result (pointwise).
-	\item Multiplication: $$\prod_{v}e(X,v)$$ means that, for every column vector $v$ of the identity of addecuate dimention do $e(X,v_i)$ and matrix multiply the results $R_i$ as they come up, this is, $R_1R_2\cdots R_n$.
+	\item Sum: $$\sum v.e(v)$$ means that, for every column vector $v$ of the identity of addecuate dimention (this is, $v$ are canonical vectors) do $e(v)$ and sum the result (pointwise). More formally, let $\lbrace v_i\rbrace_i$ be the canonical vectors of addecuate dimention. On instance $I$, we have that $$\left[\sum v. e(v)\right](I)=A$$ if and only if $$\left[ e(v)\right](I[v\rightarrow v_1]) + \left[ e(v)\right](I[v\rightarrow v_2]) + \cdots + \left[ e(v)\right](I[v\rightarrow v_n]) = A.$$ Here, $+$ is matrix addition.
+	\item Multiplication: $$\prod_{v}e(v)$$ means that, for every column vector $v$ of the identity of addecuate dimention do $e(X,v_i)$ and matrix multiply the results $R_i$ as they come up, this is, $R_1R_2\cdots R_n$. More formally, let $\lbrace v_i\rbrace_i$ be the canonical vectors of addecuate dimention. On instance $I$, we have that $$\left[\prod v. e(v)\right](I)=A$$ if and only if $$\left[ e(v)\right](I[v\rightarrow v_1]) \times \left[ e(v)\right](I[v\rightarrow v_2]) \times \cdots \times \left[ e(v)\right](I[v\rightarrow v_n]) = A$$ Here, $\times$ is matrix multiplication.
 \end{itemize}
 
 Obviously, these operations are valid when the dimentions of the matrices match the wanted operation. \\
 
-Also, note that the definition is not ambiguous in taking column vectors instead of row vectors or doing the aggregate matrix multiplication by right, because row vectors are the canonical vectors as well. On the other hand, if you want the result of the aggregate multiplication to be computed in the inverse order, note that, since $(AB)^*=B^*A^*$ we have $$\prod_{v}^{\text{left}}e(X,v)=\left(\prod_{v}e(X,v)^*\right)^*.$$
+Also, note that the definition is not ambiguous in taking column vectors instead of row vectors or doing the aggregate matrix multiplication by right, because row vectors are the canonical vectors as well. On the other hand, if you want the result of the aggregate multiplication to be computed in the inverse order, note that, since $(AB)^*=B^*A^*$ we have $$\prod_{v}^{\text{left}}e(v)=\left(\prod_{v}e(v)^*\right)^*.$$
 
 Now, let's see what we can do with these new operators.
 
@@ -77,7 +77,7 @@ Then we have that $$\sigma(P)=\prod_{e_i}\prod_{e_j}\left(1-2\cdot (Pe_i)^*Z(Pe_
 
 Thus, given we can iterate over permutation matrices, we have $$det(A)=\sum_{P}\left(\prod_{e_i}\prod_{e_j}\left(1-2\cdot (Pe_i)^*Z(Pe_j)\cdot e_i^*Ze_j\right)\right)\left(\prod_v v^*\cdot A\cdot (Pv)\right).$$
 
-\subsection*{Escalar functions are enough}
+\subsection*{Scalar functions are enough}
 
 We have that 
 
@@ -100,7 +100,7 @@ For example:
 
 \subsection*{Gaussian elimination}
 
-Let $A$ be a matrix and $\alpha$ a scalar. For computing Gaussian elimination we turn our attention in the elementary matrices of the form $$E=I + \alpha\cdot e_ie_j^*.$$ Note that $E\cdot A$ adds a $\alpha$-multiple of row $i$ to row $j$. It is worht noting that $E^{-1}= I - \alpha\cdot e_ie_j^*.$
+Let $A$ be a matrix and $\alpha$ a scalar. For computing Gaussian elimination we turn our attention in the elementary matrices of the form $$E=I + \alpha\cdot e_ie_j^*.$$ Note that $E\cdot A$ adds a $\alpha$-multiple of row $i$ to row $j$. It is worth noting that $E^{-1}= I - \alpha\cdot e_ie_j^*.$
 
 The key property is that, if $A$ is $LU$ factorizable without any row interchange, then $A=LU$, for some upper diagonal matrix $U$ and $L=(E_1\cdots E_k)^{-1}=E_k^{-1}\cdots E_1^{-1}$ for some elementary matrices $E_i=I + \alpha_i\cdot e_ie_j^*.$
 
