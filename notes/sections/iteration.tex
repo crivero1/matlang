@@ -137,7 +137,8 @@ And we get $A$ with the first column reduced. Note that we need $v_k\neq v_1$ be
 Thus $$A'=\left(\prod_{v_k}\left(I-\dfrac{v_k^*Av_1}{v_1^*Av_1}\cdot v_1v_k^*\cdot\left(v_1^*Zv_k\right)\right)^*\right)^*A.$$
 
 So we can reduce the column $i$ of $A$ as $$\left(\prod_{v_k}\left(I-\dfrac{v_k^*Av_i}{v_i^*Av_i}\cdot v_iv_k^*\cdot\left(v_i^*Zv_k\right)\right)^*\right)^*A.$$
-We could wrongfully think that all that is left to complete the gaussian elimination on $A=LU$ is to do this for all columns, this is $$U=\left(\prod_{v_i}\prod_{v_j}\left(I-\dfrac{v_j^*Av_i}{v_i^*Av_i}\cdot v_iv_j^*\cdot\left(v_i^*Zv_j\right)\right)^*\right)^*A.$$
+
+But this is all we can do: reduce a column. For example, we could wrongfully think that all that is left to complete the gaussian elimination on $A=LU$ is to do this for all columns, this is $$U=\left(\prod_{v_i}\prod_{v_j}\left(I-\dfrac{v_j^*Av_i}{v_i^*Av_i}\cdot v_iv_j^*\cdot\left(v_i^*Zv_j\right)\right)^*\right)^*A.$$
 But note that here we obtain the multipliers $\alpha_{ij}$ from the original matrix $A$, a huge mistake.
 
 \subsection*{Recursive iteration}
@@ -171,6 +172,40 @@ A_i&=T_{i-1}A_{i-1} \\
 
 Now, if $A=LU$ and $$\phi(X, v)=\left(\prod_{v_k}\left(I-\dfrac{v_k^*Xv}{v^*Xv}\cdot vv_k^*\cdot\left(v^*Zv_k\right)\right)^*\right)^*X,$$
 then $U=\mu_v\phi(A,v)$.
+
+\subsection*{Transitive closure}
+
+To compute transitive closure we need the quantity $(A+I)^n$ and use apply[$f>0$] on the result matrix. Then we have that $$(I+A)^n=\prod v. (I+A),$$ and thus $$TC = \text{apply}\left[ f_{>0}\right]\left( \prod v. (I+A) \right).$$
+Using only the new operators, we have that $$TC=\sum v_i. \sum v_j. f_{>0}\left(v_i^*\left(\prod v. (I+A)\right)v_j\right)$$
+
+\subsection*{Power sum}
+
+If we want to compute $I+ A + A^2 + \cdots + A^n$ we need to do a little trick with the identity. In this case, we need to add results of matrix powers. We do this like $$\sum v.\prod w. \left( (A-I)(wZv) + I\right).$$
+
+To see why this works, note that
+\[
+  			wZv=\begin{cases}
+               1 \text{ if } w<v \\
+               0 \text{ if } w\geq v
+            \end{cases}
+		\]
+This is, for a sum term $A^k$, if $w$ is previous to $v$ (in the canonical vectors ordering), then stop multiplying $A$ and use $I$ until the end of the current sum term, and then add this term to the final result.
+
+\subsection*{$k$-cliques}
+
+Let's try to see first if there is a four clique in the adjacency matrix $A$. To do this, we need to verify if there are paths between four \textbf{different} nodes. So we need the function 
+
+\[
+  			f(u,v)=1-u^*v=\begin{cases}
+               0 \text{ if } u=v \\
+               1 \text{ if } u\neq v
+            \end{cases}
+		\]
+
+Define $$g(u,v,w,r)=f(u,v)\cdot f(u,w)\cdot f(u,r)\cdot f(v,w)\cdot f(v,r)\cdot f(w,r).$$ This is, $g$ is zero if any pair of vectors are the same.
+		
+So $$\sum v_1.\sum v_2 \sum v_3. \sum v_4. (v_1^*Av_2)(v_1^*Av_3)(v_1^*Av_4)(v_2^*Av_3)(v_2^*Av_4)(v_3^*Av_4)g(v_1,v_2,v_3,v_4).$$
+
 \subsection*{Current main questions}
 \begin{itemize}
 
