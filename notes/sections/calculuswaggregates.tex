@@ -236,6 +236,8 @@ for some function $f$ is not ``functional'' in the sense that for a given $i$ an
 which  may help. On the other hand, an expression may be functional while not all sub-queries are so. Indeed, one can always guard a formula with an expression which be true if and only it is functional
 (just express that there are no two values corresponding to the same entry) and return say the zero matrix if it is not functional. We can turn any formula in a functional one in this way.
 
+More generally, suppose that input relations have keys, what is the complexity of deciding whether the output to a query also satisfies a specified key. Probably undecidable if we have negation but what about
+positive fragments possibly with aggregates? This should have been studied.
 
 
 
