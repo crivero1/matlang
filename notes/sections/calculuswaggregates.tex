@@ -228,6 +228,14 @@ translate any calculus with sum expression which starts from relations encoding 
 vector or matrix, into $\sum\ML$? Perhaps also no  negation in the expression? The challenge will be to simulate conjunction (disjunction), in other words. For examples, we can have sub-formulas $M(i,j,x)\land M(i',j',x')$ which will be existentially quantified in the end because we can only have 
 three variables (indexes $i$ and $j$ and numerical variable) in the final expression. 
 
+Also note that we only need to consider expressions that are ``functional''. For example,
+$$
+\varphi(i,j',z)=\exists j,i' ( R(i,j,x)\land R(i',j',y)\land z=f(x,y))
+$$
+for some function $f$ is not ``functional'' in the sense that for a given $i$ and $j'$ there may be more than one value $z$. Any inductive translation will need to require functionally for all sub-formulas
+which  may help. On the other hand, an expression may be functional while not all sub-queries are so. Indeed, one can always guard a formula with an expression which be true if and only it is functional
+(just express that there are no two values corresponding to the same entry) and return say the zero matrix if it is not functional. We can turn any formula in a functional one in this way.
+
 
 
 
