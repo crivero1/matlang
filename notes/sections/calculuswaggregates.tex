@@ -1,0 +1,239 @@
+\section{Connection with logic with aggregates}
+\newcommand{\ML}{\mathsf{MATLANG}}
+\newcommand{\reals}{\mathbf{R}}
+\newcommand{\cmplx}{\mathbf{C}}
+%\newcommand{\C}{\mathbf{C}}
+\newcommand{\nat}{\mathbf{N}}
+\newcommand{\pnat}{\nat_{>0}}
+\newcommand{\var}{var}
+\newcommand{\scm}{\mathcal{S}}
+\newcommand{\sizevar}{\mathsf{SizeVars}}
+\newcommand{\mname}{\mathsf{MatNames}}
+\newcommand{\allinst}[1]{\mathcal{I}_{#1}}
+\newcommand{\cmats}{\mathcal{M}}
+\newcommand{\false}{\bot}
+\newcommand{\true}{\top}
+\newcommand{\boolinterp}{\nu}
+\newcommand{\Rel}{\mathit{Rel}}
+\newcommand{\Mat}{\mathit{Mat}}
+\newcommand{\one}{\mathbf{1}}
+\newcommand{\Sum}{\mathsf{sum}}
+\newcommand{\diag}{\mathsf{diag}}
+\newcommand{\Apply}{\mathsf{apply}}
+\newcommand{\Tb}{\mathbf{b}}
+\newcommand{\Tn}{\mathbf{n}}
+\newcommand{\dom}{\mathbf{dom}}
+\newcommand{\rname}{\mathsf{RelNames}}
+\newtheorem{proposition}{Proposition}
+We first recall how MATLANG expressions can be simulated in the calculus with aggregates (see Expressive power of SQL paper by Leonid
+for definition of this calculus). I am copying stuff from the ICDT paper (and upcoming TODS submission).
+
+To fix the relational representation of matrices, it is natural to represent an $m \times n$ matrix $A$
+by a ternary relation $$
+\Rel_2(A) := \{(i,j,A_{i,j}) \mid i \in \{1,\dots,m\}, \ j \in
+\{1,\dots,n\}\}. $$  In the special case where $A$ is an
+$m \times 1$ matrix (column
+vector), $A$ can also be represented by a binary relation
+$\Rel_1(A) :=
+\{(i,A_{i,1}) \mid i \in \{1,\dots,m\}\}$.  Similarly, a $1
+\times n$ matrix (row vector) $A$ can be represented by $\Rel_1(A)
+:= \{(j,A_{1,j}) \mid j \in \{1,\dots,n\}\}$.  Finally, a $1
+\times 1$ matrix (scalar) $A$ can be represented by the unary
+singleton relation $\Rel_0(A) := \{(A_{1,1})\}$. 
+
+More formally,
+we assume a supply of \emph{relation variables}, which, for
+convenience, we can take to be the same as the matrix variables.
+A \emph{relation type} is a tuple of $\Tb$'s and $\Tn$'s.
+A \emph{relational schema} $\scm$ is a function, defined on a
+nonempty finite set
+$\var(\scm)$ of relation variables, that assigns a relation type
+to each element of $\var(\scm)$.
+
+To define relational instances, we assume a countably infinite universe
+$\dom$ of abstract atomic data elements.  It is convenient to
+assume that the natural numbers are contained in $\dom$.  We
+stress that this assumption is not essential but simplifies the
+presentation.  Alternatively, we would have to work with explicit
+embeddings from the natural numbers into $\dom$.
+
+Let $\tau$ be a relation type. A \emph{tuple
+of type $\tau$} is a tuple $(t(1),\dots,t(n))$ of the same arity
+as $\tau$, such that $t(i) \in \dom$ when $\tau(i) = \Tb$, and
+$t(i)$ is a complex number when $\tau(i) = \Tn$.
+A \emph{relation of type
+$\tau$} is a finite set of tuples of type $\tau$.  
+An \emph{instance} of a relational schema $\scm$ is a
+function $I$ defined on $\var(\scm)$ so that $I(R)$ is a relation
+of type $\scm(R)$ for every $R \in \var(\scm)$.
+
+%In order to translate $\ML$ to the relational algebra with summation, we must connect
+The matrix data model can now be formally connected to the relational data
+model, as follows. Let $\tau = s_1\times s_2$ be a matrix type.  Let us call $\tau$ a
+\emph{general type} if $s_1$ and $s_2$ are both size symbols; a
+\emph{vector type} if $s_1$ is a size symbol and $s_2$ is 1, or
+vice versa; and the \emph{scalar type} if $\tau$ is $1\times 1$.
+To every matrix type $\tau$ we associate a relation type
+$$ \Rel(\tau) := \begin{cases}
+(\Tb,\Tb,\Tn) & \text{if $\tau$ is general;} \\
+(\Tb,\Tn) & \text{if $\tau$ is a vector type;} \\
+(\Tn) & \text{if $\tau$ is scalar.} \end{cases} $$
+Then to every matrix schema $\scm$ we associate the relational
+schema $\Rel(\scm)$ where $\Rel(\scm)(M) = \Rel(\scm(M))$ for
+every $M \in \var(\scm)$.  For each instance $I$ of
+$\scm$, we define the instance $\Rel(I)$ over
+$\Rel(\scm)$ by $$ \Rel(I)(M) = \begin{cases} 
+\Rel_2(I(M)) & \text{if $\scm(M)$ is a general type;} \\
+\Rel_1(I(M)) & \text{if $\scm(M)$ is a vector type;} \\
+\Rel_0(I(M)) & \text{if $\scm(M)$ is the scalar type.}
+\end{cases} $$  
+
+\begin{proposition} 
+Let $\scm$ be a matrix schema, and let $e$ be a $\ML$ expression
+that is well-typed over $\scm$ with output type $\tau$.
+Let $\ell=2$, $1$,
+or $0$, depending on whether $\tau$ is general, a vector type, or
+scalar, respectively.
+For every $\ML$ expression $e$ there is a formula
+$\varphi_e$ over $\Rel(\scm)$
+in the relational calculus with summation, such that
+\begin{enumerate}
+\item
+If\/ $\tau$ is general, $\varphi_e(i,j,z)$ has two free base
+variables $i$ and $j$ and one free numerical variable $z$; if\/
+$\tau$ is a vector type, we have $\varphi_e(i,z)$; and if\/ $\tau$ is
+scalar, we have $\varphi_e(z)$.
+\item
+For every instance $I$, the relation defined by $\varphi_e$ on
+$\Rel(I)$ equals $\Rel_\ell(e(I))$.
+\item
+The formula $\varphi_e$ uses only {\bf three distinct base variables}. The functions used in pointwise applications in $\varphi_e$ 
+ are those used in
+pointwise applications in $e$; complex conjugation;
+multiplication of two numbers;
+and the constant functions $0$ and $1$.
+ Furthermore, $\varphi_e$ neither uses equality conditions between numerical variables nor equality conditions on base variables involving constants.
+\end{enumerate}
+\end{proposition}
+
+
+Let us assign, to each $\ML$ expression $e$ that is well-typed over $\scm$, an expression $\varphi_e$ in the relational calculus with
+summation as follows. 
+
+\begin{itemize}
+\item If $e = M$ is a matrix variable of $\scm$, then $\varphi_e(i,j,x):=\Rel_2(M)(i,j,x)$ if $M$ is of general type,
+ $\varphi_e(i,x):=\Rel_1(M)(i,x)$ if $M$ is of vector type, and $\varphi_e(x):=\Rel_0(M)(x)$ if $M$ is of scalar type.
+\end{itemize}
+Let $e'$ be a $\ML$ and let $\tau = s_1 \times s_2$ be the output type of $e'$.
+\begin{itemize}
+\item If $e = (e')^*$, then  $\varphi_e(i,j,x):=\exists x'\, (\varphi_{e'}(j,i,x')\land x=\overline{x'})$ if $\tau$ is a general type,
+$\varphi_e(i,x):=\exists x'\, (\varphi_{e'}(i,x')\land x=\overline{x'})$ if $\tau$ is a vector type, and $\varphi_e(x):=\exists x'\, (\varphi_{e'}(x')\land x=\overline{x'})$ if $\tau$ is the scalar type.
+Here, $\overline x$ denotes the complex conjugate operation.
+
+\item If $e = \one(e')$, then $\varphi_e(i,x):=\exists j, x'\, (\varphi_{e'}(i,j,x')\land x=1(x'))$ if $\tau$ is a general type,
+$\varphi_e(i,x):=\exists  x'\, (\varphi_{e'}(i,x')\land x=1(x'))$  is a vector type and $s_1\neq 1=s_2$, 
+$\varphi_e(x):=\exists  i,x'\, (\varphi_{e'}(i,x')\land x=1(x'))$  is a vector type and $s_1=1\neq s_2$, 
+and $\varphi_e(x):=\exists x'\, (\varphi_{e'}(x')\land x=1(x'))$  if $\tau$ is the scalar type. As before,  $1$ in the expression $\varphi_e$ is the constant $1$ function.
+
+
+\item If $e = \mathrm{diag}(e')$, then $\varphi_e(i,j,x):=(\varphi_{e'}(i,x)\land j=i)\vee (\exists x',x''\, \varphi_{e'}(i,x')\land\varphi_{e'}(j,x'')\land i\neq j \land x=0(x')$
+if $s_1 \neq 1 = s_2$ and  $\varphi_e(x):=\varphi_{e'}(x)$ if $\tau$ is the scalar type.
+
+
+\item If $e = e_1 \cdot e_2$, then 
+\[\begin{cases}
+\varphi_e(i,j,z):=z = \Sum k,x,y . (\varphi_{e_1}(i,k,x) \land \varphi_{e_2}(k,j,y), x \times y)
+ & \text{if } s_1 \neq 1 \neq s_2 \text{ and } s_3 \neq 1
+\cr
+\varphi_e(i,z):=z = \Sum k,x,y . (\varphi_{e_1}(i,k,x) \land \varphi_{e_2}(k,y), x \times y)
+& \text{if } s_1 \neq 1 = s_2 \text{ and } s_3 \neq 1
+\cr
+\varphi_e(i,z):=z = \Sum k,x,y . (\varphi_{e_1}(k,x) \land \varphi_{e_2}(k,i,y), x \times y)
+  & \text{if } s_1 = 1 \neq s_2 \text{ and } s_3 \neq 1
+\cr
+\varphi_e(z):=z = \Sum k,x,y . (\varphi_{e_1}(k,x) \land \varphi_{e_2}(k,y), x \times y)
+ & \text{if } s_1 = 1 = s_2 \text{ and } s_3 \neq 1
+\cr
+\varphi_e(i,j,z):=\varphi_{e_1}(i,x) \land \varphi_{e_2}(j,y) \land z=x \times y
+ & \text{if } s_1 \neq 1 \neq s_2 \text{ and } s_3 = 1
+\cr
+\varphi_e(i,z):=\varphi_{e_1}(i,x) \land \varphi_{e_2}(y) \land z=x \times y
+ & \text{if } s_1 \neq 1 = s_2 \text{ and } s_3 = 1
+\cr
+\varphi_e(i,z):=\varphi_{e_1}(x) \land \varphi_{e_2}(i,y)\land z=x \times y
+ & \text{if } s_1 = 1 \neq s_2 \text{ and } s_3 = 1
+\cr
+\varphi_e(z):=\varphi_{e_1}(x) \land \varphi_{e_2}(y) \land z=x \times y
+ & \text{if } s_1 = 1 = s_2 \text{ and } s_3 = 1
+\cr
+\end{cases},
+\]
+where $e_1$ is of type $s_1 \times s_3$ and $e_2$ is of type $s_3 \times s_2$.
+
+\item If $e = \Apply[f](e_1,\ldots,e_n)$, then 
+\begin{align*}
+\varphi_e(i,j,x)&:=\exists x_1,\ldots,x_n\, (\varphi_{e_1}(i,j,x_1)\land \cdots \land \varphi_{e_n}(i,j,x_n)\land x=f(x_1,\ldots,x_n)),\\
+\varphi_e(i,x)&:=\exists x_1,\ldots,x_n\, (\varphi_{e_1}(i,x_1)\land \cdots \land \varphi_{e_n}(i,x_n)\land x=f(x_1,\ldots,x_n)), \text{ and}\\
+\varphi_e(x)&:=\exists x_1,\ldots,x_n\, (\varphi_{e_1}(x_1)\land \cdots \land \varphi_{e_n}(x_n)\land x=f(x_1,\ldots,x_n))
+\end{align*}
+depending on whether $\tau$ is of general, vector or scalar type, respectively.
+\end{itemize}
+Notice that the only functions in $\varphi_e$ aside from those used in $\Apply$ in $e$ are complex conjugation ($\bar z$), multiplication of two numbers ($\times$), and the constant functions $0$ and $1$. Also notice that $\varphi_e$ uses neither negation, nor equality conditions on numerical variables, nor equality conditions on variables involving a constant.
+
+By induction on the structure of $e$ one straightforwardly observes that $\varphi_e$ satisfies the conditions (1) and (2) in the statement of the theorem.
+Furthermore, it is clear for all operations except for matrix multiplication that when $\varphi_{e'}$ uses at most $3$ base variables than so does $\varphi_e$.
+When it comes to matrix multiplication, assume that $\varphi_{e_1}(i,k,x)$ uses base variables $i,j',k$ and 
+ $\varphi_{e_2}(k,j,y)$ use base variables $i',k,j$. Then since only $i$, $j$ and $k$ are free variables, we can simply reuse variable $j'$ for $i'$ (or vice versa).
+ Hence, $\varphi_e(i,j,z):=z = \Sum k,x,y . (\varphi_{e_1}(i,k,x) \land \varphi_{e_2}(k,j,y), x \times y)$ uses at most $3$ base variables as well.\qed
+
+
+\subsection{MATLANG + sum iteration}
+Let's denote this extension of $\ML$ by $\sum\ML$.
+We show that we can extend the previous translation to incorporate expressions of the form $\sum_v e(v)$. More precisely, let $e$ be a $\sum\ML$ expression. Such an expression $e$ is defined on matrix variables which hold to input matrices. To formally define $\sum_v e(v)$ we reserve an infinite set of vector variables $V_1,V_2,\ldots,$ which are to hold the canonical vectors over which the sum ranges. So, in general, we consider expressions of the form 
+$$
+\sum_v e(V_1/v,V_2,\ldots,V_k),
+$$
+where $V_1/v$ means that vector variable is instantiated by vector $v$, the other vector variables $V_2,\ldots,V_k$ are ``free'' (a notion we need to define for $\sum\ML$ expressions) and these will be instantiated later by further summation (i.e., in the end a valid $\sum\ML$ expression does not have free vector variables).
+
+It is easy to see that the inductive proof given above still works in the presence of such vector variables. The difference is that $\varphi_e$ will have occurrences of $\Rel_1(V_j)(i,x)$ which, when considering an instance $I$ of the matrix variables the vector variables will be instantiated by means of the sum iteration. As a consequence, for every such occurrence of  $\Rel_1(V_j)(i,x)$ we have an extra pair of free variables (one of $\Tb$ type for the index $i$ in the vector, and one of $\Tn$ type for the value $x$ of the entries in the vector. In summary, $\varphi_e$ is of the form 
+$\varphi_e(i,j,x; i_1,x_1,\ldots,i_k,x_k)$ where the last $2k$ variables correspond to the vector variables.
+
+Consider now $$
+e:=\sum_v e'(V_1/v,V_2,\ldots,V_k),
+$$ 
+we assume that $e'$ is of matrix type (if $e'$ is of vector type or scalar we may need to encode these differently, shouldn't be a problem).
+
+Then to translate  $e$  into the calculus we 
+\begin{itemize}
+\item first consider $\varphi_{\mathsf{Id}}(i,j,x)$ as the expression corresponding to $\diag(\one(M))$ for a matrix variable $M$, this is to generate the identity matrix.
+\item
+Then, we replace the vector relation  $\Rel_1(V_1)(i_1,x_1)$ in $\varphi_e'(i,j,x; i_1,x_1,\ldots,i_k,x_k)$ by columns returned by $\varphi_{\mathsf{Id}}(i_1,j',x)$ for a given $j'$:
+$$
+\psi_e(i,j,x;j',i_2,x_2,\ldots,i_k,x_k):=\exists i_1,x_1\, \varphi_{\mathsf{Id}}(i_1,j',x_1)\land      \varphi_{e'}(i,j,x; i_1,x_1,\ldots,i_k,x_k)[V_1(i_1,x_1)/\varphi_{\mathsf{Id}}(i_1,j',x_1)],
+$$
+where $\varphi_{e'}(i,j,x; i_1,x_1,\ldots,i_k,x_k)[V_1(i_1,x_1)/\varphi_{\mathsf{Id}}(i_1,j',x_1)]$ means that we subtitute $V_1(i_1,x_1)$ by 
+$\varphi_{\mathsf{Id}}(i_1,j',x_1)$ everywhere in expression $\varphi_{e'}$. We further existentially quantify $i_1$ and $x_1$ so that we
+when $\psi_e$ is evaluated on an instance $I$ (for matrix variables) and index $j$ (and indexes $i_2,\ldots,i_k$ and values $x_2,\ldots,x_k$,
+$\psi_e$ evaluates $\varphi_{e'}$ were $V_1$ holds the $j$th column of the identity matrix.
+\item It remains to sum up over all these columns in the identity matrix:
+$$
+\varphi_e(i,j,z;i_2,x_2,\ldots,i_k,x_k):= z= \Sum x,j' (\exists i',x',\, \varphi_{\mathsf{Id}}(i',j',x')\land \psi_e(i,j,x;j',i_2,x_2,\ldots,i_k,x_k),x)
+$$
+which results in an expression in which the pair of variables for $V_1$ is eliminated.
+\end{itemize}
+
+\subsection{Conjecture}
+Under certain syntactical restriction on function applications and equality conditions (no numerical equal to base variable) it is possible to
+translate any calculus with sum expression which starts from relations encoding matrices and has an output type that correspond to a scalar,
+vector or matrix, into $\sum\ML$? Perhaps also no  negation in the expression? The challenge will be to simulate conjunction (disjunction), in other words. For examples, we can have sub-formulas $M(i,j,x)\land M(i',j',x')$ which will be existentially quantified in the end because we can only have 
+three variables (indexes $i$ and $j$ and numerical variable) in the final expression. 
+
+
+
+
+
+
+
+
+
+
