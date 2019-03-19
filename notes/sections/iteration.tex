@@ -147,14 +147,21 @@ Given the above problem, we sort of need an operator that iterates over the cano
 
 Let $\phi(X,v)$ be an expression. We define
 
-$$\mu_v\phi(X,v)$$
+$$\mu v.\phi(A,v)$$
 
-as the operator that iterates over the canonical vectors $\lbrace v_i\rbrace_{i=1}^n$ and successively computes $\phi(X_i,v_i)$ where $X_i=\phi(X_{i-1}, v_{i-1})$ and $X_1=X$. The value of $\mu_v\phi(X,v)$ is $\phi(X_n, v_n)$. This is
+as the operator that iterates over the canonical vectors $\lbrace v_i\rbrace_{i=1}^n$ and successively computes $\phi(X_i,v_i)$ where $X_i=\phi(X_{i-1}, v_{i-1})$ and $X_1=A$. The value of $\mu v.\phi(A,v)$ is $\phi(X_n, v_n)$. This is
 
 \begin{align*}
-\mu_v\phi(X,v)&=\phi(X_n, v_n) \\
+\mu v.\phi(A,v)&=\phi(X_n, v_n) \\
 X_i&=\phi(X_{i-1}, v_{i-1}),\hspace{1ex}i=2,\cdots, n \\
-X_1&=X
+X_1&=A
+\end{align*}
+
+Formally, let $\lbrace v_i\rbrace_i$ be the canonical vectors of addecuate dimention. On instance $I$, we have that $$\left[\mu v. \phi(A,v)\right](I)=B$$ if and only if
+
+\begin{align*}
+X_1&=\left[\phi(X,v)\right](I\left[X\rightarrow A, v\rightarrow v_1\right]) \\
+X_i&=\left[\phi(X, v)\right](I\left[X\rightarrow X_{i-1}, v\rightarrow v_{i-1}\right]),\hspace{1ex}i=2,\cdots, n
 \end{align*}
 
 Let's consider the following setting of the $A=LU$ factorization:
@@ -171,7 +178,7 @@ A_i&=T_{i-1}A_{i-1} \\
 \end{align*}
 
 Now, if $A=LU$ and $$\phi(X, v)=\left(\prod_{v_k}\left(I-\dfrac{v_k^*Xv}{v^*Xv}\cdot vv_k^*\cdot\left(v^*Zv_k\right)\right)^*\right)^*X,$$
-then $U=\mu_v\phi(A,v)$.
+then $U=\mu v.\phi(A,v)$.
 
 \subsection*{Transitive closure}
 
