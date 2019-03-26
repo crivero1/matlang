@@ -176,7 +176,7 @@ But note that here we obtain the multipliers $\alpha_{ij}$ from the original mat
 
 \subsection*{Ordering}
 
-Let's turn our attention to the ordering of the canonical vectors. If we have the canonical vectors, using a simple matrix product we can compute a function that discriminates if two canonical vectors are the same or not, in particular
+Let's turn our attention to the ordering of the canonical vectors $\lbrace v_i\rbrace_i$. If we have the canonical vectors, using a simple matrix product we can compute a function that discriminates if two canonical vectors are the same or not, in particular
 
 \[
   			f(u,v)=1-u^*v=\begin{cases}
@@ -229,8 +229,22 @@ So it's the matrix equivalent of the \textit{predecessor} relation. For example,
             \end{cases}
 		\]
 		
+With this matrix we can compute a function that tells us if the argument is the first canonical vector. Note that $$\mathbf{1}\cdot Su=0\leftrightarrow u=cv_1, \hspace{1ex} c\in\mathbb{R},$$ so $$\mathbf{1}\cdot Su=0\leftrightarrow u=cv_1, \hspace{1ex} c\in\mathbb{R},$$ and we have that
+\[
+  			min(u)=(1-\mathbf{1}\cdot f_{\neq 0}(Su))=\begin{cases}
+               1 \text{ if } u = cv_1 \\
+               0 \text{ if not}
+            \end{cases}
+		\]
 
-		
+Since $S$ and $Z$ give us an order, it is natural to compute one from the other, so
+
+\begin{align*}
+Z&=f_{>0}\left(\prod v. (S+I)\right) \\
+S&=Z-f_{>0}(Z^2)
+\end{align*}
+
+
 \subsection*{Recursive iteration}
 
 Given the above problem, we sort of need an operator that iterates over the canonical vectors and compute the same operation over the result of the previous iteration.
