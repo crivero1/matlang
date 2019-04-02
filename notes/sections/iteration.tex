@@ -282,8 +282,10 @@ A_i&=T_{i-1}A_{i-1} \\
 &=\left(\prod_{v_k}\left(I-\dfrac{v_k^*A_{i-1}v_i}{v_i^*A_{i-1}v_i}\cdot v_iv_k^*\cdot\left(v_i^*Zv_k\right)\right)^*\right)^*A_{i-1}.
 \end{align*}
 
-Now, if $A=LU$ and $$\phi(X, v)=\left(\prod_{v_k}\left(I-\dfrac{v_k^*Xv}{v^*Xv}\cdot vv_k^*\cdot\left(v^*Zv_k\right)\right)^*\right)^*X,$$
-then $U=\mu v.\phi(A,v)$.
+Now, if $A=LU$ and $$E(X, v)=\left(\prod_{v_k}\left(I-\dfrac{v_k^*(XA)v}{v^*(XA)v}\cdot vv_k^*\cdot\left(v^*Zv_k\right)\right)^*\right)^*(XA),$$
+then $U=\mu X, v.E(X,v)$.
+
+Note that in the example above we \textit{inserted} the target matrix $A$
 
 \subsection*{Current main questions}
 \begin{itemize}
