@@ -244,28 +244,28 @@ Z&=f_{>0}\left(\prod v. (S+I)\right) \\
 S&=Z-f_{>0}(Z^2)
 \end{align*}
 
-
 \subsection*{Recursive iteration}
 
 Given the above problem, we sort of need an operator that iterates over the canonical vectors and compute the same operation over the result of the previous iteration.
 
-Let $\phi(X,v)$ be an expression. We define
+Let $E(X,v)$ be a two variable expression. We define
 
-$$\mu v.\phi(A,v)$$
+$$\mu X, v.E(X,v)$$
 
-as the operator that iterates over the canonical vectors $\lbrace v_i\rbrace_{i=1}^n$ and successively computes $\phi(X_i,v_i)$ where $X_i=\phi(X_{i-1}, v_{i-1})$ and $X_1=A$. The value of $\mu v.\phi(A,v)$ is $\phi(X_n, v_n)$. This is
+as the operator that iterates over the canonical vectors $\lbrace v_i\rbrace_{i=1}^n$ and successively computes $E(A_{i-1}, v_i)$ where $A_i=E(A_{i-1}, v_{i})$ and $A_0=I$. The value of $\mu X, v.E(X,v)$ is $A_n$. This is
 
 \begin{align*}
-\mu v.\phi(A,v)&=\phi(X_n, v_n) \\
-X_i&=\phi(X_{i-1}, v_{i-1}),\hspace{1ex}i=2,\cdots, n \\
-X_1&=A
+\mu X, v.E(X,v)&=A_n \\
+A_i&=E(A_{i-1}, v_{i}),\hspace{1ex}i=1,\cdots, n \\
+A_0&=I
 \end{align*}
 
-Formally, let $\lbrace v_i\rbrace_i$ be the canonical vectors of addecuate dimention. On instance $I$, we have that $$\left[\mu v. \phi(A,v)\right](I)=B$$ if and only if
+Formally, let $\lbrace v_i\rbrace_i$ be the canonical vectors of addecuate dimention. On instance $I$, we have that $$\left[\mu X, v. E(X,v)\right](I)=B$$ if and only if
 
 \begin{align*}
-X_1&=\left[\phi(X,v)\right](I\left[X\rightarrow A, v\rightarrow v_1\right]) \\
-X_i&=\left[\phi(X, v)\right](I\left[X\rightarrow X_{i-1}, v\rightarrow v_{i-1}\right]),\hspace{1ex}i=2,\cdots, n
+I &= A_0 \\
+\left[E(X, v)\right](I\left[X\rightarrow A_{i-1}, v\rightarrow v_{i}\right])&=A_i,\hspace{1ex}i=1,\cdots, n \\
+A_n &= B
 \end{align*}
 
 \subsubsection*{LU factorization with recursive iteration}
