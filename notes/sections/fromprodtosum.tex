@@ -1,0 +1,40 @@
+\section{From Product to Sum} \label{sec:prodtosum}
+
+A quick note how product iterations and sum iterations relate.
+Consider the computation $(I+A)^n$ which we can express using
+product iterations 
+$$
+(I+A)^n=\prod_{e_i} (I+A),
+$$
+but not with sum iterations (as  MATLANG+sum can be encoded in
+logic with aggregation,  which is local, and we can define TC with
+$(I+A)^n$). There is a way, however, of encoding $(I+A)^n$ as sum
+by extending MATLANG with some extra (powerful) machinery. Intuitively,
+the $i$th iteration in the product will  be stored in the $i$-\textit{slice} $B[i,\_,\_]$ of a $n\times n\times n$
+array $B$ and in each sum iteration we additively populate the $i+1$-slice using the
+result two other slices, the $1$-slice $B[1,\_,\_]$ storing $I+A$, and the $i$-slice $B[i,\_,\_]$
+storing the result of the previous iteration. So if we consider
+$$
+B[i,j,k]=B[1,j,\ell]\cdot B[i-1,\ell,k]
+$$
+we compute $(I+A)^i$ in $B[i,\_,\_]$ when initially $B[1,\_,\_]:=I+A$. Intuitively, we built-in some kind of recursion.
+
+To formalize this in terms of an extension of MATLANG, however, we need to introduce various operations which enable to:
+\begin{itemize}
+\item Store a matrix in a specific slice of a ternary array;
+\item Extract matrix in a specific slice of a ternary array;
+\item Extend product to array/matrix, array/vector, and so; {\bf and}
+\item we need to be able to take the predecessor of a canonical vector (to simulate accessing $i-1$ when given $i$).
+\end{itemize}
+
+This will definitely go beyond first-order logic with aggregation but may be embeddable in some datalog with aggregation variant (with predecessor relation).
+
+The {\bf main reason} for doing this may be motivated by some paper that I came across in which the communication cost of linear algebra operations is studied (in the context of implementations in which data needs to be shipped from slow  to fast memory). What is nice about this work is that they provide a general mechanism of obtaining {\em lower bounds} by using techniques like  Loomis-Whitney (also used in AGM work on joins). They develop an entire framework for bounding complexity when programs are {\bf declaratively specified as for loops}!. They also show that the lower bounds are attainable by concrete algorithms (basically by partitioning the indices used in for loops). We could attempt to ensure that the MATLANG extension we consider can only express for loops to which their theory is applicable. The pape r is:
+\begin{quote}
+Communication Lower Bounds and Optimal Algorithms for Programs That Reference Arrays - Part 1, by Michael Christ James Demmel Nicholas Knight Thomas Scanlon Katherine A. Yelick. \url{https://www2.eecs.berkeley.edu/Pubs/TechRpts/2013/EECS-2013-61.pdf}.
+\end{quote}
+A colleague working in that area told me that this is state-of-the art!
+
+
+
+
