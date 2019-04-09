@@ -229,7 +229,7 @@ So it's the matrix equivalent of the \textit{predecessor} relation. For example,
             \end{cases}
 		\]
 		
-With this matrix we can compute a function that tells us if the argument is the first canonical vector. Note that we don't have exactly $$\mathbf{1}\cdot Su=0\leftrightarrow u=cv_1, \hspace{1ex} c\in\mathbb{R},$$ it depends on $u_i$, but  $$\mathbf{1}\cdot f_{\neq}(Su)=0\leftrightarrow u=cv_1, \hspace{1ex} c\in\mathbb{R},$$ and we have that
+With this matrix we can compute a function that tells us if the argument is the first canonical vector. Note that we don't have exactly $$\mathbf{1}\cdot Su=0\leftrightarrow u=cv_1, \hspace{1ex} c\in\mathbb{R},$$ it depends on $u_i$, but  $$\mathbf{1}\cdot f_{\neq 0}(Su)=0\leftrightarrow u=cv_1, \hspace{1ex} c\in\mathbb{R},$$ and we have that
 \[
   			min(u)=(1-\mathbf{1}\cdot f_{\neq 0}(Su))=\begin{cases}
                1 \text{ if } u = cv_1 \\
@@ -283,9 +283,34 @@ A_i&=T_{i-1}A_{i-1} \\
 \end{align*}
 
 Now, if $A=LU$ and $$E(X, v)=\left(\prod_{v_k}\left(I-\dfrac{v_k^*(XA)v}{v^*(XA)v}\cdot vv_k^*\cdot\left(v^*Zv_k\right)\right)^*\right)^*X$$
-then $U=(\mu X, v.E(X,v))(A)$, this is $L=\mu X, v.E(X,v)$.
+then $U=(\mu X, v.E(X,v))(A)$, this is $L^{-1}=\mu X, v.E(X,v)$.
 
-Note that in the example above we \textit{inserted} the target matrix $A$ in the expression $E(X,v)$.
+Note that in the example above we \textit{inserted} the target matrix $A$ in the expression $E(X,v)$. Would it be different if in the definition of $\mu$ we start with some matrix $B$ and not the indentity? We show that we can simulate this using our setting. Let us have an operator $\lambda$ that does exactly what $\mu$ does, except that we have to give another parameter: a starting matrix. This is:
+
+\begin{align*}
+\lambda X, v.E(X,v)(B)&=A_n \\
+A_i&=E(A_{i-1}, v_{i}),\hspace{1ex}i=1,\cdots, n \\
+A_0&=B
+\end{align*}
+Now, we use the following expression with the operator $\mu$ to simulate $\lambda$: $$E'(X,v)=min(v)\cdot E(B,v_1)+(1-min(v))E(X,v).$$
+Note that for $\lambda$ we have 
+\begin{align*}
+	A^{\lambda}_0&=B \\
+	A^{\lambda}_1&=E(A^{\lambda}_0,v_1)=E(B,v_1) \\
+	A^{\lambda}_2&=E(A^{\lambda}_1,v_2) \\
+	&\vdots \\
+	A^{\lambda}_n&=E(A^{\lambda}_{n-1}, v_n)
+\end{align*}
+and for $\mu$
+\begin{align*}
+	A^{\mu}_0&=I \\
+	A^{\mu}_1&=E'(A^{\mu}_0,v_1)=E(B,v_1) \\
+	A^{\mu}_2&=E'(A^{\mu}_1,v_2)=E(A^{\mu}_1,v_2) \\
+	&\vdots \\
+	A^{\mu}_n&=E'(A^{\mu}_{n-1}, v_n)=E(A^{\mu}_{n-1}, v_n).
+\end{align*}
+
+Since $A^{\mu}_1=A^{\lambda}_1$ we have that $A^{\mu}_i=A^{\lambda}_i$ for $i=1,\ldots,n$. So $$\lambda X, v.E(X,v)(B)=\mu X, v.E'(X,v)$$
 
 \subsection*{Current main questions}
 \begin{itemize}
