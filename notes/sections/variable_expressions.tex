@@ -2,5 +2,34 @@
 
 All the expressions so far are valid if they are composed of matrices that are on the instance $I$ (see section 1). Once you have an expression $E$ that is well defined on the given instance, it doesn't change its value unless the current instance is modified. We call this a \textit{constant} expression.
 
-Now, let's turn our attention on the expressions $$E(v)=v^* Av.$$ The value of $E$ depends entirely on $v$, we call this a \textit{variable expression}. This type of expressions have \textit{free} variables ($v$ in this case) and it doesn't mean anything in MATLANG unless the \textit{free} variables are mapped into an actual matrix of the current instance, we denote this $E(v)(I[v\rightarrow B])$, assuming thath $B$ is on the domain of the given instance. This imapping will be accomplished trough operators that are introduced in the next section. These operators define how the variable expression $E$ is used and how it's instantiated.
+Now, let's turn our attention on the expressions $$E(v)=v^* Av.$$ The value of $E$ depends entirely on $v$, we call this a \textit{variable expression}. This type of expressions have \textit{free} variables ($v$ in this case) and it doesn't mean anything in MATLANG unless the \textit{free} variables are mapped into an actual matrix of the current instance, we denote this $E(v)(I[v\rightarrow B])$, assuming that $B$ is on the domain of the given instance. This mapping will be accomplished trough operators that are introduced in the next section. These operators define how the variable expression $E$ is used and how it's instantiated.
 A formal example, let $\lbrace v_i\rbrace_i$ be the canonical vectors. An operator could receive a variable expression $E(v)$ and give the output $E(v_k)=B$, if and only if $[E(v)](I[v\rightarrow v_k])=B$.
+
+\subsection*{MATLANG Formulas}
+
+Let $I$ be an instantce of MATLANG. We assume a countably infinite set of variables $V=\lbrace x,y,z,v_1,v_2,\ldots \rbrace$ and constants $var(I)$. We define formulas inductivelly:
+\begin{itemize}
+	\item Each variable $x$ is a formula.
+	\item Each constant $C\in var(I)$ is a formula.
+	\item If $e_1,\ldots, e_n$ are formulas and $E$ is a $k-$ary variable expression then $E(e_1,\ldots, e_n)$ is a formula.
+	\item If $e, e_1,\ldots, e_n$ are formulas, then any MATLANG expression over $e,e_1,\ldots e_n$ is a formula. This is
+		\begin{align*}
+			&\text{let }M=e_1 \text{ in } e_2 \\
+			&e^* \\
+			&\mathbf{1}(e) \\
+			&\text{diag}(e) \\
+			&e_1\cdot e_2 \\
+			&\text{apply}[f](e_1,\ldots, e_n)
+		\end{align*}
+		are formulas.
+\end{itemize}
+Free variables of a formula are defined as follows:
+
+\begin{itemize}
+	\item The only free variable of a the formula $x$ is $x$. A constant formula $C$ does not have free variables.
+	\item The free variables of $E(e_1,\ldots, e_n)$ are the free variables of $e_1,\ldots, e_n$.
+	\item The free variables of a MATLANG expression over $e_1,\ldots, e_n$ are the free variables of $e_1,\ldots, e_n$.
+\end{itemize}
+
+
+
