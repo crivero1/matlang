@@ -4,32 +4,31 @@ All the expressions so far are valid if they are composed of matrices that are o
 
 Now, let's turn our attention on the expressions $$E(v)=v^* Av.$$ The value of $E$ depends entirely on $v$, we call this a \textit{variable expression}. This type of expressions have \textit{free} variables ($v$ in this case) and it doesn't mean anything in MATLANG unless the \textit{free} variables are mapped into an actual matrix of the current instance, we denote this $E(v)(I[v\rightarrow B])$, assuming that $B$ is on the domain of the given instance. This mapping will be accomplished trough operators that are introduced in the next section. These operators define how the variable expression $E$ is used and how it's instantiated.
 A formal example, let $\lbrace v_i\rbrace_i$ be the canonical vectors. An operator could receive a variable expression $E(v)$ and give the output $E(v_k)=B$, if and only if $[E(v)](I[v\rightarrow v_k])=B$.
+We now proceed to define the semantics of this formulas.
 
-\subsection*{MATLANG Formulas}
+\subsection{Extended MATLANG}
 
-Let $I$ be an instantce of MATLANG. We assume a countably infinite set of variables $V=\lbrace x,y,z,v_1,v_2,\ldots \rbrace$ and constants $var(I)$. We define formulas inductivelly:
-\begin{itemize}
-	\item Each variable $x$ is a formula.
-	\item Each constant $C\in var(I)$ is a formula.
-	\item If $e_1,\ldots, e_n$ are formulas and $E$ is a $k-$ary variable expression then $E(e_1,\ldots, e_n)$ is a formula.
-	\item If $e, e_1,\ldots, e_n$ are formulas, then any MATLANG expression over $e,e_1,\ldots e_n$ is a formula. This is
-		\begin{align*}
-			&\text{let }M=e_1 \text{ in } e_2 \\
-			&e^* \\
-			&\mathbf{1}(e) \\
-			&\text{diag}(e) \\
-			&e_1\cdot e_2 \\
-			&\text{apply}[f](e_1,\ldots, e_n)
-		\end{align*}
-		are formulas.
-\end{itemize}
-Free variables of a formula are defined as follows:
+A schema $S$ is a set of matrix names $M_1,\ldots, M_p$ and a set of vector names $v_1,\ldots, v_l$.
+An instance $I$ is a function that maps matrix names to concrete matrices (of dimention $n\times n$) and vector names to concrete colun vectors (of dimention $n\times 1$). 
+In addition, we define $dim(I)=n$ and $can(I)$ as the set of canonical vectors of dimention $n$, indexed as $can(I)[1], \ldots,can(I)[n]$.
 
-\begin{itemize}
-	\item The only free variable of a the formula $x$ is $x$. A constant formula $C$ does not have free variables.
-	\item The free variables of $E(e_1,\ldots, e_n)$ are the free variables of $e_1,\ldots, e_n$.
-	\item The free variables of a MATLANG expression over $e_1,\ldots, e_n$ are the free variables of $e_1,\ldots, e_n$.
-\end{itemize}
+Let $I$ be an intance and $n=dim(I)$. Let $X$ be a set of vector variables (matrix variables, respectively). A valuation $\nu$ on instance $I$ is a function from $X$ to column vectors of dimention $n\times 1$ (matrices of dimention $n\times n$, respectively). 
 
+Let $S$ be an schema, $I$ an instance, $F$ a set of functions $f:\mathbb{R}^{k}\rightarrow\mathbb{R}$ (with $1\leq k$) and $X$ a set of vector variables. An \textit{extended} MATLANG expression $E$ is given by
+
+\begin{align*}
+E:=& x\in X | M\in S | v\in S | \\
+&|E_1+E_2 | E_1\cdot E_2 | E^* | \\
+& |f(E_1,\ldots, E_k), f\in F | \\
+& |\sum v. E | \prod v. E
+\end{align*}
+
+Let $n=dim(I)$. We define $\text{type}(E)=(i,j)$ where $(i,j)\in \lbrace 1, n\rbrace$. The well typeness id defined recursively as follows.
+
+\begin{align*}
+\text{type}(x) &= (n,1) \\
+\text{type}(M) &= (n,n) \\
+\text{type}(v) &= (n,1) 
+\end{align*}
 
 
