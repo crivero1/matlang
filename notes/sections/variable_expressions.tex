@@ -58,12 +58,12 @@ Given $I, \nu, V$ and a well typed expression $E$, we define the semantics for t
 \left[ x\right](I,\nu)&=\nu (x)\\
 \left[ M\right](I,\nu)&=I(M) \\
 \left[ v\right]&=I(v) \\
-\left[ E^*\right]&=\left[ E\right](I,\nu)^* \\
-\left[ E_1+E_2\right]&= \left[ E_1\right](I,\nu)+\left[ E_2\right](I,\nu)\\
-\left[ E_1\cdot E_2\right]&= \left[ E_1\right](I,\nu)\times \left[ E_2\right](I,\nu)\\
-\left[ f(E_1,\ldots ,E_k)\right] &= f\left(\left[ E_1\right](I,\nu),\ldots , \left[  E_k\right](I,\nu)\right)\\
-\left[ \sum x.E\right]&= \sum_{i=1}^{dim(I)}\left[ E\right](I, \nu [x\rightarrow can(I)[i]])\\
-\left[ \prod x. E\right]&= \prod_{i=1}^{dim(I)}\left[ E\right](I, \nu [x\rightarrow can(I)[i]])
+\left[ E^*\right]I,\nu)&=\left[ E\right](I,\nu)^* \\
+\left[ E_1+E_2\right]I,\nu)&= \left[ E_1\right](I,\nu)+\left[ E_2\right](I,\nu)\\
+\left[ E_1\cdot E_2\right]I,\nu)&= \left[ E_1\right](I,\nu)\times \left[ E_2\right](I,\nu)\\
+\left[ f(E_1,\ldots ,E_k)\right]I,\nu) &= f\left(\left[ E_1\right](I,\nu),\ldots , \left[  E_k\right](I,\nu)\right)\\
+\left[ \sum x.E\right]I,\nu)&= \sum_{i=1}^{dim(I)}\left[ E\right](I, \nu [x\rightarrow can(I)[i]])\\
+\left[ \prod x. E\right]I,\nu)&= \prod_{i=1}^{dim(I)}\left[ E\right](I, \nu [x\rightarrow can(I)[i]])
 \end{align*}
 
 Here, $+$ is matrix sum, $\times$ is matrix multiplication and 
@@ -75,5 +75,12 @@ Depending on context, we sometimes denote explicitly that an expression $E$ depe
 
 Note that the definition above is over a set of vector variables $V$. We can naturally extend our language to work with matrix variables as well. Let V be the set of vector a matrix variables, this is $V=\lbrace\lbrace x, y, z, \ldots\rbrace,\lbrace X,Y,Z,\ldots\rbrace\rbrace$. Also $E:=X\in V$, type($X$)$=(n, n)$ and $\left[X\right](I,\nu)=\nu(X)$.
 
-Now, with matrix variables on the table, we define a new expression $$\mu X, v.E$$.
+Now, with matrix variables on the table, we define a new expression $$\mu X, v.E$$ With $$\text{type}(\mu X,v. E) = \text{type}(E)$$ and
+\begin{align*}
+\\
+\left[ \mu X,v. E\right](I,\nu) &= A_n \\
+A_i &= \left[ E\right](I,\nu\left[X\rightarrow A_{i-1}, v\rightarrow v_i\right]),\hspace{1ex} i= 1, \ldots, n \\
+A_0 &= Id
+\end{align*}
 
+Here, $Id$ is the identity. This operator iterates over the canonical vectors and uses the previous result as an input matrix for the same expression

@@ -168,24 +168,16 @@ But note that here we obtain the multipliers $\alpha_{ij}$ from the original mat
 
 Given the above problem, we sort of need an operator that iterates over the canonical vectors and compute the same operation over the result of the previous iteration.
 
-Let $E(X,v)$ be a two variable expression. We define
+Let $E(X,v)$ be a two variable expression. Recall that
 
 $$\mu X, v.E(X,v)$$
 
-as the operator that iterates over the canonical vectors $\lbrace v_i\rbrace_{i=1}^n$ and successively computes $E(A_{i-1}, v_i)$ where $A_i=E(A_{i-1}, v_{i})$ and $A_0=I$. The value of $\mu X, v.E(X,v)$ is $A_n$. This is
+is the operator that iterates over the canonical vectors $\lbrace v_i\rbrace_{i=1}^n$ and successively computes $E(A_{i-1}, v_i)$ where $A_i=E(A_{i-1}, v_{i})$ and $A_0=I$. The value of $\mu X, v.E(X,v)$ is $A_n$. This is
 
 \begin{align*}
 \mu X, v.E(X,v)&=A_n \\
 A_i&=E(A_{i-1}, v_{i}),\hspace{1ex}i=1,\cdots, n \\
 A_0&=I
-\end{align*}
-
-Formally, let $\lbrace v_i\rbrace_i$ be the canonical vectors of addecuate dimention. On instance $I$, we have that $$\left[\mu X, v. E(X,v)\right](I)=B$$ if and only if
-
-\begin{align*}
-I &= A_0 \\
-\left[E(X, v)\right](I\left[X\rightarrow A_{i-1}, v\rightarrow v_{i}\right])&=A_i,\hspace{1ex}i=1,\cdots, n \\
-A_n &= B
 \end{align*}
 
 \subsubsection*{LU factorization with recursive iteration}
