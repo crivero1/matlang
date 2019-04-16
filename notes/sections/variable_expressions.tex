@@ -14,21 +14,64 @@ In addition, we define $dim(I)=n$ and $can(I)$ as the set of canonical vectors o
 
 Let $I$ be an intance and $n=dim(I)$. Let $X$ be a set of vector variables (matrix variables, respectively). A valuation $\nu$ on instance $I$ is a function from $X$ to column vectors of dimention $n\times 1$ (matrices of dimention $n\times n$, respectively). 
 
-Let $S$ be an schema, $I$ an instance, $F$ a set of functions $f:\mathbb{R}^{k}\rightarrow\mathbb{R}$ (with $1\leq k$) and $X$ a set of vector variables. An \textit{extended} MATLANG expression $E$ is given by
+Let $S$ be an schema, $I$ an instance, $F$ a set of functions $f:\mathbb{R}^{k}\rightarrow\mathbb{R}$ (with $1\leq k$) and $V$ a set of vector variables. An \textit{extended} MATLANG expression $E$ is given by
 
 \begin{align*}
-E:=& x\in X | M\in S | v\in S | \\
-&|E_1+E_2 | E_1\cdot E_2 | E^* | \\
+E:=& x\in V | M\in S | v\in S | \\
+&|E^*|E_1+E_2 | E_1\cdot E_2 |\\
 & |f(E_1,\ldots, E_k), f\in F | \\
-& |\sum v. E | \prod v. E
+& |\sum x. E | \prod x. E
 \end{align*}
 
-Let $n=dim(I)$. We define $\text{type}(E)=(i,j)$ where $(i,j)\in \lbrace 1, n\rbrace$. The well typeness id defined recursively as follows.
+Let $n=dim(I)$. We define $\text{type}(E)=(i,j)$ where $(i,j)\in \lbrace 1, n\rbrace$. The well typeness is defined recursively as follows.
 
 \begin{align*}
 \text{type}(x) &= (n,1) \\
 \text{type}(M) &= (n,n) \\
-\text{type}(v) &= (n,1) 
+\text{type}(v) &= (n,1) \\
+\text{type}(E^*)&=(j,i) \text{ where } (i,j)=\text{type}(E) \\
+\text{type}(E_1 + E_2) &= \begin{cases}
+               \text{type}(E_1) \text{ if } \text{type}(E_1)=\text{type}(E_1) \\
+               \text{undefined} \text{ otherwise }
+            \end{cases} \\
+\text{type}(E_1\cdot E_2)&=\begin{cases}
+               (i,k) \text{ if } \text{type}(E_1)=(i,j)\text{ and type}(E_2)=(j,k) \\
+               \text{undefined} \text{ otherwise }
+            \end{cases} \\
+\text{type}(f(E_1,\ldots, E_k))&=\begin{cases}
+               (1,1) \text{ if } \text{type}(E_1)=\cdots =\text{type}(E_k)=(1,1) \\
+               \text{undefined} \text{ otherwise }
+            \end{cases} \\
+\text{type}\left(\sum x.E\right) &= \text{type}(E) \\
+\text{type}\left(\prod x. E\right) &=
+\begin{cases}
+               (1,1) \text{ if } \text{type}(E)=(1,1) \\
+               (n,n) \text{ if } \text{type}(E)=(n,n) \\
+               \text{undefined } \text{ otherwise }
+            \end{cases}
+\end{align*}
+We say that $E$ is well typed if it has a defined type. Here, type(undefined)$=$ undefined.
+
+
+Given $I, \nu, V$ and a well typed expression $E$, we define the semantics for the values $\left[ E\right](I,\nu)$ inductivelly as follows.
+\begin{align*}
+\left[ x\right](I,\nu)&=\nu (x)\\
+\left[ M\right](I,\nu)&=I(M) \\
+\left[ v\right]&=I(v) \\
+\left[ E^*\right]&=\left[ E\right](I,\nu)^* \\
+\left[ E_1+E_2\right]&= \left[ E_1\right](I,\nu)+\left[ E_2\right](I,\nu)\\
+\left[ E_1\cdot E_2\right]&= \left[ E_1\right](I,\nu)\times \left[ E_2\right](I,\nu)\\
+\left[ f(E_1,\ldots ,E_k)\right] &= f\left(\left[ E_1\right](I,\nu),\ldots , \left[  E_k\right](I,\nu)\right)\\
+\left[ \sum x.E\right]&= \sum_{i=1}^{dim(I)}\left[ E\right](I, \nu [x\rightarrow can(I)[i]])\\
+\left[ \prod x. E\right]&= \prod_{i=1}^{dim(I)}\left[ E\right](I, \nu [x\rightarrow can(I)[i]])
 \end{align*}
 
+Here, $+$ is matrix sum, $\times$ is matrix multiplication and 
+\begin{align*}
+\sum_{i=1}^n E_i = E_1+\cdots + E_n \\
+\prod_{i=1}^n E_i = E_1\times \cdots\times E_n
+\end{align*}
+Depending on context, we sometimes denote explicitly that an expression $E$ depends on $x$ as $E(x)$.
+
+Note that the definition above is over a set of vector variables $V$. We can naturally extend our language to work with matrix variables as well. Let V be the set of vector a matrix variables, this is $V=\lbrace\lbrace x, y, z, \ldots\rbrace\lbrace X,Y,Z,\ldots\rbrace\rbrace$
 

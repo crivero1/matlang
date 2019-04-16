@@ -5,23 +5,41 @@ It is natural for us to wish for some kind of iteration in MATLANG. There's a lo
 	\item In the LU factorization process the result is $$A=G_1^{-1}G_2^{-2}\cdots G_n^{-1}U=LU$$ for some upper triangular matrix $U$ and some pivot matrices $G_1, \ldots, G_n$. Note that $$L=\prod_{i=1}^nG_{i}^{-1}$$
 \end{itemize}
 
-With this in mind, we introduce the following operators:
+We can compute this and many other things using extMATLANG expressions. The extra property of these expressions relies on the operators $\sum$ and $\prod$. 
+
+First of all, note that the definition of these operators is not ambiguous in taking column vectors instead of row vectors or doing the aggregate matrix multiplication by right, because row vectors are the canonical vectors as well, and transposing gives us one from the other. On the other hand, if you want the result of the aggregate multiplication to be computed in the inverse order, note that, since $(AB)^*=B^*A^*$ we have $$\prod^{\text{left}} x.E(x)=\left(\prod x.E(x)^*\right)^*.$$
+
+Now, let's see what we can do with these new operators. Some of these examples are simulations of original MATLANG matrix operations. As a consecuence, the semantics of these operators are well defined and we can use them as well. We assume that we have $I,\nu, X$.
+
+\subsection*{Identity}
+
+We can express the identity of dimention $dim(I)$ as $$\sum x. x\cdot x^*.$$
+
+\subsection*{Ones vector and diag()}
+
+Note that $$\text{ones}(v)=\sum x. x$$ And $$\text{diag}(v)=\sum x. (x^*v)\cdot xx^*$$
+
+\subsection*{Matrix pointwise function application (apply[f])}
+
+We have that 
+
 \begin{itemize}
-	\item Sum: $$\sum v.e(v)$$ means that, for every column vector $v$ of the identity of addecuate dimention (this is, $v$ are canonical vectors) do $e(v)$ and sum the result (pointwise). More formally, let $\lbrace v_i\rbrace_i$ be the canonical vectors of addecuate dimention. On instance $I$, we have that $$\left[\sum v. e(v)\right](I)=A$$ if and only if $$\left[ e(v)\right](I[v\rightarrow v_1]) + \left[ e(v)\right](I[v\rightarrow v_2]) + \cdots + \left[ e(v)\right](I[v\rightarrow v_n]) = A.$$ Here, $+$ is matrix addition.
-	\item Multiplication: $$\prod_{v}e(v)$$ means that, for every column vector $v$ of the identity of addecuate dimention do $e(X,v_i)$ and matrix multiply the results $R_i$ as they come up, this is, $R_1R_2\cdots R_n$. More formally, let $\lbrace v_i\rbrace_i$ be the canonical vectors of addecuate dimention. On instance $I$, we have that $$\left[\prod v. e(v)\right](I)=A$$ if and only if $$\left[ e(v)\right](I[v\rightarrow v_1]) \times \left[ e(v)\right](I[v\rightarrow v_2]) \times \cdots \times \left[ e(v)\right](I[v\rightarrow v_n]) = A$$ Here, $\times$ is matrix multiplication.
+	\item \textbf{Pointwise application:} if $A^{(1)}, \ldots, A^{(n)}$ are $m\times p$ matrices, then apply$\left[ f \right](A^{(1)}, \ldots, A^{(n)})$ is the $m\times p$ matrix $C$ where $C_{ij}=f(A^{(1)}_{ij}, \ldots, A^{(n)}_{ij})$.
 \end{itemize}
 
-Obviously, these operations are valid when the dimentions of the matrices match the wanted operation. \\
+So, given the \textbf{sum} operator and the function $f$, we can compute $C$ in the following way: $$C=\sum x_i.\sum x_j. f\left( x_i^*A^{(1)}x_j, \cdots, x_i^*A^{(n)}v_j\right)\cdot x_ix_j^*$$
 
-Also, note that the definition is not ambiguous in taking column vectors instead of row vectors or doing the aggregate matrix multiplication by right, because row vectors are the canonical vectors as well. On the other hand, if you want the result of the aggregate multiplication to be computed in the inverse order, note that, since $(AB)^*=B^*A^*$ we have $$\prod_{v}^{\text{left}}e(v)=\left(\prod_{v}e(v)^*\right)^*.$$
+Recall that $v_iv_j^*$ is the matrix that has a 1 in the position i, j and zero everywhere else.
 
-Now, let's see what we can do with these new operators.
+Thus, we can simulate the MATLANG operator apply[$f$].
+
+For example, matrix pointwise multiplication: $$\sum x_i.\sum x_j.\left( x_i^*A^{(1)}x_j\times \cdots\times x_i^*A^{(n)}x_j\right)\cdot x_ix_j^*$$
 
 \subsection*{Trace and diagonal product}
 
-We can express $$tr(A)=\sum_v v^*Av.$$
+We can express $$tr(A)=\sum x. x^*Ax.$$
 
-And the product of the diagonal of a matrix (this can be useful in computing the determinant of an upper/down triangular matrix): $$dp(A)=\prod_v v^*Av.$$
+And the product of the diagonal of a matrix (this can be useful in computing the determinant of an upper/down triangular matrix): $$dp(A)=\prod x. x^*Ax.$$
 
 
 \subsection*{Determinant}
@@ -33,23 +51,14 @@ Recall that the determinant is define over permutations, this is $$det(A)=\sum_{
                -1 \text{ if p can be restored to natural order in an odd number of steps}
             \end{cases}
 		\]
-In the case of MATLANG, the permutations are represented as permutation matrices, this is, permutations of the identity. In this context, note that, for a permutation matrix $P$, we compute $a_{1p_1}\cdots a_{np_n}$ as $$\prod_v v^*\cdot A\cdot (Pv).$$ See that $a_{ip_i}=v_i^*\cdot A\cdot (Pv_i)$, where $v_i$ is the $i$-th canonical vector. 
+In the case of MATLANG, the permutations are represented as permutation matrices, this is, permutations of the identity. In this context, note that, for a permutation matrix $P$, we compute $a_{1p_1}\cdots a_{np_n}$ as $$\prod x. x^*\cdot A\cdot (Px).$$ See that $a_{ip_i}=v_i^*\cdot A\cdot (Pv_i)$, where $v_i$ is the $i$-th canonical vector. 
 
 
-We also need to compute $\sigma(P)$, to this end, note that $$\sigma(P)=(-1)^{\sum_{i<j}\lbrace p_i>p_j\rbrace}.$$ Also, let $e_i$ be the canonical vector with a $1$ in its $i$-th entry and 
-
-\[
-Z = \begin{bmatrix}
-    0 & 1 & \cdots &  1 \\
-    0 & \ddots & \ddots & \vdots \\
-    \hdotsfor{3} & 1 \\
-    0 & \cdots & \cdots & 0 
-\end{bmatrix}.
-\]
+We also need to compute $\sigma(P)$, to this end, note that $$\sigma(P)=(-1)^{\sum_{i<j}\lbrace p_i>p_j\rbrace}.$$ Also, let $\lbrace v_i\rbrace_{i=1}^{n}$ be the canonical vectors.
 Now, note that 
 
  		\[
-  			2\cdot e_i^*Ze_j=\begin{cases}
+  			2\cdot v_i^*Zv_j=\begin{cases}
                2 \text{ if } i < j \\
                0 \text{ if } i \geq j
             \end{cases}
@@ -58,45 +67,26 @@ Now, note that
 Thus
 
 		\[
-  			1-2\cdot e_i^*Ze_j=\begin{cases}
+  			1-2\cdot v_i^*Zv_j=\begin{cases}
                -1 \text{ if } i < j \\
                +1 \text{ if } i \geq j
             \end{cases}
 		\]
 
-So $$\sigma(P)=\prod_{e_i}\prod_{e_j:i<j}\left(1-2\cdot (Pe_i)^*Z(Pe_j)\right),$$ and since 
+So $$\sigma(P)=\prod x_i.\prod x_j:(i<j).\left(1-2\cdot (Px_i)^*Z(Px_j)\right),$$ and since 
 
 		\[
-  			e_i^*Ze_j=\begin{cases}
+  			v_i^*Zv_j=\begin{cases}
                1 \text{ if } i < j \\
                0 \text{ if } i \geq j
             \end{cases}
 		\]
 
-Then we have that $$\sigma(P)=\prod_{e_i}\prod_{e_j}\left(1-2\cdot (Pe_i)^*Z(Pe_j)\cdot e_i^*Ze_j\right)$$
+Then we have that $$\sigma(P)=\prod x_i.\prod x_j.\left(1-2\cdot (Px_i)^*Z(Px_j)\cdot x_i^*Zx_j\right)$$
 
-Thus, given we can iterate over permutation matrices, we have $$det(A)=\sum_{P}\left(\prod_{e_i}\prod_{e_j}\left(1-2\cdot (Pe_i)^*Z(Pe_j)\cdot e_i^*Ze_j\right)\right)\left(\prod_v v^*\cdot A\cdot (Pv)\right).$$
+Thus, given we can iterate over permutation matrices, we have $$det(A)=\sum_{P}\left[\left(\prod x_i \prod x_j \left(1-2\cdot (Px_i)^*Z(Px_j)\cdot x_i^*Zx_j\right)\right)\left(\prod y. y^*\cdot A\cdot (Py)\right)\right].$$
 
-\subsection*{Scalar functions are enough}
 
-We have that 
-
-\begin{itemize}
-	\item \textbf{Pointwise application:} if $A^{(1)}, \ldots, A^{(n)}$ are $m\times p$ matrices, then apply$\left[ f \right](A^{(1)}, \ldots, A^{(n)})$ is the $m\times p$ matrix $C$ where $C_{ij}=f(A^{(1)}_{ij}, \ldots, A^{(n)}_{ij})$.
-\end{itemize}
-
-So, given the \textbf{sum} operator and the function $f$, we can compute $C$ in the following way: $$C=\sum_{v_i}\sum_{v_j}f\left( v_i^*A^{(1)}v_j, \cdots, v_i^*A^{(n)}v_j\right)\cdot v_iv_j^*$$
-
-Recall that $v_iv_j^*$ is the matrix that has a 1 in the position i, j and zero everywhere else.
-
-Thus, the operator apply$\left[ f \right]$ is no longer needed.
-
-For example:
-
-\begin{itemize}
-	\item \textbf{Matrix sum:}$$\sum_{v_i}\sum_{v_j}\left( v_i^*A^{(1)}v_j+ \cdots + v_i^*A^{(n)}v_j\right)\cdot v_iv_j^*$$
-	\item \textbf{Matrix pointwise multiplication:} $$\sum_{v_i}\sum_{v_j}\left( v_i^*A^{(1)}v_j\times \cdots\times v_i^*A^{(n)}v_j\right)\cdot v_iv_j^*$$
-\end{itemize}
 
 \subsection*{Transitive closure}
 
