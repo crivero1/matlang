@@ -9,7 +9,7 @@ We can compute this and many other things using extMATLANG expressions. The extr
 
 First of all, note that the definition of these operators is not ambiguous in taking column vectors instead of row vectors or doing the aggregate matrix multiplication by right, because row vectors are the canonical vectors as well, and transposing gives us one from the other. On the other hand, if you want the result of the aggregate multiplication to be computed in the inverse order, note that, since $(AB)^*=B^*A^*$ we have $$\prod^{\text{left}} x.E(x)=\left(\prod x.E(x)^*\right)^*.$$
 
-Now, let's see what we can do with these new operators. Some of these examples are simulations of original MATLANG matrix operations. As a consecuence, the semantics of these operators are well defined and we can use them as well. We assume that we have $I,\nu, X$.
+Now, let's see what we can do with these new operators. Some of these examples are simulations of original MATLANG matrix operations. As a consecuence, the semantics of these operators are well defined and we can use them as well. We assume that we have $I,\nu, V$.
 
 \subsection*{Identity}
 
