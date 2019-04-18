@@ -5,95 +5,90 @@ It is natural for us to wish for some kind of iteration in MATLANG. There's a lo
 	\item In the LU factorization process the result is $$A=G_1^{-1}G_2^{-2}\cdots G_n^{-1}U=LU$$ for some upper triangular matrix $U$ and some pivot matrices $G_1, \ldots, G_n$. Note that $$L=\prod_{i=1}^nG_{i}^{-1}$$
 \end{itemize}
 
-We can compute this and many other things using extMATLANG expressions. The extra property of these expressions relies on the operators $\sum$ and $\prod$. 
+We have seen some examples of what we can compute using extMATLANG expressions. The extra property of these expressions relies on the operators $\sum$ and $\prod$. If we want to do more elaborate things, like iterations, we need some extra tool: \textbf{order}.
 
-First of all, note that the definition of these operators is not ambiguous in taking column vectors instead of row vectors or doing the aggregate matrix multiplication by right, because row vectors are the canonical vectors as well, and transposing gives us one from the other. On the other hand, if you want the result of the aggregate multiplication to be computed in the inverse order, note that, since $(AB)^*=B^*A^*$ we have $$\prod^{\text{left}} x.E(x)=\left(\prod x.E(x)^*\right)^*.$$
+\subsection{Order}
 
-Now, let's see what we can do with these new operators. Some of these examples are simulations of original MATLANG matrix operations. As a consecuence, the semantics of these operators are well defined and we can use them as well. We assume that we have $I,\nu, V$.
-
-\subsection*{Identity}
-
-We can express the identity of dimention $dim(I)$ as $$\sum x. x\cdot x^*.$$
-
-\subsection*{Ones vector and diag()}
-
-Note that $$\text{ones}(v)=\sum x. x$$ And $$\text{diag}(v)=\sum x. (x^*v)\cdot xx^*$$
-
-\subsection*{Matrix pointwise function application (apply[f])}
-
-We have that 
-
-\begin{itemize}
-	\item \textbf{Pointwise application:} if $A^{(1)}, \ldots, A^{(n)}$ are $m\times p$ matrices, then apply$\left[ f \right](A^{(1)}, \ldots, A^{(n)})$ is the $m\times p$ matrix $C$ where $C_{ij}=f(A^{(1)}_{ij}, \ldots, A^{(n)}_{ij})$.
-\end{itemize}
-
-So, given the \textbf{sum} operator and the function $f$, we can compute $C$ in the following way: $$C=\sum x_i.\sum x_j. f\left( x_i^*A^{(1)}x_j, \cdots, x_i^*A^{(n)}v_j\right)\cdot x_ix_j^*$$
-
-Recall that $v_iv_j^*$ is the matrix that has a 1 in the position i, j and zero everywhere else.
-
-Thus, we can simulate the MATLANG operator apply[$f$].
-
-For example, matrix pointwise multiplication: $$\sum x_i.\sum x_j.\left( x_i^*A^{(1)}x_j\times \cdots\times x_i^*A^{(n)}x_j\right)\cdot x_ix_j^*$$
-
-\subsection*{Trace and diagonal product}
-
-We can express $$tr(A)=\sum x. x^*Ax.$$
-
-And the product of the diagonal of a matrix (this can be useful in computing the determinant of an upper/down triangular matrix): $$dp(A)=\prod x. x^*Ax.$$
-
-
-\subsection*{Determinant}
-
-Recall that the determinant is define over permutations, this is $$det(A)=\sum_{p}\sigma(p)a_{1p_1}\cdots a_{np_n},$$ where the sum is taken over the $n!$ permutations of the natural order $(1, 2,\ldots, n)$ and 
-       \[
-  			\sigma(p)=\begin{cases}
-               +1 \text{ if p can be restored to natural order in an even number of steps} \\
-               -1 \text{ if p can be restored to natural order in an odd number of steps}
+Let's turn our attention to the order of the canonical vectors $\lbrace v_i\rbrace_i$. If we have the canonical vectors, using a simple matrix product we can compute a function that discriminates if two canonical vectors are the same or not, in particular
+\[
+  			f(v_i,v_j)=1-v_i^*v_j=\begin{cases}
+               0 \text{ if } i=j \\
+               1 \text{ if } i\neq j
             \end{cases}
 		\]
-In the case of MATLANG, the permutations are represented as permutation matrices, this is, permutations of the identity. In this context, note that, for a permutation matrix $P$, we compute $a_{1p_1}\cdots a_{np_n}$ as $$\prod x. x^*\cdot A\cdot (Px).$$ See that $a_{ip_i}=v_i^*\cdot A\cdot (Pv_i)$, where $v_i$ is the $i$-th canonical vector. 
+does exactly that. So, without adding any object, we have equality for canonical vectors. Note that implicitly we are using de identity, the matrix equivalent to the equality relation.
 
 
-We also need to compute $\sigma(P)$, to this end, note that $$\sigma(P)=(-1)^{\sum_{i<j}\lbrace p_i>p_j\rbrace}.$$ Also, let $\lbrace v_i\rbrace_{i=1}^{n}$ be the canonical vectors.
-Now, note that 
+Now, consider the following matrix
+\[
+Z = \begin{bmatrix}
+    0 & 1 & \cdots &  1 \\
+    0 & \ddots & \ddots & \vdots \\
+    \hdotsfor{3} & 1 \\
+    0 & \cdots & \cdots & 0 
+\end{bmatrix}.
+\]
+In some way, this matrix gives us an ordering of the canonical vectors. We can see this in the functions of the form 
 
- 		\[
-  			2\cdot v_i^*Zv_j=\begin{cases}
-               2 \text{ if } i < j \\
-               0 \text{ if } i \geq j
-            \end{cases}
-		\]
-		
-Thus
-
-		\[
-  			1-2\cdot v_i^*Zv_j=\begin{cases}
-               -1 \text{ if } i < j \\
-               +1 \text{ if } i \geq j
-            \end{cases}
-		\]
-
-So $$\sigma(P)=\prod x_i.\prod x_j:(i<j).\left(1-2\cdot (Px_i)^*Z(Px_j)\right),$$ and since 
-
-		\[
-  			v_i^*Zv_j=\begin{cases}
+\[
+  			f(v_i, v_j)=v_i^*Zv_j=\begin{cases}
                1 \text{ if } i < j \\
                0 \text{ if } i \geq j
             \end{cases}
 		\]
+		
+This kind of functions discriminate between canonical vectors, in terms of order. Note that this gives us an answer for any pair of canonical vector, so we have a total order in some sense.
 
-Then we have that $$\sigma(P)=\prod x_i.\prod x_j.\left(1-2\cdot (Px_i)^*Z(Px_j)\cdot x_i^*Zx_j\right)$$
+Can we introduce a \textit{local} order of the canonical vectors? For instance, we can ask ourselves if we can define the \textit{successor} or \textit{predecessor} relation of the canonical vectors from a matrix. Let us introduce a new matrix:
 
-Thus, given we can iterate over permutation matrices, we have $$det(A)=\sum_{P}\left[\left(\prod x_i \prod x_j \left(1-2\cdot (Px_i)^*Z(Px_j)\cdot x_i^*Zx_j\right)\right)\left(\prod y. y^*\cdot A\cdot (Py)\right)\right].$$
+\[
+S := \begin{bmatrix}
+    0 & 1         & 0         & \cdots &  0 \\
+    0 & \ddots & 1         & \cdots & 0 \\
+    \vdots & \vdots & \ddots & \ddots & \vdots \\
+    \hdotsfor{3} & \ddots & 1 \\
+    0 & \cdots & \cdots & \cdots & 0 
+\end{bmatrix}.
+\]
 
+Let's see what this matrix does. Note that
 
+\[
+  			Sv_i=\begin{cases}
+               v_{i-1} \text{ if } i > 1 \\
+              \mathbf{0} \text{ if } i = 1
+            \end{cases}
+		\]
 
-\subsection*{Transitive closure}
+So it's the matrix equivalent of the \textit{predecessor} relation. For example, now we can compute 
 
-To compute transitive closure we need the quantity $(A+I)^n$ and use apply[$f>0$] on the result matrix. Then we have that $$(I+A)^n=\prod v. (I+A),$$ and thus $$TC = \text{apply}\left[ f_{>0}\right]\left( \prod v. (I+A) \right).$$
-Using only the new operators, we have that $$TC=\sum v_i. \sum v_j. f_{>0}\left(v_i^*\left(\prod v. (I+A)\right)v_j\right)$$
+\[
+  			g(v_i, v_j)=v_i^*Sv_j=\begin{cases}
+               1 \text{ if } i = j - 1 \\
+               0 \text{ if not}
+            \end{cases}
+		\]
+		
+With this matrix we can compute a function that tells us if the argument is the first canonical vector. Note that we don't have exactly $$\mathbf{1}\cdot Su=0\leftrightarrow u=cv_1, \hspace{1ex} c\in\mathbb{R},$$ it depends on the entries of $u$, but  $$\mathbf{1}\cdot f_{\neq 0}(Su)=0\leftrightarrow u=cv_1, \hspace{1ex} c\in\mathbb{R},$$ and we have that
+\[
+  			min(u)=(1-\mathbf{1}\cdot f_{\neq 0}(Su))=\begin{cases}
+               1 \text{ if } u = cv_1 \\
+               0 \text{ if not}
+            \end{cases}
+		\]
 
-\subsection*{Power sum}
+Since $S$ and $Z$ give us an order, it is natural to compute one from the other, so
+
+\begin{align*}
+Z&=f_{>0}\left(\prod v. (S+I)\right) \\
+S&=Z-f_{>0}(Z^2)
+\end{align*}
+
+\subsection{Examples}
+
+Now, let's see what we can do with these new operators and an order. We assume that we have $\cM,\nu, V$. Also, the matrices $S,Z$.
+
+\subsubsection{Power sum}
 
 If we want to compute $I+ A + A^2 + \cdots + A^n$ we need to do a little trick with the identity. In this case, we need to add results of matrix powers. We do this like $$\sum v.\prod w. \left( (A-I)(wZv) + I\right).$$
 
@@ -106,22 +101,7 @@ To see why this works, note that
 		\]
 This is, for a sum term $A^k$, if $w$ is previous to $v$ (in the canonical vectors ordering), then stop multiplying $A$ and use $I$ until the end of the current sum term, and then add this term to the final result.
 
-\subsection*{$k$-cliques}
-
-Let's try to see first if there is a four clique in the adjacency matrix $A$. To do this, we need to verify if there are paths between four \textbf{different} nodes. So we need the function 
-
-\[
-  			f(u,v)=1-u^*v=\begin{cases}
-               0 \text{ if } u=v \\
-               1 \text{ if } u\neq v
-            \end{cases}
-		\]
-
-Define $$g(u,v,w,r)=f(u,v)\cdot f(u,w)\cdot f(u,r)\cdot f(v,w)\cdot f(v,r)\cdot f(w,r).$$ This is, $g$ is zero if any pair of vectors are the same.
-		
-So $$\sum v_1.\sum v_2. \sum v_3. \sum v_4. (v_1^*Av_2)(v_1^*Av_3)(v_1^*Av_4)(v_2^*Av_3)(v_2^*Av_4)(v_3^*Av_4)g(v_1,v_2,v_3,v_4).$$
-
-\subsection*{Gaussian elimination}
+\subsubsection{Pivoting a column}
 
 Let $A$ be a matrix and $\alpha$ a scalar. For computing Gaussian elimination we turn our attention in the elementary matrices of the form $$E=I + \alpha\cdot e_ie_j^*.$$ Note that $E\cdot A$ adds a $\alpha$-multiple of row $i$ to row $j$. It is worth noting that $E^{-1}= I - \alpha\cdot e_ie_j^*.$
 
@@ -164,7 +144,7 @@ So we can reduce the column $i$ of $A$ as $$\left(\prod_{v_k}\left(I-\dfrac{v_k^
 But this is all we can do: reduce a column. For example, we could wrongfully think that all that is left to complete the gaussian elimination on $A=LU$ is to do this for all columns, this is $$U=\left(\prod_{v_i}\prod_{v_j}\left(I-\dfrac{v_j^*Av_i}{v_i^*Av_i}\cdot v_iv_j^*\cdot\left(v_i^*Zv_j\right)\right)^*\right)^*A.$$
 But note that here we obtain the multipliers $\alpha_{ij}$ from the original matrix $A$, a huge mistake. So all we can do with these new operators is to reduce one column of a given matrix. It's not a weak property, but not powerful enough.
 
-\subsection*{Recursive iteration}
+\subsection{Recursive iteration}
 
 Given the above problem, we sort of need an operator that iterates over the canonical vectors and compute the same operation over the result of the previous iteration.
 
@@ -172,15 +152,9 @@ Let $E(X,v)$ be a two variable expression. Recall that
 
 $$\mu X, v.E(X,v)$$
 
-is the operator that iterates over the canonical vectors $\lbrace v_i\rbrace_{i=1}^n$ and successively computes $E(A_{i-1}, v_i)$ where $A_i=E(A_{i-1}, v_{i})$ and $A_0=I$. The value of $\mu X, v.E(X,v)$ is $A_n$. This is
+is the operator that iterates over the canonical vectors $\lbrace v_i\rbrace_{i=1}^n$ and successively computes $E(A_{i-1}, v_i)$ where $A_i=E(A_{i-1}, v_{i})$ and $A_0=I$. The value of $\mu X, v.E(X,v)$ is $A_n$.
 
-\begin{align*}
-\mu X, v.E(X,v)&=A_n \\
-A_i&=E(A_{i-1}, v_{i}),\hspace{1ex}i=1,\cdots, n \\
-A_0&=I
-\end{align*}
-
-\subsubsection*{LU factorization with recursive iteration}
+\subsubsection{LU factorization with recursive iteration}
 Let's consider the following setting of the $A=LU$ factorization:
 
 \begin{align*}
@@ -223,7 +197,7 @@ and for $\mu$
 \end{align*}
 Since $A^{\mu}_1=A^{\lambda}_1$ we have that $A^{\mu}_i=A^{\lambda}_i$ for $i=1,\ldots,n$. So $$\lambda X, v.E(X,v)(B)=\mu X, v.E'(X,v)$$
 
-\subsection*{Current main questions}
+\subsection{Current main questions}
 \begin{itemize}
 
 \item $PA=LU$ factorization: if $A$ needs row interchange, is there some way to compute $P$ beforehand?
@@ -244,6 +218,53 @@ Cholesky, etc.).
 \item Explore the possibility to define the sum and product operators over invariant expressions, and then extend the definition through $Z$.
 
 \end{itemize}
+
+\subsubsection*{Other examples}
+
+\textbf{Determinant}
+
+
+Recall that the determinant is define over permutations, this is $$det(A)=\sum_{p}\sigma(p)a_{1p_1}\cdots a_{np_n},$$ where the sum is taken over the $n!$ permutations of the natural order $(1, 2,\ldots, n)$ and 
+       \[
+  			\sigma(p)=\begin{cases}
+               +1 \text{ if p can be restored to natural order in an even number of steps} \\
+               -1 \text{ if p can be restored to natural order in an odd number of steps}
+            \end{cases}
+		\]
+In the case of MATLANG, the permutations are represented as permutation matrices, this is, permutations of the identity. In this context, note that, for a permutation matrix $P$, we compute $a_{1p_1}\cdots a_{np_n}$ as $$\prod x. x^*\cdot A\cdot (Px).$$ See that $a_{ip_i}=v_i^*\cdot A\cdot (Pv_i)$, where $v_i$ is the $i$-th canonical vector. 
+
+
+We also need to compute $\sigma(P)$, to this end, note that $$\sigma(P)=(-1)^{\sum_{i<j}\lbrace p_i>p_j\rbrace}.$$ Also, let $\lbrace v_i\rbrace_{i=1}^{n}$ be the canonical vectors.
+Now, note that 
+
+ 		\[
+  			2\cdot v_i^*Zv_j=\begin{cases}
+               2 \text{ if } i < j \\
+               0 \text{ if } i \geq j
+            \end{cases}
+		\]
+		
+Thus
+
+		\[
+  			1-2\cdot v_i^*Zv_j=\begin{cases}
+               -1 \text{ if } i < j \\
+               +1 \text{ if } i \geq j
+            \end{cases}
+		\]
+
+So $$\sigma(P)=\prod x_i.\prod x_j:(i<j).\left(1-2\cdot (Px_i)^*Z(Px_j)\right),$$ and since 
+
+		\[
+  			v_i^*Zv_j=\begin{cases}
+               1 \text{ if } i < j \\
+               0 \text{ if } i \geq j
+            \end{cases}
+		\]
+
+Then we have that $$\sigma(P)=\prod x_i.\prod x_j.\left(1-2\cdot (Px_i)^*Z(Px_j)\cdot x_i^*Zx_j\right)$$
+
+Thus, given we can iterate over permutation matrices, we have $$det(A)=\sum_{P}\left[\left(\prod x_i \prod x_j \left(1-2\cdot (Px_i)^*Z(Px_j)\cdot x_i^*Zx_j\right)\right)\left(\prod y. y^*\cdot A\cdot (Py)\right)\right].$$
 
 \subsubsection*{Observations}
 
