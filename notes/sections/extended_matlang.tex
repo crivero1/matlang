@@ -52,7 +52,7 @@ Let $\cM$ be an intance and $n=dim(\cM)$. Let $V$ be a set of vector variables (
 
 Let $\cS$ be an schema, $\cM$ an instance, $F$ a set of functions $f:\mathbb{R}^{k}\rightarrow\mathbb{R}$ (with $1\leq k$) and $V$ a set of vector variables. An \textit{extended} MATLANG expression $E$ is given by
 $$
-E:= \ | x\in V \ | M\in S \ | v\in S \ | E^* \ |E_1+E_2 \ | E_1\cdot E_2 \ | f(E_1,\ldots, E_k), f\in F \ | \sum x. E \ | \prod x. E \ |
+E:= \ |\  x\in V \ |\  M\in S \ |\  v\in S \ |\  E^* \ |\ E_1+E_2 \ |\  E_1\cdot E_2 \ |\  f(E_1,\ldots, E_k), f\in F \ |\  \sum x. E \ |\  \prod x. E \ |\ 
 $$
 
 Let $n=dim(\cM)$. We define $\text{type}(E)=(i,j)$ where $(i,j)\in \lbrace 1, n\rbrace$. The well typeness is defined recursively as follows.
@@ -108,16 +108,6 @@ Here, $+$ is matrix sum, $\times$ is matrix multiplication and
 Depending on context, we sometimes denote explicitly that an expression $E$ depends on $x$ as $E(x)$.
 
 First, note that the definition of these operators is not ambiguous in taking column vectors instead of row vectors or doing the aggregate matrix multiplication by right, because row vectors are the canonical vectors as well, and transposing gives us one from the other. On the other hand, if you want the result of the aggregate multiplication to be computed in the inverse order, note that, since $(AB)^*=B^*A^*$ we have $$\prod^{\text{left}} x.E(x)=\left(\prod x.E(x)^*\right)^*.$$
-
-Note that the definition above is over a set of vector variables $V$. We can naturally extend our language to work with matrix variables as well. Let V be the set of vector a matrix variables, this is $V=\lbrace\lbrace x, y, z, \ldots\rbrace,\lbrace X,Y,Z,\ldots\rbrace\rbrace$. Also $E:=X\in V$, type($X$)$=(n, n)$ and $\left[X\right](I,\nu)=\nu(X)$.
-
-Now, with matrix variables on the table, we define a new expression $$\mu X, v.E$$ With $$\text{type}(\mu X,v. E) = \text{type}(E)$$ and $\left[ \mu X,v. E\right](I,\nu) = A_n$ where
-\begin{align*}
-A_i &= \left[ E\right](I,\nu\left[X\rightarrow A_{i-1}, v\rightarrow v_i\right]),\hspace{1ex} i= 1, \ldots, n \\
-A_0 &= I
-\end{align*}
-
-Here, $I$ is the Identity. This operator iterates over the canonical vectors and uses the previous result as an input matrix for the same expression
 
 \subsection{Simulating MATLANG}
 

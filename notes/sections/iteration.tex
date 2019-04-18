@@ -1,4 +1,4 @@
-\section{Iterations in MATLANG}
+\section{Iterations in extMATLANG}
 It is natural for us to wish for some kind of iteration in MATLANG. There's a lot of matrix procedures and formulas that sums or multiplies results over an operation on the same matrix. Some examples:
 \begin{itemize}
 	\item The quantity $$\sum_{i=0}^nA^i=I+A+A^2+\ldots + A^n$$ it's used a lot in computing inverse or graph theory. This is a sum over the operation power to the $i$ of the matrix $A$.
@@ -84,7 +84,7 @@ Z&=f_{>0}\left(\prod v. (S+I)\right) \\
 S&=Z-f_{>0}(Z^2)
 \end{align*}
 
-\subsection{Examples}
+\subsection{Examples in extMATLANG + Order}
 
 Now, let's see what we can do with these new operators and an order. We assume that we have $\cM,\nu, V$. Also, the matrices $S,Z$.
 
@@ -148,13 +148,17 @@ But note that here we obtain the multipliers $\alpha_{ij}$ from the original mat
 
 Given the above problem, we sort of need an operator that iterates over the canonical vectors and compute the same operation over the result of the previous iteration.
 
-Let $E(X,v)$ be a two variable expression. Recall that
+Note that in the definition of syntax and semantics of extMATLANG is over a set of vector variables $V$. We can naturally extend our language to work with matrix variables as well. Let V be the set of vector a matrix variables, this is $V=\lbrace\lbrace x, y, z, \ldots\rbrace,\lbrace X,Y,Z,\ldots\rbrace\rbrace$. Also $E:=X\in V$, type($X$)$=(n, n)$ and $\left[X\right](I,\nu)=\nu(X)$.
 
-$$\mu X, v.E(X,v)$$
+Now, with matrix variables on the table, we define a new expression $$\mu X, v.E$$ With $$\text{type}(\mu X,v. E) = \text{type}(E)$$ and $\left[ \mu X,v. E\right](I,\nu) = A_n$ where
+\begin{align*}
+A_i &= \left[ E\right](I,\nu\left[X\rightarrow A_{i-1}, v\rightarrow v_i\right]),\hspace{1ex} i= 1, \ldots, n \\
+A_0 &= I
+\end{align*}
 
-is the operator that iterates over the canonical vectors $\lbrace v_i\rbrace_{i=1}^n$ and successively computes $E(A_{i-1}, v_i)$ where $A_i=E(A_{i-1}, v_{i})$ and $A_0=I$. The value of $\mu X, v.E(X,v)$ is $A_n$.
+Here, $I$ is the Identity. This operator iterates over the canonical vectors and uses the previous result as an input matrix for the same expression.
 
-\subsubsection{LU factorization with recursive iteration}
+\subsubsection{LU factorization in extMATLANG + order}
 Let's consider the following setting of the $A=LU$ factorization:
 
 \begin{align*}
