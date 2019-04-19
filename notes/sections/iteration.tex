@@ -5,7 +5,7 @@ It is natural for us to wish for some kind of iteration in MATLANG. There's a lo
 	\item In the LU factorization process the result is $$A=G_1^{-1}G_2^{-2}\cdots G_n^{-1}U=LU$$ for some upper triangular matrix $U$ and some pivot matrices $G_1, \ldots, G_n$. Note that $$L=\prod_{i=1}^nG_{i}^{-1}$$
 \end{itemize}
 
-We have seen some examples of what we can compute using extMATLANG expressions. The extra property of these expressions relies on the operators $\sum$ and $\prod$. If we want to do more elaborate things, like iterations, we need some extra tool: \textbf{order}.
+We have seen some examples of what we can compute using extMATLANG expressions. The extra property of these expressions relies on the operators $\ssum$ and $\sprod$. If we want to do more elaborate things, like iterations, we need some extra tool: \textbf{order}.
 
 \subsection{Order}
 
@@ -80,7 +80,7 @@ With this matrix we can compute a function that tells us if the argument is the 
 Since $S$ and $Z$ give us an order, it is natural to compute one from the other, so
 
 \begin{align*}
-Z&=f_{>0}\left(\prod v. (S+I)\right) \\
+Z&=f_{>0}\left(\sprod v. (S+I)\right) \\
 S&=Z-f_{>0}(Z^2)
 \end{align*}
 
@@ -90,7 +90,7 @@ Now, let's see what we can do with these new operators and an order. We assume t
 
 \subsubsection{Power sum}
 
-If we want to compute $I+ A + A^2 + \cdots + A^n$ we need to do a little trick with the identity. In this case, we need to add results of matrix powers. We do this like $$\sum v.\prod w. \left( (A-I)(wZv) + I\right).$$
+If we want to compute $I+ A + A^2 + \cdots + A^n$ we need to do a little trick with the identity. In this case, we need to add results of matrix powers. We do this like $$\ssum v.\sprod w. \left( (A-I)(wZv) + I\right).$$
 
 To see why this works, note that
 \[
@@ -125,8 +125,8 @@ Note that
 A'&=E_k\cdots E_1A \\
 &=\left( E_1^*\cdots E_k^*\right)^*A \\
 &=\left(\prod_{k}E_k^*\right)^*A \\
-&=\left(\prod_{v_k\neq v_1}\left(I-\alpha_k\cdot v_1v_k^*\right)^*\right)^*A \\
-&=\left(\prod_{v_k\neq v_1}\left(I-\dfrac{v_k^*Av_1}{v_1^*Av_1}\cdot v_1v_k^*\right)^*\right)^*A
+&=\left(\sprod_{v_k\neq v_1}\left(I-\alpha_k\cdot v_1v_k^*\right)^*\right)^*A \\
+&=\left(\sprod_{v_k\neq v_1}\left(I-\dfrac{v_k^*Av_1}{v_1^*Av_1}\cdot v_1v_k^*\right)^*\right)^*A
 \end{align*}
 
 And we get $A$ with the first column reduced. Note that we need $v_k\neq v_1$ because we don't want to reduce the first row since it will be set to all zeroes. Furthermore, we want to reduce only the downward rows. This can be done with the function 
@@ -137,23 +137,23 @@ And we get $A$ with the first column reduced. Note that we need $v_k\neq v_1$ be
             \end{cases}
 		\]
 
-Thus $$A'=\left(\prod_{v_k}\left(I-\dfrac{v_k^*Av_1}{v_1^*Av_1}\cdot v_1v_k^*\cdot\left(v_1^*Zv_k\right)\right)^*\right)^*A.$$
+Thus $$A'=\left(\sprod v_k.\left(I-\dfrac{v_k^*Av_1}{v_1^*Av_1}\cdot v_1v_k^*\cdot\left(v_1^*Zv_k\right)\right)^*\right)^*A.$$
 
-So we can reduce the column $i$ of $A$ as $$\left(\prod_{v_k}\left(I-\dfrac{v_k^*Av_i}{v_i^*Av_i}\cdot v_iv_k^*\cdot\left(v_i^*Zv_k\right)\right)^*\right)^*A.$$
+So we can reduce the column $i$ of $A$ as $$\left(\sprod v_k.\left(I-\dfrac{v_k^*Av_i}{v_i^*Av_i}\cdot v_iv_k^*\cdot\left(v_i^*Zv_k\right)\right)^*\right)^*A.$$
 
-But this is all we can do: reduce a column. For example, we could wrongfully think that all that is left to complete the gaussian elimination on $A=LU$ is to do this for all columns, this is $$U=\left(\prod_{v_i}\prod_{v_j}\left(I-\dfrac{v_j^*Av_i}{v_i^*Av_i}\cdot v_iv_j^*\cdot\left(v_i^*Zv_j\right)\right)^*\right)^*A.$$
+But this is all we can do: reduce a column. For example, we could wrongfully think that all that is left to complete the gaussian elimination on $A=LU$ is to do this for all columns, this is $$U=\left(\sprod v_i.\sprod v_j.\left(I-\dfrac{v_j^*Av_i}{v_i^*Av_i}\cdot v_iv_j^*\cdot\left(v_i^*Zv_j\right)\right)^*\right)^*A.$$
 But note that here we obtain the multipliers $\alpha_{ij}$ from the original matrix $A$, a huge mistake. So all we can do with these new operators is to reduce one column of a given matrix. It's not a weak property, but not powerful enough.
 
 \subsection{Recursive iteration}
 
 Given the above problem, we sort of need an operator that iterates over the canonical vectors and compute the same operation over the result of the previous iteration.
 
-Note that in the definition of syntax and semantics of extMATLANG is over a set of vector variables $V$. We can naturally extend our language to work with matrix variables as well. Let V be the set of vector a matrix variables, this is $V=\lbrace\lbrace x, y, z, \ldots\rbrace,\lbrace X,Y,Z,\ldots\rbrace\rbrace$. Also $E:=X\in V$, type($X$)$=(n, n)$ and $\left[X\right](I,\nu)=\nu(X)$.
+Note that in the definition of syntax and semantics of extMATLANG is over a set of vector variables $V$. We can naturally extend our language to work with matrix variables as well. Let V be the set of vector a matrix variables, this is $V=\lbrace\lbrace x, y, z, \ldots\rbrace,\lbrace X,Y,Z,\ldots\rbrace\rbrace$. Also $E:=X\in V$, type($X$)$=(n, n)$ and $\sem{X}(I,\nu)=\nu(X)$.
 
-Now, with matrix variables on the table, we define a new expression $$\mu X, v.E$$ With $$\text{type}(\mu X,v. E) = \text{type}(E)$$ and $\left[ \mu X,v. E\right](I,\nu) = A_n$ where
+Now, with matrix variables on the table, we define a new expression $$\mu X, v.E$$ With $$\text{type}(\mu X,v. E) = \text{type}(E)$$ and $\sem{\mu X,v. E}(\cM,\nu) = A_n$ where
 \begin{align*}
-A_i &= \left[ E\right](I,\nu\left[X\rightarrow A_{i-1}, v\rightarrow v_i\right]),\hspace{1ex} i= 1, \ldots, n \\
-A_0 &= I
+A_0 &= I \\
+A_i &= \sem{E}(\cM,\nu\left[X\rightarrow A_{i-1}, v\rightarrow can(\cM)[i]\right]),\hspace{1ex} i= 1, \ldots, n 
 \end{align*}
 
 Here, $I$ is the Identity. This operator iterates over the canonical vectors and uses the previous result as an input matrix for the same expression.
@@ -169,10 +169,10 @@ A_1&=A \\
 Note that $A_n=U$ and 
 \begin{align*}
 A_i&=T_{i-1}A_{i-1} \\
-&=\left(\prod_{v_k}\left(I-\dfrac{v_k^*A_{i-1}v_i}{v_i^*A_{i-1}v_i}\cdot v_iv_k^*\cdot\left(v_i^*Zv_k\right)\right)^*\right)^*A_{i-1}.
+&=\left(\sprod v_k.\left(I-\dfrac{v_k^*A_{i-1}v_i}{v_i^*A_{i-1}v_i}\cdot v_iv_k^*\cdot\left(v_i^*Zv_k\right)\right)^*\right)^*A_{i-1}.
 \end{align*}
 
-Now, if $A=LU$ and $$E(X, v)=\left(\prod_{v_k}\left(I-\dfrac{v_k^*(XA)v}{v^*(XA)v}\cdot vv_k^*\cdot\left(v^*Zv_k\right)\right)^*\right)^*X$$
+Now, if $A=LU$ and $$E(X, v)=\left(\sprod v_k.\left(I-\dfrac{v_k^*(XA)v}{v^*(XA)v}\cdot vv_k^*\cdot\left(v^*Zv_k\right)\right)^*\right)^*X$$
 then $U=(\mu X, v.E(X,v))(A)$, this is $L^{-1}=\mu X, v.E(X,v)$.
 
 Note that in the example above we \textit{inserted} the target matrix $A$ in the expression $E(X,v)$. Would it be different if in the definition of $\mu$ we start with some matrix $B$ and not the indentity? We show that we can simulate this using our setting. Let us have an operator $\lambda$ that does exactly what $\mu$ does, except that we have to give another parameter: a starting matrix. This is:

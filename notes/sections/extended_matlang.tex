@@ -52,7 +52,7 @@ Let $\cM$ be an intance and $n=dim(\cM)$. Let $V$ be a set of vector variables (
 
 Let $\cS$ be an schema, $\cM$ an instance, $F$ a set of functions $f:\mathbb{R}^{k}\rightarrow\mathbb{R}$ (with $1\leq k$) and $V$ a set of vector variables. An \textit{extended} MATLANG expression $E$ is given by
 $$
-E:= \ |\  x\in V \ |\  M\in S \ |\  v\in S \ |\  E^* \ |\ E_1+E_2 \ |\  E_1\cdot E_2 \ |\  f(E_1,\ldots, E_k), f\in F \ |\  \sum x. E \ |\  \prod x. E \ |\ 
+E:= \ |\  x\in V \ |\  M\in S \ |\  v\in S \ |\  E^* \ |\ E_1+E_2 \ |\  E_1\cdot E_2 \ |\  f(E_1,\ldots, E_k), f\in F \ |\  \ssum x. E \ |\  \sprod x. E \ |\ 
 $$
 
 Let $n=dim(\cM)$. We define $\text{type}(E)=(i,j)$ where $(i,j)\in \lbrace 1, n\rbrace$. The well typeness is defined recursively as follows.
@@ -74,8 +74,8 @@ Let $n=dim(\cM)$. We define $\text{type}(E)=(i,j)$ where $(i,j)\in \lbrace 1, n\
                (1,1) \text{ if } \text{type}(E_1)=\cdots =\text{type}(E_k)=(1,1) \\
                \text{undefined} \text{ otherwise }
             \end{cases} \\
-\text{type}\left(\sum x.E\right) &= \text{type}(E) \\
-\text{type}\left(\prod x. E\right) &=
+\text{type}\left(\ssum x.E\right) &= \text{type}(E) \\
+\text{type}\left(\sprod x. E\right) &=
 \begin{cases}
                (1,1) \text{ if } \text{type}(E)=(1,1) \\
                (n,n) \text{ if } \text{type}(E)=(n,n) \\
@@ -85,19 +85,18 @@ Let $n=dim(\cM)$. We define $\text{type}(E)=(i,j)$ where $(i,j)\in \lbrace 1, n\
 We say that $E$ is well typed if it has a defined type. Here, type(undefined)$=$ undefined.
 
 
-Given $\cM, \nu, V$ and a well typed expression $E$, we define the semantics for the values $\left[ E\right](\cM,\nu)$ inductivelly as follows. 
-
+Given $\cM, \nu, V$ and a well typed expression $E$, we define the semantics for the values $\left[ E\right](\cM,\nu)$ inductivelly as follows.
 
 \begin{align*}
-\left[ x\right](\cM,\nu)&=\nu (x)\\
-\left[ M\right](\cM,\nu)&=\cM (M) \\
-\left[ v\right](\cM,\nu)&=\cM (v) \\
-\left[ E^*\right](\cM,\nu)&=\left[ E\right](\cM,\nu)^* \\
-\left[ E_1+E_2\right](\cM,\nu)&= \left[ E_1\right](\cM,\nu)+\left[ E_2\right](\cM,\nu)\\
-\left[ E_1\cdot E_2\right](\cM,\nu)&= \left[ E_1\right](\cM,\nu)\times \left[ E_2\right](\cM,\nu)\\
-\left[ f(E_1,\ldots ,E_k)\right](\cM,\nu) &= f\left(\left[ E_1\right](\cM,\nu),\ldots , \left[  E_k\right](\cM,\nu)\right)\\
-\left[ \sum x.E\right](\cM,\nu)&= \sum_{i=1}^{dim(\cM)}\left[ E\right](\cM,\nu[x\rightarrow can(\cM)[i]])\\
-\left[ \prod x. E\right](\cM,\nu)&= \prod_{i=1}^{dim(\cM)}\left[ E\right](\cM,\nu)[x\rightarrow can(\cM)[i]])
+\sem{x}(\cM,\nu)&=\nu (x)\\
+\sem{M}(\cM,\nu)&=\cM (M) \\
+\sem{v}(\cM,\nu)&=\cM (v) \\
+\sem{E^*}(\cM,\nu)&=\sem{E}(\cM,\nu)^* \\
+\sem{E_1+E_2}(\cM,\nu)&= \sem{E_1}(\cM,\nu)+\sem{E_2}(\cM,\nu)\\
+\sem{E_1\cdot E_2}(\cM,\nu)&= \sem{E_1}(\cM,\nu)\times \sem{E_2}(\cM,\nu)\\
+\sem{f(E_1,\ldots ,E_k)}(\cM,\nu) &= f\left(\sem{E_1}(\cM,\nu),\ldots , \sem{E_k}(\cM,\nu)\right)\\
+\sem{\ssum x.E}(\cM,\nu)&= \sum_{i=1}^{dim(\cM)}\sem{E}(\cM,\nu[x\rightarrow can(\cM)[i]])\\
+\sem{\sprod x. E}(\cM,\nu)&= \prod_{i=1}^{dim(\cM)}\sem{E}(\cM,\nu)[x\rightarrow can(\cM)[i]])
 \end{align*}
 
 Here, $+$ is matrix sum, $\times$ is matrix multiplication and 
@@ -107,7 +106,7 @@ Here, $+$ is matrix sum, $\times$ is matrix multiplication and
 \end{align*}
 Depending on context, we sometimes denote explicitly that an expression $E$ depends on $x$ as $E(x)$.
 
-First, note that the definition of these operators is not ambiguous in taking column vectors instead of row vectors or doing the aggregate matrix multiplication by right, because row vectors are the canonical vectors as well, and transposing gives us one from the other. On the other hand, if you want the result of the aggregate multiplication to be computed in the inverse order, note that, since $(AB)^*=B^*A^*$ we have $$\prod^{\text{left}} x.E(x)=\left(\prod x.E(x)^*\right)^*.$$
+First, note that the definition of these operators is not ambiguous in taking column vectors instead of row vectors or doing the aggregate matrix multiplication by right, because row vectors are the canonical vectors as well, and transposing gives us one from the other. On the other hand, if you want the result of the aggregate multiplication to be computed in the inverse order, note that, since $(AB)^*=B^*A^*$ we have $$\sprod^{\text{left}} x.E(x)=\left(\sprod x.E(x)^*\right)^*.$$
 
 \subsection{Simulating MATLANG}
 
@@ -115,11 +114,11 @@ We will now show that we can simulate MATLANG operators in our extMATLANG langua
 
 \subsubsection{Identity}
 
-We can express the identity of dimention $dim(I)$ as $$\sum x. x\cdot x^*.$$
+We can express the identity of dimention $dim(I)$ as $$\ssum x. x\cdot x^*.$$
 
 \subsubsection{Ones vector and diag()}
 
-Note that $$\text{ones}(v)=\sum x. x$$ And $$\text{diag}(v)=\sum x. (x^*v)\cdot xx^*$$
+Note that $$\text{ones}(v)=\ssum x. x$$ And $$\text{diag}(v)=\ssum x. (x^*v)\cdot xx^*$$
 
 \subsubsection{Matrix pointwise function application (apply[f])}
 
@@ -129,13 +128,13 @@ We have that
 	\item \textbf{Pointwise application:} if $A^{(1)}, \ldots, A^{(n)}$ are $m\times p$ matrices, then apply$\left[ f \right](A^{(1)}, \ldots, A^{(n)})$ is the $m\times p$ matrix $C$ where $C_{ij}=f(A^{(1)}_{ij}, \ldots, A^{(n)}_{ij})$.
 \end{itemize}
 
-So, given the \textbf{sum} operator and the function $f$, we can compute $C$ in the following way: $$C=\sum x_i.\sum x_j. f\left( x_i^*A^{(1)}x_j, \cdots, x_i^*A^{(n)}v_j\right)\cdot x_ix_j^*$$
+So, given the \textbf{sum} operator and the function $f$, we can compute $C$ in the following way: $$C=\ssum x_i.\ssum x_j. f\left( x_i^*A^{(1)}x_j, \cdots, x_i^*A^{(n)}v_j\right)\cdot x_ix_j^*$$
 
 Recall that $v_iv_j^*$ is the matrix that has a 1 in the position i, j and zero everywhere else.
 
 Thus, we can simulate the MATLANG operator apply[$f$].
 
-For example, matrix pointwise multiplication: $$\sum x_i.\sum x_j.\left( x_i^*A^{(1)}x_j\times \cdots\times x_i^*A^{(n)}x_j\right)\cdot x_ix_j^*$$
+For example, matrix pointwise multiplication: $$\ssum x_i.\ssum x_j.\left( x_i^*A^{(1)}x_j\times \cdots\times x_i^*A^{(n)}x_j\right)\cdot x_ix_j^*$$
 
 \subsection{Examples}
 
@@ -143,14 +142,14 @@ Let's see some examples of what we can do with extMATLANG.
 
 \subsubsection{Trace and diagonal product}
 
-We can express $$tr(A)=\sum x. x^*Ax.$$
+We can express $$tr(A)=\ssum x. x^*Ax.$$
 
-And the product of the diagonal of a matrix (this can be useful in computing the determinant of an upper/down triangular matrix): $$dp(A)=\prod x. x^*Ax.$$
+And the product of the diagonal of a matrix (this can be useful in computing the determinant of an upper/down triangular matrix): $$dp(A)=\sprod x. x^*Ax.$$
 
 \subsubsection{Transitive closure}
 
-To compute transitive closure we need the quantity $(A+I)^n$ and use apply[$f>0$] on the result matrix. Then we have that $$(I+A)^n=\prod v. (I+A),$$ and thus $$TC = \text{apply}\left[ f_{>0}\right]\left( \prod v. (I+A) \right).$$
-Using only the new operators, we have that $$TC=\sum v_i. \sum v_j. f_{>0}\left(v_i^*\left(\prod v. (I+A)\right)v_j\right)$$
+To compute transitive closure we need the quantity $(A+I)^n$ and use apply[$f>0$] on the result matrix. Then we have that $$(I+A)^n=\sprod v. (I+A),$$ and thus $$TC = \text{apply}\left[ f_{>0}\right]\left( \sprod v. (I+A) \right).$$
+Using only the new operators, we have that $$TC=\ssum v_i. \ssum v_j. f_{>0}\left(v_i^*\left(\sprod v. (I+A)\right)v_j\right)$$
 
 \subsubsection{$k$-cliques}
 
@@ -165,6 +164,6 @@ Let's try to see first if there is a four clique in the adjacency matrix $A$. To
 
 Define $$g(u,v,w,r)=f(u,v)\cdot f(u,w)\cdot f(u,r)\cdot f(v,w)\cdot f(v,r)\cdot f(w,r).$$ This is, $g$ is zero if any pair of vectors are the same.
 		
-So $$\sum v_1.\sum v_2. \sum v_3. \sum v_4. (v_1^*Av_2)(v_1^*Av_3)(v_1^*Av_4)(v_2^*Av_3)(v_2^*Av_4)(v_3^*Av_4)g(v_1,v_2,v_3,v_4).$$
+So $$\ssum v_1.\ssum v_2. \ssum v_3. \ssum v_4. (v_1^*Av_2)(v_1^*Av_3)(v_1^*Av_4)(v_2^*Av_3)(v_2^*Av_4)(v_3^*Av_4)g(v_1,v_2,v_3,v_4).$$
 
 \label{sec:extmatlang}
