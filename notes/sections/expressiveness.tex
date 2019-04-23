@@ -1,0 +1,27 @@
+\section{Extended MATLANG expressiveness}
+
+Since there are expressions that depend on order Z (or S), we define an \textit{order invariant expression}.
+
+$E(Z)$ is order invariant if $$\forall Z_1, Z_2. \sem{E(Z_1)}=\sem{E(Z_2)}.$$
+Note that the definition depends on $Z$, but it is well defined because we can compute $Z$ from $S$ and viceversa.
+
+Additionally, we define an \textit{instance order invariant expression}.
+
+Let $\cM_1$ and $\cM_2$ be instances such that for all $A\in var(\cM_1)=var(\cM_2)$ we have that
+
+\begin{align*}
+	\cM_1(A)&=\cM_2(A) \\
+	can(\cM_1)[i]&\neq can(\cM_2)[i]
+\end{align*}
+for some $i=1, \ldots, n$, with $n=dim(\cM_1)=dim(\cM_2).$ $E$ is instance order invariant if $\sem{E}(\cM_1)=\sem{E}(\cM_2)$
+
+Some questions arise.
+
+\begin{itemize}
+	\item Does exists a formula in $\sum$MATLANG + order that is order invariant?
+	\item If there exists some expression $E$ in $\sum$MATLANG+order that is order invariant, does there exists $E'\in\sum$MATLANG+order such that $$\forall\cM.\sem{E}(\cM)=\sem{E'}(\cM)$$
+	\item Does there exists $E\in\sprod$MATLANG that is instance order invariant? Is there $E\in\sprod$MATLANG such that $\sem{E}(\cM_1)\neq\sem{E}(\cM_2)$?
+	
+\end{itemize}
+
+\label{expressiveness}
