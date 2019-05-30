@@ -1,0 +1,91 @@
+\subsection{FO in MATLANG+$\ssum$}
+
+Let $\mathcal{R}=\{R_1,\ldots,R_k\}$ be a relational schema consisting of $k$ binary relations. We consider first-order logic formulas  over ${\cal R}$ and more specifically, we consider the subclass of first-order logic formulas which are safe-range. This is to avoid any issues regarding safety of formulas. (see e.g., Section 5.4 in Abiteboul-Hull-Vianu). We denote this class of formulas simply by $\textsf{FO}$. 
+
+A graph database $\mathbf{G}$ over ${\cal R}$ is a collection of graphs $\{G_1,\ldots,G_k\}$, one for each relation in ${\cal R}$. 
+We assume that all graphs in $\mathbf{G}$ have the same number $n$ of vertices and that the active domain of these graphs equals $[n]=\{1,\ldots,n\}$ for some $n$~\footnote{We had similar restriction in the MATLANG paper, probably not needed but convenient.}. In other words, each graph $G_i$ is a set of directed edges $(i,j)$ with $i,j\in [n]$.
+
+A graph query $q$ is a mapping which assigns to each graph database
+$\mathbf{G}$ over ${\cal R}$ a unique graph $q(\mathbf{G})$, again defined over the active domain $[n]$.  A formula $\varphi(x,y)$ in $\textsf{FO}$, where $x$ and $y$ denote the free variables of $\varphi$, is said to express the graph query $q$ if $q(\mathbf{G})=\{(v,w) \mid \mathbf{G}\models\varphi(v,w)\}$
+for every graph database $\mathbf{G}$ over ${\cal R}$.
+
+We will show that every formula $\varphi$ in $\text{FO}$ which expresses a graph query over graph databases  has an equivalent counterpart in $\textsf{MATLANG}+\Sigma$. We make precise shortly what we mean by equivalent.
+
+As mentioned earlier, we consider safe range formulas. Such formulas are known to be equivalent to formulas in relational algebra normal form (RANF). We will carry out the translation from $\textsf{FO}$ into $\textsf{MATLANG}+\Sigma$, assuming that the input formula $\varphi$ is in RANF. This makes the inductive translation a bit easier. Let us recall how such formulas look like (see e.g., the induction steps needed in Algorithm 5.4.8 in Abiteboul-Hull-Vianu).
+The formulas we consider are inductively defined, as follows.
+\begin{enumerate}
+\item $R(x,y)$ is a formula;
+\item $\psi\land \xi$ is a formula such that either $\xi$ is $x=x$ but where $x$ belongs to the free variables of $\psi$; $\xi$ is $x=y$ but then at least $x$ or $y$ must belong to the free variables of $\psi$; $\xi$ is $x\neq y$ but here both $x$ and $y$ must belong to the free variables of $\psi$; $\xi$ is $\neg \xi'$ where  again the free variables of $\xi'$ must be contained in those of $\xi$; or $\xi$ is any other formula;
+\item $\neg \psi$ is a formula, provided that $\psi$ has no free variables;
+\item $\psi_1\vee \psi_2$ is a formula, where $\psi_1$ and $\psi_2$ have the same free variables, and finally,
+\item $\exists x_1,\ldots x_n\, \psi(x_1,\ldots,x_n,y_1,\ldots,y_m)$ is a formula.
+\end{enumerate}
+
+For expressing graph queries, formulas in $\text{FO}$ must have two free variables. Of course, more than two variables can be used. In our translation from $\textsf{FO}$ into $\textsf{MATLANG}+\Sigma$ we need to know which variables in sub-formulas will be free in the overall formula. In a RANF formula, we may assume that no variable can be both bound and free and no distinct pair of existential quantifiers binds the same variable. This makes it easy to identify which variables in sub-formulas will be free in the overall formula. We denote by $\textsl{vars}(\psi)$ the set of variables occurring in a formula $\psi$. Then if $\varphi(x,y)$ is the  $\textsf{FO}$-formula that we wish to translate, with free variables $x$ and $y$, then for any sub-formula $\psi$ of $\varphi$, the set $\textsl{vars}(\psi)\cap \{x,y\}$ are those variables in $\psi$ which will be free in $\varphi$. 
+
+We now make the link with $\textsf{MATLANG}+\Sigma$. First, the relation schema ${\cal R}$ is interpreted as a matrix schema ${\cal M}$ by simply treating each binary relation name $R_i$ as a matrix variable $M_i$ of type $\alpha\times\alpha$. A graph database $\mathbf{G}=\{G_1,\ldots,G_k\}$ is interpreted over this matrix schema by associating $M_i$ with the $n\times n$ adjacency matrix $A_{G_i}$ of the graph encoded by $G_i$. We denote this collection of matrices by $\mathbf{M}$. We show that
+when $\varphi(x,y)$ is formula in $\textsf{FO}$ which expresses a graph query $q$, then there exists a $\textsf{MATLANG}+\Sigma$ expression $e_\varphi$ over matrix variables $M_1,\ldots,M_k$, such that for every graph database $\mathbf{G}$, the adjacency matrix of $q(\mathbf{G})$ coincides with the matrix returned by $e_\varphi(\mathbf{M})$. We then say that $\varphi$ and $e_\varphi$ are equivalent.
+
+As part of the translation, we need to expand the matrix schema with special vector variables, denoted by $V_x$, where $x$ denotes a variable in $\textsl{vars}(\varphi)$. Hence, during the translation expressions in $\textsf{MATLANG}+\Sigma$ can use both matrix variables $M_i$ and vector variables $V_x$. The vectors variables will be eliminated by the use of summation over the canonical vectors, so that the final expression will only use the original matrix variables.
+
+Let $\varphi(\bar x)$ be a RANF formula and assume that $\bar x=(x_1,\ldots,x_m)$. Recall that the variables range over $[n]$, for some $n$. For variable $x$ and assignment $x\mapsto i\in[n]$, we associate a canonical vector $\mathbf{e}_x^i$ which is the $n\times 1$-column vector with value $1$ on position $i$, and $0$ everywhere else. We now claim that for every such $\varphi(\bar x)$ there exists a $\textsf{MATLANG}+\Sigma$ expression $e_\varphi$ over matrix variables $M_i$ and vector variables $V_{x_i}$, for $i\in[m]$, such that for any assignment $\mu:\bar x \to [n]$, 
+\begin{equation}
+\{G_1,\ldots,G_k\}\models \varphi(\mu(\bar x)) \Leftrightarrow e_\varphi'(A_{G_1},\ldots,A_{G_k},\mathbf{e}_{x_1}^{\mu(x_1)},\ldots,\mathbf{e}_{x_m}^{\mu(x_m)})=[1], \tag{$\dagger$}
+\end{equation}
+where the canonical vectors $\mathbf{e}_{x_i}^{\mu(x_i)}$ are assigned to vector variable $V_{x_i}$.
+
+How does this help us to find $e_{\varphi}$?. Well, consider $\varphi(x_1,x_2)$ which as two output (its free) variables. Then, the adjacency matrix corresponding to $\varphi(\mathbf{G})$ can be constructed one entry at a time by considering the expression:
+$$
+e_{\varphi}:=\sum_{V_{x_1},V_{x_2}} e_\varphi'(M_1,\ldots,M_k,V_{x_1},V_{x_2})\cdot V_{x_1}\cdot (V_{x_2})^{\mathsf{t}},
+$$
+over $\mathbf{M}$.
+We next verify ($\dagger$). We show this by induction on the structure of RANF formulas:
+\begin{enumerate}
+\item for $R_i(x,y)$ we consider 
+\[e_{R_i}'(M_i,V_x,V_y):=(V_{x})^{\mathsf{t}}\cdot M_i\cdot V_y.\]
+\item for $\psi \land \xi$ we distinguish between the following cases:
+\begin{enumerate}
+\item  for $\xi$ is $x=x$ we consider $e_{\psi\land \xi}':=e_{\psi}'$.
+\item  for $\xi$ is $x=y$, when $x$ and $y$ both belong to the free variables $\bar x$ of $\psi$, we consider 
+\[
+e_{\psi\land \xi}'(M_1,\ldots,M_k,V_{x_1},\ldots,V_{x_m}):=e_{\psi}'(M_1,\ldots,M_k,V_{x_1},\ldots,V_{x_m})\cdot (V_{x}^{\mathsf{t}}\cdot V_y),
+\]
+when $x$ belongs to $\bar x$ but $y$ does not,  then
+\[
+e_{\psi\land \xi}'(M_1,\ldots,M_k,V_{x_1},\ldots,V_{x_m},V_y):=e_{\psi}'(M_1,\ldots,M_k,V_{x_1},\ldots,V_{x_m})\cdot (V_{x}^{\mathsf{t}}\cdot V_y),
+\]
+and similarly when $x$ does not belong to $\bar x$ but $y$ does.
+\item for $\xi$ is $x\neq y$ we consider 
+\[
+e_{\psi\land \xi}'(M_1,\ldots,M_k,V_{x_1},\ldots,V_{x_m}):=e_{\psi}'(M_1,\ldots,M_k,V_{x_1},\ldots,V_{x_m})\cdot (\mathbf{1}((\mathbf{1}(M_1))^{\mathsf{t}}) - V_{x}^{\mathsf{t}}\cdot V_y)),
+\]
+where $\mathbf{1}((\mathbf{1}(M_1))^{\mathsf{t}}$ simply constructs $[1]$ and where we use subtraction (which is just a pointwise function application).
+\item for $\xi$ is $\neg \xi'$, we first consider when $\xi'$ and $\psi$ have the same free variables $\bar x$. In this case,
+\[
+e_{\psi\land \xi}'(M_1,\ldots,M_k,V_{x_1},\ldots,V_{x_m}):=e_{\psi}'(M_1,\ldots,M_k,V_{x_1},\ldots,V_{x_m})-e_{\xi'}'(M_1,\ldots,M_k,V_{x_1},\ldots,V_{x_m}).
+\]
+ When the free variables of $\xi'$ are a strict subset $\bar x'$ of the free variables from $\psi$, we consider $e_{\psi\land \xi}(M_1,\ldots,M_k,V_{x_1},\ldots,V_{x_m})$ given by
+\[
+e_{\psi}'(M_1,\ldots,M_k,V_{x_1},\ldots,V_{x_m})-\Bigl(e_{\psi}'(M_1,\ldots,M_k,V_{x_1},\ldots,V_{x_m})\cdot e_{\xi'}'(M_1,\ldots,M_k,V_{x_1'},\ldots,V_{x_p'})\Bigr).
+\]
+where $\{x_1',\ldots,x_p'\}$ are the free variables in $\bar x'$.
+\item Finally, if $\xi$ is any other formula over free variables $\bar x'$,
+\[
+e_{\psi\land \xi}'(M_1,\ldots,M_k,V_{x_1},\ldots,V_{x_r}):=e_{\psi}'(M_1,\ldots,M_k,V_{x_1},\ldots,V_{x_p})\cdot e_{\xi}'(M_1,\ldots,M_k,V_{x_1'},\ldots,V_{x_q'}),\]
+where $\{x_1,\ldots,x_p\}$ are the free variables in $\bar x$ of $\psi$, $\{x_1',\ldots,x_q'\}$ are those of $\xi$ and $\{x_1,\ldots,x_r\}$ is the union of these sets.
+\end{enumerate}
+\item For $\neg \psi$ we simply take $e_{\neg\psi}:=\mathbf{1}((\mathbf{1}(M_1))^{\mathsf{t}}) - e_{\psi}$.
+
+\item For $\psi_1\vee \psi_2$ we consider
+
+\begin{align*}
+e_{\psi_1\vee\psi_2}'(M_1,\ldots,M_k,V_{x_1},\ldots,V_{x_m}):=\mathsf{Apply}(>0)\Bigl(&e_{\psi_1}'(M_1,\ldots,M_k,V_{x_1},\ldots,V_{x_m})+ \\
+&e_{\psi_2}'(M_1,\ldots,M_k,V_{x_1},\ldots,V_{x_m}) \Bigr)
+\end{align*}
+where $>0$ maps entry different from $0$ to $1$, and $0$ to $0$.
+
+\item Finally, for $\exists x_1,\ldots x_n\, \psi(x_1,\ldots,x_n,y_1,\ldots,y_m)$ we take
+\[
+e_{\exists\bar x\psi(\bar x,\bar y)}'(M_1,\ldots,M_k,V_{y_1},\ldots,V_{y_m}):=\mathsf{Apply}(>0)\Bigl(\sum_{V_{x_1},\ldots,V_{x_n}} e_{\psi}'(M_1,\ldots,M_k,V_{x_1},\ldots,V_{x_n},V_{y_1},\ldots,V_{y_m})  \Bigr)
+\]
+\end{enumerate}

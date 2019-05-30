@@ -136,6 +136,10 @@ Thus, we can simulate the MATLANG operator apply[$f$].
 
 For example, matrix pointwise multiplication: $$\ssum x_i.\ssum x_j.\left( x_i^*A^{(1)}x_j\times \cdots\times x_i^*A^{(n)}x_j\right)\cdot x_ix_j^*$$
 
+\subsubsection{Matrix multiplication via sum operator}
+
+Note that using the sum operator we can compute matrix multiplication by definition $$A\cdot B = \ssum x_i\ssum x_j\ssum x_k \left( x_iAx_k\cdot x_kBx_j\right)x_ix_j^*$$
+
 \subsection{Examples}
 
 Let's see some examples of what we can do with extMATLANG.
