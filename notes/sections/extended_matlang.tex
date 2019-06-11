@@ -96,7 +96,7 @@ Given $\cM, \nu, V$ and a well typed expression $E$, we define the semantics for
 \sem{E_1\cdot E_2}(\cM,\nu)&= \sem{E_1}(\cM,\nu)\times \sem{E_2}(\cM,\nu)\\
 \sem{f(E_1,\ldots ,E_k)}(\cM,\nu) &= f\left(\sem{E_1}(\cM,\nu),\ldots , \sem{E_k}(\cM,\nu)\right)\\
 \sem{\ssum x.E}(\cM,\nu)&= \sum_{i=1}^{dim(\cM)}\sem{E}(\cM,\nu[x\rightarrow can(\cM)[i]])\\
-\sem{\sprod x. E}(\cM,\nu)&= \prod_{i=1}^{dim(\cM)}\sem{E}(\cM,\nu)[x\rightarrow can(\cM)[i]])
+\sem{\sprod x. E}(\cM,\nu)&= \prod_{i=1}^{dim(\cM)}\sem{E}(\cM,\nu[x\rightarrow can(\cM)[i]])
 \end{align*}
 
 Here, $+$ is matrix sum, $\times$ is matrix multiplication and 
