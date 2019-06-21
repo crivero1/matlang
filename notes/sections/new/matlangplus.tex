@@ -1,0 +1,319 @@
+% !TEX root = ../../main/main.tex
+\newpage 
+\section{Syntax and semantics}
+We assume an infinite supply of matrix variables and vector variables. The matrix variables  correspond to the input matrices, the vector variables
+correspond to ``free'' variables and will always be instantiated by canonical basis vectors of appropriate dimension.
+%
+%
+%
+%The definiton of an instance $I$ on MATLANG is a function defined on a nonempty set $var(I)=\lbrace A, B, M, C,  \ldots\rbrace$, that assigns a concrete matrix to each element (matrix \textit{name}) of $var(I)$.
+%
+%
+%Every expression $e$ is a matrix, either a matrix of $var(I)$ (\textit{base} matrix, if you will) or a result of an operation over matrices.
+We start by describing  the syntax of  $\MLP$ expressions. We here provide a minimal set of constructs and show later that more general constructs, such as those supported
+in $\ML$ can be easily expressed in $\MLP$.  
+
+The syntax of $\MLP$ is defined by the following grammar:
+%   Every sentence is an expression itself.
+\begin{align*}
+	E&:=\M && \text{(matrix variable)} \\
+       &\mid\quad \V &&\text{(vector variable)}\\
+        &\mid\quad E^{\textsc{t}} &&\text{((vector) transposition)}\\
+    &\mid\quad E_1 \cdot E_2 && \text{(matrix multiplication)} \\
+	  &\mid\quad{\sum}_{\V} E &&\text{(sum iteration)} \\
+	      &\mid\quad \Apply[f](E_1, \ldots, E_k) && \text{(pointwise function
+    application, $f \in \Omega$)}
+\end{align*}
+Here, in the last rule, $\Omega$ denotes a class of functions $f:\RR^k\to \RR$ for $k>0$.  From the linear algebra operations mentioned in the grammar above, transposition and matrix multiplication are defined as usual. Less standard is  pointwise function application whose semantics is defined as follows. If $A^{(1)},\dots,A^{(k)}$ are scalars
+$\Apply[f](A^{(1)},\dots,A^{(k)})$ is the scalar $f(A^{(1)},\dots,A^{(k)})$.  
+
+\begin{remark}
+We note that we only regard transposition of vectors as a base construct. The transposition and complex conjugate transposition of matrices can be expressed by  leveraging the presence of sum iteration and pointwise function applications.
+We could similarly also have limited matrix multiplication such that it can only be applied to a matrix and vector, or two vectors. General matrix multiplication can again be expressed. Furthermore, we show below that all constructs 
+of $\ML$ can be expressed.
+\end{remark}
+
+To ensure that $\MLP$ expressions can be correctly evaluated, we will only consider $\MLP$ expressions that are \textit{well-typed}. For example, when matrix multiplication is concerned, certain dimensionality conditions need to be satisfied for the product to make sense.
+
+
+We next formalize well-typedness.
+We assume a sufficient supply of \textit{size symbols},
+which we will denote by the letters $\alpha$, $\beta$, $\gamma$.
+A size symbol represents the number of rows or columns of a
+matrix.  Together with an explicit 1, we can indicate
+arbitrary matrices as $\alpha \times \beta$, square matrices as
+$\alpha \times \alpha$, column vectors as $\alpha \times 1$, row
+vectors as $1 \times \alpha$, and scalars as $1 \times 1$.
+Formally, a \textit{size term} is either a size symbol or an
+explicit 1.  A \textit{type} is then an expression of the form $s_1
+\times s_2$ where $s_1$ and $s_2$ are size terms.  
+
+A \textit{schema} $\scm$ is a function, defined on a nonempty finite
+set $\mvar(\scm)$ of matrix variables, that assigns a type to each
+element of $\mvar(\scm)$. Given a set $V$ of vector variables, 
+we denote by $\scm_V$ an extension of $\scm$ defined over $\mvar(\scm)$ and $V$
+such that (i)~$\scm_V$
+coincides with $\scm$ on $\mvar(\scm)$; and (ii)~$\scm_V$ assigns 
+a column vector type  to each vector variable
+in $V$. We define $\mvar(\scm_V)=\mvar(\scm)$.
+
+\begin{figure}
+  \begin{mathpar}
+    \infer{\M \in \var(\scm_V)}
+    {\typed{\scm_V}{\M}{\scm_V(\M)}} \and
+        \infer{\V \in V}
+    {\typed{\scm_V}{\V}{\scm_V(\V)}} \and
+\and
+    \infer{\typed{\scm_V}{E}{s_1 \times s_2} \\ \text{$s_1$ or $s_2$ is $1$}}
+    {\typed{\scm_V}{E^{\textsc{t}}}{s_2 \times s_1}} \and
+    \infer{\typed{\scm_V}{E_1}{s_1 \times s_2} \\ \typed{\scm_V}{E_2}{s_2 \times s_3}}
+    {\typed{\scm_V}{E_1 \cdot E_2}{s_1 \times s_3}} \and
+    \infer{k > 0 \\ f : \RR^k\to \RR \\ \forall i = 1, \ldots, k : (\typed{\scm_V}{E_i}{1\times 1})}
+    {\typed{\scm_V}{\Apply[f](E_1, \ldots, E_n)}{1\times 1}} \and
+    \infer{\typed{\scm_V}{E}{s_1\times s_2} \\ \text{$\V$ occurs in $E$}}{\typed{\scm_V}{\sum_{\V}E}{s_1\times s_2}}
+  \end{mathpar}
+  \caption{Type-checking $\MLP$.}
+  \label{fig:matlangplus-type-rules}
+\end{figure}
+
+
+
+Then, given $\scm_V$, the type-checking rules for $\MLP$ expressions, using matrix variables in $\mvar(\scm_V)$ and vector variables in $V$,
+are shown in Figure~\ref{fig:matlangplus-type-rules}.  The figure provides the rules
+that allow to infer an output type $\tau$ for an expression $E$
+over a schema $\scm_V$. 
+ To indicate that a type can be
+\emph{successfully inferred}, we use the notation
+$\typed{\scm_V}{E}{\tau}$.  When we cannot infer a type, we say $E$
+is not well-typed over $\scm_V$.  
+
+
+%Expressions in $\MLP$ will be evaluated on instances in which matrix variables
+%are instantiated with specific matrices. In these instances, no concrete instantiations
+%of vector variables are present. This implies that we need to be able to type-check
+%$\MLP$ expressions given only $\scm$, despite that the expressions may contain
+%vector variables. We say that a type  can be successfully inferred by $\scm$, denoted by
+%$\typed{\scm}{E}{\tau}$ if for \textit{any} two extensions $\scm_V$ and $\scm_V'$, for $V$ vector variables
+%occurring in $E$, it holds that (i)~$\typed{\scm_V}{E}{\tau}$ and $\typed{\scm_V'}{E}{\tau}$; and (ii)~$\scm_V(\V)=\scm_V'(\V)$
+%for all $\V\in V$. In other words,  the type of $E$ and vector variables in $E$ are uniquely determined by $\scm$.
+%
+%For example, $E:=\V$ for $\V \in V$ is not well-typed over $\scm$. Similarly, $\sum_{\V} \V\cdot\V^{\textsc{t}}$ is not well-typed.
+%By contrast, $E:=M\cdot\V$ is well-typed and so is $\sum_{\V} M\cdot\V$.
+
+For the semantics of $\MLP$ expressions, we first consider instances over matrix and vector variables. Later on, we further restrict
+$\MLP$ expressions so that they can be evaluated when only instances over matrices are consider (just like in $\ML$) and where
+the vector variables are ``controlled'' by the sum iteration operation.
+
+More precisely,
+an instance $I$ is function which assigns  matrices to matrix variables $\var(I)$ and vectors to vector variables in $V$.
+The semantics of $\MLP$ expressions is defined inductively, as shown in Figure~\ref{fig:semantics}.
+\begin{figure}
+  \begin{mathpar}
+    \infer{\M \in \var(I) }{\bigstep{I}{\M}{I(\M)}} \and
+  \infer{\V \in V }{\bigstep{I}{\V}{I(\V)}} \and
+    \and
+    \infer{\bigstep{I}{E}{A}\\ \text{$A$ is a  vector}}{\bigstep{I}{E^\textsc{t}}{A^{\textsc{t}}}} \and
+    \infer{
+      \bigstep{I}{E_1}{A} \\ \bigstep{I}{E_2}{B} \\
+    \text{\#cols$(A)$ = \#rows$(B)$}
+      }
+    {\bigstep{I}{E_1 \cdot E_2}{A\cdot B}} \and
+    \infer{\forall i = 1, \ldots, k : (\bigstep{I}{E_i}{A^{(i)}}) \\
+      \text{all $A_i$ are scalars}}
+    {\bigstep{I}{\Apply[f](E_1, \ldots, E_k)}{\Apply[f](A^{(1)}, \ldots, A^{(k)})}}\and
+      \infer{\forall i = 1, \ldots, n : \bigstep{I[\V:=e_i]}{E}{A^{(i)}} \\ \text{$\V$ occurs in $E$ and $I(\V)$ is a $n\times 1$-vector}}{\bigstep{I}{\bigl(\sum_{\V} E\bigr)}{A^{(1)}+\cdots+A^{(n)}}}
+    \end{mathpar}
+\caption{Operational semantics of $\MLP$. In the last rule we use $I[\V:=e_i]$ to denote the instance that is equal to $I$ except that vector variable $\V$ is assigned the $i$th canonical basis vector $e_i$ of $\RR^n$.
+}\label{fig:semantics}
+\end{figure}
+
+
+
+To establish the soundness of the type system,
+we need a notion of conformance of an instance to a schema. A \emph{size assignment} $\sigma$ is a function
+from size symbols to positive natural numbers.  We extend
+$\sigma$ to any size term by setting $\sigma(1) = 1$.  
+Let $\scm_V$ be a schema. An instance $I$ of $\scm_V$ is a
+function which assigns a matrix to each matrix variable in $\mvar(\scm_V)$ and a vector to each vector variable in $V$,
+and such that there is a size assignment $\sigma$ such
+that for all $\M \in \mvar(\scm_V)$, if $\scm(\M) = s_1 \times s_2$,
+then $I(\M)$ is a $\sigma(s_1) \times \sigma(s_2)$ matrix.  Similarly,
+for all $\V\in V$, if $\scm_V(\V)=s_1\times 1$, then $I(\V)$ is a
+$\sigma(s_1)\times 1$-vector.
+In
+that case we also say that $I$
+\emph{conforms} to $\scm_V$ by the size assignment $\sigma$.
+
+\begin{proposition}[Safety]
+If $\scm_V \vdash E : s_1 \times s_2$, then for every instance $I$
+conforming to $\scm_V$, by size assignment $\sigma$, the
+matrix $E(I)$ is well-defined and has dimensions
+$\sigma(s_1) \times \sigma(s_2)$.\qed
+\end{proposition}
+
+\begin{example}
+At this point, $E_1:=\V$,  $E_2:=M\cdot \V$ and $E_3:=\sum_{\V} \V\cdot \V^{\textsc{t}}$ are examples of well-formed expressions
+which can be evaluated on instances in which the vector variable $\V$ is instantiated by a column vector. For example,
+when $I(\V)=a$ and $a$ is of dimension $n\times 1$, and $I(\M)=A$ and $A$ is of dimension $m\times n$, then
+$E_1(I)=a$, $E_2(I)=A\cdot a$ and $E_3(I)$ is the $n\times n$ diagonal matrix. We note that these expressions cannot be evaluated
+when $I$ does not assign a vector to $\V$. In the following we restrict $\MLP$ expressions such that they can always be evaluated
+when only matrix variables are instantiated by instances (despite that the expressions may contain vector variables). Intuitively, we
+ensure that vector variables are always bound to sum iteration operations.
+\end{example}
+
+
+In analogy with logic, we define a notion of free vector variables of $\MLP$ expressions, as follows.
+\begin{mathpar}
+\free(\M)=\emptyset \text{, for $\M\in\mvar(\scm)$}\quad \and \free(\V)=\{\V\}\text{, for $\V\in V$} \and
+\free(E^{\textsc{t}})=\free(E) \quad \and \free(E_1\cdot E_2)=\free(E_1)\cup\free(E_2) \quad \and
+\free(\Apply[f](E_1,\ldots,E_k))=\bigcup \free(E_i) \quad \and \free(\sum_{\V} E)=\free(E)\setminus \{\V\}.
+\end{mathpar}
+
+
+\begin{example}
+Continuing the previous examples, $\free(E_1)=\{\V\}$, $\free(E_2)=\{\V\}$ and 
+$\free(E_3)=\emptyset$.
+\end{example}
+
+A first restriction is that we will only consider $\MLP$ expressions $E$ such that $\free(E)=\emptyset$.
+We note, however, that this does not suffice to be able to evaluate expressions on instances in which only
+matrix variables are instantiated. Indeed, just consider expression $E_3$ from the previous example.
+Intuitively, we need to further restrict $\MLP$ expressions $E$ such that, in addition to $\free(E)=\emptyset$,
+the type of vector variables is fully determined by the types of the matrix variables in $E$. 
+As a consequence,
+we must have at least one matrix variable occurring in $E$, ruling out expression $E_3$. 
+
+\begin{example}
+Consider expressions $E_4:=\sum_{\V_1}\sum_{\V_2} \V_1^{\textsc{t}}\cdot M\cdot\V_1\cdot \V_2^{\textsc{t}}\cdot \V_2$.
+We have that $\free(E_4)=\emptyset$ and $\V_1$ must necessarily be of type $\alpha\times 1$ when $M$ has type $\alpha\times \alpha$.
+Note, however that $\V_2$ can have any vector type $\beta\times 1$. So, for $E_4$ the type of $\V_2$ cannot be inferred from 
+the type of $\M$.
+\end{example}
+
+We say that the type of an $\MLP$ expression $E$ with $\free(E)=\emptyset$ can
+be successfully inferred from $\scm$ if for for any two extensions $\scm_V$ and $\scm_V'$ of $\scm$
+for vector variables in $V$ (occurring in $E$), it holds that $\typed{\scm_V}{E}{\tau}$ and 
+$\typed{\scm_V'}{E}{\tau}$ agree, and furthermore $\scm_V(\V)=\scm_V'(\V)$ for any $\V$ in $V$.
+We denote this by $\typed{\scm}{E}{\tau}$. 
+
+\begin{todo} 
+This is a semantic condition. How easy is it to determine this?
+One could perhaps augment the type-checking rules such that each vector variable $\V$ in $V$ gets a variable
+type $x_\V\times 1$, and propagate conditions on these variables. At  the end, all variables should be resolved
+in a unique way. Alternatively, we could assume that every $\V$ occurs bounded by a matrix variable (somehow).
+\end{todo}
+
+
+If $\typed{\scm}{E}{\tau}$, then  $\scm_V(\V)$ is of the form $s_1\times 1$ where $s_1$ is a size
+symbol occurring in a size term of $\scm(\M)$ for $\M\in\mvar(\scm)$.
+
+\begin{example}
+Clearly, the type of $E_4$ cannot inferred from $\scm$. By contrast, if we consider
+$E_5:=\bigl(\sum_{\V_1}\sum_{\V_2} M\cdot\V_1\cdot \V_2^{\textsc{t}}\bigr)^{\textsc{t}}$
+Then, when $M$ has type $\alpha\times \beta$, $\V_1$ must have type $\alpha\times 1$ and
+$\V_2$ must be of type $1\times 1$.
+\end{example}
+
+Let $I$ be an instance conforming to $\scm$
+by size assignment $\sigma$. When  $\typed{\scm}{E}{\tau}$ holds, we let
+$I_V$ denote an extension of $I$ such that $I_V$ agrees with $I$ on $\scm$ and such that
+$I_V(\V)$ conforms to $\sigma_V$ still with size assignment $\sigma$.
+
+
+
+\begin{proposition}[Safety - revised]
+If $\scm \vdash E : s_1 \times s_2$ with $\free(E)=\emptyset$, then for every instance $I$
+conforming to $\scm$, by size assignment $\sigma$, the
+matrix $e(I_V)$ is well-defined and has dimensions
+$\sigma(s_1) \times \sigma(s_2)$.\qed
+\end{proposition}
+
+We next show that all $\ML$ operations can be expressed by $\MLP$ expressions with no
+free vector variables and such that their type is determined by the types of the matrix variables.
+
+\begin{example}
+The one-vector $\one(M)$ can be expressed as 
+$$
+\sum_{\V_1} \V_1\cdot  \Apply[1]\Bigl(\sum_{\V_2} \V_1^{\textsc{t}}\cdot M\cdot \V_2\Bigr),
+$$
+where $1$ in $\Apply$ denotes the constant function mapping each element to $1$. Indeed, if $M$ has type
+$\alpha\times\beta$, then $\V_1$ must have type $\alpha\times 1$ and $\V_2$ must  have type $\beta\times 1$. 
+\end{example}
+
+\begin{example}
+The diag operation $\diag(M)$ can be expressed as 
+$$
+\sum_{\V_1} \Bigl(\V_1\cdot \V_1^{\textsc{t}}\cdot M \cdot \V_1^{\textsc{t}}\Bigr). 
+$$
+\end{example}
+
+
+\begin{example}
+The conjugate transpose operation $M^*$ can be expressed as 
+$$
+\sum_{\V_1}\sum_{\V_2} \Bigl(\V_2\cdot\Apply[^-]\bigl(\V_1^{\textsc{t}}\cdot M\cdot \V_2\bigr)\cdot \V_1^{\textsc{t}}\Bigr).
+$$
+\end{example}
+
+\begin{example}
+The pointwise function application $\Apply[f](M_1,\ldots,M_k)$ can be expressed as 
+
+$$
+\sum_{\V_1}\sum_{\V_2} \Bigl(\V_2\cdot\Apply[f]\bigl(\V_1^{\textsc{t}}\cdot M_1\cdot \V_2,\ldots,\V_1^{\textsc{t}}\cdot M_k\cdot \V_2\bigr)\cdot \V_1^{\textsc{t}}\Bigr).
+$$
+\end{example}
+
+
+\begin{example}
+We also mentioned that matrix multiplication can be expressed in terms of the multiplication of matrices and vectors. Indeed, $M\cdot N$ corresponds to
+$$
+\sum_{\V_1}\sum_{\V_2} \sum_{\V_3} \V_1 \cdot\Bigl( (\V_1^{\textsc{t}}\cdot M\cdot \V_2\cdot \V_2^{\textsc{t}}\cdot N\cdot \V_3\bigr)\Bigr)\cdot \V_3^{\textsc{t}}.
+$$
+\end{example}
+
+
+This shows that $\ML$ is subsumed by $\MLP$. In fact, this inclusion is strict. Indeed, it is known that there is no $\ML$ expression which, when evaluated
+on an adjacency matrix of a graph returns the scalar $[1]$ if the graph contains a $4$-clique and $[0]$ otherwise. By contrast, we can easily express this in
+$\MLP$:
+$$\sum_{\V_1}\sum_{\V_2}\sum_{\V_3}\sum_{\V_4} (\V_1^{\textsc{t}}\cdot M \cdot \V_2)\cdot (\V_1^{\textsc{t}}\cdot M\cdot \V_3)\cdot (\V_1^{\textsc{t}}\cdot M \cdot \V_4)\cdot (\V_2^{\textsc{t}}\cdot M\cdot\V_3)\cdot (\V_2^{\textsc{t}}\cdot M\cdot \V_4)\cdot (\V_3^{\textsc{t}}\cdot M\cdot \V_4)\cdot g(\V_1,\V_2,\V_3,\V_4),$$
+where $g(u,v,w,r)=f(u,v)\cdot f(u,w)\cdot f(u,r)\cdot f(v,w)\cdot f(v,r)\cdot f(w,r)$ with $f(u,v)=1-u^{\textsc{t}}\cdot v$ ($f$ can be easily expressed in $\MLP$).
+
+\section{Relationship between $\MLP$ and fixed variables fragments of first-order logic with aggregates}
+$\ML$ $\to$ 3-variable fragment. (the other direction is not known).
+
+Define a notion of summation depth of $\MLP$ expressions. Should be that $\ML$ is embedded in $\MLP$ with summation depth $3$. 
+
+$\MLP$ with summation depth $k$ $\to$ $k$-variable fragment.
+
+Stronger claim: $k$-variable fragment on ``matrix'' relations $\to$ $\MLP$ with summation depth $k$.
+
+\section{Relationship with $\MLP$ with tensor languages}
+
+
+
+%\[
+%  			=\begin{cases}
+%               0 \text{ if } u=v \\
+%               1 \text{ if } u\neq v
+%            \end{cases}
+%		\]
+%
+%Define $$g(u,v,w,r)=f(u,v)\cdot f(u,w)\cdot f(u,r)\cdot f(v,w)\cdot f(v,r)\cdot f(w,r).$$ This is, $g$ is zero if any pair of vectors are the same.
+%		
+%So 
+
+
+%
+%
+%Furthermore, $\scm$ assignes to each 
+%vector variable in $\vvar(\scm)$ a type of the form $\alpha\times 1$.
+
+
+%Expressions will be evaluated over instances where an instance $I$ is a function, defined on a nonempty
+%finite sets $\mvar(I)$ and $\vvar(I)$ of matrix and vector variables, respectively,
+% that assigns a matrix to each matrix variable in $\mvar(I)$ and a vector to each vector variable in $\vvar(I)$.
+
+
+
+
+

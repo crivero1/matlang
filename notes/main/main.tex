@@ -7,10 +7,31 @@
 \usepackage{stmaryrd}
 \usetikzlibrary{automata, graphs,positioning,chains,arrows,decorations.pathmorphing}
 \usepackage{url}
-
+\usepackage{mathpartir}
 
 \input{macros}
 %% Title
+
+\newcommand{\M}{M}
+\newcommand{\V}{v}
+%\newcommand{\ML}{\mathsf{MATLANG}}
+\newcommand{\MLP}{\mathsf{MATLANG}^{\sf +}}
+\DeclareMathOperator{\mvar}{\mathit{var}}
+\DeclareMathOperator{\free}{\mathit{free}}
+
+\newenvironment{example}[1][Example]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}]}{\end{trivlist}}
+\newenvironment{remark}[1][Remark]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}]}{\end{trivlist}}
+\newenvironment{todo}[1][\textcolor{blue}{Todo}]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}]}{\end{trivlist}}
+
+%\newcommand{\mname}{\mathsf{MatNames}}
+\newcommand{\bigstep}[3]{#2(#1)=#3}
+\newcommand{\typed}[3]{#1\vdash#2:#3}
+%\DeclareMathOperator{\var}{var}
+%\newcommand{\scm}{\mathcal{S}}
+%\newcommand{\sizevar}{\mathsf{SizeVars}}
 \title{Query languages with structural and analytic properties}
 \author{Floris Geerts, Thomas Mu\~noz, Cristian Riveros, Domagoj Vrgo\v{c}}
 \date{}
@@ -30,6 +51,7 @@
 	\input{../sections/boolean_matlang}
 	\input{../sections/expression_functions}
 	\input{../sections/matlab_and_R}
+	\input{../sections/new/matlangplus}
 
 	
 %	\input{old}
