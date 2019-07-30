@@ -626,12 +626,13 @@ We could either:
 \item Restrict ourselves to a syntactically defined fragment of $\textsf{FO}_{\textsf{sum}}$ such that safety is ensured. For example, for $\textsf{FO}$ we could consider safe-range formulas only. I asked Leonid, and this notion could be extended to logics with aggregation but it is ugly. 
 \item Safe-range formulas were considered because they allow a translation in to the relational algebra (which always return finite answers). It thus may make more sense to consider the relational algebra with summation instead of   $\textsf{FO}_{\textsf{sum}}$ (In fact, this is also what Leonid suggested).
 \item Alternatively, we could use a relaxed notion of equivalence between query languages, avoiding any of the issues with safety. This is what I sketched in an earlier email. It is rather ugly as well.
+
 \end{itemize}
 
 \begin{todo}
 What is sketched below does not work. The problem is that for general $\textsf{FO}_{\textsf{sum}}$ formulas we can have multiple values per index entry, for examples, $R(1,2,a)$ and $R(1,2,b)$.
 When extracting these entries with canonical basis vectors, however, you get $\V_1^t\cdot M_R\cdot\V_2$ which returns a unique value. Not sure how to get rid of this without assuming that every
-sub-formula preserves that the index entries form a key. A similar problem occurs when starting from the relation algebra: what is $e_1\cup e_2$? To be explored.
+sub-formula preserves that the index entries form a key. A similar problem occurs when starting from the relation algebra: what is $e_1\cup e_2$? To be explored. An alternative could be to start from the relatoinal algebra with summation but on $K$-relations (see paper by Jan van den Bussche on arxiv). This data model and operations are intrinsically functional, i.e., only one value per entry.
 \end{todo}
 
 
