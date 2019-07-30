@@ -4,7 +4,7 @@
 
 \paragraph{Syntax}
 We assume an infinite supply of matrix variables and vector variables. The matrix variables  correspond to the input matrices, the vector variables
-correspond to ``free'' variables and will always be instantiated by canonical basis vectors of appropriate dimension.
+correspond to ``free'' variables and will always be instantiated by canonical basis vectors of an appropriate dimension.
 %
 %
 %
@@ -13,7 +13,7 @@ correspond to ``free'' variables and will always be instantiated by canonical ba
 %
 %Every expression $e$ is a matrix, either a matrix of $var(I)$ (\textit{base} matrix, if you will) or a result of an operation over matrices.
 We start by describing  the syntax of  $\MLP$ expressions. We here provide a minimal set of constructs and show later that more general constructs, such as those supported
-in $\ML$ can be easily expressed in $\MLP$.  
+in $\ML$, can be easily expressed in $\MLP$.  
 
 The syntax of $\MLP$ is defined by the following grammar:
 %   Every sentence is an expression itself.
@@ -34,7 +34,7 @@ We note that we only consider transposition of vectors as a base construct. The 
 We could similarly also have limited matrix multiplication such that it can only be applied to a matrix and vector, or two vectors. General matrix multiplication can again be expressed in terms of these more basic operation. We opt, however, to allow for general matrix multiplication. As mentioned already, we show below that all operations in  $\ML$ can be expressed.
 \end{remark}
 
-To ensure that $\MLP$ expressions can be correctly evaluated, we will only consider $\MLP$ expressions that are \textit{well-typed} and such that they can be evaluated only \textit{when matrix variables are instantiated}. 
+To ensure that $\MLP$ expressions can be correctly evaluated, we will only consider $\MLP$ expressions that are \textit{well-typed} and such that they can be evaluated \textit{only when matrix variables are instantiated}. 
 We first address well-typedness.
 
 \paragraph{Well-typedness} We assume a sufficient supply of \textit{size symbols},
@@ -80,8 +80,8 @@ in $V$. We define $\mvar(\scm_V)=\mvar(\scm)$.
 
 Then, given $\scm_V$, the type-checking rules for $\MLP$ expressions, using matrix variables in $\mvar(\scm_V)$ and vector variables in $V$,
 are shown in Figure~\ref{fig:matlangplus-type-rules}.  The figure provides the rules
-that allow to infer an output type $\tau$ for an expression $E$
-over a schema $\scm_V$. 
+that allow to infer an output type $\tau$ for an $\MLP$ expression $E$
+over an extended schema $\scm_V$. 
  To indicate that a type can be
 \emph{successfully inferred}, we use the notation
 $\typed{\scm_V}{E}{\tau}$.  When we cannot infer a type, we say $E$
@@ -109,7 +109,7 @@ an instance $I_V$ is function which assigns  matrices to matrix variables $\var(
 The semantics of $\MLP$ expressions is defined inductively, as shown in Figure~\ref{fig:semantics}.
 \begin{figure}
   \begin{mathpar}
-    \infer{\M \in \var(I_V) }{\bigstep{I_V}{\M}{I(\M)}} \and
+    \infer{\M \in \var(I_V) }{\bigstep{I_V}{\M}{I_V(\M)}} \and
   \infer{\V \in V }{\bigstep{I_V}{\V}{I_V(\V)}} \and
     \and
     \infer{\bigstep{I_V}{E}{A}\\ \text{$A$ is a  vector}}{\bigstep{I_V}{E^\textsc{t}}{A^{\textsc{t}}}} \and
@@ -133,15 +133,13 @@ To establish the soundness of the type system,
 we need a notion of conformance of an instance to a schema. A \emph{size assignment} $\sigma$ is a function
 from size symbols to positive natural numbers.  We extend
 $\sigma$ to any size term by setting $\sigma(1) = 1$.  
-Let $\scm_V$ be a schema. An instance $I_V$ of $\scm_V$ is a
+Let $\scm_V$ be an extended schema. An instance $I_V$ of $\scm_V$ is a
 function which assigns a matrix to each matrix variable in $\mvar(\scm_V)$ and a vector to each vector variable in $V$,
 and such that there is a size assignment $\sigma$ such
 that for all $\M \in \mvar(\scm_V)$, if $\scm(\M) = s_1 \times s_2$,
 then $I_V(\M)$ is a $\sigma(s_1) \times \sigma(s_2)$ matrix.  Similarly,
 for all $\V\in V$, if $\scm_V(\V)=s_1\times 1$, then $I_V(\V)$ is a
-$\sigma(s_1)\times 1$-vector.
-In
-that case we also say that $I_V$
+$\sigma(s_1)\times 1$-vector. When this is satisfied we  also say that $I_V$
 \emph{conforms} to $\scm_V$ by the size assignment $\sigma$.
 
 \begin{proposition}[Safety]
@@ -155,16 +153,17 @@ $\sigma(s_1) \times \sigma(s_2)$.\qed
 At this point, $E_1:=\V$,  $E_2:=M\cdot \V$ and $E_3:=\sum_{\V} \V\cdot \V^{\textsc{t}}$ are examples of well-formed expressions
 which can be evaluated on instances in which the vector variable $\V$ is instantiated by a column vector. For example,
 when $I_V(\V)=a$ and $a$ is of dimension $n\times 1$, and $I_V(\M)=A$ and $A$ is of dimension $m\times n$, then
-$E_1(I_V)=a$, $E_2(I_V)=A\cdot a$ and $E_3(I_V)$ is the $n\times n$ diagonal matrix. We remark then none of these expressions can be evaluated when $I_V$ does not assign a vector to $\V$.
+$E_1(I_V)=a$, $E_2(I_V)=A\cdot a$ and $E_3(I_V)$ is the $n\times n$ diagonal matrix. We remark that none of these expressions can be evaluated when $I_V$ only assigns a matrix to
+the matrix variables.
 \end{example}
 
 
 In the following we restrict $\MLP$ expressions such that they can always be evaluated
 when only matrix variables are instantiated by instances (despite that the expressions may contain vector variables). Intuitively, we will 
-ensure that vector variables are always bound to sum iteration operations. We call such expressions \textit{matrix-type determined}.
+ensure that vector variables are always bound to sum iteration operations. We do this by only considering $\MLP$ expressions 
+without free vector variables, as is defined next.
 
-
-\paragraph{Matrix-type determinacy}
+\paragraph{Free vector variables}
 We first define a notion of \textit{free vector variables} of $\MLP$ expressions, as follows.
 \begin{mathpar}
 \free(\M)=\emptyset \text{, for $\M\in\mvar(\scm_V)$}\quad \and \free(\V)=\{\V\}\text{, for $\V\in V$} \and
@@ -178,11 +177,15 @@ Continuing the previous example, $\free(E_1)=\{\V\}$, $\free(E_2)=\{\V\}$ and
 $\free(E_3)=\emptyset$.
 \end{example}
 
-A first restriction is that we will only consider $\MLP$ expressions $E$ such that $\free(E)=\emptyset$.
-We note, however, that this does not suffice to be able to evaluate expressions on instances in which only
+
+In the following, we only consider $\MLP$ expressions $E$ such that $\free(E)=\emptyset$. 
+however. 
+
+\paragraph{Matrix-type determinacy}
+We note, however, that having no free vector variables does not suffice to be able to evaluate expressions on instances in which only
 matrix variables are instantiated. Indeed, just consider expression $E_3$ from the previous example.
 Intuitively, we need to further restrict $\MLP$ expressions $E$ such that, in addition to $\free(E)=\emptyset$,
-the type of vector variables is fully determined by the types of the matrix variables in $E$. 
+the type of vector variables is fully determined by the types of the matrix variables in $E$.  
 As a consequence,
 we must have at least one matrix variable occurring in $E$, ruling out expression $E_3$. 
 
@@ -193,14 +196,20 @@ implies that $\V_1$ must be  of type $\alpha\times 1$. Note, however, that $\V_2
 the type of $\M$.
 \end{example}
 
-We say that the an $\MLP$ expression $E$ with $\free(E)=\emptyset$ is \textit{matrix-type determined}
+We say that  an $\MLP$ expression $E$ with $\free(E)=\emptyset$ is \textit{matrix-type determined}
 if, given a schema $\scm$ over the matrix variables, for each vector variable $v$ in $E$ 
 there exists a matrix variable $M_v$ such that when $\scm$ assigns $M$ type $\alpha\times\beta$,
 then in any extension $\scm_V$ of $\scm$ such that $E$ is well-typed over $\scm_V$, then
-$\scm_V$ assigns $v$  either type $\alpha\times 1$ or $\beta\times 1$. We denote by $\typed{\scm}{E}{\tau}$ that $E$
+$\scm_V$ assigns $v$  either type $\alpha\times 1$ or $\beta\times 1$. We denote by $\mtyped{\scm}{E}{\tau}$ that $E$
 is matrix-typed determined, i.e., there is a uniquely defined extension $\scm_V$ of $\scm$ such that $\typed{\scm_V}{E}{\tau}$
-according to our previous definition of well-typedness.
+according to our previous definition of well-typedness. 
 
+Let $I$ be an instance conforming to $\scm$
+by size assignment $\sigma$. When  $\mtyped{\scm}{E}{\tau}$ holds, we let
+$I_V$ denote \textit{any} extension of $I$ such that $I_V$ agrees with $I$ on $\scm$ and such that
+$I_V(\V)$ conforms to $\sigma_V$ still with size assignment $\sigma$. Here, $\sigma_V$ is the uniquely
+determined size assignment extension $\sigma$ to vector variables, and such that when $v$ has type
+$s\times 1$, $s$ must occur as part of a size term of a matrix variable in $E$ and hence $\sigma_V(s)=\sigma(s)$.
 
 \begin{todo}
 Give a procedure to check whether an expression is matrix-type determined.
@@ -229,18 +238,15 @@ Then, when $M$ has type $\alpha\times \beta$, $\V_1$ must have type $\alpha\time
 $\V_2$ must be of type $\beta\times 1$.
 \end{example}
 
-Let $I$ be an instance conforming to $\scm$
-by size assignment $\sigma$. When  $\typed{\scm}{E}{\tau}$ holds, we let
-$I_V$ denote \textit{any} extension of $I$ such that $I_V$ agrees with $I$ on $\scm$ and such that
-$I_V(\V)$ conforms to $\sigma_V$ still with size assignment $\sigma$.
 
 
 
+We may thus conclude:
 \begin{proposition}[Safety - revised]
-If $\scm \vdash E : s_1 \times s_2$ with $\free(E)=\emptyset$, then for every instance $I$
+If $\scm \vdash_{\mathsf{det}} E : s_1 \times s_2$ with $\free(E)=\emptyset$, then for every instance $I$
 conforming to $\scm$, by size assignment $\sigma$, the
 matrix $e(I_V)$ is well-defined and has dimensions
-$\sigma(s_1) \times \sigma(s_2)$.\qed
+$\sigma(s_1) \times \sigma(s_2)$. Here, $I_V$ can be any extension of $I$ which conforms to the (unique) extension $\sigma_V$ of $\sigma$.\qed
 \end{proposition}
 
 In fact, it does not matter which extension $I_V$ of $I$ one considers. We therefore
@@ -284,13 +290,15 @@ $$
 $$
 \end{example}
 
+From here, we only consider $\MLP$ expression which are matrix-type determined and have no free vector variables. We simply
+refer to such expressions as $\MLP$ expressions.
 
 
 \section{Relationship between $\MLP$ and the calculus with aggregates}
-We know that $\ML$ expression correspond to expressions in the relational calculus with aggregates. We here generalize this to $\MLP$.
+We know that $\ML$ expression corresponds to expressions in the relational calculus with aggregates. We here generalize this to $\MLP$.
 
 \paragraph{Representing matrices as relations}
-To make this connection precise, we fix the relational representation of matrices, as follows. it is natural to represent an $m \times n$ matrix $A$
+To make the connection between $\MLP$ and classical relational query languages such as the calculus with aggregates, we fix a relational representation of matrices, as follows. It is natural to represent an $m \times n$ matrix $A$
 by a ternary relation $$
 \Rel_2(A) := \{(i,j,A_{i,j}) \mid i \in \{1,\dots,m\}, \ j \in
 \{1,\dots,n\}\}. $$  In the special case where $A$ is an
@@ -301,12 +309,11 @@ $\Rel_1(A) :=
 \times n$ matrix (row vector) $A$ can be represented by $\Rel_1(A)
 := \{(j,A_{1,j}) \mid j \in \{1,\dots,n\}\}$.  Finally, a $1
 \times 1$ matrix (scalar) $A$ can be represented by the unary
-singleton relation $\Rel_0(A) := \{(A_{1,1})\}$. 
+singleton relation $\Rel_0(A) := \{(A_{1,1})\}$. We choose these different representations to avoid the introduction of constants. For example, one could view a column vector $A$ also as  $\Rel_2(A) := \{(i,1,A_{i,1}) \mid i \in \{1,\dots,m\}\} $ at the cost of using constant $1$ (or any other constant). 
 
-More formally,
-we assume a supply of \emph{relation variables}, which, for
+We now assume a supply of \emph{relation variables}, which, for
 convenience, we can take to be the same as the matrix variables.
-A \emph{relation type} is a tuple of $\Tb$'s and $\Tn$'s.
+A \emph{relation type} is a tuple of $\Tb$'s (base type) and $\Tn$'s (numerical type).
 A \emph{relational schema} $\scm$ is a function, defined on a
 nonempty finite set
 $\var(\scm)$ of relation variables, that assigns a relation type
@@ -322,7 +329,7 @@ embeddings from the natural numbers into $\dom$.
 Let $\tau$ be a relation type. A \emph{tuple
 of type $\tau$} is a tuple $(t(1),\dots,t(n))$ of the same arity
 as $\tau$, such that $t(i) \in \dom$ when $\tau(i) = \Tb$, and
-$t(i)$ is a complex number when $\tau(i) = \Tn$.
+$t(i)$ is a real number when $\tau(i) = \Tn$.
 A \emph{relation of type
 $\tau$} is a finite set of tuples of type $\tau$.  
 An \emph{instance} of a relational schema $\scm$ is a
@@ -350,91 +357,134 @@ $\Rel(\scm)$ by $$ \Rel(I)(M) = \begin{cases}
 \Rel_0(I(M)) & \text{if $\scm(M)$ is the scalar type.}
 \end{cases} $$  
 
-\paragraph{Going from $\ML$ to the calculus with aggregates}
+\newcommand{\adom}{\textsf{adom}}
+\paragraph{Calculus with aggregates  $\textsf{FO}_{\textsf{sum}}$}
+The calculus with aggregates  $\textsf{FO}_{\textsf{sum}}$ works with typed relations and variables. Let $\scm$ be a relation schema consisting of relations corresponding to
+matrices, vectors or scalars, as above.
+Given an instance $I$ of $\scm$, we define its active domain as usual. That is, $\adom_{\Tb}(I)$ is the set of all values in $\dom$ occurring in the base  type attributes in $I(R)$ for $R\in\var(\scm)$. Similarly, $\adom_{\Tn}(I)$ is the set of all (numerical) values in $\dom$ occurring in the base  type attributes in $I(R)$ for $R\in\var(\scm)$.
+
+Let us first briefly recall that syntax of expressions in $\textsf{FO}_{\textsf{sum}}$. Let us start by defining terms in $\textsf{FO}_{\textsf{sum}}$:
+\begin{itemize}
+\item Variables $i_1,i_2,\ldots$ of base type are base terms; Variables $q_1,q_2,\ldots$ of numerical type are numerical terms;
+\item If $t_1,\ldots,t_k$ are numerical terms, then  $f(t_1,t_2,\ldots, t_k)$ is a  numerical term,  for function $f\in\Omega$ such that $f:\RR^k\to \RR$.
+\end{itemize}
+Note that base terms are always variables of base type. Formulas are obtained as follows:
+\begin{itemize}
+\item If $t_1$ and $t_2$ are both base terms, or both numerical terms, then $t_1=t_2$ is a formula;
+\item If $i_1$ and $i_2$ are base variables and $q$ is a numerical term, then $R(i_1,i_2,q)$, $R(i_1,q)$, and $R(q)$ are formulas (which case depends on the type of $R$ in $\scm$);
+\item If $\varphi$ is a formula, then also $\neg \varphi$, $\exists i\, \varphi$, and $\exists q\,\varphi$ are formulas;
+\item If $\varphi_1$ and $\varphi_2$ are formulas, then also $\varphi_1\land\varphi_2$ is a formula.  
+\end{itemize}
+Finally, we allow another kind of numerical terms:
+\begin{itemize}
+\item If $t(\bar x,\bar y)$ is a numerical term and $\varphi(\bar x,\bar y)$ is a formula, then $\psi(\bar x)=\Sum \bar y. \bigl(\varphi(\bar x,\bar y), t(\bar x,\bar y)\bigr)$ is a numerical term.
+\end{itemize}
+
+We assume active domain semantics. That is, the semantics of $\exists i\, $ is $\exists i \in \adom_{\Tb}(I)$ when $i$ is a base variable;
+$\exists q\, $ is $\exists q \in  \adom_{\Tn}(I)$ when $q$ is a numerical variable, and in  $\psi(\bar x)=\Sum \bar y. \bigl(\varphi(\bar x,\bar y), t(\bar x,\bar y)\bigr)$ the
+variables $\bar y$ range over the product of the active domains of the variables in $\bar y$. Recall that the semantics of $\psi(\bar x)=\Sum \bar y .\bigl(\varphi(\bar x,y), t(\bar x,y)\bigr)$ on
+$I$ is that for each $\bar a$, the summation happens over $t(\bar a,\bar b)$ for all tuples $\bar b$ such that $I\models\varphi(\bar a,\bar b)$. 
+
+\paragraph{Going from $\ML$ to the $\textsf{FO}_{\textsf{sum}}$}
 We recall the following result.
 \begin{proposition} 
-Let $\scm$ be a matrix schema, and let $e$ be a $\ML$ expression
+Let $\scm$ be a matrix schema, and let $E$ be a $\ML$ expression
 that is well-typed over $\scm$ with output type $\tau$.
 Let $\ell=2$, $1$,
 or $0$, depending on whether $\tau$ is general, a vector type, or
 scalar, respectively.
-For every $\ML$ expression $e$ there is a formula
-$\varphi_e$ over $\Rel(\scm)$
-in the relational calculus with summation, such that
+For every $\ML$ expression $E$ there is a formula
+$\varphi_E$ over $\Rel(\scm)$
+in $\textsf{FO}_{\textsf{sum}}$, such that
 \begin{enumerate}
 \item
-If\/ $\tau$ is general, $\varphi_e(i,j,z)$ has two free base
+If\/ $\tau$ is general, $\varphi_E(i,j,z)$ has two free base
 variables $i$ and $j$ and one free numerical variable $z$; if\/
-$\tau$ is a vector type, we have $\varphi_e(i,z)$; and if\/ $\tau$ is
-scalar, we have $\varphi_e(z)$.
+$\tau$ is a vector type, we have $\varphi_E(i,z)$; and if\/ $\tau$ is
+scalar, we have $\varphi_E(z)$.
 \item
-For every instance $I$, the relation defined by $\varphi_e$ on
-$\Rel(I)$ equals $\Rel_\ell(e(I))$.
+For every instance $I$, the relation defined by $\varphi_E$ on
+$\Rel(I)$ equals $\Rel_\ell(E(I))$.
 \item
-The formula $\varphi_e$ uses only {\bf three distinct base variables}. The functions used in pointwise applications in $\varphi_e$ 
+The formula $\varphi_E$ uses only {\bf three distinct base variables}. The functions used in pointwise applications in $\varphi_E$ 
  are those used in
-pointwise applications in $e$; complex conjugation;
+pointwise applications in $E$; complex conjugation;
 multiplication of two numbers;
 and the constant functions $0$ and $1$.
- Furthermore, $\varphi_e$ neither uses equality conditions between numerical variables nor equality conditions on base variables involving constants.
+ Furthermore, $\varphi_E$ neither uses equality conditions between numerical variables nor equality conditions on base variables involving constants.
 \end{enumerate}
 \end{proposition}
 
 We next generalize this result to $\MLP$. It is immediately clear that {\bf more than three base variables} will be needed.
 Indeed, the previous proposition implies that  there is no $\ML$ expression which, when evaluated
-on an adjacency matrix of a graph returns the scalar $[1]$ if the graph contains a $4$-clique and $[0]$ otherwise. This is due to the fact that only three base variables
-are needed to express $\ML$ in the calculus with aggregates. By contrast, we can easily check the existence of a $4$-clique in a graph in
+on an adjacency matrix of a graph returns the scalar $[1]$ if the graph contains a $4$-clique and $[0]$ otherwise. By contrast, we can easily check the existence of a $4$-clique in a graph in
 $\MLP$:
 $$\sum_{\V_1}\sum_{\V_2}\sum_{\V_3}\sum_{\V_4} (\V_1^{\textsc{t}}\cdot M \cdot \V_2)\cdot (\V_1^{\textsc{t}}\cdot M\cdot \V_3)\cdot (\V_1^{\textsc{t}}\cdot M \cdot \V_4)\cdot (\V_2^{\textsc{t}}\cdot M\cdot\V_3)\cdot (\V_2^{\textsc{t}}\cdot M\cdot \V_4)\cdot (\V_3^{\textsc{t}}\cdot M\cdot \V_4)\cdot g(\V_1,\V_2,\V_3,\V_4),$$
 where $g(u,v,w,r)=f(u,v)\cdot f(u,w)\cdot f(u,r)\cdot f(v,w)\cdot f(v,r)\cdot f(w,r)$ with $f(u,v)=1-u^{\textsc{t}}\cdot v$ ($f$ can be easily expressed in $\MLP$).
-In this expression, we simply check whether there are four vertices, which are found by iterating over four vector variables, that are distinct (note that $f(e_i,e_j)=0$ if $i\neg j$ and $f(e_i,e_j)=1$ if $i=1$, and
-thus $g(e_1,e_2,e_3,e_4)=1$ if and only if all canonical basis vectors are all distinct), and have edges between them.
-More generally, we can similarly detect $k$-cliques by using $k$ sum iterations. This example suggests that $\MLP$ expressions in which $k$ distinct vector variables are used correspond to expressions in the calculus with aggregates in which {\bf at most $k$ distinct base variables} are used. We next verify that this is indeed the case.
+In this expression, we simply check whether there are four vertices, which are found by iterating over four vector variables, that are distinct (note that $f(e_i,e_j)=0$ if $i\neq j$ and $f(e_i,e_j)=1$ if $i=1$, and
+thus $g(e_1,e_2,e_3,e_4)=1$ if and only if all four canonical basis vectors are all distinct), and the vertices corresponding to these basis vectors have edges between them.
+More generally, we can  detect $k$-cliques in a similar way by using $k$ sum iterations. This example suggests that $\MLP$ expressions in which $k$ distinct vector variables are used correspond to expressions in $\textsf{FO}_{\textsf{sum}}$ in which {\bf at most $k$ distinct base variables} are used. We next verify that this is indeed the case.
 
 
 %
 
-\paragraph{Going from $\MLP$ to the calculus with aggregates}
-Let $E(v_1,\ldots,v_p)$ be an $\MLP$-expression with free vector variables $v_1,\ldots,v_p$.
-Let $\scm$ be a matrix schema and assume that  $\typed{\scm_V}{E}{\tau}$, i.e., $E$ is matrix-type determined.
+\paragraph{Going from $\MLP$ to $\textsf{FO}_{\textsf{sum}}$}
+Let $E(v_1,\ldots,v_p)$ be a $\MLP$-expression with free vector variables $v_1,\ldots,v_p$. We define the \textit{summation rank} of an $\MLP$ expression as follows:
+\newcommand{\sr}{\mathsf{sr}}
+\begin{mathpar}
+\sr(\M)=\emptyset \text{, for $\M\in\mvar(\scm_V)$}\quad \and \sr(\V)=0 \text{, for $\V\in V$} \and
+\sr(E^{\textsc{t}})=\sr(E) \quad \and \sr(E_1\cdot E_2)=\max\{\sr(E_1),\sr(E_2)\} \quad \and
+\sr(\Apply_s[f](E_1,\ldots,E_k))=\max\{\sr(E_i)\mid i\in[k]\} \quad \and \sr(\sum_{\V} E)=\sr(E)+1.
+\end{mathpar}
+
+Let $\scm$ be a matrix schema and assume that  $\typed{\scm}{E}{\tau}$, i.e., $E$ is matrix-type determined.
 Let $\ell=2$, $1$,
 or $0$, depending on whether $\tau$ is general, a vector type, or
 scalar, respectively.
 
 We show, by induction on the structure of $\MLP$-expressions that for every such $E(v_1,\ldots,\allowbreak v_p)$ there exists an
 expression $\varphi_E(i,j,x,j_1,\ldots,j_p)$ such that when $v_i$ is assigned some canonical basis vector $e_{k_i}^{(i)}$,
-for $i=1,\ldots,p$, then given an instance $I$ of $\scm$, $\Rel_\ell(E(I,e_{k_1}^{(1)},\ldots,e_{k_p}^{(p)}))$ coincides with
-the relation defined by $\varphi_E(i,j,x,k_1,\ldots,k_p)$ on $\Rel(I)$. Moreover, If $\tau$ is general, $\varphi_E$ has $p+2$ free base
+for $i=1,\ldots,p$, then given an instance $I$ of $\scm$, and its extension $I_V$ such that $I(v_i)=e_{k_1}^{(i)}$, ,
+for $i=1,\ldots,p$, $\Rel_\ell(E(I_V))$ coincides with
+the relation defined by $\varphi_E(i,j,x,k_1,\ldots,k_p)$ on $\Rel(I)$. Moreover, if $\tau$ is general, and $\free(E)=p$ and $\sr(E)=q$, then $\varphi_E$ has $p+q+2$ free base
 variables  one free numerical variable; if 
-$\tau$ is a vector type, we have $p+1$ free base variables and one free numerical variable, and if $\tau$ is of scalar type, we have
-$p$ free base variables and one numerical free variable. Furthermore, $\varphi_E$ uses at most $p+3$ distinct base variables.
+$\tau$ is a vector type, we have $p+q+1$ free base variables and one free numerical variable, and if $\tau$ is of scalar type, we have
+$p$ free base variables and one numerical free variable. Furthermore, $\varphi_E$ uses at most $p+q+3$ distinct base variables.
+So, when $\free(E)=0$, we use at most $q+3$ distinct base variables.
 
 The formula $\varphi_E$ is obtained, as follows:
 \begin{itemize}
 \item If $E = M$ is a matrix variable of $\scm$, then $\varphi_E(i,j,x):=\Rel_2(M)(i,j,x)$ if $M$ is of general type,
  $\varphi_E(i,x):=\Rel_1(M)(i,x)$ if $M$ is of vector type, and $\varphi_E(x):=\Rel_0(M)(x)$ if $M$ is of scalar type.
+  We note that $\free(E)=\emptyset$ and $\sr(E)=0$.  Hence, $p=q=0$. It is clear that $\varphi_E$ uses at most $2$ base variables.
  \end{itemize}
  
  For  vector variables we only need to assure correctness of the corresponding formula when $v$ is assigned
-some canonical basis vector.  We know that overall expression is matrix-type determined and hence we denote by $M_v$ the corresponding
-matrix variable with $v$. We assume that $v$ gets its type from the row dimension of $M_v$. Let $\tau=s_1\times s_2$ (the other case is similar).
+some canonical basis vector.  We know that overall expression is matrix-type determined and hence we denote by $M_v$ the 
+matrix variable corresponding with $v$. That is, the type of $v$ is determined by the type of $M_v$ in $\scm$ (and $\scm_V$). We assume that $v$ gets its type from the row dimension of $M_v$ (the other case, when $v$ inherits the column dimension of $M_v$ is similar). Let $\tau=s_1\times s_2$ be the type of $M_v$.
  \begin{itemize}
-\item If $E = v$ is a vector variable in $V$. We first create the identity matrix of dimension $s_1\times s_1$. This is done in two steps.
+\item $E = v$ is a vector variable in $V$. We first create the identity matrix of dimension $s_1\times s_1$. This is done in two steps.
 
-First, we create $\one(M_v)$. More precisely, consider $\varphi_\one(i,x):=\exists j, x'\, (\Rel_2(i,j,x')\land x=1(x'))$ if $\tau$ is a general type,
-$\varphi_\one(i,x):=\exists  x'\, (\Rel_1(i,x')\land x=1(x'))$  if $\tau$ is of vector type and $s_1\neq 1=s_2$, 
-and $\varphi_\one(x):=\exists x'\, (\Rel_0(x')\land x=1(x'))$  if $\tau$ is the scalar type. In these expressions $1$  is the constant $1$ function.
+First, we create a formula which computes the $s_1\times 1$-vector $\one$ consisting of all ones. To this aim, we consider $\varphi_\one(i,x):=\exists j, x'\, (\Rel_2(M_v)(i,j,x')\land x=1(x'))$ if $\tau$ is a general type,
+$\varphi_\one(i,x):=\exists  x'\, (\Rel_1(M_v)(i,x')\land x=1(x'))$  if $\tau$ is of vector type  
+and  $s_1 \neq 1 = s_2$, 
+$\varphi_\one(x):=\exists  i, x'\, (\Rel_2(M_v)(i,x')\land x=1(x'))$  if $\tau$ is of vector type and $s_1=1\neq s_2$, 
+and $\varphi_\one(x):=\exists x'\, (\Rel_0(M_v)(x')\land x=1(x'))$  if $\tau$ is the scalar type. In these expressions $1$  is the constant $1$ function.
 
-Second, we create $\diag(\one(M_v))$. That is, we consider $\varphi_{\Delta(v)}(i,j,x):=(\varphi_{\one}(i,x)\land j=i)\vee (\exists x',x''\, \varphi_{\one}(i,x')\land\varphi_{\one}(j,x'')\land i\neq j \land x=0(x')$ if $s_1 \neq 1 = s_2$ and  $\varphi_{\Delta(v)}(x):=\varphi_{\one}(x)$ if $\tau$ is the scalar type.
+Second, make the $s_1\times s_1$ identity matrix $I$. That is, we consider $\varphi_{I_v}(i,j,x):=(\varphi_{\one}(i,x)\land j=i)\vee (\exists x',x''\, \varphi_{\one}(i,x')\land\varphi_{\one}(j,x'')\land i\neq j \land x=0(x')$  and  $\varphi_{I_v}(x):=\varphi_{\one}(x)$, where the formula $\varphi_{\one}$ used depends on the type $\tau$, as described above.
 
-Finally, $\varphi_E(i,x,j):=\varphi_{\Delta(v)}(i,j,x)$ if $v$ is not of scalar type and
-$\varphi_E(x):=\varphi_{\Delta(v)}(x)$ if $v$ is the scalar type.
+Finally, $\varphi_E(i,x,j):=\varphi_{I_v}(i,j,x)$ if $v$ is not of scalar type and
+$\varphi_E(x):=\varphi_{I_v}(x)$ if $v$ is the scalar type.
 
 When $v$ is assigned the canonical basis vector $e_k$, then  $\varphi_E(i,x,k)$ evaluates to the $i$the entry of the $k$th column of the diagonal matrix, as desired. When $v$ is of scalar type, $\varphi_E(x)$ evaluates to $1$.
+
+ We note that $\free(E)=\{\V\}$ and $\sr(E)=0$.  Hence, $p=1$ and $q=0$. It is clear that $\varphi_E$ uses at most $2$ base variables. Indeed,
+ in $\varphi_{I_\V}$ we can re-use variables such that $i$ and $j$ are the only base variables used.
+
  \end{itemize}
- Let $E'$ be a $\MLP$ and let $\tau = 1 \times s_2$ or $\tau=s_1\times 1$ be the output type of $E'$. Let $\free(E')=\{v_1,\ldots,v_k\}$.
+ Let $E'$ be a $\MLP$ expression and let $\tau = 1 \times s_2$ or $\tau=s_1\times 1$ be the output type of $E'$. Let $\free(E')=\{v_1,\ldots,v_k\}$.
  \begin{itemize}
-\item If $E= (E')^{\textsc{t}}$, then $\varphi_E(i,x,j_1,\ldots,j_k):=\varphi_{E'}(i,x,j_1,\ldots,j_k)$. We note that we do not distinguish between row and column vectors in our relational representation. We can infer row versus column based on the type of the expression. 
+\item If $E= (E')^{\textsc{t}}$, then $\varphi_E(i,x,j_1,\ldots,j_k):=\varphi_{E'}(i,x,j_1,\ldots,j_k)$. We note that we do not distinguish between row and column vectors in our relational representation. We can infer row versus column based on the type of the expression. The claim about the number of base variables follows by induction.
 \end{itemize}
 %if $\tau$ is a vector type, and $\varphi_e(x):=\exists x'\, (\varphi_{e'}(x')\land x=\overline{x'})$ if $\tau$ is the scalar type.
 %Here, $\overline x$ denotes the complex conjugate operation.
@@ -467,20 +517,29 @@ $\mathbf{w}=(k_1,\ldots,k_m)$, then
 \varphi_E(z;\mathbf{u},\mathbf{v},\mathbf{w}):=z = \Sum k,x,y . (\varphi_{E_1}(k,x;\mathbf{u},\mathbf{v}) \land \varphi_{E_2}(k,y;\mathbf{u},\mathbf{w}), x \times y)
  & \text{if } s_1 = 1 = s_2 \text{ and } s_3 \neq 1
 \cr
-\varphi_E(i,j,z;\mathbf{u},\mathbf{v},\mathbf{w}):=\varphi_{E_1}(i,x;\mathbf{u},\mathbf{v}) \land \varphi_{E_2}(j,y;\mathbf{u},\mathbf{w}) \land z=x \times y
+\varphi_E(i,j,z;\mathbf{u},\mathbf{v},\mathbf{w}):=\exists x,y\varphi_{E_1}(i,x;\mathbf{u},\mathbf{v}) \land \varphi_{E_2}(j,y;\mathbf{u},\mathbf{w}) \land z=x \times y
  & \text{if } s_1 \neq 1 \neq s_2 \text{ and } s_3 = 1
 \cr
-\varphi_E(i,z;\mathbf{u},\mathbf{v},\mathbf{w}):=\varphi_{E_1}(i,x;\mathbf{u},\mathbf{v}) \land \varphi_{E_2}(y;\mathbf{u},\mathbf{w}) \land z=x \times y
- & \text{if } s_1 \neq 1 = s_2 \text{ and } s_3 = 1hgg n  
+\varphi_E(i,z;\mathbf{u},\mathbf{v},\mathbf{w}):=\exists x,y\varphi_{E_1}(i,x;\mathbf{u},\mathbf{v}) \land \varphi_{E_2}(y;\mathbf{u},\mathbf{w}) \land z=x \times y
+ & \text{if } s_1 \neq 1 = s_2 \text{ and } s_3 = 1
 \cr
-\varphi_E(i,z;\mathbf{u},\mathbf{v},\mathbf{w}):=\varphi_{E_1}(x;\mathbf{u},\mathbf{v}) \land \varphi_{E_2}(i,y;\mathbf{u},\mathbf{w})\land z=x \times y
+\varphi_E(i,z;\mathbf{u},\mathbf{v},\mathbf{w}):=\exists x,y\varphi_{E_1}(x;\mathbf{u},\mathbf{v}) \land \varphi_{E_2}(i,y;\mathbf{u},\mathbf{w})\land z=x \times y
  & \text{if } s_1 = 1 \neq s_2 \text{ and } s_3 = 1
 \cr
-\varphi_E(z;\mathbf{u},\mathbf{v},\mathbf{w}):=\varphi_{E_1}(x;\mathbf{u},\mathbf{v}) \land \varphi_{E_2}(y;\mathbf{u},\mathbf{w}) \land z=x \times y
+\varphi_E(z;\mathbf{u},\mathbf{v},\mathbf{w}):=\exists x,y\varphi_{E_1}(x;\mathbf{u},\mathbf{v}) \land \varphi_{E_2}(y;\mathbf{u},\mathbf{w}) \land z=x \times y
  & \text{if } s_1 = 1 = s_2 \text{ and } s_3 = 1
 \cr
-\end{cases},
+\end{cases}
 \]
+In these expressions $\times$ stands for the function $\times:\RR\times \RR\to \RR:(x,y)\mapsto x\times y$.
+We note that by, induction, $\varphi_{E_1}$ uses at most $p_1+q_1+3$ base variables, with $p_1=\ell$ and $q_1=\sr(E_1)$.
+Similarly, $\varphi_{E_2}$ uses at most $p_2+q_2+3$ base variables, with $p_2=m$ and $q_2=\sr(E_2)$. An inspection of the
+formula $\varphi_E$ shows that we need $p=k+\ell+m$ base variable (for $\free(E)$, in addition, let $q=\scm(E)=\max\{q_1,q_2\}$.
+Suppose that $q=q_1$. Then we can reuse the $q_1$ base variables from $\varphi_{E_1}$ for the $q_2$ base variables in $\varphi_{E_2}$.
+So, we need at most $q$ base variables for the sum iterations in both sub-expressions. Finally, let us consider the first case above. Here,
+$\varphi_{E_1}$ uses $i$ and $k$, plus (possibly) an additional variable $s$ (not free). Similarly, $\varphi_{E_2}$ uses $k$, $j$ and
+and  (possibly) an additional variable $t$ (not free). We can take $s$ to be $j$ and $t$ to be $i$. All combined, we use at most $i$, $k$, $j$
+as base variables. In total, $\varphi_E$ uses at most $p+q+3$ base variables.
 
 
 \item If $E = \Apply[f](E_1,\ldots,E_n)$ with all $E_i$ of scalar type with $\free(E_j)=\{v_1^{(j)},\ldots,v_{k_i}^{(j)}\}$, then if we denote by
@@ -488,9 +547,10 @@ $\mathbf{v}^{(j)}=(i_1^{(j)},\ldots,i_{k_j}^{(j)})$ where we use the same variab
 \begin{align*}
 %\varphi_e(i,j,x)&:=\exists x_1,\ldots,x_n\, (\varphi_{e_1}(i,j,x_1)\land \cdots \land \varphi_{e_n}(i,j,x_n)\land x=f(x_1,\ldots,x_n)),\\
 %\varphi_e(i,x)&:=\exists x_1,\ldots,x_n\, (\varphi_{e_1}(i,x_1)\land \cdots \land \varphi_{e_n}(i,x_n)\land x=f(x_1,\ldots,x_n)), \text{ and}\\
-\varphi_E(x,\mathbf{v})&:=\exists x_1,\ldots,x_n\, (\varphi_{e_1}(x_1,\mathbf{v}^{(1)})\land \cdots \land \varphi_{e_n}(x_n,\mathbf{v}^{(n)})\land x=f(x_1,\ldots,x_n)),
+\varphi_E(x,\mathbf{v})&:=\exists x_1,\ldots,x_n\, (\varphi_{E_1}(x_1,\mathbf{v}^{(1)})\land \cdots \land \varphi_{E_n}(x_n,\mathbf{v}^{(n)})\land x=f(x_1,\ldots,x_n)),
 \end{align*}
-where $\mathbf{v}$ corresponds to the union of all variables the $\mathbf{v}^{(i)}$'s.
+where $\mathbf{v}$ corresponds to the union of all variables the $\mathbf{v}^{(i)}$'s. The claim about the number of base variables follows by induction. Indeed, each expression uses at most $p_i+q_i+3$ distinct variables, with $p_i=k_i$, $q_i=\sr(E_i)$. We need at $p$ base variables for $p$ the number of free variables in $E$, we note that $\sr(E)=\max\{q_i\}$. As before, suppose that $q=q_1$,  then we can use the $q_1$ base variables used in $\varphi_{E_1}$ also for the $\varphi_{E_i}$'s. Since all remaining (at most $3$) base variables are not free in $\varphi_{E_i}$, we can use the same variables in all expressions. As a consequence, $\varphi_E$ needs at most $p+q+3$ base variables.
+
 
 \item If $E = \sum_{v_1} E'$ with $\free(E')=\{v_1,\ldots,v_k\}$, then 
 $$\varphi_E(i,j,z;i_2,\ldots,i_k):= z= \Sum x,i_1 (\varphi_{E'}(i,j,x,i_1,i_2,\ldots,i_k),x)
@@ -500,9 +560,134 @@ $$ if $E'$ is of vector type, and
 $$\varphi_E(z;i_2,\ldots,i_k):= z= \Sum x,i_1 (\varphi_{E'}(x,i_1,i_2,\ldots,i_k),x)
 $$ if $E'$ is of scalar type.
 
-
+We need $p=p'-1$ base variables for the free ones, $q=\scm(E')+1$ base variables for the sum iteration. So, in total
+$p+q+3=p'+q'+3$ base variables.
 
 %depending on whether $\tau$ is of general, vector or scalar type, respectively.
+\end{itemize}
+\begin{todo}
+A careful check is needed to see correctness of this translation.
+\end{todo}
+
+We have seen that $\ML$ expressions can be simulated by $\MLP$ expressions. Nevertheless,
+this does not always guarantee the most efficient translation in to $\textsf{FO}_{\textsf{sum}}$.
+As an example, $\one(\cdot)$ can be encoded in $\textsf{FO}_{\textsf{sum}}$ using at most
+two base variables, by contrast, when considering its $\MLP$ expression, we need more:
+
+\begin{itemize}
+\item Consider the one-vector $\MLP$ expression 
+$$
+\sum_{\V_1} \V_1\cdot  \Apply[1]\Bigl(\sum_{\V_2} \V_1^{\textsc{t}}\cdot M\cdot \V_2\Bigr),
+$$
+where $1$ in $\Apply$ denotes the constant function mapping each element to $1$. 
+This is translated, as follows. We translate $E_1:=M\cdot \V_2$ as
+$$
+\varphi_{E_1}(i,z_1,j_2):=z_1=\Sum k,x,y.\bigl(\Rel_2(M)(i,k,x)\land \varphi_{I(\V_2)}(k,j_2,y),x\times y\bigr)
+$$
+and $E_2:\V_1^{\textsc{t}}\cdot E_2$ as 
+$$
+\varphi_{E_2}(z_2,j_1,j_2):=z_2=\Sum k,x,y.\bigl(\varphi_{I(\V_1)}(j_1,k,x)\land \varphi_{E_2}(k,y,j_2),x\times y\bigr)
+$$
+and $E_3:=\sum_{\V_2} E_2$ as
+$$
+\varphi_{E_3}(z_3,j_1):=z_3=\Sum x,j_2. \bigl( \varphi_{E_2}(x,j_1,j_2),x\bigr)
+$$
+and $E_4:=\Apply[1](E_3)$ as
+$$
+\varphi_{E_4}(z_4,j_1):=\exists x \varphi_{E_3}(x,j_1)\land z_4=1(x)
+$$
+and $E_5:=\V_1\cdot E_4$ as
+$$
+\varphi_{E_5}(i,z_5,j_1):=\exists x,y \varphi_{I(\V_1)}(i,j_1,x)\land \varphi_{E_4}(y,j_1)\land z_5=x\times y
+$$
+and finally, $E_6:=\sum_{\V_1} E_5$ as 
+$$
+\varphi_{E_6}(i,z_6):=\Sum z, j_1. \bigl(\varphi_{E_5}(i,z_5,j_1),z\bigr).
+$$
+\end{itemize}
+
+\begin{todo}
+Can we encode $\ML$ expressions in $\MLP$ such that we need at most 3 base variables? Of course, we can add the operations in $\ML$ to the list of $\MLP$ operations, avoiding in this way the additional sum iterations needed.
+\end{todo}
+
+\section{From $\textsf{FO}_{\textsf{sum}}$ to $\MLP$}.
+We next explore the other direction. We note that there are various discrepancies between $\textsf{FO}_{\textsf{sum}}$ and $\MLP$. 
+\begin{itemize}
+\item Expressions in $\MLP$ necessarily return an output of type $\mathbf{b}\mathbf{b}\mathbf{n}$, $\mathbf{b}\mathbf{n}$ or $\mathbf{n}$. By contrast,
+we may generate an output of arbitrary type using formulas in   $\textsf{FO}_{\textsf{sum}}$;
+\item Even when only  formulas in   $\textsf{FO}_{\textsf{sum}}$ are considered of output type $\mathbf{b}\mathbf{b}\mathbf{n}$, $\mathbf{b}\mathbf{n}$ or $\mathbf{n}$,
+this does not ensure that the results can be represented as matrices (e.g., entries may hold multiple values, some entries may have no value).
+\item Finally, despite using active domain semantics, formulas in $\textsf{FO}_{\textsf{sum}}$ are not necessarily safe. By contrast, expressions in $\MLP$ always
+generate a finite result.
+\end{itemize}
+
+We could either:
+\begin{itemize}
+\item Restrict ourselves to a syntactically defined fragment of $\textsf{FO}_{\textsf{sum}}$ such that safety is ensured. For example, for $\textsf{FO}$ we could consider safe-range formulas only. I asked Leonid, and this notion could be extended to logics with aggregation but it is ugly. 
+\item Safe-range formulas were considered because they allow a translation in to the relational algebra (which always return finite answers). It thus may make more sense to consider the relational algebra with summation instead of   $\textsf{FO}_{\textsf{sum}}$ (In fact, this is also what Leonid suggested).
+\item Alternatively, we could use a relaxed notion of equivalence between query languages, avoiding any of the issues with safety. This is what I sketched in an earlier email. It is rather ugly as well.
+\end{itemize}
+
+\begin{todo}
+What is sketched below does not work. The problem is that for general $\textsf{FO}_{\textsf{sum}}$ formulas we can have multiple values per index entry, for examples, $R(1,2,a)$ and $R(1,2,b)$.
+When extracting these entries with canonical basis vectors, however, you get $\V_1^t\cdot M_R\cdot\V_2$ which returns a unique value. Not sure how to get rid of this without assuming that every
+sub-formula preserves that the index entries form a key. A similar problem occurs when starting from the relation algebra: what is $e_1\cup e_2$? To be explored.
+\end{todo}
+
+
+Nevertheless, we will show the following. Given a set of variables $\bar x$, we denote by $\textsf{base}(\bar x)$ the base variables, and by $\textsf{num}(\bar x)$  the numerical variables.
+We will use $\textsf{MATLANG}+\sum$ expressions over an extended matrix schema. That is, apart from the usual matrix variables $M_1,\ldots,M_k$ (corresponding to the relations in ${\cal R}$)
+we have an infinite supply of vector variables $V_1,V_2,\ldots$ and scalar variables $S_1,S_2,\ldots$. We will only list these extra variables in expressions.
+Given variables $\bar x$, we assume that $\textsf{base}(\bar x)=\{i_1,\ldots,i_n\}$
+and  $\textsf{num}(\bar x)=\{q_1,\ldots,q_m\}$. 
+
+We assume that all base variables range over $\{1,\ldots,n\}$ (in other words, all input relations encode $n\times n$-matrices. (\textcolor{red}{This can be generalized, for sure, but at the costs
+of considering different base types, depending on the dimension that they range on.})
+
+For any numerical term $t(\bar x)$ in $\textsf{FO}_{\textsf{sum}}$ there exists a $\textsf{MATLANG}+\sum$ expression $e_t(V_1,\ldots,V_n,S_1,\ldots,S_m)$ such that for
+any $\bar a$ (of appropriate type) $t(\bar a)$ is equal to  
+$$e_t(\mathbf{e}_{a_1},\ldots,\mathbf{e}_{a_n},[a_{n+1}],\ldots,[a_{n+m}]).$$. For any base term (variable) $x$, we associate expression $V_x$. Furthermore, when $x=i\in\{1,\ldots,n\}$
+then we set $V_x=\mathbf{e}_i$ (the $i$th canonical vector).
+Furthermore, for every formula $\varphi(\bar x)$  in $\textsf{FO}_{\textsf{sum}}$ there exists a  $\textsf{MATLANG}+\sum$ expression $e_t(V_1,\ldots,V_n,S_1,\ldots,S_m)$ such that
+$$
+\mathbf{D}\models\varphi(\bar a)  \Leftrightarrow e(\mathbf{e}_{a_1},\ldots,\mathbf{e}_{a_n},[a_{n+1}],\ldots,[a_{n+m}])=[1].
+$$
+
+We start with the simple terms.
+\begin{itemize}
+\item If $x$ is a base variable, then we consider expression $V_{x}$.
+\item If $x$ is a numerical variable, then we consider expression $S_x$.
+\item If $q_1$ and $q_2$ are numerical terms, for $q_1+q_2$ we consider $\mathsf{Apply}[+](e_{q_1},e_{q_2})$, for $q_1-q_2$ we consider 
+$\mathsf{Apply}[-](e_{q_1},e_{q_2})$ and for $f_{>0}(q_1)$ we consider $\mathsf{Apply}[f_{>0}](e_{q_1})$.
+\end{itemize}
+For formulas, we use $1$ for $\mathsf{ones}(\mathsf{ones}(X))$.
+\begin{itemize}
+\item $R(i,j,q)$ with $q$ a numerical term. We consider  $\mathsf{Apply}[f_{>0}]\bigl([1]-(V_i^t\cdot M_R\cdot V_j)-e_q)\bigr)$
+\item $R(i,q)$ with $q$ a numerical term. We consider  $\mathsf{Apply}[f_{>0}]\bigl([1]-(V_i^t\cdot M_R)-e_q)\bigr)$
+\item $R(q)$ with $q$ a numerical term. We consider  $\mathsf{Apply}[f_{>0}]\bigl([1]-(M_R)-e_q)\bigr)$
+\item $i_1=i_2$ we consider $V_{i_1}^t\cdot V_{i_2}$, for $q_1=q_2$,  $\mathsf{Apply}[f_{>0}]\bigl([1]-(e_{q_1}-e_{q_2}))\bigr)$
+\item  If $\varphi=\neg \psi$ we use $\mathsf{Apply}[f_{>0}]\bigl([1]- e_\psi\bigr)$
+\item  If $\varphi=\psi_1\land \psi_2$ we use $e_{\psi_1}\cdot e_{\psi_2}$
+\item If $\varphi=\exists i\, \psi(\bar x)$ with $i$ base variable,
+$$
+\mathsf{Apply}[f_{>0}]\Bigl(\sum_{V_i} e_\psi  \Bigr)
+$$
+\item If $\varphi=\exists q\, \psi(\bar x)$ with $q$ numerical variable we need to collect all numerical values occurring in each relation $R_1,\ldots,R_k$ in ${\cal R}$.
+So, for $R_i$ of type $\mathbf{b}\mathbf{b}\mathbf{n}$,
+$$
+e_\varphi^i\mathsf{Apply}[f_{>0}]\Bigl(\sum_{W_i,W_j} e_\psi(S_q/W_i^t\cdot M_i\cdot W_j)  \Bigr),
+$$
+i.e., we replace scalar $S_q$ with all possible values obtained by looping over $W_i^t\cdot M_i\cdot W_j$ (these are new vector variables).
+(Similar expressions for when $R_i$ of of another type.
+The final expression is  that  $\mathsf{Apply}[f_{>0}](e_\psi^1+\cdots+e_{\psi}^k)$.
+\item \textcolor{red}{Very messy.} For summation, $\psi(\bar x)=\sum_{\varphi(\bar x,\bar y)} t(\bar x,\bar y)$  we again loop over all domain values of $\bar y$ (note that in contrast
+to a single $y$, we need to extract all possible numerical variables for every components. We will get an exponential sum of expression (exponential in number
+of relations). E.g. for $y_1$ we may loop over $R_2$, $y_2$ over $R_1$, or  $y_1$ we may loop over $R_1$, $y_2$ over $R_1$,  $y_1$ we may loop over $R_2$, $y_2$ over $R_2$,
+and so on.  For each assignment of $y_i$ to a relation we get a formula
+$$
+\sum_{\text{domain $\bar y$}} e_\varphi(V_1,\ldots,V_n,S_1,\ldots,S_n)\cdot e_t(V_1,\ldots,V_n),
+$$
+where we replace the vectors $W_{y_i}$ and scalars $S_{y_i}'$ for $\bar y$ in the expression by either canonical vectors or scalars, just as in the existential case.
 \end{itemize}
 
 \section{Relationship with $\MLP$ with tensor languages}
@@ -534,52 +719,55 @@ To carry out these constructions, it is clear that for $\ell$-cliques we need to
 
 For $4$-cliques, we need thus need a $3$-dimensional array, something we cannot compute in $\MLP+$ (recall that we can check for $\ell$-cliques in $\MLP$).
 
-This, and the common use of tensors in practice, motivates us to consider another kind of extension of $\ML$, which we dub $\TL$. In the following we treat tensors just as multidimensional arrays.
-As starting point, we simply generalize the operations in $\ML$ to tensors.
-
-The syntax of $\TL$ is defined by the following grammar:
-%   Every sentence is an expression itself.
-\begin{align*}
-	E&:=\T && \text{(tensor variable)} \\
-       &\mid\quad E^\sigma &&\text{(tensor transpose)}\\
-        &\mid\quad \one(E) &&\text{(one vector)}\\
-        &\mid\quad \diag(E) &&\text{tensor diagonalisation)}\\
-    &\mid\quad E_1 \cdot_p E_2 && \text{(contracted product)} \\
-        &\mid\quad E_1 \otimes E_2 && \text{(tensor product)} \\
-	      &\mid\quad \Apply[f](E_1, \ldots, E_k) && \text{(pointwise function
-    application, $f \in \Omega$)}
-\end{align*}
-where for tensor transposition $\sigma$ is a permutation of $(1,\ldots,n)$ for some appropriate $n$.
-
-Here, for an $k$-way array $A$ of dimension $[n_1,\ldots,n_k]$ and permutation $\sigma$ of $(1,\ldots,k)$,
-$(A^\sigma)_{i_1,\ldots,i_k}=A_{\sigma(i_1),\ldots,\sigma(i_k)}$. $\one(A)_{i}=1$ for $i=1,\ldots,n_1$.
-$\diag(A)_{i,j,\ldots,i_k}=A_{j,\ldots,i_k}$ for $i=j$, and $\diag(A)_{i,j,\ldots,i_k}=0$ when $i\neq j$.
-If $B$ an $k'$-way array of dimension $[m_1,\ldots,m_{k'}]$, then when $n_p=m_p$,
-$$
-(A\cdot_p B)_{i_1,\ldots,i_{p-1},i_{p+1},\ldots,i_k,j_1,\ldots,j_{p-1},j_{p+1},\ldots,j_{k'}}=\sum_{p=1}^{n_p} A_{i_1,\ldots,i_{p-1},p,i_{p+1},\ldots,i_k}\cdot  B_{j_1,\ldots,j_{p-1},p,j_{p+1},\ldots,j_{k'}}.
-$$
-Also,
-$$
-(A\otimes B)_{i_1,\ldots,i_k,j_1,\ldots,j_{k'}}=A_{i_1,\ldots,i_k}\cdot  B_{j_1,\ldots,j_{k'}}.
-$$
-and pointwise function application is as expected.
-
-
-To compare $\MLP$ with $\TL$ we are interested in $\TL$ expression  that take matrices as input and return matrices.
-
-Is $\MLP$  subsumed by $\TL$? We can do more with vector variables than just summing up in $\MLP$. The contracted product
-can be seen as $\sum_{\V}$ but can only sum.
-
-We can add sum iteration to $\TL$ as well. Then, $\MLP$ is subsumed by $\TL$,
-
-However, if we add a commonly use matricize operations (which turns a $k$-way array into a $2$-way array), the subsumption
-is strict since we can return matrices of larger dimensions (e.g., adjacency of triangles, where rows are indexed by $v$ and columns
-by $(u,w)$.
-
-
-
-
-
+\begin{todo}
+Can we define Tensorlang to do this? and if so, how does this compare with $\MLP?$
+\end{todo}
+%This, and the common use of tensors in practice, motivates us to consider another kind of extension of $\ML$, which we dub $\TL$. In the following we treat tensors just as multidimensional arrays.
+%As starting point, we simply generalize the operations in $\ML$ to tensors.
+%
+%The syntax of $\TL$ is defined by the following grammar:
+%%   Every sentence is an expression itself.
+%\begin{align*}
+%	E&:=\T && \text{(tensor variable)} \\
+%       &\mid\quad E^\sigma &&\text{(tensor transpose)}\\
+%        &\mid\quad \one(E) &&\text{(one vector)}\\
+%        &\mid\quad \diag(E) &&\text{tensor diagonalisation)}\\
+%    &\mid\quad E_1 \cdot_p E_2 && \text{(contracted product)} \\
+%        &\mid\quad E_1 \otimes E_2 && \text{(tensor product)} \\
+%	      &\mid\quad \Apply[f](E_1, \ldots, E_k) && \text{(pointwise function
+%    application, $f \in \Omega$)}
+%\end{align*}
+%where for tensor transposition $\sigma$ is a permutation of $(1,\ldots,n)$ for some appropriate $n$.
+%
+%Here, for an $k$-way array $A$ of dimension $[n_1,\ldots,n_k]$ and permutation $\sigma$ of $(1,\ldots,k)$,
+%$(A^\sigma)_{i_1,\ldots,i_k}=A_{\sigma(i_1),\ldots,\sigma(i_k)}$. $\one(A)_{i}=1$ for $i=1,\ldots,n_1$.
+%$\diag(A)_{i,j,\ldots,i_k}=A_{j,\ldots,i_k}$ for $i=j$, and $\diag(A)_{i,j,\ldots,i_k}=0$ when $i\neq j$.
+%If $B$ an $k'$-way array of dimension $[m_1,\ldots,m_{k'}]$, then when $n_p=m_p$,
+%$$
+%(A\cdot_p B)_{i_1,\ldots,i_{p-1},i_{p+1},\ldots,i_k,j_1,\ldots,j_{p-1},j_{p+1},\ldots,j_{k'}}=\sum_{p=1}^{n_p} A_{i_1,\ldots,i_{p-1},p,i_{p+1},\ldots,i_k}\cdot  B_{j_1,\ldots,j_{p-1},p,j_{p+1},\ldots,j_{k'}}.
+%$$
+%Also,
+%$$
+%(A\otimes B)_{i_1,\ldots,i_k,j_1,\ldots,j_{k'}}=A_{i_1,\ldots,i_k}\cdot  B_{j_1,\ldots,j_{k'}}.
+%$$
+%and pointwise function application is as expected.
+%
+%
+%To compare $\MLP$ with $\TL$ we are interested in $\TL$ expression  that take matrices as input and return matrices.
+%
+%Is $\MLP$  subsumed by $\TL$? We can do more with vector variables than just summing up in $\MLP$. The contracted product
+%can be seen as $\sum_{\V}$ but can only sum.
+%
+%We can add sum iteration to $\TL$ as well. Then, $\MLP$ is subsumed by $\TL$,
+%
+%However, if we add a commonly use matricize operations (which turns a $k$-way array into a $2$-way array), the subsumption
+%is strict since we can return matrices of larger dimensions (e.g., adjacency of triangles, where rows are indexed by $v$ and columns
+%by $(u,w)$.
+%
+%
+%
+%
+%
 
 
 
