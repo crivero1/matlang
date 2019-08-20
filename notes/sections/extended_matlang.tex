@@ -48,11 +48,11 @@ A schema $\cS$ is a set of matrix names $M_1,\ldots, M_p$ and a set of vector na
 An instance $\cM$ is a function that maps matrix names to concrete matrices (of dimention $n\times n$) and vector names to concrete colun vectors (of dimention $n\times 1$). 
 In addition, we define $dim(\cM)=n$ and $can(\cM)$ as the set of canonical vectors of dimention $n$, indexed as $can(\cM)[1], \ldots,can(\cM)[n]$.
 
-Let $\cM$ be an intance and $n=dim(\cM)$. Let $V$ be a set of vector variables (matrix variables, respectively). A valuation $\nu$ on instance $\cM$ is a function from $X$ to column vectors of dimention $n\times 1$ (matrices of dimention $n\times n$, respectively). 
+Let $\cM$ be an intance and $n=dim(\cM)$. Let $V$ be a set of vector variables (matrix variables, respectively). A valuation $\nu$ on instance $\cM$ is a function from $V$ to column vectors of dimention $n\times 1$ (matrices of dimention $n\times n$, respectively). 
 
 Let $\cS$ be an schema, $\cM$ an instance, $F$ a set of functions $f:\mathbb{R}^{k}\rightarrow\mathbb{R}$ (with $1\leq k$) and $V$ a set of vector variables. An \textit{extended} MATLANG expression $E$ is given by
 $$
-E:= \ |\  x\in V \ |\  M\in S \ |\  v\in S \ |\  E^* \ |\ E_1+E_2 \ |\  E_1\cdot E_2 \ |\  f(E_1,\ldots, E_k), f\in F \ |\  \ssum x. E \ |\  \sprod x. E \ |\ 
+E:= x\in V \ |\  M\in S \ |\  v\in S \ |\  E^* \ |\ E_1+E_2 \ |\  E_1\cdot E_2 \ |\  f(E_1,\ldots, E_k), f\in F \ |\  \ssum x. E \ |\  \sprod x. E
 $$
 
 Let $n=dim(\cM)$. We define $\text{type}(E)=(i,j)$ where $(i,j)\in \lbrace 1, n\rbrace$. The well typeness is defined recursively as follows.
