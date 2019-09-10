@@ -43,7 +43,7 @@ Now, let's turn our attention on the expressions $$E(v)=v^* Av.$$ The value of $
 \subsection{Syntax and semantics of  extMATLANG}
 
 A vocabulary $\cS$ is a set of matrix names $\cM=M_1,\ldots, M_p$ and a set of vector names $X=x_1,\ldots, x_l$.
-An instance $\cI$ is a function that maps matrix names to concrete matrices of a determined dimension $(m,n)$ and vector names to a determined dimension $(n\times 1)$. 
+An instance $\cI$ is a function that maps matrix names to concrete matrices of a determined dimension $(m,n)$ and vector names to a determined dimension $(n, 1)$. 
 We also assume the presence of $F$, a set of functions $f:\mathbb{R}^{k}\rightarrow\mathbb{R}$ (with $1\leq k$).
 
 Let $\cS=(\cM, X)$ be a vocabulary, a formula in the vocabulary $\cS$ is of the form:
@@ -54,7 +54,7 @@ $$
 Now, given a vocabulary $\cS$, an instance $\cI$ and a set of functions $F$, we define the well typedness of a formula of $\cS$ according to $\cI$ as follows. 
 
 \begin{align*}
-\text{type}(x) &= (n,1) \text{ if } \cI(M) = (n, 1) \\
+\text{type}(x) &= (n,1) \text{ if } \cI(x) = (n, 1) \\
 \text{type}(M) &= (n,m) \text{ if } \cI(M) \text{ is a } n\times m \text{ matrix } \\
 \text{type}(E^*)&=(j,i) \text{ where } (i,j)=\text{type}(E) \\
 \text{type}(E_1 + E_2) &= \text{type}(E_1) \text{ if } \text{type}(E_1)=\text{type}(E_2) \\
