@@ -38,65 +38,48 @@ Note that $I=\text{diag}(\mathbf{1}(A))$ and the sum of matrices can be implemen
 
 All the expressions so far are valid if they are composed of matrices that are on the instance $I$ (see section 1). Once you have an expression $E$ that is well defined on the given instance, it doesn't change its value unless the current instance is modified. We call this a \textit{constant} expression.
 
-Now, let's turn our attention on the expressions $$E(v)=v^* Av.$$ The value of $E$ depends entirely on $v$, we call this a \textit{variable expression}. This type of expressions have \textit{free} variables ($v$ in this case) and it doesn't mean anything in MATLANG unless the \textit{free} variables are mapped into an actual matrix of the current instance, we denote this $E(v)(I[v\rightarrow B])$, assuming that $B$ is on the domain of the given instance. This mapping will be accomplished trough operators that are introduced in the next section. These operators define how the variable expression $E$ is used and how it's instantiated.
-A formal example, let $\lbrace v_i\rbrace_i$ be the canonical vectors. An operator could receive a variable expression $E(v)$ and give the output $E(v_k)=B$, if and only if $[E(v)](I[v\rightarrow v_k])=B$.
-We now proceed to define the semantics of this formulas.
+Now, let's turn our attention on the expressions $$E(v)=v^* Av.$$ The value of $E$ depends entirely on $v$, we call this a \textit{variable expression}. This type of expressions have \textit{free} variables ($v$ in this case) and it doesn't mean anything in MATLANG unless the \textit{free} variables are mapped into an actual matrix bye means of the $\ssum,\sprod$ operators.
 
 \subsection{Syntax and semantics of  extMATLANG}
 
-A schema $\cS$ is a set of matrix names $M_1,\ldots, M_p$ and a set of vector names $v_1,\ldots, v_l$.
-An instance $\cM$ is a function that maps matrix names to concrete matrices (of dimention $n\times n$) and vector names to concrete colun vectors (of dimention $n\times 1$). 
-In addition, we define $dim(\cM)=n$ and $can(\cM)$ as the set of canonical vectors of dimention $n$, indexed as $can(\cM)[1], \ldots,can(\cM)[n]$.
+A vocabulary $\cS$ is a set of matrix names $\cM=M_1,\ldots, M_p$ and a set of vector names $X=x_1,\ldots, x_l$.
+An instance $\cI$ is a function that maps matrix names to concrete matrices of a determined dimension $(m,n)$ and vector names to a determined dimension $(n\times 1)$. 
+We also assume the presence of $F$, a set of functions $f:\mathbb{R}^{k}\rightarrow\mathbb{R}$ (with $1\leq k$).
 
-Let $\cM$ be an intance and $n=dim(\cM)$. Let $V$ be a set of vector variables (matrix variables, respectively). A valuation $\nu$ on instance $\cM$ is a function from $V$ to column vectors of dimention $n\times 1$ (matrices of dimention $n\times n$, respectively). 
-
-Let $\cS$ be an schema, $\cM$ an instance, $F$ a set of functions $f:\mathbb{R}^{k}\rightarrow\mathbb{R}$ (with $1\leq k$) and $V$ a set of vector variables. An \textit{extended} MATLANG expression $E$ is given by
+Let $\cS=(\cM, X)$ be a vocabulary, a formula in the vocabulary $\cS$ is of the form:
 $$
-E:= x\in V \ |\  M\in S \ |\  v\in S \ |\  E^* \ |\ E_1+E_2 \ |\  E_1\cdot E_2 \ |\  f(E_1,\ldots, E_k), f\in F \ |\  \ssum x. E \ |\  \sprod x. E
+E:= x\in X \ |\ M\in \cM \ |\  E^* \ |\ E_1+E_2 \ |\  E_1\cdot E_2 \ |\  f(E_1,\ldots, E_k), f\in F \ |\  \ssum x. E \ |\  \sprod x. E
 $$
 
-Let $n=dim(\cM)$. We define $\text{type}(E)=(i,j)$ where $(i,j)\in \lbrace 1, n\rbrace$. The well typeness is defined recursively as follows.
+Now, given a vocabulary $\cS$, an instance $\cI$ and a set of functions $F$, we define the well typedness of a formula of $\cS$ according to $\cI$ as follows. 
 
 \begin{align*}
-\text{type}(x) &= (n,1) \\
-\text{type}(M) &= (n,n) \\
-\text{type}(v) &= (n,1) \\
+\text{type}(x) &= (n,1) \text{ if } \cI(M) = (n, 1) \\
+\text{type}(M) &= (n,m) \text{ if } \cI(M) \text{ is a } n\times m \text{ matrix } \\
 \text{type}(E^*)&=(j,i) \text{ where } (i,j)=\text{type}(E) \\
-\text{type}(E_1 + E_2) &= \begin{cases}
-               \text{type}(E_1) \text{ if } \text{type}(E_1)=\text{type}(E_1) \\
-               \text{undefined} \text{ otherwise }
-            \end{cases} \\
-\text{type}(E_1\cdot E_2)&=\begin{cases}
-               (i,k) \text{ if } \text{type}(E_1)=(i,j)\text{ and type}(E_2)=(j,k) \\
-               \text{undefined} \text{ otherwise }
-            \end{cases} \\
-\text{type}(f(E_1,\ldots, E_k))&=\begin{cases}
-               (1,1) \text{ if } \text{type}(E_1)=\cdots =\text{type}(E_k)=(1,1) \\
-               \text{undefined} \text{ otherwise }
-            \end{cases} \\
+\text{type}(E_1 + E_2) &= \text{type}(E_1) \text{ if } \text{type}(E_1)=\text{type}(E_2) \\
+\text{type}(E_1\cdot E_2)&= (i,k) \text{ if } \text{type}(E_1)=(i,j)\text{ and type}(E_2)=(j,k) \\
+\text{type}(f(E_1,\ldots, E_k))&=(1,1) \text{ if } \text{type}(E_1)=\cdots =\text{type}(E_k)=(1,1) \\
 \text{type}\left(\ssum x.E\right) &= \text{type}(E) \\
 \text{type}\left(\sprod x. E\right) &=
 \begin{cases}
                (1,1) \text{ if } \text{type}(E)=(1,1) \\
-               (n,n) \text{ if } \text{type}(E)=(n,n) \\
-               \text{undefined } \text{ otherwise }
+               (n,n) \text{ if } \text{type}(E)=(n,n)
             \end{cases}
 \end{align*}
-We say that $E$ is well typed if it has a defined type. Here, type(undefined)$=$ undefined.
 
-
-Given $\cM, \nu, V$ and a well typed expression $E$, we define the semantics for the values $\left[ E\right](\cM,\nu)$ inductivelly as follows.
+We say that $E$ is well typed if it has a defined type. Now we will proceed with the semantics of these formulas.
+First, we define $\text{type}(x)_1$ as the first coordinate of the type of $x$ and $\cI[x:= e^n_i]$ as the instance $\cI$ except that $x$ is mapped to the $i-$th canonical vector of size $n$.
+Now, given $\cS, \cI, F$ and a well typed expression $E$, we define the semantics for the values $\sem{E}(\cS,\cI)$ inductively as follows.
 
 \begin{align*}
-\sem{x}(\cM,\nu)&=\nu (x)\\
-\sem{M}(\cM,\nu)&=\cM (M) \\
-\sem{v}(\cM,\nu)&=\cM (v) \\
-\sem{E^*}(\cM,\nu)&=\sem{E}(\cM,\nu)^* \\
-\sem{E_1+E_2}(\cM,\nu)&= \sem{E_1}(\cM,\nu)+\sem{E_2}(\cM,\nu)\\
-\sem{E_1\cdot E_2}(\cM,\nu)&= \sem{E_1}(\cM,\nu)\times \sem{E_2}(\cM,\nu)\\
-\sem{f(E_1,\ldots ,E_k)}(\cM,\nu) &= f\left(\sem{E_1}(\cM,\nu),\ldots , \sem{E_k}(\cM,\nu)\right)\\
-\sem{\ssum x.E}(\cM,\nu)&= \sum_{i=1}^{dim(\cM)}\sem{E}(\cM,\nu[x\rightarrow can(\cM)[i]])\\
-\sem{\sprod x. E}(\cM,\nu)&= \prod_{i=1}^{dim(\cM)}\sem{E}(\cM,\nu[x\rightarrow can(\cM)[i]])
+\sem{M}(\cS,\cI)&=\cI (M) \\
+\sem{E^*}(\cS,\cI)&=\sem{E}(\cS,\cI)^* \\
+\sem{E_1+E_2}(\cS,\cI)&= \sem{E_1}(\cS,\cI)+\sem{E_2}(\cS,\cI)\\
+\sem{E_1\cdot E_2}(\cS,\cI)&= \sem{E_1}(\cS,\cI)\times \sem{E_2}(\cS,\cI)\\
+\sem{f(E_1,\ldots ,E_k)}(\cS,\cI) &= f\left(\sem{E_1}(\cS,\cI),\ldots , \sem{E_k}(\cS,\cI)\right)\\
+\sem{\ssum x.E}(\cS,\cI)&= \sum_{i=1}^{n}\sem{E}(\cS,\cI[x:= e^n_i]),\text{ where }n=\text{type}(x)_1\\
+\sem{\sprod x. E}(\cS,\cI)&= \prod_{i=1}^{n}\sem{E}(\cS,\cI[x:= e^n_i]),\text{ where }n=\text{type}(x)_1
 \end{align*}
 
 Here, $+$ is matrix sum, $\times$ is matrix multiplication and 
@@ -108,17 +91,19 @@ Depending on context, we sometimes denote explicitly that an expression $E$ depe
 
 First, note that the definition of these operators is not ambiguous in taking column vectors instead of row vectors or doing the aggregate matrix multiplication by right, because row vectors are the canonical vectors as well, and transposing gives us one from the other. On the other hand, if you want the result of the aggregate multiplication to be computed in the inverse order, note that, since $(AB)^*=B^*A^*$ we have $$\sprod^{\text{left}} x.E(x)=\left(\sprod x.E(x)^*\right)^*.$$
 
+On the other hand, expressions that depend on a variable $x$ can be well typed according to the typing rules, but we cannot infer a value (semantic) unless $x$ is instantiated by $\ssum$ or $\sprod$.
+
 \subsection{Simulating MATLANG}
 
 We will now show that we can simulate MATLANG operators in our extMATLANG language.
 
-\subsubsection{Identity}
-
-We can express the identity of dimention $dim(I)$ as $$\ssum x. x\cdot x^*.$$
-
 \subsubsection{Ones vector and diag()}
 
-Note that $$\text{ones}(v)=\ssum x. x$$ And $$\text{diag}(v)=\ssum x. (x^*v)\cdot xx^*$$
+Note that $$\text{ones}(M)=\ssum x_1. f_1(\ssum x_2. x_1^*Mx_2)\cdot x_1.$$ And $$\text{diag}(v)=\ssum x. (x^*v)\cdot xx^*$$
+
+\subsubsection{Identity}
+
+Given a $n\times m$ matrix, we can compute the $n\times n$ identity as $$\ssum x. f_1\left(x^*MM^*x\right)\cdot x \cdot x^* = \text{ones}(M)\cdot\text{ones}(M)^*$$ and the $m\times m$ identity as $$\ssum x. f_1\left(x^*M^*Mx\right)\cdot x \cdot x^*= \text{ones}(M^*)\cdot\text{ones}(M^*)^*$$
 
 \subsubsection{Matrix pointwise function application (apply[f])}
 
