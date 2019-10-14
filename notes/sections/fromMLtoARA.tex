@@ -1,0 +1,80 @@
+\newcommand{\row}{\mathsf{row}}
+\newcommand{\rows}{\mathsf{rows}}
+\newcommand{\col}{\mathsf{col}}
+\newcommand{\cols}{\mathsf{cols}}
+
+\section{From MATLANG++ ARA}
+
+There exists a vocabulary $\cS$ that consists of a set of matrix names $\cM=M_1,\ldots, M_p$ and a set of vector names $V=v_1,\ldots, v_d$. An instance $\cI$ is a function that maps matrix names to concrete matrices of a determined dimension $(m,n)$ and vector names to a determined dimension $(n, 1)$.
+
+Given this setting, the translation to ARA is the following. We have relation names $ \cR=\lbrace R_{M_1}, \ldots, R_{M_p}, R_{v_1}, \ldots, R_{v_d}\rbrace$ where 
+
+\[
+	\attr{R_{M_t}} = \begin{cases}
+		\lbrace\row_n,\col_m \rbrace \text{ if } M_t \text{ is } n\times m \\
+		\lbrace\row_n \rbrace \text{ if } M_t \text{ is } n\times 1 \\
+		\lbrace\col_m \rbrace \text{ if } M_t \text{ is } 1\times m \\
+		\lbrace\rbrace \text{ if } M_t \text{ is } 1\times 1 \\
+	\end{cases} \text{ for } R_{M_t}\in\cR.
+\]
+$$\attr{R_{v_l}} = \lbrace\row_n,\col_n \rbrace \text{ if } v_l \text{ is } n\times 1, \text{ for } R_{v_t}\in\cR.$$
+
+The domain assignment $D$ is as follows:
+\begin{align*}
+	D(\row_n)&=[1, n]\text{ for } n\in\rows\left( \cI(M_t): t=1,\ldots, p\right)\cup\rows\left( \cI(v_l): l=1,\ldots, d\right) \\
+	D(\col_m)&=[1, m]\text{ for } m\in\cols\left( \cI(M_t): t=1,\ldots, p\right)\cup\rows\left( \cI(v_l): l=1,\ldots, d\right) \\
+	D(\row_1) &=\lbrace 1\rbrace \\
+	D(\col_1) &=\lbrace 1\rbrace
+\end{align*}
+
+The ARA instance is $\cI_{ARA}=\lbrace r_1,\ldots,r_p,r_{v_1},\ldots, r_{v_d}\rbrace$, where:
+\begin{align*}
+r_t&: \Tup_D(\row_n,\col_m)\rightarrow K \text{ if }  M_t \text{ is } n\times m, \text{ such that } r_t(i,j)=(M_t)_{ij} \\
+r_t&: \Tup_D(\row_n)\rightarrow K \text{ if }  M_t \text{ is } n\times 1, \text{ such that } r_t(i)=(M_t)_{i} \\
+r_t&: \Tup_D(\col_m)\rightarrow K \text{ if }  M_t \text{ is } 1\times m, \text{ such that } r_t(j)=(M_t)_{j} \\
+r_t&: \emptyset\rightarrow K \text{ if }  M_t \text{ is } 1\times 1, \text{ such that } r_t=(M_t)_{11} \\
+r_{v_l}&: \Tup_D(\row_n,\col_n)\rightarrow K \text{ if }  v_l \text{ is } n\times 1, \text{ such that } r_t(i,j)=1 \text{ if } i=j \text{ and } 0 \text{ otherwise.}
+\end{align*}
+
+The next claim use this construction to simulate a MATLANG+ expression.
+
+\begin{prop}
+
+Let $e(v_1,\ldots, v_k)$ be a well typed MATLANG+ expression over a vocabulary $\cS=(\cM,V)$ instantiated by $\cI$. The following holds over relation names $\cR$, domain assignment $D$ and and instance $\cI_{ARA}$.
+\begin{itemize}
+	\item If $e(v_1,\ldots, v_k)$ is $n\times m$ there exists an ARA expression $E(\row_n, \col_m, A_1,\ldots, A_k)$ such that: $$(b_i^n)^T\cdot e(v_1,\ldots,v_k)\left(\cI\left[ v_l\rightarrow b_{i_l}^{n_l}\right]\right)\cdot b_j^m=E(i,j,i_1,\ldots, i_k).$$
+	\item If $e(v_1,\ldots, v_k)$ is $n\times 1$ there exists an ARA expression $E(\row_n, A_1,\ldots, A_k)$ such that: $$(b_i^n)^T\cdot e(v_1,\ldots,v_k)\left(\cI\left[ v_l\rightarrow b_{i_l}^{n_l}\right]\right)=E(i,i_1,\ldots, i_k).$$
+	\item If $e(v_1,\ldots, v_k)$ is $1\times m$ there exists an ARA expression $E(\col_m, A_1,\ldots, A_k)$ such that: $$e(v_1,\ldots,v_k)\left(\cI\left[ v_l\rightarrow b_{i_l}^{n_l}\right]\right)\cdot b_j^m=E(j,i_1,\ldots, i_k).$$
+	\item If $e(v_1,\ldots, v_k)$ is $1\times 1$ there exists an ARA expression $E(A_1,\ldots, A_k)$ such that: $$e(v_1,\ldots,v_k)\left(\cI\left[ v_l\rightarrow b_{i_l}^{n_l}\right]\right)=E(i_1,\ldots, i_k).$$
+\end{itemize}
+
+\end{prop}
+\begin{proof}
+
+We prove this by induction over MATLANG+ expressions.
+\begin{itemize}
+	\item If $e=M$ then $E=E(\row_n,\col_m)$ is 
+		\begin{align*}
+			R_{M}&=R_{M}(\row_n,\col_m) \text{ if } M \text{ is } n\times m \\
+			R_{M}&=R_{M}(\row_n) \text{ if } M \text{ is } n\times 1 \\
+			R_{M}&=R_{M}(\col_m) \text{ if } M \text{ is } 1\times m \\
+			R_{M}&=R_{M} \text{ if } M \text{ is } n\times m 
+		\end{align*}
+	\item If $e=v$ then $E=E(\row_n,A=\col_n)=R_{v}$ where $v$ is $n\times 1$.
+	\item If $e=e'(v_1,\ldots,v_k)^T$ and $E'$ the ARA expression corresponding to $e'$. Let $\rho:\row_n\rightarrow\col_n,\col_m\rightarrow\row_m.$ We have:
+		\begin{itemize}
+			\item if $e'$ is $n\times m$, $n\times 1$ or $1\times m$ then $E=\rho\left( E'\right).$
+			\item if $e'$ is $1\times 1$ then $E=E'$.
+		\end{itemize}
+	\item If $e=e_1(v_1,\ldots,v_k)+e_2(u_1,\ldots,u_s)$ then $E=E_1\cup E_2$.
+	\item If $e=e_1(v_1,\ldots,v_k)\cdot e_2(u_1,\ldots,u_s)$ where $e_1$ is $n\times\gamma$, $e_2$ is $\gamma\times m$. Let $\rho:\row_\gamma\rightarrow C,\col_\gamma\rightarrow C.$ We have two cases:
+		\begin{itemize}
+			\item If $\gamma\neq 1$ then $E=\widehat{\pi}_C\left( \rho\left(E_1\right)\bowtie\rho\left( E_2\right)\right).$
+			\item If $\gamma = 1$ then $E=E_1\bowtie E_2$.
+		\end{itemize}
+	\item If $e=f(e_1,\ldots,e_s)$ we have that $E=E_1\cup\cdots\cup E_s$ if $f$ is sum and $E=E_1\bowtie\cdots\bowtie E_s$ if $f$ is multiplication.
+	\item If $e=\ssum v.e'(v,v_1,\ldots, v_k)$ and let $E'$ be the corresponding ARA expression of $e'$. Note that $E'$ is $E'(\row_n, \col_m,A,A_1,\ldots,A_k), E'(\row_n,A,A_1,\ldots,A_k), E'(\col_m,A,A_1,\ldots,A_k)$ or $E'(A,A_1,\ldots,A_k)$ depending on the dimensions of $e'$. Then we have that $E=\widehat{\pi}_A(E').$ Note that this implies that if $e=\ssum v_1\ssum v_2\cdots\ssum v_k.e'(v_1,\ldots,v_k)$ then $E=\widehat{\pi}_{A_1}\widehat{\pi}_{A_2}\cdots\widehat{\pi}_{A_k}E'.$
+\end{itemize}
+
+\end{proof}
+
