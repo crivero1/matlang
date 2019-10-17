@@ -5,9 +5,10 @@
 \newcommand{\Matr}{\mathsf{Mat}}
 \newtheorem{lemma}{Lemma}
 \newtheorem{prop}{Proposition}
+
 \section{From ARA to MATLANG++}
-We are given a relational schema $\cR$ consisting of relation names $R_1,\ldots,R_k$ of arity at most two. We denote by $\attr{R_i}$ the set of attributes in $R_i$.
-For each attribute $A\in\attr{R_i}$, for $R_i\in\cR$, we assume that its domain $D(A)$ consists of $[1,n_A]$ for some natural number $n_A$. A tuple $t$ over a set $X$ of attributes is regarded as a function
+We are given a relational schema $\cR$ consisting of relation names $R_1,\ldots,R_k$ of arity at most two. We denote by $\attr{R_i}$ the set of attributes in $R_i$, for $R_i\in \cR$.
+For each attribute $A\in\attr{R_i}$ and $R_i\in\cR$, we assume that its domain $D(A)$ consists of $[1,n_A]$ for some natural number $n_A$. The function $D$ from attributes to intervals is referred to as a domain assignment. A tuple $t$ over a set $X$ of attributes is regarded as a function
 $t:X\to \times_{A\in X} D(A)$. Let $\Tup_X(D)$ denote the set of all such tuples over $X$. A relation $r$ over $X$ with respect to $D$ is a function
 $$
 \Tup_{X}(D)\to K
@@ -15,36 +16,40 @@ $$
 for some semiring $K$. A (database) instance $\cI$ over schema $\cR$ with respect to $D$ is now simply a function assigning to every $R_i$ in $\cR$, a relation $I(R_i):\Tup_{D}(\attr{R_i})\to K$.
 The ARA language works over this relational schema and instances.
 
-We next tie these relational notions to matrix notions so that we can make the bridge from ARA to MATLANG++. 
-
-First, given a relational schema $\cR$ and domain assignment $D$ of the attributes (recall all attributes $A$ are assumed to have $[1,n_A]$ as domain), we associate a matrix schema $\Theta(\cR)$ in which
-each $R_i(A,B)\in \cR$ is mapped to a matrix name $M_i$ of size $n_A\times n_B$, $R_i(A)\in \cR$ is mapped to a matrix name $M_i$ of size $n_A\times 1$ and $R()\in\cR$ to a matrix name $M_i$ of size $1\times 1$. Then, given an instance $\cI=(r_1,\ldots,r_k)$ of $\cR$, we define the corresponding matrix instance
-$\Matr_D(\cI)$ as the collection of matrices $\Matr_D(r)$, for relations $r$ of $R$, defined by
+We next tie these relational notions to matrix notions so that we can make the bridge from ARA to MATLANG++. First, given a relational schema $\cR$ and domain assignment $D$ of the attributes (recall all attributes $A$ are assumed to have $[1,n_A]$ as domain), we associate a matrix schema $\Theta(\cR)$ in which
+\begin{itemize}
+\item each binary relation $R_i(A,B)\in \cR$ is mapped to a matrix name $M_i$ of size $n_A\times n_B$;
+\item each unary relation $R_i(A)\in \cR$ is mapped to a matrix name $M_i$ of size $n_A\times 1$; and
+\item each nullary relation $R()\in\cR$ is mapped  to a matrix name $M_i$ of size $1\times 1$. 
+\end{itemize}
+Then, given an instance $\cI=(r_1,\ldots,r_k)$ of $\cR$ with respect to $D$, we define the corresponding matrix instance
+$\Matr_D(\cI)$ as the collection of matrices $\Matr_D(r)$, for relations $r$ of $R\in\cR$, defined by
 $$
-(\Matr_D(r))_{ij}=r(t),
+(\Matr_D(r))_{ij}:=r(t),
 $$
 where $t[A]=i$ and $t[B]=j$ if $R(A,B)$ is of arity two, $t[A]=i$ and $j=1$ if $R(A)$ is of arity one,
-and $i=1=j$ when $R$ is of arity zero. The matrices $\Matr_D(r)$ are of dimension $\Theta(R)$.
+and $i=1=j$ when $R$ is of arity zero. We note that the matrices $\Matr_D(r)$ are of dimension specified by the matrix schema $\Theta(R)$.
 
 
 When converting ARA expressions to MATLANG++ expressions we expand the matrix schema with vector variables.  We write $\Theta_V(\cR)$ for the matrix schema $\Theta(\cR)$ extended with vector variables $v\in V$, for some set $V$ of vector variables, and such that $\Theta_V(\cR)$ assigns dimensions $n_v\times 1$ to these vectors. When given an instance $\cI$ of $\cR$, 
 we denote by  $\Matr_{D,V}(\cI)$ the matrix instance $\Matr_D(\cI)$ over $\Theta_V(\cR)$
- expanded with arbitrary $\Theta_V(v)$ vectors, denoted by $\Matr_{D}(v)$, for each $v\in V$.
+ expanded with \textit{arbitrary} vectors of dimension $\Theta_V(v)$, denoted by $\Matr_{D}(v)$, for each $v\in V$.
 
-In the following, when $e$ is an ARA expression such that $\cR(e)=(A_1,\ldots,A_k)$, we write it as $e(A_1,\ldots,A_k)$. We always assume that the attributes in $e$ are listed according to some order $<$. Furthermore, for each attribute $A$, we designate a special vector variable $v_A$ of dimension $n_A\times 1$.
+In the the definition of ARA, one starts from the (input) relational schema $\cR$ and when given an ARA
+expression $e$, $\cR(e)=(A_1,\ldots,A_k)$ denotes the output schema of $A$ (i.e., a list of attributes).
+We write  $e(A_1,\ldots,A_k)$ to make this output schema explicit. We always \textit{assume that the attributes in $e$ are listed according to some fixed order $<$}. Furthermore, for each attribute $A$, we designate a special vector variable $v_A$ of dimension $n_A\times 1$, when $D(A)=[1,n_A]$. When given a matrix instance $\cM$ we denote by $\cM[v\gets a]$ the instance obtained from $\cM$ by replacing the instance of $v$ by the vector $a$. 
 
-
-
-Our claim is the following:
-\begin{lemma}
-For each ARA$(k)$ expression $e(A_1,\ldots,A_k)$ over relation schema $\cR$ of arity at most two, there exists a MATLANG++ expression $\Phi(e)[V]$ over  matrix schema $\Theta_V(\cR)$ with $\{v_{A_1},\ldots,v_{A_k}\}\subseteq V$, such that for elements $i_j\in [1,n_{A_j}]$,
+\begin{lemma}\label{lem:ARA2ML}
+For each ARA expression $e(A_1,\ldots,A_k)$ over relation schema $\cR$ of arity at most two, there exists a MATLANG++ expression $\Phi(e)[V]$ over  matrix schema $\Theta_V(\cR)$ with $\{v_{A_1},\ldots,v_{A_k}\}\subseteq V$, such that for all instances $\cI$ of $\cR$ with respect to $D$, and all elements
+elements $i_j\in D(A_j)=[1,n_{A_j}]$: 
 $$
-e(\cI)(i_1,\ldots,i_k)=\Phi(e)[V](\Matr_{D,V}(\cI)[v_{A_1}\gets b_{i_1}^{n_1},\ldots,v_k\gets b_{i_k}^{n_k}]),
+e(\cI)(i_1,\ldots,i_k)=\Phi(e)[V](\Matr_{D,V}(\cI)[v_{A_1}\gets b_{i_1}^{n_{A_1}},\ldots,v_k\gets b_{i_k}^{n_{A_k}}]),
 $$
-where $b_j^{n_i}$ denotes the $j$the basis vector of dimension $n_i$.
+where $b_j^{n}$ denotes the $j$the basis vector of dimension $n$.
 \end{lemma}
+
 \begin{proof}
-We show this by induction on the structure of ARA$(k)$ expressions.
+The proof is  by induction on the structure of ARA expressions.
 \begin{itemize}
 \item If $e=R_i(A,B)$, then $\Phi(e)[v_A,v_B]:=v_A^t\cdot M_i\cdot v_B$; if $e=R_i(A)$, then $\Phi(e)[v_A]:=v_A^t\cdot M_i$; and if 
 $e=R_i()$, then $\Phi(e):=M_i$.
@@ -54,15 +59,15 @@ $\Phi(e)[V]:=\Phi(e_1)[V_1]+\Phi(e_2)[V_2]$ with $V=V_1=V_2=(v_{A_1},\ldots,v_{A
 $$
 \Phi(e)[Y]:=\sum_{v\in V'\setminus Y} \Phi(e')[V'].
 $$
-Indeed, assume that $Y=(A_1,\ldots,A_j)$ for $j<k$. Then,
+For example,  assume that $Y=(A_1,\ldots,A_j)$ for $j<k$. Then,
 $(\pi_Y(e'))(\cI)(i_1,\ldots,i_j)$ is the sum of  $e'(\cI)(i_1,\ldots,i_j,\ldots,i_k)$
 for all possible $i_{j+1},\ldots, i_k$. This precisely what $\sum_{v\in V'\setminus Y} \Phi(e')[V']$ computes.
 
 \item if $e=\sigma_{A_p=A_q}(e')$ for $A_p,A_q\in\cR(e')$, then 
 $
-\Phi(e)[V]:=\Phi(e')[V']\cdot v_{A_p}^t\cdot v_{A_q}^t
+\Phi(e)[V]:=\Phi(e')[V']\cdot v_{A_p}^t\cdot v_{A_q}
 $,
-with $V=V'$. We observe that $v_{A_p}^t\cdot v_{A_q}^t$ is well-defined since both $v_{A_p}$ and $v_{A_q}$ are assigned dimension $n_{A_p}\times 1=n_{A_q}\times 1$ by $\Theta_V(\cR)$. (Recall that ARA only allows attribute comparisons when the attributes are compatible and thus range over the same indexes.)
+with $V=V'$. We observe that $v_{A_p}^t\cdot v_{A_q}$ is well-defined since both $v_{A_p}$ and $v_{A_q}$ are assigned dimension $n_{A_p}\times 1=n_{A_q}\times 1$ by $\Theta_V(\cR)$. (Recall that ARA only allows attribute comparisons when the attributes are compatible and thus range over the same indexes. I found renaming quite tricky.)
 Hence, since  
 $$
 e(\cI)(i_1,\ldots,i_k)=\begin{cases}
@@ -76,7 +81,7 @@ $\Phi(e)[V]:=\Phi(e')[\rho_\varphi(V')]$, where $\rho_\varphi(V'):=\{v_{\varphi(
 if we consider $e'(A,B)=R(A,B)$ with $A<B$ and $\rho_{A\leftrightarrow B}(R(A,B))$
 then this results in $R(B,A)$. In matrix terms, $v_A^t\cdot M\cdot v_B$ becomes 
 $v_B^t\cdot M\cdot v_A$ but we want to remember that $A$ was the first index. So, for the correspondence between $e(A,B)=\rho_{A\leftrightarrow B}(R(A,B))$  and 
-$\Phi(e)=v_B^t\cdot M\cdot v_A$ it is important that when looking at $e(\cI)_{ij}$ that $i$ corresponds to $A$ and $j$ to $B$. 
+$\Phi(e)=v_B^t\cdot M\cdot v_A$ it is important that when looking at $e(\cI)_{ij}$ that $i$ corresponds to $A$ and $j$ to $B$. {\bf This may need to spelled out a bit more?}
 \item If $e=\mathbf{1}(e')$  then 
 $$
 \Phi(e)[V]:=\mathbf{1}(\Phi(e')[V'])
@@ -111,19 +116,12 @@ Finally, When $e$ is of arity $0$, then
 $e(\cI)=\Phi(e)[V](\Matr_{D,V}(\cI)$. So, $\Psi(e)=\Phi(e)$. 
 \end{proof}
 
-We can strengthen the previous result, as follows:
+
+
 \begin{prop}
 For each ARA$(k)$ expression $e$ over relation schema $\cR$ of arity at most two, and such that $\cR(e)$ is of arity at most two,  there exists a MATLANG++ expression $\Psi(e)[V]$ over  matrix schema $\Theta_V(\cR)$ for some $V$, such that $
 \Matr_{D}(e(\cI))=\Psi(e)(\Matr_{D,V}(\cI))$, 
 and furthermore, $V$ consist of $k$ distinct vector variables.
 \end{prop}
 \begin{proof}
-It suffices to observe that one can assume that at most $k$ distinct attributes are used in an ARA$(k)$ expression. The proof of the previous Lemma shows that $|V|$ is bounded by $k$. This can, I guess be shown by induction on the structure of ARA expressions?
-By the definition of ARA$(k)$ we can only join if the overall result has arity at most $k$.
-Furthermore, we can free up attributes that are projected away, hereby limiting the number of unique attributes used?
-\textbf{this needs to be checked!}
 \end{proof}
-
-{\bf If the translation of MATLANG++ into ARA also limits the number of vector variables used, we have a precise correspondence. In particular, MATLANG corresponds to ARA(3) and thus resided in MATLANG++ with 3 vector variables. That's why for 4-cliques we need four.}
-
-
