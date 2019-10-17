@@ -1,0 +1,50 @@
+% !TEX root =../main/main.tex
+
+\section{MATLANG and product iteration}
+We first extend ARA with (some kind of) transitive closure and denote the corresponding fragment by ARA+TC.
+More specifically, let $e$ be a ARA+TC expression of schema $\cR(e)$.
+Then,
+$$
+\mathsf{tc}_{X;Y}(e)
+$$
+is an ARA+TC expression of the same schema. Here, $X$ and $Y$ are sets of attributes in $\cR(e)$,
+all distinct, and such that $|X|=|Y|$. The semantics of $\mathbf{tc}_{X;Y}(e)$ 
+is defined in terms of the expressions
+\begin{align*}
+e^{(0)}&=e\\
+e^{(k)}&=\pi_{C}\bigl(\rho_{Y\mapsto C}(e)\bowtie \rho_{X\mapsto C}(e^{(i-1)})\bigr).
+\end{align*}
+(We note that, typically, when introducing TC, the second rule involves also the union with $e$, so 
+$e^{(k)}=e\cup \pi_{C}\bigl(\rho_{Y\mapsto C}(e)\bowtie \rho_{X\mapsto C}(e^{(k-1)})\bigr)$ is more
+commonly used. This ensures that TC grows in each step, for our product we do not have this, each
+additional multiplication may reduce the number of non-zero entries.)
+
+The semantics of $\mathbf{tc}_{X;Y}(e)$ is defined in a straightforward way.
+For an instance $r:\Tup_D(Z)\to K$ such that $X$ and $Y$ are subsets of $Z$, $\mathbf{tc}_{X;Y}(r)$ is defined as 
+$e^{(k)}(r)$, where $k$ is the smallest number such that $e^{(k)}(r)=e^{(k+1)}(r)$. Of course, restrictions on semirings need to be in place to 
+ensure convergence. This has been studied before, they are called $\omega$-continuous semirings. It does not really matter at this point
+and as we will see below, to get a translation of ML+$\sum$+$\Pi$ into an extension of ARA, we need a successor relation which can be used to limit the amount of iterations when computing $\mathbf{tc}_{X;Y}(e)$.
+
+Product iteration uses an implicit ordering on the canonical vectors. To accommodate for this ordering we further extend ARA (and also ARA+TC) with a binary successor relation, $\mathbf{succ}(A,B)$ where $A$ and $B$
+are compatible attributes whose domains have an order $<$, and unary operators $\mathbf{min}(A)$ and $\mathbf{max+}(A)$.
+ On the instance level, we treat $\mathbf{succ}(A,B)$ it as a built-in predicate
+which contains pairs $(x,y)$ for $x<y$ and such that no other $z$ lies between $x$ and $y$. Similarly, $\mathbf{min}(A)$ stores the minimum value of attribute $A$, and $\mathbf{max+}(A)$ the successor of the maximal value in attribute $A$. (I know that this asymmetry between min and max is ugly, it is a side effect of squeezing things in a tc-like form. We need to ensure that enough steps are made in the tc computation.)
+So, in the following we assume that we use these predicates just as relation in ARA (+TC). We denote the fragment by ARA+TC+succ.
+
+
+Let's see whether this suffices to simulate ML+$\sum$+$\Pi$ expressions. Take such an expression $e'(v_1,\ldots,v_k)$ and assume by induction that there exists an ARA+TC+succ expression $E'(\row_n,\col_m,\allowbreak A_1,\ldots,A_k)$ such that 
+$$(b_i^n)^T\cdot e'(v_1,\ldots,v_k)\left(\cI\left[ v_l\rightarrow b_{i_l}^{n_l}\right]\right)\cdot b_j^m=E'(i,j,i_1,\ldots, i_k).$$
+We know already how to deal with operations in ML+$\sum$. We next consider an expression $E=\prod_{v_k} E'$ )(the choice of $v_k$
+is arbitrary, it should work for any other vector variable, just a bit more messy perhaps from a notational point of view). We now consider
+expressions
+\begin{align*}
+E_1(\row_n,\col_n,A_1,\ldots,A_k,A_{k+1})&:=E'(\row_n,\col_n,A_1,\ldots,A_k)\bowtie \mathbf{succ}(A_k,A_{k+1})\\
+E_2(\row_n,\col_n,A_1,\ldots,A_k,A_{k+1})&=\mathbf{tc}_{\row_n,A_k;\col_n,A_{k+1}}(E_1)\\
+E(\row_n,\col_n,A_1,\ldots,A_{k-1})&=E_2(\row_n,\col_n,A_1,\ldots,A_{k-1},\textbf{min}(A_k),\textbf{max+}(A_{k+1}))
+\end{align*}
+We now claim that 
+$$(b_i^n)^T\cdot e(v_1,\ldots,v_{k-1})\left(\cI\left[ v_l\rightarrow b_{i_l}^{n_l}\right]\right)\cdot b_j^m=E(i,j,i_1,\ldots, i_{k-1}).$$
+
+{\bf This needs verification}.
+
+
