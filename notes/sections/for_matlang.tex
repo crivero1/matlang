@@ -1,0 +1,110 @@
+\section{MATLANG extended with FOR}
+
+\subsection{Syntax and semantics of MATLANG with FOR}
+
+A vocabulary $\cS$ is a set of matrix names $\cM=M_1,\ldots, M_p$, a set of vector variable names $\cV=v_1,\ldots, v_l$ and a set of matrix variable names $\cX=X_1,\ldots, X_c$.
+An instance $\cI$ is a function that maps matrix names to concrete matrices of a determined dimension $(n,m)$, vector variable names to a determined dimension $(n, 1)$ and matrix variable names to a determined dimension $(n,m)$.
+We also assume the presence of $F$, a set of functions $f:\mathbb{R}^{k}\rightarrow\mathbb{R}$ (with $1\leq k$).
+
+Let $\cS=(\cM, \cV, \cX)$ be a vocabulary, a formula in the vocabulary $\cS$ is of the form:
+$$
+E:= M\in \cM \ |\ v\in \cV \ |\ X\in \cX \ |\    E^* \ |\ E_1+E_2 \ |\  E_1\cdot E_2 \ |\  f(E_1,\ldots, E_k), f\in F \ |\  \for v,X. E
+$$
+
+In the last expression $v\in \cV, X\in \cX$.
+
+Now, given a vocabulary $\cS$, an instance $\cI$ and a set of functions $F$, we define the well typedness of a formula of $\cS$ according to $\cI$ as follows. 
+
+\begin{align*}
+\text{type}(M) &= (n,m) \text{ if } \cI(M) \text{ is a } n\times m \text{ matrix } \\
+\text{type}(v) &= (n,1) \text{ if } \cI(v) = (n, 1) \\
+\text{type}(X) &= (n,m) \text{ if } \cI(X) = (n, m) \\
+\text{type}(E^*)&=(j,i) \text{ where } (i,j)=\text{type}(E) \\
+\text{type}(E_1 + E_2) &= \text{type}(E_1) \text{ if } \text{type}(E_1)=\text{type}(E_2) \\
+\text{type}(E_1\cdot E_2)&= (i,k) \text{ if } \text{type}(E_1)=(i,j)\text{ and type}(E_2)=(j,k) \\
+\text{type}(f(E_1,\ldots, E_k))&=(1,1) \text{ if } \text{type}(E_1)=\cdots =\text{type}(E_k)=(1,1) \\
+\text{type}\left( \for v,X. E\right) &= \text{type}(E)
+\end{align*}
+
+We say that $E$ is well typed if it has a defined type. Now we will proceed with the semantics of these formulas.
+First, we define $\text{type}(v)_1 = n_v$ as the first coordinate of the type of $v$ and $\cI[v:= e^n_i]$ as the instance $\cI$ except that $v$ is mapped to the $i-$th canonical vector of size $n$.
+Now, given $\cS, \cI, F$ and a well typed expression $E$, we define the semantics for the values $\sem{E}(\cS,\cI)$ inductively as follows.
+
+\begin{align*}
+\sem{M}(\cS,\cI)&=\cI (M) \\
+\sem{E^*}(\cS,\cI)&=\sem{E}(\cS,\cI)^* \\
+\sem{E_1+E_2}(\cS,\cI)&= \sem{E_1}(\cS,\cI)+\sem{E_2}(\cS,\cI)\\
+\sem{E_1\cdot E_2}(\cS,\cI)&= \sem{E_1}(\cS,\cI)\times \sem{E_2}(\cS,\cI)\\
+\sem{f(E_1,\ldots ,E_k)}(\cS,\cI) &= f\left(\sem{E_1}(\cS,\cI),\ldots , \sem{E_k}(\cS,\cI)\right)\\
+\sem{ \for v,X. E }(\cS,\cI) &= A_n \text{ where }
+	\begin{cases}
+	               A_0 = 0 \\
+ 	               A_i = \sem{E}(\cS,\cI[v:= e^{n_v}_i, X:=A_{i-1}]), i=1,\ldots, n
+	\end{cases}
+\end{align*}
+
+Here, $+$ is matrix sum and $\times$ is matrix multiplication. Depending on context, we sometimes denote explicitly that an expression $E$ depends on $x$ as $E(x)$.
+
+On the other hand, expressions that depend on a variable $v$ or $X$ can be well typed according to the typing rules, but we cannot infer a value (semantic) unless $v$ and $X$ are instantiated by $\for v,X. E$.
+
+\subsection{Simulating MATLANG ( WORK IN PROGRESS )}
+
+We will now show that we can simulate MATLANG operators in our extMATLANG language.
+
+\subsubsection{Ones vector and diag()}
+
+Note that $$\text{ones}(M)=\ssum x_1. f_1(\ssum x_2. x_1^*Mx_2)\cdot x_1.$$ And $$\text{diag}(v)=\ssum x. (x^*v)\cdot xx^*$$
+
+\subsubsection{Identity}
+
+Given a $n\times m$ matrix, we can compute the $n\times n$ identity as $$\ssum x. f_1\left(x^*MM^*x\right)\cdot x \cdot x^* = \text{ones}(M)\cdot\text{ones}(M)^*$$ and the $m\times m$ identity as $$\ssum x. f_1\left(x^*M^*Mx\right)\cdot x \cdot x^*= \text{ones}(M^*)\cdot\text{ones}(M^*)^*$$
+
+\subsubsection{Matrix pointwise function application (apply[f])}
+
+We have that 
+
+\begin{itemize}
+	\item \textbf{Pointwise application:} if $A^{(1)}, \ldots, A^{(n)}$ are $m\times p$ matrices, then apply$\left[ f \right](A^{(1)}, \ldots, A^{(n)})$ is the $m\times p$ matrix $C$ where $C_{ij}=f(A^{(1)}_{ij}, \ldots, A^{(n)}_{ij})$.
+\end{itemize}
+
+So, given the \textbf{sum} operator and the function $f$, we can compute $C$ in the following way: $$C=\ssum x_i.\ssum x_j. f\left( x_i^*A^{(1)}x_j, \cdots, x_i^*A^{(n)}v_j\right)\cdot x_ix_j^*$$
+
+Recall that $v_iv_j^*$ is the matrix that has a 1 in the position i, j and zero everywhere else.
+
+Thus, we can simulate the MATLANG operator apply[$f$].
+
+For example, matrix pointwise multiplication: $$\ssum x_i.\ssum x_j.\left( x_i^*A^{(1)}x_j\times \cdots\times x_i^*A^{(n)}x_j\right)\cdot x_ix_j^*$$
+
+\subsubsection{Matrix multiplication via sum operator}
+
+Note that using the sum operator we can compute matrix multiplication by definition $$A\cdot B = \ssum x_i\ssum x_j\ssum x_k \left( x_iAx_k\cdot x_kBx_j\right)x_ix_j^*$$
+
+\subsection{Examples}
+
+Let's see some examples of what we can do with extMATLANG.
+
+\subsubsection{Trace and diagonal product}
+
+We can express $$tr(A)=\ssum x. x^*Ax.$$
+
+And the product of the diagonal of a matrix (this can be useful in computing the determinant of an upper/down triangular matrix): $$dp(A)=\sprod x. x^*Ax.$$
+
+\subsubsection{Transitive closure}
+
+To compute transitive closure we need the quantity $(A+I)^n$ and use apply[$f>0$] on the result matrix. Then we have that $$(I+A)^n=\sprod v. (I+A),$$ and thus $$TC = \text{apply}\left[ f_{>0}\right]\left( \sprod v. (I+A) \right).$$
+Using only the new operators, we have that $$TC=\ssum v_i. \ssum v_j. f_{>0}\left(v_i^*\left(\sprod v. (I+A)\right)v_j\right)$$
+
+\subsubsection{$k$-cliques}
+
+Let's try to see first if there is a four clique in the adjacency matrix $A$. To do this, we need to verify if there are paths between four \textbf{different} nodes. So we need the function 
+
+\[
+  			f(u,v)=1-u^*v=\begin{cases}
+               0 \text{ if } u=v \\
+               1 \text{ if } u\neq v
+            \end{cases}
+		\]
+
+Define $$g(u,v,w,r)=f(u,v)\cdot f(u,w)\cdot f(u,r)\cdot f(v,w)\cdot f(v,r)\cdot f(w,r).$$ This is, $g$ is zero if any pair of vectors are the same.
+		
+So $$\ssum v_1.\ssum v_2. \ssum v_3. \ssum v_4. (v_1^*Av_2)(v_1^*Av_3)(v_1^*Av_4)(v_2^*Av_3)(v_2^*Av_4)(v_3^*Av_4)g(v_1,v_2,v_3,v_4).$$
