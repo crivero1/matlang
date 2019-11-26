@@ -39,7 +39,7 @@ Now, given $\cS, \cI, F$ and a well typed expression $E$, we define the semantic
 \sem{ \for v,X. E }(\cS,\cI) &= A_n \text{ where }
 	\begin{cases}
 	               A_0 = 0 \\
- 	               A_i = \sem{E}(\cS,\cI[v:= e^{n_v}_i, X:=A_{i-1}]), i=1,\ldots, n
+ 	               A_i = \sem{E}(\cS,\cI[v:= e^{n_v}_i, X:=A_{i-1}]), i=1,\ldots, n_v
 	\end{cases}
 \end{align*}
 
