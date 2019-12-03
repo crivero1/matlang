@@ -58,9 +58,7 @@ Let's turn our attention to the order of the canonical vectors $\lbrace v_i\rbra
 		\]
 does exactly that. So, without adding any object, we have equality for canonical vectors. Note that implicitly we are using the identity, the matrix equivalent to the equality relation. We can compute this as $$ I = \for X, v. X+vv^*$$
 
-The $\for$operator actually iterates over the canonical vector, so it makes sense that we can get this order matrices using this operator. First we compute$$v_{max} = \for X,v. v$$ and then $$Z_{\text{eq}}=\for v,X. X + \left[ (Xv_{max}) + v \right]v^* + vv^*_{max}.$$ 
-Note that 
-
+Can we get the matrix equivalent to a \textit{order} relation? The $\for$operator actually iterates over the canonical vector, so it makes sense that we can get this order matrices using this operator. First we are going to use a little trick with the $\for$operator. We compute$$v_{max} = \for X,v. v$$ This allows us to have the last canonical vector in every iteration and thus we have access to the last column of $X$ in every iteration, so we can sort of use the last column of $X$ as a placeholder for some vector. For example, to compute the matrix
 \[
 Z_{eq} = \begin{bmatrix}
     1 & 1 & \cdots &  1 \\
@@ -70,7 +68,9 @@ Z_{eq} = \begin{bmatrix}
 \end{bmatrix}.
 \]
 
-So
+We do $$Z_{\text{eq}}=\for v,X. X + \left[ (Xv_{max}) + v \right]v^* + vv^*_{max}.$$ This iteration does the following: add the current stored vector $Xv_{max}$ plus $v$ to the column of $X$ indicated by $v$ and then add $v$ to the last column of $X$ (the stored vector).
+
+Also, we have
 
 \[
   			f(v_i, v_j)=v_i^*Z_{eq}v_j=\begin{cases}
@@ -79,7 +79,7 @@ So
             \end{cases}
 \]
 
-This matrix discriminate between canonical vectors in terms of order. Note that this gives us an answer for any pair of canonical vector, so we have a total order in some sense.
+This $Z_{eq}$ matrix discriminate between canonical vectors in terms of order. Note that this gives us an answer for any pair of canonical vector, so we have a total order in some sense.
 Now, consider the following matrix
 \[
 Z:=Z_{eq} - I = \begin{bmatrix}
@@ -131,13 +131,13 @@ So it's the matrix equivalent of the \textit{predecessor} relation. For example,
 		
 With this matrix we can compute a function that tells us if the argument is the first canonical vector. Note that we have $$\mathbf{1}\cdot Su=0\leftrightarrow u=v_1, \hspace{1ex} u\in\lbrace v_1,\ldots, v_n\rbrace,$$ and we have that if $u\in\lbrace v_1,\ldots, v_n\rbrace$ then
 \[
-  			min(u)=(1-Su)=\begin{cases}
+  			min(u)=(1-\mathbf{1}^*Su)=\begin{cases}
                1 \text{ if } u = v_1 \\
                0 \text{ if not}
             \end{cases}
 		\]
 		
-This is enough since if it is used over vector variables it will allow us to identify when $v=e_1$. This way, we can get $$v_{min} = \for X,v. v\cdot min(v)$$ 
+This is enough since if it is used over vector variables it will allow us to identify when $v=e_1$. We actually do $min(u)=(1-\text{ones}(\text{diag}(u))^*Su)$, we show how to do $diag$ and $ones$ in the next section. This way, we can get $$v_{min} = \for X,v. v\cdot min(v)$$ 
 
 \subsection{Simulating MATLANG}
 
@@ -164,7 +164,7 @@ For example, matrix pointwise multiplication: $$\ssum x_i.\ssum x_j.\left( x_i^*
 
 \subsubsection{Ones vector and diag()}
 
-Note that $$\text{ones}(M)=f_{>0}\left(\ssum v. Mv\right).$$ And $$\text{diag}(u)=\ssum v. (v^*u)\cdot vv^*$$
+Note that $$\text{ones}(M)=\text{apply}\left[ f_{x\rightarrow 1}\right] \left(\ssum v. Mv\right).$$ And $$\text{diag}(u)=\ssum v. (v^*u)\cdot vv^*$$
 
 \subsubsection{Identity}
 
@@ -267,7 +267,7 @@ A_i&=T_{i-1}A_{i-1},\hspace{1ex}i=2, \cdots, n \\
 A_1&=A \\
 \end{align*}
 
-Note that $A_m=U$ and 
+Note that $A_n=U$ and 
 \begin{align*}
 A_i&=T_{i-1}A_{i-1} \\
 &=\left(\sprod v_k.\left(I-\dfrac{v_k^*A_{i-1}v_i}{v_i^*A_{i-1}v_i}\cdot v_iv_k^*\cdot\left(v_i^*Zv_k\right)\right)^*\right)^*A_{i-1}.
