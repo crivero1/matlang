@@ -23,7 +23,7 @@ Now, given a vocabulary $\cS$, an instance $\cI$ and a set of functions $F$, we 
 \text{type}(E_1 + E_2) &= \text{type}(E_1) \text{ if } \text{type}(E_1)=\text{type}(E_2) \\
 \text{type}(E_1\cdot E_2)&= (i,k) \text{ if } \text{type}(E_1)=(i,j)\text{ and type}(E_2)=(j,k) \\
 \text{type}(f(E_1,\ldots, E_k))&=(1,1) \text{ if } \text{type}(E_1)=\cdots =\text{type}(E_k)=(1,1) \\
-\text{type}\left( \for v,X. E\right) &= \text{type}(E)
+\text{type}\left( \for X,v. E\right) &= \text{type}(E) \text{ if } \text{type}(X)=\text{type}(E)
 \end{align*}
 
 We say that $E$ is well typed if it has a defined type. Now we will proceed with the semantics of these formulas.
@@ -36,7 +36,7 @@ Now, given $\cS, \cI, F$ and a well typed expression $E$, we define the semantic
 \sem{E_1+E_2}(\cS,\cI)&= \sem{E_1}(\cS,\cI)+\sem{E_2}(\cS,\cI)\\
 \sem{E_1\cdot E_2}(\cS,\cI)&= \sem{E_1}(\cS,\cI)\times \sem{E_2}(\cS,\cI)\\
 \sem{f(E_1,\ldots ,E_k)}(\cS,\cI) &= f\left(\sem{E_1}(\cS,\cI),\ldots , \sem{E_k}(\cS,\cI)\right)\\
-\sem{ \for v,X. E }(\cS,\cI) &= A_n \text{ where }
+\sem{ \for X,v. E }(\cS,\cI) &= A_n \text{ where }
 	\begin{cases}
 	               A_0 = 0 \\
  	               A_i = \sem{E}(\cS,\cI[v:= e^{n_v}_i, X:=A_{i-1}]), i=1,\ldots, n_v
@@ -56,78 +56,9 @@ Let's turn our attention to the order of the canonical vectors $\lbrace v_i\rbra
                1 \text{ if } i\neq j
             \end{cases}
 		\]
-does exactly that. So, without adding any object, we have equality for canonical vectors. Note that implicitly we are using the identity, the matrix equivalent to the equality relation.
+does exactly that. So, without adding any object, we have equality for canonical vectors. Note that implicitly we are using the identity, the matrix equivalent to the equality relation. We can compute this as $$ I = \for X, v. X+vv^*$$
 
-
-Now, consider the following matrix
-\[
-Z = \begin{bmatrix}
-    0 & 1 & \cdots &  1 \\
-    0 & \ddots & \ddots & \vdots \\
-    \hdotsfor{3} & 1 \\
-    0 & \cdots & \cdots & 0 
-\end{bmatrix}.
-\]
-In some way, this matrix gives us an ordering of the canonical vectors. We can see this in the functions of the form 
-
-\[
-  			f(v_i, v_j)=v_i^*Zv_j=\begin{cases}
-               1 \text{ if } i < j \\
-               0 \text{ if } i \geq j
-            \end{cases}
-		\]
-		
-This kind of functions discriminate between canonical vectors, in terms of order. Note that this gives us an answer for any pair of canonical vector, so we have a total order in some sense.
-
-Can we introduce a \textit{local} order of the canonical vectors? For instance, we can ask ourselves if we can define the \textit{successor} or \textit{predecessor} relation of the canonical vectors from a matrix. Let us introduce a new matrix:
-
-\[
-S := \begin{bmatrix}
-    0 & 1         & 0         & \cdots &  0 \\
-    0 & \ddots & 1         & \cdots & 0 \\
-    \vdots & \vdots & \ddots & \ddots & \vdots \\
-    \hdotsfor{3} & \ddots & 1 \\
-    0 & \cdots & \cdots & \cdots & 0 
-\end{bmatrix}.
-\]
-
-Let's see what this matrix does. Note that
-
-\[
-  			Sv_i=\begin{cases}
-               v_{i-1} \text{ if } i > 1 \\
-              \mathbf{0} \text{ if } i = 1
-            \end{cases}
-		\]
-
-So it's the matrix equivalent of the \textit{predecessor} relation. For example, now we can compute 
-
-\[
-  			g(v_i, v_j)=v_i^*Sv_j=\begin{cases}
-               1 \text{ if } i = j - 1 \\
-               0 \text{ if not}
-            \end{cases}
-		\]
-		
-With this matrix we can compute a function that tells us if the argument is the first canonical vector. Note that we don't have exactly $$\mathbf{1}\cdot Su=0\leftrightarrow u=cv_1, \hspace{1ex} c\in\mathbb{R},$$ it depends on the entries of $u$, but  $$\mathbf{1}\cdot f_{\neq 0}(Su)=0\leftrightarrow u=cv_1, \hspace{1ex} c\in\mathbb{R},$$ and we have that
-\[
-  			min(u)=(1-\mathbf{1}\cdot f_{\neq 0}(Su))=\begin{cases}
-               1 \text{ if } u = cv_1 \\
-               0 \text{ if not}
-            \end{cases}
-		\]
-		
-This is enough since if it is used over vector variables it will allow us to identify when $v=e_1$. Since $S$ and $Z$ give us an order, it is natural to compute one from the other, so
-
-\begin{align*}
-Z&=f_{>0}\left(\sprod v. (S+I)\right) \\
-S&=Z-f_{>0}(Z^2)
-\end{align*}
-
-\subsubsection{How to get this order with MATLANG with FOR}
-
-The $\for$operator actually iterates over the canonical vector, so it makes sense that we can get this order matrices using this operator. First we compute $$Z_{\text{eq}}=\for v,X. X + f_{>0}\left( \left( \ssum w.Xw+v\right)\cdot v^*\right).$$ Here $f_{>0}$ is the pointwise function that maps an entry to 1 if is greater than zero an to 0 otherwise.
-
+The $\for$operator actually iterates over the canonical vector, so it makes sense that we can get this order matrices using this operator. First we compute$$v_{max} = \for X,v. v$$ and then $$Z_{\text{eq}}=\for v,X. X + \left[ (Xv_{max}) + v \right]v^* + vv^*_{max}.$$ 
 Note that 
 
 \[
@@ -146,16 +77,73 @@ So
                1 \text{ if } i \leq j \\
                0 \text{ if } i > j
             \end{cases}
+\]
+
+This matrix discriminate between canonical vectors in terms of order. Note that this gives us an answer for any pair of canonical vector, so we have a total order in some sense.
+Now, consider the following matrix
+\[
+Z:=Z_{eq} - I = \begin{bmatrix}
+    0 & 1 & \cdots &  1 \\
+    0 & \ddots & \ddots & \vdots \\
+    \hdotsfor{3} & 1 \\
+    0 & \cdots & \cdots & 0 
+\end{bmatrix}.
+\]
+In some way, this matrix gives us an strict total ordering of the canonical vectors.
+\[
+  			f(v_i, v_j)=v_i^*Zv_j=\begin{cases}
+               1 \text{ if } i < j \\
+               0 \text{ if } i \geq j
+            \end{cases}
+		\]
+		
+This kind of functions discriminate between canonical vectors, in terms of order.
+
+Can we introduce a \textit{local} order of the canonical vectors? For instance, we can ask ourselves if we can define the \textit{successor} or \textit{predecessor} relation of the canonical vectors from a matrix. Let us introduce a new matrix:
+
+\[
+S := \begin{bmatrix}
+    0 & 1         & 0         & \cdots &  0 \\
+    0 & \ddots & 1         & \cdots & 0 \\
+    \vdots & \vdots & \ddots & \ddots & \vdots \\
+    \hdotsfor{3} & \ddots & 1 \\
+    0 & \cdots & \cdots & \cdots & 0 
+\end{bmatrix}.
+\]
+
+We can compute this as $$S = \for X,v. X+\left[ (1 - v^*v_{max})vv_{max}^* - (Xv_{max}) v_{max}^* + (Xv_{max})v^*\right]$$ and note that
+
+\[
+  			Sv_i=\begin{cases}
+               v_{i-1} \text{ if } i > 1 \\
+              \mathbf{0} \text{ if } i = 1
+            \end{cases}
 		\]
 
-Later we will show how to get the identity, and we have that $Z = Z_{eq} - I$, and thus we can compute $S$ and $min(v)$.
+So it's the matrix equivalent of the \textit{predecessor} relation. For example, now we can compute 
 
+\[
+  			g(v_i, v_j)=v_i^*Sv_j=\begin{cases}
+               1 \text{ if } i = j - 1 \\
+               0 \text{ if not}
+            \end{cases}
+		\]
+		
+With this matrix we can compute a function that tells us if the argument is the first canonical vector. Note that we have $$\mathbf{1}\cdot Su=0\leftrightarrow u=v_1, \hspace{1ex} u\in\lbrace v_1,\ldots, v_n\rbrace,$$ and we have that if $u\in\lbrace v_1,\ldots, v_n\rbrace$ then
+\[
+  			min(u)=(1-Su)=\begin{cases}
+               1 \text{ if } u = v_1 \\
+               0 \text{ if not}
+            \end{cases}
+		\]
+		
+This is enough since if it is used over vector variables it will allow us to identify when $v=e_1$. This way, we can get $$v_{min} = \for X,v. v\cdot min(v)$$ 
 
 \subsection{Simulating MATLANG}
 
 When $E=E(v)$ there exists useful operations that arise frequently. The first one is to sum the same expression but iterating over canonical vectors. We define this as $$\ssum v. E(v)=\for v, X. X + E(v).$$
 
-The second one is similar, but with multiplication: $$\sprod v. E(v)=\for v,X. X\cdot E(v) + min(v)\cdot E(v)$$
+The second one is similar, but with multiplication: $$\sprod v. E(v)=\for X,v. X\cdot E(v) + min(v)\cdot E(v)$$
 Here we need to identify the first iteration to not multiply by the zero matrix.
 
 \subsubsection{Matrix pointwise function application (apply[f])}
