@@ -19,7 +19,7 @@
 %\end{itemize}
 %\end{itemize}
 
-While \lang\ serves as a solid basis for expressing linear algebra properties, it is still somewhat lacking when defining more advanced linear algebra operators such as Gaussian eliminations, or computing an inverse of a matrix. To alleviate these issues, we propose an extended version of \lang, called \lang++ which allows us to express such properties, as well as significantly simplify the syntax of the language.
+While \lang\ serves as a solid basis for expressing linear algebra properties, it is still somewhat lacking when defining more advanced linear algebra operators such as Gaussian eliminations, or computing an inverse of a matrix. To alleviate these issues, we propose an extended version of \lang, called \lang++ which allows us to express such properties.
 
 As before, we assume a countably infinite set of matrix variables $\Mvar = \{V_1, V_2, \ldots\}$, and a set $\Fun$  of functions $f:\mathbb{C}^n \mapsto \mathbb{C}$. The syntax of \lang++ is defined as follows:
 
@@ -57,3 +57,12 @@ A \lang++ {\em instance} $\I$ over a schema $\Sch$, is a pair $\I = (\dom,\conc)
 \item $\sem{e_1 + e_2}_\I = \sem{e_1}_\I + \sem{e_2}_\I$;
 \item $\sem{f(e_1,\ldots ,e_n)}_\I$ is a $1\times 1$ matrix whose only entry has the value $f(\sem{e_1}_\I,\ldots ,\sem{e_n}_\I)$. Here we abuse the notation and use $\sem{e}_\I$ to denote both a $1\times 1$ matrix, and a scalar from $\mathbb{C}$.
 \end{itemize}
+
+The semantics of $\ffor{v}{X}{e}$ over $\I$ is defined iteratively as follows:
+\begin{itemize}
+\item Set $A_0 = \mathbf{0}$ be the null matrix of size $\dom(\alpha)\times \dom(\beta)$, where $\type(e) = (\alpha,\beta)$.
+\item For $i=1,\ldots \dom(\gamma)$, where $\type(e)= (\gamma,1)$, compute $A_i = \sem{e}_{\I[v := e^{\dom(\gamma)}_i, X:= A_{i-1}]}$.
+\end{itemize}
+We finally set $\sem{\ffor{v}{X}{e}}_\I = A_{\dom(\gamma)}$.
+
+Additionally, we assume that each instance $\I$ has access to canonical vectors of arbitrary size. That is, for each $n\in \mathbb{N}$, we have the vectors $e^n_1 = $
