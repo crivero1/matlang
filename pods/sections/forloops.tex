@@ -1,20 +1,59 @@
-Probably the longest section.
+%Probably the longest section.
 
 
+%\begin{itemize}
+%\item Define the syntax and the semantics of for loop language. 
+%\item Examples:
+%\begin{itemize}
+%\item Simple queries (cover \lang\)
+%\item Elementary operations
+%\item How to define order (the $Z$ matrix, $v_{max}$,...)
+%\item Standard Linear Algebra algorithms:
+%\begin{itemize}
+%\item Gaussian elimination
+%\item Inverse
+%\item Determinant
+%\item $LU$
+%\item $\cdots$
+%\end{itemize}
+%\end{itemize}
+%\end{itemize}
+
+While \lang\ serves as a solid basis for expressing linear algebra properties, it is still somewhat lacking when defining more advanced linear algebra operators such as Gaussian eliminations, or computing an inverse of a matrix. To alleviate these issues, we propose an extended version of \lang, called \lang++ which allows us to express such properties, as well as significantly simplify the syntax of the language.
+
+As before, we assume a countably infinite set of matrix variables $\Mvar = \{V_1, V_2, \ldots\}$, and a set $\Fun$  of functions $f:\mathbb{C}^n \mapsto \mathbb{C}$. The syntax of \lang++ is defined as follows:
+
+
+\medskip
+
+\begin{tabular}{lcll}
+$e$ & $::=$ & $V\in \Mvar$ & (matrix variable)\\
+ & $|$ & $e^*$ & (conjugate transpose)\\ 
+ & $|$ & $e_1 \cdot e_2$ & (matrix multiplication)\\   
+ & $|$ & $e_1 + e_2$ & (matrix addition)\\    
+ & $|$ & $f(e_1,\ldots ,e_n)$ & (application of $f\in \Fun$)\\
+ & $|$ & $\ffor{v}{X}{e}$ & (canonical for loop). 
+\end{tabular}
+
+\medskip
+
+A \lang++ {\em schema} $\Sch$ is a pair $\Sch=(\Mnam,\size)$, where $\Mnam\subset \Mvar$ is a finite set of matrix variables, and $\size: \Mvar \mapsto \DD\times \DD$ is a function that maps each matrix variable to a pair of {\em size symbols}. Given a schema $\Sch$, they type of a \lang++ expression, denoted $\type(e)^{\Sch}$, is defined inductively as follows:
 \begin{itemize}
-\item Define the syntax and the semantics of for loop language. 
-\item Examples:
-\begin{itemize}
-\item Simple queries (cover MATLANG)
-\item Elementary operations
-\item How to define order (the $Z$ matrix, $v_{max}$,...)
-\item Standard Linear Algebra algorithms:
-\begin{itemize}
-\item Gaussian elimination
-\item Inverse
-\item Determinant
-\item $LU$
-\item $\cdots$
+\item $\type(V)^{\Sch} = \size(V)$, for a matrix variable $V$;
+\item $\type(e^*)^{\Sch} = (\beta,\alpha)$, if $\type(e)^{\Sch}=(\alpha,\beta)$, and undefined if $\type(e)^{\Sch}$ is undefined;
+\item $\type(e_1 \cdot e_2)^{\Sch} = (\alpha,\gamma)$, if $\type(e_1)^{\Sch}=(\alpha,\beta)$, and $\type(e_2)^{\Sch}=(\beta,\gamma)$, and is undefined otherwise;
+\item $\type(e_1 + e_2)^{\Sch} = \type(e_1)^{\Sch}$, if $\type(e_1)^{\Sch} = \type(e_2)^{\Sch}$, and is undefined otherwise;
+\item $\type(f(e_1,\ldots ,e_n))^{\Sch} = (1,1)$, if $\type(e_1)^{\Sch}= \cdots =\type(e_n)^{\Sch}=(1,1)$, and $f:\mathbb{C}^n\mapsto \mathbb{C}$, and is undefined otherwise; and
+\item $\type(\ffor{v}{X}{e})^{\Sch} = \type(e)^{\Sch}$, if $\type(v)^{\Sch} = (\alpha,1)$, and undefined otherwise.
 \end{itemize}
-\end{itemize}
+
+An expression $e$ is well-typed over a schema $\Sch$ if its type is defined. For well-typed expressions we can define the evaluation as follows.
+%
+A \lang++ {\em instance} $\I$ over a schema $\Sch$, is a pair $\I = (\dom,\conc)$, where $\dom : \DD \mapsto \mathbb{N}$ assigns a value to each size symbol, and $\conc : \Mnam \mapsto \mtr{\mathbb{C}}$ assigns a concrete matrix to each matrix variable $M\in \Mnam$, such that $\dim(\conc(M)) = \dom(\alpha)\times \dom(\beta)$, where $\size(M) = (\alpha,\beta)$. We assume that $\dom(1) = 1$, for every instance $\I$. If $e$ is a well-typed expression according to $\Sch$, then we denote by $\sem{e}_\I$ the matrix obtained by evaluating $e$ over $\I$, and define it as follows:
+\begin{itemize}
+\item $\sem{M}_\I = \conc(M)$, for $M\in \Mnam$;
+\item $\sem{e^*}_\I = \sem{e}_\I^*$, where $M^*$ is the conjugate transpose of a matrix $M$;
+\item $\sem{e_1\cdot e_2}_\I = \sem{e_1}_\I \cdot \sem{e_2}_\I$;
+\item $\sem{e_1 + e_2}_\I = \sem{e_1}_\I + \sem{e_2}_\I$;
+\item $\sem{f(e_1,\ldots ,e_n)}_\I$ is a $1\times 1$ matrix whose only entry has the value $f(\sem{e_1}_\I,\ldots ,\sem{e_n}_\I)$. Here we abuse the notation and use $\sem{e}_\I$ to denote both a $1\times 1$ matrix, and a scalar from $\mathbb{C}$.
 \end{itemize}
