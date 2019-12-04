@@ -1,1 +1,91 @@
 Recall the basics of MATLANG \cite{matlang}, and linear algebra. Perhaps stress where MATLANG falls short with respect to natural linear algebra questions.
+
+\bigskip
+
+$\dim(M)$ gives the dimension of the matrix $M$, where $\dim(M)\in \mathbb{N}^2$. We use $\mtr{\mathbb{F}}$ to denote the set of all matrices over some field $\mathbb{F}$.
+
+\bigskip
+
+%FIRST TRY
+%
+%Since the baseline for our study is the MATLANG language introduced in \cite{matlang}, here we briefly recap its syntax and semantics. Let $\Mnam = \{M_1, M_2,\ldots\}$ be a countably infinite set of {\em matrix names}, $\Mvar = \{V_1, V_2, \ldots\}$ a countably infinite set of {\em matrix variables}, and $\Fun$ a set of functions $f:\mathbb{C}^n \mapsto \mathbb{C}$, where $\mathbb{C}$ denotes the set of complex numbers. A {\em vocabulary} $\Voc$ is a triple $\Voc = (\Mnam', \Mvar, \Fun)$, where $\Mnam'\subset \Mnam$ is a finite subset of matrix names. An {\em $\Voc$-instance} $\I$ maps every $M\in \Mnam'$ to a concrete matrix, and assigns a dimension $(m,n)$, with $m,n\in \mathbb{N}$ to every matrix variable. That is, if $M\in \Mnam'$, then $\I(M)$ is a matrix over $\mathbb{C}$ of some dimension, and if $V\in \Mvar$, then $\ddim(\I(V)) = (m,n)$; that is, $V$ is a placeholder for a matrix of a specific dimension\footnote{Note that in \cite{matlang} the authors introduce the notion of abstract typing for vocabulary symbols. To simplify the notation, and stay closer to standard definitions of First order logic, we opt to assign matrix types to variables directly on an instance level.}.
+%
+%The syntax of MATLANG expressions over the vocabulary $\Voc$ is defined by the following grammar:
+%
+%\begin{tabular}{lcll}
+%$e$ & $::=$ & $M\in \Mnam'$ & (matrix name)\\
+% & $|$ & $V\in \Mvar$ & (matrix variable)\\
+% & $|$ & $\llet$ & (local binding)\\
+% & $|$ & $e^*$ & (conjugate transpose)\\ 
+% & $|$ & $\ones(e)$ & (one-vector)\\ 
+% & $|$ & $\diag(e)$ & (diagonalization of a vector)\\  
+% & $|$ & $e_1 \cdot e_2$ & (matrix multiplication)\\   
+% & $|$ & $\apply{f}(e_1,\ldots ,e_n)$ & (pointwise application of $f$).    
+%\end{tabular}
+%
+%To define the semantics of a MATLANG expression $e$ over $\Voc$, we first need to know whether $e$ can be evaluated due to matrix dimension constraints, since, for example,  the product $M_1 \cdot M_2$ of two matrices is not always defined. To overcome this, we define the {\em type} of each expression $e$ with respect to an instance $\I$, denoted by $\type(e)^\I$ in Table \ref{tab-types}.
+%
+%\begin{table}
+%\begin{tabular}{rcll}
+%$\type(M)^\I$ & $=$ & $\dim(\I(M))$, for $M\in \Mnam'$\\
+%$\type(V)^\I$ & $=$ & $\dim(\I(V))$, for $V\in \Mvar$\\
+%%$\type(\llet)^\I$ & $=$ & this is a dumb operator\\
+%$\type(e^*)^\I$ & $=$ & $(m,n)$, if $\type(e)^\I = (n,m)$\\%, and undefined otherwise\\
+%$\type(\ones(e))^\I$ & $=$ & $(n,1)$, if $\type(e)^\I = (n,m)$\\%, and undefined otherwise\\
+%$\type(\diag(e))^\I$ & $=$ & $(n,n)$, if $\type(e)^\I = (n,1)$\\
+%$\type(e_1\cdot e_2)^\I$ & $=$ & $(n,k)$, if $\type(e_1)^\I = (n,m)$, and $\type(e_2)^\I = (m,k)$\\
+%$\type(\apply{f}(e_1,\ldots ,e_n))^\I$ & $=$ & $(n,m)$, if $\type(e_1)^\I = \ldots = \type(e_k)^\I = (m,n)$, and $f:\mathbf{C}^n\mathbf{C}$\\
+%\end{tabular}
+%\label{tab-types}
+%\caption{Type of MATLANG expression $e$ over an instance $\I$.}
+%\end{table}
+
+
+
+
+
+
+
+
+
+
+
+Since the baseline for our study is the MATLANG language introduced in \cite{matlang}, here we briefly recap its syntax and semantics. Let $\Mvar = \{V_1, V_2, \ldots\}$ be a countably infinite set of {\em matrix variables}, and $\Fun$ a set of functions $f:\mathbb{C}^n \mapsto \mathbb{C}$, where $\mathbb{C}$ denotes the set of complex numbers. The syntax of MATLANG expressions is defined by the following grammar\footnote{The original syntax also permits the operator $\llet$, which replaces every occurrence of $M$ in $e_2$ with the value of $e_1$. Since this is just syntactic sugar, we omit this operator.}:
+
+\medskip
+
+\begin{tabular}{lcll}
+$e$ & $::=$ & $V\in \Mvar$ & (matrix variable)\\
+% & $|$ & $\llet$ & (local binding)\\
+ & $|$ & $e^*$ & (conjugate transpose)\\ 
+ & $|$ & $\ones(e)$ & (one-vector)\\ 
+ & $|$ & $\diag(e)$ & (diagonalization of a vector)\\  
+ & $|$ & $e_1 \cdot e_2$ & (matrix multiplication)\\   
+ & $|$ & $\apply{f}(e_1,\ldots ,e_n)$ & (pointwise application of $f$).    
+\end{tabular}
+
+\medskip
+
+To define the semantics of MATLANG expressions, we first require the notion of an instance, and a schema. A MATLANG {\em schema} $\Sch$ is a pair $\Sch=(\Mnam,\size)$, where $\Mnam\subset \Mvar$ is a finite set of matrix variables, and $\size: \Mvar \mapsto \DD\times \DD$ is a function that maps each matrix variable to a pair of {\em size symbols}. The idea here is that since different matrices can have different sizes, the function $\size$ helps us determine whether certain matrix operations, such as multiplication, can be performed for matrices adhering to a schema. We denote size symbols by letters $\alpha,\beta,\gamma$. We also assume that $1\in \DD$. To help us determine whether a MATLANG expression can always be evaluated, we define the {\em type} of an expression $e$, with respect to a schema $\Sch$, denoted by $\type(e)^{\Sch}$ as follows:
+\begin{itemize}
+\item $\type(V)^{\Sch} = \size(V)$, for a matrix variable $V$;
+\item $\type(e^*)^{\Sch} = (\beta,\alpha)$, if $\type(e)^{\Sch}=(\alpha,\beta)$, and undefined if $\type(e)^{\Sch}$ is undefined;
+\item $\type(\ones(e))^{\Sch} = (\alpha,1)$, if $\type(e)^{\Sch}=(\alpha,\beta)$, and undefined if $\type(e)^{\Sch}$ is undefined;
+\item $\type(\diag(e))^{\Sch} = (\alpha,\alpha)$, if $\type(e)^{\Sch}=(\alpha,1)$, and undefined otherwise;
+\item $\type(e_1 \cdot e_2)^{\Sch} = (\alpha,\gamma)$, if $\type(e_1)^{\Sch}=(\alpha,\beta)$, and $\type(e_2)^{\Sch}=(\beta,\gamma)$, and is undefined otherwise; and
+\item $\type(\apply{f}(e_1,\ldots ,e_n))^{\Sch} = (\alpha,\beta)$, if $\type(e_1)^{\Sch} = \ldots = \type(e_k)^{\Sch} = (\alpha,\beta)$, and $f:\mathbf{C}^n \mapsto  \mathbf{C}$, and undefined otherwise.
+\end{itemize}
+
+\medskip
+
+When $\Sch$ is clear from the context we will simply write $\type(e)$. We call an expression {\em well-typed} according to the schema $\Sch$, if it has a defined type. Note that a well-typed expression can be evaluated regardless of the actual sizes of the matrices assigned to matrix variables, as we describe next.
+
+A MATLANG {\em instance} $\I$ over a schema $\Sch$, is a pair $\I = (\dom,\conc)$, where $\dom : \DD \mapsto \mathbb{N}$ assigns a value to each size symbol (and thus in turn a dimension to each matrix variable), and $\conc : \Mnam \mapsto \mtr{\mathbb{C}}$ assigns a concrete matrix to each matrix variable $M\in \Mnam$, such that $\dim(\conc(M)) = \dom(\alpha)\times \dom(\beta)$, where $\size(M) = (\alpha,\beta)$. That is, an instance tells us the dimension of each matrix variable, and also the concrete matrices assigned to the variable names in $\Mnam$. We assume that $\dom(1) = 1$, for every instance $\I$. If $e$ is a well-typed expression according to $\Sch$, then we denote by $\sem{e}_\I$ the matrix obtained by evaluating $e$ over $\I$, and define it as follows:
+\begin{itemize}
+\item $\sem{M}_\I = \conc(M)$, for $M\in \Mnam$;
+\item $\sem{e^*}_\I = \sem{e}_\I^*$, where $M^*$ is the conjugate transpose of a matrix $M$;
+\item $\sem{\ones(e)}_\I$ is a $n\times 1$ size vector with 1 as all of its entries;
+\item $\sem{\diag(e)}_\I$ is a diagonal matrix with the vector $\sem{e}_\I$ on its main diagonal, and zero in every other position;
+\item $\sem{e_1\cdot e_2}_\I = \sem{e_1}_\I \cdot \sem{e_2}_\I$;
+\item $\sem{\apply{f}(e_1,\ldots ,e_n)}_\I$ is a matrix $A$ such that $A_{ij}$ has the value $f(\sem{e_1}_\I,\ldots ,\sem{e_n}_\I)$.
+\end{itemize}

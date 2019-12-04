@@ -24,6 +24,10 @@
 %% The first command in your LaTeX source must be the \documentclass command.
 \documentclass[sigconf]{acmart}
 
+\settopmatter{printacmref=false} % Removes citation information below abstract
+\renewcommand\footnotetextcopyrightpermission[1]{} % removes footnote with conference information in first column
+\pagestyle{plain} % removes running headers
+
 %%
 %% \BibTeX command to typeset BibTeX logo in the docs
 \AtBeginDocument{%
@@ -48,6 +52,7 @@
 %\acmPrice{15.00}
 %\acmISBN{978-1-4503-XXXX-X/18/06}
 
+\input{./sections/macros.tex}
 
 %%
 %% Submission ID.
