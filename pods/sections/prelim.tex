@@ -23,18 +23,18 @@ $\dim(M)$ gives the dimension of the matrix $M$, where $\dim(M)\in \mathbb{N}^2$
 % & $|$ & $\apply{f}(e_1,\ldots ,e_n)$ & (pointwise application of $f$).    
 %\end{tabular}
 %
-%To define the semantics of a \lang\ expression $e$ over $\Voc$, we first need to know whether $e$ can be evaluated due to matrix dimension constraints, since, for example,  the product $M_1 \cdot M_2$ of two matrices is not always defined. To overcome this, we define the {\em type} of each expression $e$ with respect to an instance $\I$, denoted by $\type(e)^\I$ in Table \ref{tab-types}.
+%To define the semantics of a \lang\ expression $e$ over $\Voc$, we first need to know whether $e$ can be evaluated due to matrix dimension constraints, since, for example,  the product $M_1 \cdot M_2$ of two matrices is not always defined. To overcome this, we define the {\em type} of each expression $e$ with respect to an instance $\I$, denoted by $\ttype(e)^\I$ in Table \ref{tab-types}.
 %
 %\begin{table}
 %\begin{tabular}{rcll}
-%$\type(M)^\I$ & $=$ & $\dim(\I(M))$, for $M\in \Mnam'$\\
-%$\type(V)^\I$ & $=$ & $\dim(\I(V))$, for $V\in \Mvar$\\
-%%$\type(\llet)^\I$ & $=$ & this is a dumb operator\\
-%$\type(e^*)^\I$ & $=$ & $(m,n)$, if $\type(e)^\I = (n,m)$\\%, and undefined otherwise\\
-%$\type(\ones(e))^\I$ & $=$ & $(n,1)$, if $\type(e)^\I = (n,m)$\\%, and undefined otherwise\\
-%$\type(\diag(e))^\I$ & $=$ & $(n,n)$, if $\type(e)^\I = (n,1)$\\
-%$\type(e_1\cdot e_2)^\I$ & $=$ & $(n,k)$, if $\type(e_1)^\I = (n,m)$, and $\type(e_2)^\I = (m,k)$\\
-%$\type(\apply{f}(e_1,\ldots ,e_n))^\I$ & $=$ & $(n,m)$, if $\type(e_1)^\I = \ldots = \type(e_k)^\I = (m,n)$, and $f:\mathbf{C}^n\mathbf{C}$\\
+%$\ttype(M)^\I$ & $=$ & $\dim(\I(M))$, for $M\in \Mnam'$\\
+%$\ttype(V)^\I$ & $=$ & $\dim(\I(V))$, for $V\in \Mvar$\\
+%%$\ttype(\llet)^\I$ & $=$ & this is a dumb operator\\
+%$\ttype(e^*)^\I$ & $=$ & $(m,n)$, if $\ttype(e)^\I = (n,m)$\\%, and undefined otherwise\\
+%$\ttype(\ones(e))^\I$ & $=$ & $(n,1)$, if $\ttype(e)^\I = (n,m)$\\%, and undefined otherwise\\
+%$\ttype(\diag(e))^\I$ & $=$ & $(n,n)$, if $\ttype(e)^\I = (n,1)$\\
+%$\ttype(e_1\cdot e_2)^\I$ & $=$ & $(n,k)$, if $\ttype(e_1)^\I = (n,m)$, and $\ttype(e_2)^\I = (m,k)$\\
+%$\ttype(\apply{f}(e_1,\ldots ,e_n))^\I$ & $=$ & $(n,m)$, if $\ttype(e_1)^\I = \ldots = \ttype(e_k)^\I = (m,n)$, and $f:\mathbf{C}^n\mathbf{C}$\\
 %\end{tabular}
 %\label{tab-types}
 %\caption{Type of \lang\ expression $e$ over an instance $\I$.}
@@ -66,26 +66,26 @@ $e$ & $::=$ & $V\in \Mvar$ & (matrix variable)\\
 
 \medskip
 
-To define the semantics of \lang\ expressions, we first require the notion of an instance, and a schema. A \lang\ {\em schema} $\Sch$ is a pair $\Sch=(\Mnam,\size)$, where $\Mnam\subset \Mvar$ is a finite set of matrix variables, and $\size: \Mvar \mapsto \DD\times \DD$ is a function that maps each matrix variable to a pair of {\em size symbols}. The idea here is that since different matrices can have different sizes, the function $\size$ helps us determine whether certain matrix operations, such as multiplication, can be performed for matrices adhering to a schema. We denote size symbols by letters $\alpha,\beta,\gamma$. We also assume that $1\in \DD$. To help us determine whether a \lang\ expression can always be evaluated, we define the {\em type} of an expression $e$, with respect to a schema $\Sch$, denoted by $\type(e)^{\Sch}$ as follows:
+To define the semantics of \lang\ expressions, we first require the notion of an instance, and a schema. A \lang\ {\em schema} $\Sch$ is a pair $\Sch=(\Mnam,\size)$, where $\Mnam\subset \Mvar$ is a finite set of matrix variables, and $\size: \Mvar \mapsto \DD\times \DD$ is a function that maps each matrix variable to a pair of {\em size symbols}. The idea here is that since different matrices can have different sizes, the function $\size$ helps us determine whether certain matrix operations, such as multiplication, can be performed for matrices adhering to a schema. We denote size symbols by letters $\alpha,\beta,\gamma$. We also assume that $1\in \DD$. To help us determine whether a \lang\ expression can always be evaluated, we define the {\em type} of an expression $e$, with respect to a schema $\Sch$, denoted by $\ttype(e)$ as follows:
 \begin{itemize}
-\item $\type(V)^{\Sch} = \size(V)$, for a matrix variable $V$;
-\item $\type(e^*)^{\Sch} = (\beta,\alpha)$, if $\type(e)^{\Sch}=(\alpha,\beta)$, and undefined if $\type(e)^{\Sch}$ is undefined;
-\item $\type(\ones(e))^{\Sch} = (\alpha,1)$, if $\type(e)^{\Sch}=(\alpha,\beta)$, and undefined if $\type(e)^{\Sch}$ is undefined;
-\item $\type(\diag(e))^{\Sch} = (\alpha,\alpha)$, if $\type(e)^{\Sch}=(\alpha,1)$, and undefined otherwise;
-\item $\type(e_1 \cdot e_2)^{\Sch} = (\alpha,\gamma)$, if $\type(e_1)^{\Sch}=(\alpha,\beta)$, and $\type(e_2)^{\Sch}=(\beta,\gamma)$, and is undefined otherwise; and
-\item $\type(f(e_1,\ldots ,e_n))^{\Sch} = (\alpha,\beta)$, if $\type(e_1)^{\Sch} = \ldots = \type(e_k)^{\Sch} = (\alpha,\beta)$, and $f:\mathbb{C}^n \mapsto  \mathbb{C}$, and is undefined otherwise.
+\item $\ttype(V) = \size(V)$, for a matrix variable $V$,
+\item $\ttype(e^*) = (\beta,\alpha)$, if $\ttype(e)=(\alpha,\beta)$, and undefined if $\ttype(e)$ is undefined,
+\item $\ttype(\ones(e)) = (\alpha,1)$, if $\ttype(e)=(\alpha,\beta)$, and undefined if $\ttype(e)$ is undefined,
+\item $\ttype(\diag(e)) = (\alpha,\alpha)$, if $\ttype(e)=(\alpha,1)$, and undefined otherwise,
+\item $\ttype(e_1 \cdot e_2) = (\alpha,\gamma)$, whenever $\ttype(e_1)=(\alpha,\beta)$, and $\ttype(e_2)=(\beta,\gamma)$, and is undefined otherwise, and
+\item $\ttype(f(e_1,\ldots ,e_n)) = (\alpha,\beta)$, whenever $\ttype(e_1) = \ldots = \ttype(e_k) = (\alpha,\beta)$, and $f:\mathbb{C}^n \mapsto  \mathbb{C}$, and is undefined otherwise.
 \end{itemize}
 
 \medskip
 
 When $\Sch$ is clear from the context we will simply write $\type(e)$. We call an expression {\em well-typed} according to the schema $\Sch$, if it has a defined type. Note that a well-typed expression can be evaluated regardless of the actual sizes of the matrices assigned to matrix variables, as we describe next.
 
-A \lang\ {\em instance} $\I$ over a schema $\Sch$, is a pair $\I = (\dom,\conc)$, where $\dom : \DD \mapsto \mathbb{N}$ assigns a value to each size symbol (and thus in turn a dimension to each matrix variable), and $\conc : \Mnam \mapsto \mtr{\mathbb{C}}$ assigns a concrete matrix to each matrix variable $M\in \Mnam$, such that $\dim(\conc(M)) = \dom(\alpha)\times \dom(\beta)$, where $\size(M) = (\alpha,\beta)$. That is, an instance tells us the dimension of each matrix variable, and also the concrete matrices assigned to the variable names in $\Mnam$. We assume that $\dom(1) = 1$, for every instance $\I$. If $e$ is a well-typed expression according to $\Sch$, then we denote by $\sem{e}_\I$ the matrix obtained by evaluating $e$ over $\I$, and define it as follows:
+A \lang\ {\em instance} $\I$ over a schema $\Sch$, is a pair $\I = (\dom,\conc)$, where $\dom : \DD \mapsto \mathbb{N}$ assigns a value to each size symbol (and thus in turn a dimension to each matrix variable), and $\conc : \Mnam \mapsto \mtr{\mathbb{C}}$ assigns a concrete matrix to each matrix variable $M\in \Mnam$, such that $\dim(\conc(M)) = \dom(\alpha)\times \dom(\beta)$, where $\size(M) = (\alpha,\beta)$. That is, an instance tells us the dimension of each matrix variable, and also the concrete matrices assigned to the variable names in $\Mnam$. We assume that $\dom(1) = 1$, for every instance $\I$. If $e$ is a well-typed expression according to $\Sch$, then we denote by $\sem{e}{\I}$ the matrix obtained by evaluating $e$ over $\I$, and define it as follows:
 \begin{itemize}
-\item $\sem{M}_\I = \conc(M)$, for $M\in \Mnam$;
-\item $\sem{e^*}_\I = \sem{e}_\I^*$, where $M^*$ is the conjugate transpose of a matrix $M$;
-\item $\sem{\ones(e)}_\I$ is a $n\times 1$ size vector with 1 as all of its entries;
-\item $\sem{\diag(e)}_\I$ is a diagonal matrix with the vector $\sem{e}_\I$ on its main diagonal, and zero in every other position;
-\item $\sem{e_1\cdot e_2}_\I = \sem{e_1}_\I \cdot \sem{e_2}_\I$;
-\item $\sem{f(e_1,\ldots ,e_n)}_\I$ is a matrix $A$ of the same size as $\sem{e_1}_\I$, and where $A_{ij}$ has the value $f((\sem{e_1}_\I)_{ij},\ldots ,(\sem{e_n}_\I)_{ij})$.
+\item $\sem{M}{\I} = \conc(M)$, for $M\in \Mnam$;
+\item $\sem{e^*}{\I} = \sem{e}{\I}^*$, where $M^*$ is the conjugate transpose of a matrix $M$;
+\item $\sem{\ones(e)}{\I}$ is a $n\times 1$ size vector with 1 as all of its entries;
+\item $\sem{\diag(e)}{\I}$ is a diagonal matrix with the vector $\sem{e}{\I}$ on its main diagonal, and zero in every other position;
+\item $\sem{e_1\cdot e_2}{\I} = \sem{e_1}{\I} \cdot \sem{e_2}{\I}$;
+\item $\sem{f(e_1,\ldots ,e_n)}{\I}$ is a matrix $A$ of the same size as $\sem{e_1}{\I}$, and where $A_{ij}$ has the value $f(\sem{e_1}{\I}_{ij},\ldots ,\sem{e_n}{\I}_{ij})$.
 \end{itemize}
