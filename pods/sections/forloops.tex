@@ -37,6 +37,8 @@ $e$ & $::=$ & $V\in \Mvar$ & (matrix variable)\\
 
 \medskip
 
+Similarly as when defining \lang\, here we start with a core set of matrix operations (sum, product, and the transpose of a matrix). In addition to this, we allow applying functions, and  the $\ffor{v}{X}{e}$ construct, which allows looping over the canonical vectors of a specified dimension. The latter operator is inspired by classical Linear Algebra algorithms \cite{num}, which commonly use loops whose termination conditions are determined by the matrix dimension, and will allow us to express many properties of interest.
+
 A \lang++ {\em schema} $\Sch$ is a pair $\Sch=(\Mnam,\size)$, where $\Mnam\subset \Mvar$ is a finite set of matrix variables, and $\size: \Mvar \mapsto \DD\times \DD$ is a function that maps each matrix variable to a pair of {\em size symbols}. Given a schema $\Sch$, the type of a \lang++ expression, denoted $\type(e)^{\Sch}$, is defined inductively as follows:
 \begin{itemize}
 \item $\type(V)^{\Sch} = \size(V)$, for a matrix variable $V$;
@@ -69,3 +71,27 @@ The semantics of $\ffor{v}{X}{e}$ over $\I$ is defined iteratively as follows:
 \item Finally, set $\sem{\ffor{v}{X}{e}}_\I = A_{n}$.
 \end{itemize}
 
+
+\subsection{Examples of \lang++ expressions}
+
+
+
+
+%%needs dimensions:
+%Next we illustrate the versatility of the introduced language. To begin, we note that, unlike the original \lang\ proposal, we have at our disposals canonical vectors of arbitrary dimension. The most basic use of canonical vectors is for accessing a position $ij$ of some matrix $M$, a property which lies outside of the scope of \lang. For this, we can simply use the expression $(e_i^{n})^*\cdot M \cdot e_j^m$, where $M$ is a matrix of size $m\times n$, $e_i^n$ is the $i$th canonical vector of dimension $n$, and likewise, $e_j^m$ is the $j$th canonical vector of dimension $m$.
+\noindent{\bf Basic examples.} 
+The biggest novelty of $\lang++$ is the for operator. To illustrate how this operator can be used, we first show how one can construct the identity matrix of needed dimension in \lang++. For this, it suffices to use the expression $$\ffor{v}{X}{X + v\cdot v^*}.$$ For this expression to be well-typed, $v$ has to be a vector variable of type $\alpha\times 1$, and $X$ a matrix variable such that $\size(X) = (\alpha,\alpha)$. When evaluated over some instance $\I$, this loop starts by initializing $X$ as the null matrix of dimension $n\times n$, where $n=\dom(\alpha)$, and then adds to $X$ the matrix $e_1^n\cdot (e_1^n)^*$ in the first iteration, the matrix $e_2^n\cdot (e_2^n)^*$ in the second iteration, and so on, until $X$ equals the identity matrix of dimension $n\times n$ in the end.
+
+%%NOT DOABLE IF NO ACCESS TO DIMENSION
+%\noindent{\bf Elementary matrix operations.} Here we show the true value of adding canonical vectors to the language, by illustrating how they allow us to express elementary matrix operations \cite{linalg}:
+%\begin{enumerate}
+%\item {\bf Row switching.} To switch the row $i$ and row $j$ of an $m\times n$ matrix $M$, we can simply use the expression $T^{ij} \cdot M$, where:
+%$$T^{ij} = I^m - e_i^m\cdot (e_i^m)^* - e_j^m\cdot (e_j^m)^* + e_i^m\cdot (e_j^m)^* + e_j^m\cdot (e_i^m)^*.$$
+%\item {\bf Row multiplication.} Multiplying a row by a scalar $c$ is performed by 
+%\item {\bf Row addition.}
+%\end{enumerate}
+%Analogously, we can perform these transformations of columns, by using the transposed matrix $M^*$, and the canonical vectors of appropriate dimension.
+
+\noindent{\bf Useful shorthand.} Define sum(s) and product.
+
+\noindent{\bf Capturing \lang.}
