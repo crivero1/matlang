@@ -97,7 +97,7 @@ We extend \ARA with the following two operators:
  \item $\textsf{Apply}[f](\psi_1,\ldots,\psi_k)$, where $\psi_1,\ldots,\psi_k$ are \ARA expressions with $\mathcal{R}(\psi_1)=\cdots=\mathcal{R}(\psi_k)$, 
  $f$ is a function $K^k\to K$,
  and 
- $\mathcal(\varphi)=\mathcal{R}(\psi_1)$.
+ $\mathcal{R}(\varphi)=\mathcal{R}(\psi_1)$.
 \end{itemize}
 The semantics of these operators is given by:
 \begin{description}
@@ -117,15 +117,15 @@ $\varphi(\mathcal{I}):=\textsf{Apply}[f](\psi_1(\mathcal{I}), \ldots,\psi_k(\mat
 
 
 \subsection{Upper bound on expressivity}
-There is a straightforward translation from \ARA expressions into the relational algebra with aggregation $\text{ALG}_{\text{aggr}}(\Omega',\Theta)$ as defined in~\cite{LIBKIN2003}. Here, $\Omega'$ consists of the functions in $\Omega$ and complemented with the unary functions $1:K\to K:k\mapsto 1$, to deal with $\mathbf{1}$ operator and $0:K\to K:k\mapsto 0$ to deal with selection and binary functions $f_+:K^2\to K:(k,\ell)\mapsto k+\ell$ and $f_*:K^2\to K:(k,\ell)\mapsto k*\ell$.
+There is a straightforward translation from \ARA$_{\Omega}$ expressions into the relational algebra with aggregation $\text{ALG}_{\text{aggr}}(\Omega',\Theta)$ as defined in~\cite{LIBKIN2003}. Here, $\Omega'$ consists of the functions in $\Omega$ and complemented with the unary functions $1:K\to K:k\mapsto 1$, to deal with $\mathbf{1}$ operator and $0:K\to K:k\mapsto 0$ to deal with selection and binary functions $f_+:K^2\to K:(k,\ell)\mapsto k+\ell$ and $f_*:K^2\to K:(k,\ell)\mapsto k*\ell$.
 Furthermore, $\Theta$ consist of aggregate functions corresponding to the semiring sum and product, lifted to multi-sets. More precisely,
 $\Theta$ includes $f_+^1,f_+^2,f_+^3,\ldots$ such that $f_+^n$ maps
-a $n$-element multi-sets in $K$ to their sum, and 
+$n$-element multi-sets in $K$ to their sum, and 
  $f_*^1,f_*^2,f_*^3,\ldots$ such that $f_*^n$ maps
-a $n$-element multi-sets in $K$ to their product.
+ $n$-element multi-sets in $K$ to their product.
 
-The language $\text{ALG}_{\text{aggr}}(\Omega,\Theta)$ is defined over a pure relation schema in which attributes are typed. It is easy to see that with every \ARA schema $\mathcal{R}$ we can associate a relational schema encoding the same information.
+The language $\text{ALG}_{\text{aggr}}(\Omega,\Theta)$ is defined over a ``pure'' relational schema in which attributes are typed. It is easy to see that with every \ARA schema $\mathcal{R}$ we can associate a relational schema encoding the same information. Intuitively, we have one attribute of type $\mathbf{dom}$ for each $A\in\mathcal{R}$ and a special attribute $\text{Val}$ of type $K$ which is to hold the semiring values.
 
-Given this translation, it is known that every expression in  $\text{ALG}_{\text{aggr}}(\Omega,\Theta)$ corresponds to an expression in the finite rank fragment $\mathcal{L}_{\infty,\omega}^*(\textbf{Cnt})$ of infinitary logic with counting $\mathcal{L}_{\infty,\omega}(\textbf{Cnt})$~\cite{Hella:2001}. 
+Given this translation, it is known that every expression in  $\text{ALG}_{\text{aggr}}(\Omega,\Theta)$ corresponds to an expression in the finite rank fragment $\mathcal{L}_{\infty,\omega}^*(\textbf{Cnt})$ of infinitary logic with counting $\mathcal{L}_{\infty,\omega}(\textbf{Cnt})$~\cite{LIBKIN2003,Hella:2001}. 
 Since this logic is local, \ARA inherits this locality. As an example, 
-transitive closure and connectivity cannot be expressed in \ARA$_{\Omega}$.
+transitive closure and connectivity of graphcs cannot be expressed in \ARA$_{\Omega}$.
