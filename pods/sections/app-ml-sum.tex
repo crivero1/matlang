@@ -1,0 +1,26 @@
+\newcommand{\row}{\mathsf{row}}
+\newcommand{\rows}{\mathsf{rows}}
+\newcommand{\col}{\mathsf{col}}
+\newcommand{\cols}{\mathsf{cols}}
+
+We next show that \lang$(\Sigma)$ and \ARA are closely connected. To make this correspond formal we first establish a link between matrix schemas and relation schemas, and matrix instances and database instances.
+
+We start from a matrix schema $\Sch=(\Mnam,\size)$, where $\Mnam\subset \Mvar$ is a finite set of matrix variables, and $\size: \Mvar \mapsto \DD\times \DD$ is a function that maps each matrix variable to a pair of size symbols. On the relational side
+we have for each size symbol $\alpha\in\DD\setminus\{1\}$, attributes $\row_\alpha$ and $\col_\alpha$ in $\mathbf{att}$. Given
+$\Sch$, the domain asssignment $\mathbb{D}_\Sch$ is defined as 
+$\mathbb{D}_\Sch(\row_\alpha)=[1,\size(\alpha)]$ and 
+$\mathbb{D}_\Sch(\col_\alpha)=[1,\size(\alpha)]$. We define the database  schema $\text{Rel}(\Sch)$ such that for each $V\in\Mnam$,
+\[
+	\text{Rel}(\Sch)(V) = \begin{cases}
+		\lbrace\row_\alpha,\col_\beta \rbrace & \text{ if $ \size(V)=(\alpha,\beta)$} \\
+		\lbrace\row_\alpha \rbrace & \text{ if $ \size(V)=(\alpha,1)$} \\
+		\lbrace\col_\beta \rbrace  &
+	 \text{ if $ \size(V)=(1,\beta)$} \\
+		\lbrace\rbrace & \text{ if $\size(V)=(1,1)$}.
+\end{cases}
+\]
+Consider a matrix instance $\I = (\dom,\conc)$ over a schema $\Sch$.
+Let $V\in\Mnam$ with $\size(V)=(\alpha,\beta)$ and $\conc(V)$ be its corresponding matrix of dimension $\dom(\alpha)\times \dom(\beta)$.
+We then define the database instance $\text{Rel}_\Sch(\I)$  to consist of relations for each $V\in\Mnam$ defined as follows:
+$\mathcal{T}_{\mathbb{D}_{\Sch}}(\text{Rel}(\Sch)(V)) \to K$ such that
+$(\text{Rel}_{_\Sch}(I))(t):=\conc(V)_{ij}$ where (1) $t(\row_\alpha)=i$ if $\alpha\neq 1$ and equal to $1$ if $\alpha = 1$; and (2) $t(\col_\beta)=j$ if $\beta\neq 1$ and equal to $1$ if $\beta= 1$.
