@@ -24,3 +24,28 @@ Let $V\in\Mnam$ with $\size(V)=(\alpha,\beta)$ and $\conc(V)$ be its correspondi
 We then define the database instance $\text{Rel}_\Sch(\I)$  to consist of relations for each $V\in\Mnam$ defined as follows:
 $\mathcal{T}_{\mathbb{D}_{\Sch}}(\text{Rel}(\Sch)(V)) \to K$ such that
 $(\text{Rel}_{_\Sch}(I))(t):=\conc(V)_{ij}$ where (1) $t(\row_\alpha)=i$ if $\alpha\neq 1$ and equal to $1$ if $\alpha = 1$; and (2) $t(\col_\beta)=j$ if $\beta\neq 1$ and equal to $1$ if $\beta= 1$.
+
+We next translate \lang++ expressions $e$ into \ARA expressions $\Phi(e)$ by induction on the structure.
+%
+% \begin{itemize}
+% 	\item If $e=V$ then $\Phi(e):=\text{Rel}(\Sch)(V)$.
+% 	\item if $e=e^t$ then \[
+% \Phi(e) :=
+% \begin{cases}
+% \rho_{\varphi}(\Phi(e')) & \text{if } \alpha \neq 1 \neq \beta; \cr
+% \rho_{\mathrm{col}_\alpha \to \mathrm{row}_\alpha}(\Phi(e')) & \text{if } \alpha \neq 1 = \beta; \cr
+% \rho_{\mathrm{row}_\beta \to \mathrm{col}_\beta}(\Phi(e')) & \text{if } \alpha = 1 \neq \beta; \cr
+% e' & \text{if } \alpha = 1 = \beta,
+% \end{cases}
+% \]
+% where $\varphi$ maps $\mathrm{col}_\alpha$ to $\mathrm{row}_\alpha$ and $\mathrm{row}_\beta$ to $\mathrm{col}_\beta$.
+% 	\item
+% 	If $e = e_1 \cdot e_2$ where $\mathcal{S}(e_1) = \alpha \times \gamma$ and $\mathcal{S}(e_2) = \gamma \times \beta$, then we consider two cases. If $\gamma = 1$, then $\Upsilon(e) := \Upsilon(e_1) \Join \Upsilon(e_2)$. If $\gamma \neq 1$, then $\Upsilon(e) := \zeta_{C,2}(\rho_{\varphi_1}(\Upsilon(e_1)),\rho_{\varphi_2}(\Upsilon(e_2)))$, where $\varphi_1(\mathrm{col}_\gamma) = \varphi_2(\mathrm{row}_\gamma) = C \notin \{\mathrm{row}_\alpha, \mathrm{col}_\beta\}$ and $\varphi_1$ and $\varphi_2$ are the identity otherwise.
+% 	If $e=e_1(v_1,\ldots,v_k)\cdot e_2(u_1,\ldots,u_s)$ where $e_1$ is $n\times\gamma$, $e_2$ is $\gamma\times m$. Let $\rho:\row_\gamma\rightarrow C,\col_\gamma\rightarrow C.$ We have two cases:
+% 		\begin{itemize}
+% 			\item If $\gamma\neq 1$ then $E=\widehat{\pi}_C\left( \rho\left(E_1\right)\bowtie\rho\left( E_2\right)\right).$
+% 			\item If $\gamma = 1$ then $E=E_1\bowtie E_2$.
+% 		\end{itemize}
+% 	\item If $e=f(e_1,\ldots,e_s)$ we have that $E=E_1\cup\cdots\cup E_s$ if $f$ is sum and $E=E_1\bowtie\cdots\bowtie E_s$ if $f$ is multiplication.
+% 	\item If $e=\ssum v.e'(v,v_1,\ldots, v_k)$ and let $E'$ be the corresponding ARA expression of $e'$. Note that $E'$ is $E'(\row_n, \col_m,A,A_1,\ldots,A_k), E'(\row_n,A,A_1,\ldots,A_k), E'(\col_m,A,A_1,\ldots,A_k)$ or $E'(A,A_1,\ldots,A_k)$ depending on the dimensions of $e'$. Then we have that $E=\widehat{\pi}_A(E').$ Note that this implies that if $e=\ssum v_1\ssum v_2\cdots\ssum v_k.e'(v_1,\ldots,v_k)$ then $E=\widehat{\pi}_{A_1}\widehat{\pi}_{A_2}\cdots\widehat{\pi}_{A_k}E'.$
+% \end{itemize}
