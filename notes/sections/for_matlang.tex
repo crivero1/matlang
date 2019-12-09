@@ -2,28 +2,25 @@
 
 \subsection{Syntax and semantics of MATLANG with FOR}
 
-A vocabulary $\cS$ is a set of matrix names $\cM=M_1,\ldots, M_p$, a set of vector variable names $\cV=v_1,\ldots, v_l$ and a set of matrix variable names $\cX=X_1,\ldots, X_c$.
-An instance $\cI$ is a function that maps matrix names to concrete matrices of a determined dimension $(n,m)$, vector variable names to a determined dimension $(n, 1)$ and matrix variable names to a determined dimension $(n,m)$.
+A vocabulary $\cV$ is a set of matrix variables. An instance $\cI$ is a function that maps matrix names to concrete matrices of a determined dimension $(n,m)$
 We also assume the presence of $F$, a set of functions $f:\mathbb{R}^{k}\rightarrow\mathbb{R}$ (with $1\leq k$).
 
-Let $\cS=(\cM, \cV, \cX)$ be a vocabulary, a formula in the vocabulary $\cS$ is of the form:
+Let $\cV$ be a vocabulary, a formula in the vocabulary $\cV$ is of the form:
 $$
-E:= M\in \cM \ |\ v\in \cV \ |\ X\in \cX \ |\    E^* \ |\ E_1+E_2 \ |\  E_1\cdot E_2 \ |\  f(E_1,\ldots, E_k), f\in F \ |\  \for v,X. E
+E:= V\in \cV \ |\    E^* \ |\ E_1+E_2 \ |\  E_1\cdot E_2 \ |\  f(E_1,\ldots, E_k), f\in F \ |\  \for v,X. E
 $$
 
-In the last expression $v\in \cV, X\in \cX$.
+In the last expression $v,X\in \cV$.
 
-Now, given a vocabulary $\cS$, an instance $\cI$ and a set of functions $F$, we define the well typedness of a formula of $\cS$ according to $\cI$ as follows. 
+Now, a MATLANG ++ schema $\cS$ is given a vocabulary $\cV$, a function $\texttt{size}$ and  an instance $\cI$ and a set of functions $F$, we define the well typedness of a formula of $\cS$ according to $\cI$ as follows. 
 
 \begin{align*}
-\text{type}(M) &= (n,m) \text{ if } \cI(M) \text{ is a } n\times m \text{ matrix } \\
-\text{type}(v) &= (n,1) \text{ if } \cI(v) = (n, 1) \\
-\text{type}(X) &= (n,m) \text{ if } \cI(X) = (n, m) \\
+\text{type}(V) &= (n,m) \text{ if } \cI(V) \text{ is a } n\times m \text{ matrix } \\
 \text{type}(E^*)&=(j,i) \text{ where } (i,j)=\text{type}(E) \\
 \text{type}(E_1 + E_2) &= \text{type}(E_1) \text{ if } \text{type}(E_1)=\text{type}(E_2) \\
 \text{type}(E_1\cdot E_2)&= (i,k) \text{ if } \text{type}(E_1)=(i,j)\text{ and type}(E_2)=(j,k) \\
 \text{type}(f(E_1,\ldots, E_k))&=(1,1) \text{ if } \text{type}(E_1)=\cdots =\text{type}(E_k)=(1,1) \\
-\text{type}\left( \for X,v. E\right) &= \text{type}(E) \text{ if } \text{type}(X)=\text{type}(E)
+\text{type}\left( \for X,v. E\right) &= \text{type}(E) \text{ if } \text{type}(X)=\text{type}(E)\text{ and type}(v)=(n,1)
 \end{align*}
 
 We say that $E$ is well typed if it has a defined type. Now we will proceed with the semantics of these formulas.
@@ -221,43 +218,81 @@ This is, for a sum term $A^k$, if $w$ is previous to $v$ (in the canonical vecto
 
 Let $A$ be a $n\times n$ matrix and $\alpha$ a scalar. For computing Gaussian elimination we turn our attention in the elementary matrices of the form $$E=I + \alpha\cdot e_ie_j^*.$$ Note that $E\cdot A$ adds a $\alpha$-multiple of row $i$ to row $j$. It is worth noting that $E^{-1}= I - \alpha\cdot e_ie_j^*.$
 
-The key property is that, if $A$ is $LU$ factorizable without any row interchange, then $A=LU$, for some upper diagonal matrix $U$ and $L^{-1}=T_{n-1}\cdots T_1$ where $T_i=E_{n-1}^{(i)}\cdots E_{i}^{(i)}$ for some elementary matrices $E_j=I + \alpha_{ij}\cdot e_ie_j^*.$ Here $T_iA$ results in $A$ with its $i-$th column reduced, and $E_j^{(i)}$ adds an $\alpha_{ij}$ multiple of row $i$ to row $j+1$.
-
-For instance, assume that $A$ has no zero pivots (no row interchanging is necessary), we aim to reduce the first column. Let us do the first reduction, this is, substract a multiple of the first row to the second row. Let $\lbrace v_i\rbrace_i$ be the canonical vectors. We first need to find the proper $\alpha$ to ponderate the first row. In gaussian elimination this is the first entry of the second row divided by the first entry of the first row, this is $$\alpha = \dfrac{v_2^*Av_1}{v_1^*Av_1}.$$
-So $$E_1= I - \alpha_1\cdot v_1v_2^*$$
-and $E_1A=A'$ where $A'$ has the second row reduced (first entry zero).
-
-Do this for the rest of the rows and we will have $$E_{n-1}\cdots E_1A=A'$$ and
-\[
-  			A'_{i1}=\begin{cases}
-               A_{11} \text{ if } i =1 \\
-               0 \text{ if } i > 1
-            \end{cases}
-		\]
-
-Note that
+The key property is that, if $A$ is $LU$ factorizable without any row interchange, then $A=LU$, for some upper diagonal matrix $U$ and $L^{-1}=T_{n-1}\cdots T_1$ where $T_{i}=E_{n}^{(i)}\cdots E_{i+1}^{(i)}$ for some elementary matrices $E^{(i)}_j=I + \alpha_{ij}\cdot e_ie_{j}^*.$ Here $T_iA$ results in $A$ with its $i-$th column reduced, and $E_j^{(i)}$ adds an $\alpha_{ij}$ multiple of row $i$ to row $j$. Note that if $E_j^{(i)}=I + \alpha_ij\cdot e_ie_j^*$ and $E_{j+1}^{i}=I + \alpha_i(j+1)\cdot e_ie_{j+1}^*$ (note $e_i^*e_{j+1}=0$) then
 
 \begin{align*}
-A'&=E_{n-1}\cdots E_1A \\
-&=\left( E_1^*\cdots E_{n-1}^*\right)^*A \\
-&=\left(\prod_{k}E_k^*\right)^*A \\
-&=\left(\sprod_{v_k\neq v_1}\left(I-\alpha_k\cdot v_1v_k^*\right)^*\right)^*A \\
-&=\left(\sprod_{v_k\neq v_1}\left(I-\dfrac{v_k^*Av_1}{v_1^*Av_1}\cdot v_1v_k^*\right)^*\right)^*A
+	E_{j+1}^{(i)}E_j^{(i)}&=(I + \alpha_{i(j+1)}\cdot e_ie_{j+1}^*)(I + \alpha_{ij}\cdot e_ie_j^*) \\
+	&=I + \alpha_{ij}\cdot e_ie_j^* + \alpha_{i(j+1)}\cdot e_ie_{j+1}^* + \alpha_{ij}\alpha_{ij}\cdot e_i(e_{j+1}^*e_i)e_j^* \\
+	&= I +\alpha_{ij}\cdot e_ie_j^* + \alpha_{i(j+1)}\cdot e_ie_{j+1}^*
 \end{align*}
 
-And we get $A$ with the first column reduced. Note that we need $v_k\neq v_1$ because we don't want to reduce the first row since it will be set to all zeroes. Furthermore, we want to reduce only the downward rows. This can be done with the function 
+So, for a fixed column $i=1, \ldots, n-1$ we have 
+
+\begin{align*}
+	T_i = E_{n}^{(i)} \cdots E_{i+2}^{(i)}E_{i+1}^{(i)}&=(I + \alpha_{in}\cdot e_ie_n^*)\cdots (I + \alpha_{i(i+2)}\cdot e_ie_{i+2}^*)(I + \alpha_{i(i+1)}\cdot e_ie_{i+1}^*) \\
+	&=I + \alpha_{i(i+1)}\cdot e_ie_{i+1}^* + \alpha_{i(i+2)}\cdot e_ie_{i+2}^* + \cdots + \alpha_{in}\cdot e_ie_{n}^* \\
+	&= I + c_ie_i^*
+\end{align*}
+
+Where
+
 \[
-  			f(v_i, v_j)=v_i^*Zv_j=\begin{cases}
-               1 \text{ if } i < j \\
-               0 \text{ if } i \geq j
-            \end{cases}
-		\]
+c_i=
+\begin{bmatrix}
+    0 \\
+    \vdots \\
+    0 \\
+    \alpha_{i(i+1)} \\
+    \vdots \\
+    \alpha_{in}
+\end{bmatrix}
+\]
 
-Thus $$A'=\left(\sprod v_k.\left(I-\dfrac{v_k^*Av_1}{v_1^*Av_1}\cdot v_1v_k^*\cdot\left(v_1^*Zv_k\right)\right)^*\right)^*A.$$
+Here, $$\alpha_{ij}=\frac{( T_{i-1}\cdots T_1A )_{ij}}{( T_{i-1}\cdots T_1A ) _{ii}}$$
 
-So we can reduce the column $i$ of $A$ as $$\left(\sprod v_k.\left(I-\dfrac{v_k^*Av_i}{v_i^*Av_i}\cdot v_iv_k^*\cdot\left(v_i^*Zv_k\right)\right)^*\right)^*A.$$
+For instance, assume that $A$ has no zero pivots so no row interchanging is necessary and hence $(T_{i-1}\cdots T_1A )_{ii}=e_i^*T_{i-1}\cdots T_1Ae_i\neq 0$ for all $i$. We aim to reduce the first column, this is, compute $T_1$. For this, we need 
 
-Not that this still is not useful, since it depends on $v_i$, but we will use the above expression that computes $T_i$ to compute $L^{-1}$
+\[
+c_i=
+\begin{bmatrix}
+    0 \\
+    \alpha_{12} \\
+    \vdots \\
+    \alpha_{1n}
+\end{bmatrix}
+\]
+
+Where $\alpha_{1j}=\frac{A_{1j}}{A_{11}}$
+
+For this, let us assume we have $e_1$, this indicate the column we aim to reduce. We'll first get 
+
+\[
+a = 
+\begin{bmatrix}
+    0 \\
+    A_{12} \\
+    \vdots \\
+    A_{1n}
+\end{bmatrix}
+\]
+
+And then do $\text{apply}[\div]\left( a, (e_1^*Ae_1)\cdot\texttt{ones}(e_1) \right)$. Now, define $$\texttt{col}(A,e_j):=\for X,v. (e_jZv)(vAe_j)v + X$$
+
+This gives us the lower diagonal entries of column $j$ of $A$. Then $$c_i=\text{apply}[\div]\left(\texttt{col}(A, e_1), (e_1^*Ae_1)\cdot\texttt{ones}(e_1) \right)$$ So
+
+\begin{align*}
+	T_1&=I+c_1e_1^* \\
+	&=I + \left[ \text{apply}[\div]\left(\texttt{col}(A, e_1), (e_1^*Ae_1)\cdot\texttt{ones}(e_1) \right)\right]e_1^* 
+\end{align*}
+
+More generally, let $A_i=T_{i-1} \cdots T_1A$, this is, $A_i$ is $A$ whit its first $i-1$ columns reduced. Then, to reduce the $i$-th column of $A_i$ we compute $T_{i}$ as 
+
+\begin{align*}
+	T_{i}&=I+c_{i}e_{i}^* \\
+	&=I + \left[ \text{apply}[\div]\left(\texttt{col}(A_i, e_{i}), (e_{i}^*A_ie_{i})\cdot\texttt{ones}(e_{i}) \right)\right]e_{i}^* 
+\end{align*}
+
+Not that this still is not useful, since it depends on $e_i$, but we will use the above expression that computes $T_i$ to compute $L^{-1}$. To this purpose, we define $$\texttt{reduce}(A,e_i)= I + \left[ \text{apply}[\div]\left(\texttt{col}(A, e_i), (e_i^*Ae_i)\cdot\texttt{ones}(e_i) \right)\right]e_i^* $$ This returns $T_i$ such that $T_iA$ is $A$ with its $i$-th column reduced. Now we do $$L^{-1}=\for X,v. (1-v^*v_{min})\texttt{reduce}(XA,v)X + (v^*v_{min})\texttt{reduce}(A,v)$$
 
 \subsubsection{LU factorization in MATLANG + for}
 Let's consider the following setting of the $A=LU$ factorization:
@@ -270,11 +305,15 @@ A_1&=A \\
 Note that $A_n=U$ and 
 \begin{align*}
 A_i&=T_{i-1}A_{i-1} \\
-&=\left(\sprod v_k.\left(I-\dfrac{v_k^*A_{i-1}v_i}{v_i^*A_{i-1}v_i}\cdot v_iv_k^*\cdot\left(v_i^*Zv_k\right)\right)^*\right)^*A_{i-1}.
+&=\texttt{reduce}(A_{i-1},e_i)A_{i-1}.
 \end{align*}
 
-Now, if $A=LU$ and $$E(X, v)=\left(\sprod v_k.\left(I-\dfrac{v_k^*(XA)v}{v^*(XA)v}\cdot vv_k^*\cdot\left(v^*Zv_k\right)\right)^*\right)^*X$$
+Now, if $A=LU$ and $$E(X, v)=(1-v^*v_{min})\texttt{reduce}(XA,v)X + (v^*v_{min})\texttt{reduce}(A,v)$$
 then $U=(\for X, v.E(X,v))\cdot A$, this is $L^{-1}=\for X, v.E(X,v)$.
+
+\subsubsection{PA=LU factorization}
+
+Here we can compute $L^{-1}P$. Then $L^{-1}PA=U$.
 
 \subsubsection{Independence of starting matrix}
 
