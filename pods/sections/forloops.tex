@@ -21,7 +21,7 @@
 
 While \lang\ serves as a solid basis for expressing linear algebra properties, it is still somewhat lacking when defining more advanced linear algebra operators such as Gaussian eliminations, or computing an inverse of a matrix. To alleviate these issues, we propose an extended version of \lang, called \lang++ which allows us to express such properties.
 
-As before, we assume a countably infinite set of matrix variables $\Mvar = \{V_1, V_2, \ldots\}$, and a set $\Fun$  of functions $f:\mathbb{C}^n \mapsto \mathbb{C}$. The syntax of \lang++ is defined as follows:
+As before, we assume a countably infinite set of matrix variables $\Mvar = \{V_1, V_2, \ldots\}$, and a set $\Fun$  of functions $f:\mathbb{C}^n \mapsto \mathbb{C}$. Additionally, for each $n\in \mathbb{N}$, we denote by $e_1^n,\ldots ,e_n^n$ the complete list of canonical vectors of dimension $n$; that is, $e_1^n = [1\ 0 \cdots 0]^*$, $e_2^n = [0\ 1\ 0 \cdots 0]^*$, etc. The syntax of \lang++ is defined as follows:
 
 
 \medskip
@@ -37,7 +37,7 @@ $e$ & $::=$ & $V\in \Mvar$ & (matrix variable)\\
 
 \medskip
 
-Similarly as when defining \lang\, here we start with a core set of matrix operations (sum, product, and the transpose of a matrix). In addition to this, we allow applying functions, and  the $\ffor{v}{X}{e}$ construct, which allows looping over the canonical vectors of a specified dimension. The latter operator is inspired by classical Linear Algebra algorithms \cite{num}, which commonly use loops whose termination conditions are determined by the matrix dimension, and will allow us to express many properties of interest.
+Similarly as when defining \lang\, here we start with a core set of matrix operations (sum, product, and the transpose of a matrix). In addition to this, we allow applying functions, and  the $\ffor{v}{X}{e}$ construct, which allows looping over the canonical vectors of a specified dimension, and updating the context of the variable $X$ in each iteration. The latter operator is inspired by classical Linear Algebra algorithms \cite{num}, which commonly use loops whose termination conditions are determined by the matrix dimension, and will allow us to express many properties of interest.
 
 A \lang++ {\em schema} $\Sch$ is a pair $\Sch=(\Mnam,\size)$, where $\Mnam\subset \Mvar$ is a finite set of matrix variables, and $\size: \Mvar \mapsto \DD\times \DD$ is a function that maps each matrix variable to a pair of {\em size symbols}. Given a schema $\Sch$, the type of a \lang++ expression, denoted $\ttype(e)$, is defined inductively as follows:
 \begin{itemize}
@@ -45,13 +45,16 @@ A \lang++ {\em schema} $\Sch$ is a pair $\Sch=(\Mnam,\size)$, where $\Mnam\subse
 \item $\ttype(e^*) = (\beta,\alpha)$, if $\ttype(e)=(\alpha,\beta)$; and undefined if $\ttype(e)$ is undefined,
 \item $\ttype(e_1 \cdot e_2) = (\alpha,\gamma)$, whenever $\ttype(e_1)^{\Sch}=(\alpha,\beta)$, and $\ttype(e_2)=(\beta,\gamma)$; and is undefined otherwise,
 \item $\ttype(e_1 + e_2) = \ttype(e_1)$, if $\ttype(e_1) = \ttype(e_2)$; and is undefined otherwise,
-\item $\ttype(f(e_1,\ldots ,e_n)) = (1,1)$, whenever $\ttype(e_1)= \cdots =\ttype(e_n)=(1,1)$, and $f:\mathbb{C}^n\mapsto \mathbb{C}$; and is undefined otherwise,
+%\item $\ttype(f(e_1,\ldots ,e_n)) = (1,1)$, whenever $\ttype(e_1)= \cdots =\ttype(e_n)=(1,1)$, and $f:\mathbb{C}^n\mapsto \mathbb{C}$; and is undefined otherwise,
+\item $\ttype(f(e_1,\ldots ,e_n)) = (\alpha,\beta)$, whenever $\ttype(e_1) = \ldots = \ttype(e_k) = (\alpha,\beta)$, and $f:\mathbb{C}^n \mapsto  \mathbb{C}$; and is undefined otherwise, and,
 \item $\ttype(\ffor{v}{X}{e}) = \ttype(e)$, if $\ttype(X) = \ttype(e)$, and $\ttype(v) = (\gamma,1)$; and is undefined otherwise.
 \end{itemize}
 
+We remark that in the expression $\ffor{v}{X}{e}$, we require that $\ttype(X) = \ttype(e)$ since, intuitively, this expression updates the content of the variable $X$ in each iteration using the result of $e$. As we will see below, evaluating $e$ will depend on a canonical vector stored in $v$, and the current content of $X$. %Another difference from \lang\ is that we allow function application only on scalars (more precisely, on $1\times 1$ matrices).
+
 An expression $e$ is well-typed over a schema $\Sch$ if its type is defined. For well-typed expressions we can define the evaluation as follows.
 %
-A \lang++ {\em instance} $\I$ over a schema $\Sch$, is a pair $\I = (\dom,\conc)$, where $\dom : \DD \mapsto \mathbb{N}$ assigns a value to each size symbol, and $\conc : \Mnam \mapsto \mtr{\mathbb{C}}$ assigns a concrete matrix to each matrix variable $M\in \Mnam$, such that $\dim(\conc(M)) = \dom(\alpha)\times \dom(\beta)$, where $\size(M) = (\alpha,\beta)$. As before, we assume that $\dom(1) = 1$, for every instance $\I$. Additionally, we assume that each instance $\I$ has a countably infinite set of canonical vectors of arbitrary dimension. That is, for each $n\in \mathbb{N}$, we assume that vectors $e_1^n,\ldots ,e_n^n$ store the complete list of canonical vectors of dimension $n$, where $e_1^n = [1\ 0 \cdots 0]^*$, $e_2^n = [0\ 1\ 0 \cdots 0]^*$, etc. Note that we do not have a direct access to these vectors, but will use them for defining the semantics of for loops. 
+A \lang++ {\em instance} $\I$ over a schema $\Sch$, is a pair $\I = (\dom,\conc)$, where $\dom : \DD \mapsto \mathbb{N}$ assigns a value to each size symbol, and $\conc : \Mnam \mapsto \mtr{\mathbb{C}}$ assigns a concrete matrix to each matrix variable $M\in \Mnam$, such that $\dim(\conc(M)) = \dom(\alpha)\times \dom(\beta)$, where $\size(M) = (\alpha,\beta)$. As before, we assume that $\dom(1) = 1$, for every instance $\I$. 
  %(meaning that $e_1^n = \begin{bmatrix} 1 \\ 0 \\ \vdots \\ 0 \end{bmatrix}$, etc.).
 If $\I$ is an instance, $V$ a matrix variable such that $\size(V)= (\alpha,\beta)$, and $M$ a matrix of dimension $\dom(\alpha)\times \dom(\beta)$, then $\I[V := X]$ denotes an instance that coincides with $\I$, apart from the fact that the value of the matrix variable $V$ is the matrix $M$. 
 If $e$ is a well-typed expression according to $\Sch$, then we denote by $\sem{e}{\I}$ the matrix obtained by evaluating $e$ over $\I$, and define it as follows:
@@ -60,26 +63,35 @@ If $e$ is a well-typed expression according to $\Sch$, then we denote by $\sem{e
 \item $\sem{e^*}{\I} = \sem{e}{\I}^*$, where $M^*$ is the conjugate transpose of a matrix $M$;
 \item $\sem{e_1\cdot e_2}{\I} = \sem{e_1}{\I} \cdot \sem{e_2}{\I}$;
 \item $\sem{e_1 + e_2}{\I} = \sem{e_1}{\I} + \sem{e_2}{\I}$;
-\item $\sem{f(e_1,\ldots ,e_n)}{\I}$ is a $1\times 1$ matrix whose only entry has the value $f(\sem{e_1}{\I},\ldots ,\sem{e_n}{\I})$. Here we abuse the notation and use $\sem{e}{\I}$ to denote both a $1\times 1$ matrix, and a scalar from $\mathbb{C}$.
+%\item $\sem{f(e_1,\ldots ,e_n)}{\I}$ is a $1\times 1$ matrix whose only entry has the value $f(\sem{e_1}{\I},\ldots ,\sem{e_n}{\I})$. Here we abuse the notation and use $\sem{e}{\I}$ to denote both a $1\times 1$ matrix, and a scalar from $\mathbb{C}$.
+\item $\sem{f(e_1,\ldots ,e_n)}{\I}$ is a matrix $A$ of the same size as $\sem{e_1}{\I}$, and where $A_{ij}$ has the value $f(\sem{e_1}{\I}_{ij},\ldots ,\sem{e_n}{\I}_{ij})$.
 \end{itemize}
 
 The semantics of $\ffor{v}{X}{e}$ over $\I$ is defined iteratively as follows:
 \begin{itemize}
-\item Let $\ttype(v)= (\gamma,1)$, and $\ttype(e) = (\alpha,\beta)$. Define $n := \dom(\gamma)$.
-\item Set $A_0 = \mathbf{0}$, is the null matrix of size $\dom(\alpha)\times \dom(\beta)$.
+\item Let $\ttype(v)= (\gamma,1)$, and $\ttype(e) = (\alpha,\beta)$. Set $n := \dom(\gamma)$.
+\item Let $A_0 = \mathbf{0}$, be the null matrix of size $\dom(\alpha)\times \dom(\beta)$.
 \item For $i=1,\ldots n$, compute $A_i = \sem{e}{\I[v := e^{n}_i, X:= A_{i-1}]}$.
 \item Finally, set $\sem{\ffor{v}{X}{e}}{\I} = A_{n}$.
 \end{itemize}
 
+Notice that evaluating $\ffor{v}{X}{e}$ over an instance that already assigns values to $v$ and $X$, these values get overwritten immediately. Notice that if $e$ does not use the variable $v$, the it will have the same value in each iteration. Sometimes when we want to make it explicit that the expression $e$ uses matrix variables $X_1,\ldots ,X_n$, we write $e(X_1,\ldots ,X_n)$, where $X_1,\ldots ,X_n$ are all the matrix variables mentioned in $e$. Analogously with First Order Logic, we could define the notion of free and bound variables (i.e. the ones in the scope of a \texttt{for} operator), however, since we explicitly rewrite the value of these variables, this distinction will not play an important role.
 
-\subsection{Examples of \lang++ expressions}
+What about: $$\ffor{v}{X}{(\ffor{v}{X}{X+v\cdot v^*})}???$$
+
+%\subsection{Examples of \lang++ expressions}
 
 
 
 
 %%needs dimensions:
 %Next we illustrate the versatility of the introduced language. To begin, we note that, unlike the original \lang\ proposal, we have at our disposals canonical vectors of arbitrary dimension. The most basic use of canonical vectors is for accessing a position $ij$ of some matrix $M$, a property which lies outside of the scope of \lang. For this, we can simply use the expression $(e_i^{n})^*\cdot M \cdot e_j^m$, where $M$ is a matrix of size $m\times n$, $e_i^n$ is the $i$th canonical vector of dimension $n$, and likewise, $e_j^m$ is the $j$th canonical vector of dimension $m$.
-\noindent{\bf Basic examples.} 
+
+To illustrate how \lang++ works, we next present a series of properties that the language can express, introduce some operators that will be commonly used throughout the paper, and show how the proposed language captures original \lang.
+
+\medskip
+
+\noindent{\bf For loops.} 
 The biggest novelty of $\lang++$ is the for operator. To illustrate how this operator can be used, we first show how one can construct the identity matrix of needed dimension in \lang++. For this, it suffices to use the expression $$\ffor{v}{X}{X + v\cdot v^*}.$$ For this expression to be well-typed, $v$ has to be a vector variable of type $\alpha\times 1$, and $X$ a matrix variable such that $\size(X) = (\alpha,\alpha)$. When evaluated over some instance $\I$, this loop starts by initializing $X$ as the null matrix of dimension $n\times n$, where $n=\dom(\alpha)$, and then adds to $X$ the matrix $e_1^n\cdot (e_1^n)^*$ in the first iteration, the matrix $e_2^n\cdot (e_2^n)^*$ in the second iteration, and so on, until $X$ equals the identity matrix of dimension $n\times n$ in the end.
 
 %%NOT DOABLE IF NO ACCESS TO DIMENSION
@@ -92,14 +104,56 @@ The biggest novelty of $\lang++$ is the for operator. To illustrate how this ope
 %\end{enumerate}
 %Analogously, we can perform these transformations of columns, by using the transposed matrix $M^*$, and the canonical vectors of appropriate dimension.
 
-\noindent{\bf Summation.} 
+\medskip
 
-EXPLAIN: Free vs bound. The use of variables. Notation.
+\noindent{\bf Canonical summation.} Notice that when defining the identity matrix, we actually only update the value of $X$ by adding some value to it. This restricted form of the $\texttt{for}$ loop will prove useful throughout the paper, and we will therefore introduce it a special operator. That is, we define:
+$$\Sigma x. e := \ffor{v}{X}{X + e}.$$
 
-Define sum(s); NOT the  product.
+Interestingly enough, this restricted version of \texttt{for} already allows us to capture the \lang\ operators that are not present in the syntax of \lang++. More precisely, we have:
+\begin{itemize}
+%\item {\bf Multiplying a matrix by a scalar.} One of the fundamental operations is the ability to multiply a matrix by a scalar. While this operation is not explicitly present in \lang++, we can simulate it as follows. Let $f_c(x) := c\cdot x$. For an expression $e$ 
+%\item {\bf Function application.} Notice that in \lang, a function is applied pointwise to matrices of arbitrary size, while \lang++ only allows functions that process matrices of size $1\times 1$. Using the summation operator we can lift this condition, and allow applying a function $f:\mathbb{C}^n \mapsto \mathbb{C}$ on expressions $e_1,\ldots ,e_n$ of arbitrary (but equal) type by writing 
+%$$\Sigma x_i \Sigma x_j. f(x_i^*\cdot e_1\cdot x_j, \ldots ,x_i^*\cdot e_n\cdot x_j) \cdot x_i\cdot x_j^*,$$
+%which simply reconstructs the matrix obtained by applying $f$ to every position of $e_1$ through $e_n$, by using the fact that for two canonical vectors $e_i^m$ and $e_j^n$, the product $e_i^m \cdot (e_j^n)^*$ defines a $m\times n$ matrix whose only non-zero entry is in the position $ij$. From now on we will abuse the notation and allow applying $f$ to an arbitrary matrix, and not only a $1\time 1$ matrix. PERHAPS USE THE SAME NOTATION AS MATLANG TO AVOID THIS THING ALTOGETHER?
+\item {\em One vector.} Using the function $f(x) := 1$, we can define $$\ones(e) := f(\Sigma v. M\cdot v).$$
+\item {\em Diagonal of a vector.} The operator $\ones(e)$ can be defined as:
+$$\ones(e) := \Sigma v. (v^*\cdot e) \cdot vv^*.$$
+\end{itemize}
 
-\noindent{\bf Capturing \lang.}
+Using the observations above we obtain the following:
+\begin{corollary}
+\lang\ is subsumed by \lang++.
+\end{corollary}
+
+To show that the inclusion here is strict, we illustrate how one can detect whether a undirected graph has a four clique. For this, we define an expression $f(u,v) := 1 - u^*\cdot v$. Notice that when $u$ and $v$ are interpreted by two canonical vector of the same dimension, we have that:
+\[
+  			f(u,v)=1-u^*v=\begin{cases}
+               0 \text{ if } u=v \\
+               1 \text{ if } u\neq v
+            \end{cases}
+		\]
+
+To distinguish four-cliques, we will need to determine whether we are dealing with four different nodes. For this, we will utilize the function $$g(u,v,w,r)=f(u,v)\cdot f(u,w)\cdot f(u,r)\cdot f(v,w)\cdot f(v,r)\cdot f(w,r),$$
+which, when evaluated over four canonical vectors of the same dimension, will give us 1 if and only if the four vectors are distinct. With this at hand, we can now define:		
+\begin{multline*}
+\texttt{4-clique}(A) := \ssum v_1.\ssum v_2. \ssum v_3. \ssum v_4.\\ (v_1^*Av_2)(v_1^*Av_3)(v_1^*Av_4)(v_2^*Av_3)(v_2^*Av_4)(v_3^*Av_4) \cdot
+\\g(v_1,v_2,v_3,v_4).
+\end{multline*}
+
+When $A$ is an adjacency matrix of an undirected graph $G$, then we have that $\texttt{4-clique}(A)$ is different from zero if and only if $G$ has a four-clique. Using this, and the fact that \lang\ is subsumed by First Order Logic with aggregates that uses only three variables \cite{matlang}, we immediately obtain the following:
+
+\begin{corollary}
+There is a  \lang++ expression that is not expressible in \lang.
+\end{corollary}
+
+\medskip
 
 \noindent{\bf Order.}
 
+\medskip
+
 \noindent{\bf Product.}
+
+\medskip
+
+\noindent{\bf Algorithms in Linear Algebra.}
