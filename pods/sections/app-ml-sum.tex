@@ -85,8 +85,96 @@ We next translate \lang++ expressions $e$ into \ARA expressions $\Phi(e)$ by ind
 \end{proposition}
 
 For the converse translation, i.e., from \ARA to \lang++, we need to impose some restrictions. More precisely, we only consider \ARA expression $\varphi$
-that take as input relations of arity at most two and also have a schema of arity at most two. Note that intermediate expressions can create schemas of arbitraty size. We also make the assumption that there is an order, denoted by $<$, on the attributes in $\mathbf{att}$. This is to identify which attributes correspond to rows and columns when moving the matrix setting.
+that take as input relations of arity at most two and also have a schema of arity at most two. Note that intermediate expressions can create schemas of arbitraty size. We also make the assumption that there is an order, denoted by $<$, on the attributes in $\mathbf{att}$. In particular, we assume $A_1<A_2<\cdots$ for attributes $A_i\in\mathbf{att}$.
+
+This is to identify which attributes correspond to rows and columns when moving the matrix setting. 
 
 
-Given an \ARA schema $\mathcal{R}$ of arity at most two, we associate a matrix schema $\text{Mat}(\mathcal{R})$ as follows.
+Consider a database schema $\mathcal{R}$ on a finite set $N$ of relation names
+ assigning a relation schema $\mathcal{R}(R)$ to each $R \in N$. We assume that 
+ $\mathcal{R}(R)\subseteq\{A_1,A_2\}$ so the arity is at most two. With each
+ $R\in N$ we associate a matrix name $M_R$. Let $\Mnam_{\mathcal{R}}$ denote the set
+ $V_R$ of matrix names for $R\in\mathcal{R}$. Furthermore, we define 
+ $$
+\size(V_R)=\begin{cases}
+(\alpha,\beta) & \text{with $\alpha\neq 1\neq\beta$ if $\mathcal{R}(R)=\{A_1,A_2\}$}\\
+(\alpha,1) & \text{with $\alpha\neq 1$ if $\mathcal{R}(R)=\{A_1\}$}\\
+(1,\beta) & \text{with $\beta\neq 1$ if $\mathcal{R}(R)=\{A_2\}$}\\
+(1,1) & \text{$\mathcal{R}(R)=\{\}$}
+\end{cases}
+ $$
+Let $\mathbb{D}$ be a domain assignment and consider 
+a relation $r:
+\mathcal{T}_{\mathbb{D}}(X) \to K$ of $R$ with $X\subseteq\{A_1,A_\}$ as determined by
+$\mathcal{R}(R)$. We associate a matrix instance $\I = (\dom,\conc)$ as follows.
+We define $\dom(\alpha)=|\mathbb{D}(A_1)|$ and
+$\dom(\beta)=|\mathbb{D}(A_2)|$. We assume that $\mathbb{D}$ is a consecutive assignment, i.e.,
+$\mathbb{D}(A_i)=[1,n_i]$ for some $n_i\in\mathbb{N}$. We then define
+$\conc(V_R)=\text{Mat}(r)$ such that 
+$(\text{Mat}(r))_{i,j} := r(t)$, where $t$ is (1) the tuple with $t(A_1) = i$ and $t(A_2) = j$ if $|X| = 2$; (2) the tuple with $t(A_1) = i$ and $j = 1$ if $X = {A_1}$,
+(3) the tuple with $t(A_2) = j$ and $i = 1$ if $X = {A_2}$,
+(3) the unique tuple of $r$ if $X=\emptyset$. Clearly, $\text{Mat}(r)$ is a matrix of dimension as
+specified by $\mathbb{D}$. 
+%
+% Given an \ARA schema $\mathcal{R}$ of arity at most two, we associate a matrix schema $\text{Mat}(\mathcal{R})$ as follows:
+% $$
+% \text{Mat}(\mathcal{R})(R):=M_i
+% $$
+%
+% \begin{itemize}
+% \item each binary relation $R_i(A,B)\in \cR$ is mapped to a matrix name $M_i$ of size $n_A\times n_B$;
+% \item each unary relation $R_i(A)\in \cR$ is mapped to a matrix name $M_i$ of size $n_A\times 1$; and
+% \item each nullary relation $R()\in\cR$ is mapped  to a matrix name $M_i$ of size $1\times 1$.
+%
+%
+%
+% In the following, when $\varphi$ is
+% an \ARA expression of schema $\mathcal{R}(\varphi)=\{A_1,\ldots,A_k\}$ with $A_1<A_2<A_3<\cdots < A_k$
+%
+% \begin{itemize}
+% \item If $e=R_i(A,B)$, then $\Phi(e)[v_A,v_B]:=v_A^t\cdot M_i\cdot v_B$; if $e=R_i(A)$, then $\Phi(e)[v_A]:=v_A^t\cdot M_i$; and if
+% $e=R_i()$, then $\Phi(e):=M_i$.
+% \item If $e=e_1\cup e_2$ with $\cR(e_1)=(A_1,\ldots,A_k)=\cR(e_2)$, then
+% $\Phi(e)[V]:=\Phi(e_1)[V_1]+\Phi(e_2)[V_2]$ with $V=V_1=V_2=(v_{A_1},\ldots,v_{A_k})$.
+% \item if $e=\pi_{Y}(e')$ for $Y\subseteq \cR(e')=(A_1,\ldots,A_k)$ then
+% $$
+% \Phi(e)[Y]:=\sum_{v\in V'\setminus Y} \Phi(e')[V'].
+% $$
+% For example,  assume that $Y=(A_1,\ldots,A_j)$ for $j<k$. Then,
+% $(\pi_Y(e'))(\cI)(i_1,\ldots,i_j)$ is the sum of  $e'(\cI)(i_1,\ldots,i_j,\ldots,i_k)$
+% for all possible $i_{j+1},\ldots, i_k$. This precisely what $\sum_{v\in V'\setminus Y} \Phi(e')[V']$ computes.
+%
+% \item if $e=\sigma_{A_p=A_q}(e')$ for $A_p,A_q\in\cR(e')$, then
+% $
+% \Phi(e)[V]:=\Phi(e')[V']\cdot v_{A_p}^t\cdot v_{A_q}
+% $,
+% with $V=V'$. We observe that $v_{A_p}^t\cdot v_{A_q}$ is well-defined since both $v_{A_p}$ and $v_{A_q}$ are assigned dimension $n_{A_p}\times 1=n_{A_q}\times 1$ by $\Theta_V(\cR)$. (Recall that ARA only allows attribute comparisons when the attributes are compatible and thus range over the same indexes. I found renaming quite tricky.)
+% Hence, since
+% $$
+% e(\cI)(i_1,\ldots,i_k)=\begin{cases}
+% e'(\cI)(i_1,\ldots,i_k) & \text{if $i_p=i_q$}\\
+% 0 & \text{otherwise}.
+% \end{cases}
+% $$
+% and $(b_{i_p}^{n_{A_i}})^t\cdot b_{i_q}^{n_{A_j}}=1$ if $i_p=i_q$, and  $(b_{i_p}^{n_{A_i}})^t\cdot b_{i_q}^{n_{A_j}}=0$ if $i_p\neq i_q$, correctness of $\Phi(e)[V]$ follows.
+% \item if $e=\rho_{\varphi}(e')$ then
+% $\Phi(e)[V]:=\Phi(e')[\rho_\varphi(V')]$, where $\rho_\varphi(V'):=\{v_{\varphi(A_1)},\ldots,v_{\varphi(A_k)}\}$ and $V$ is the sorted  version of $\rho_\varphi(V')$. We note that this change of attributes names and corresponding vectors results in a MATLANG++ expression which is well-defined. (Recall that ARA only allows attribute renaming for compatible attributes, so the dimensions of the vectors after renaming have the same dimension.) The ordering of the attributes is important here. For example,
+% if we consider $e'(A,B)=R(A,B)$ with $A<B$ and $\rho_{A\leftrightarrow B}(R(A,B))$
+% then this results in $R(B,A)$. In matrix terms, $v_A^t\cdot M\cdot v_B$ becomes
+% $v_B^t\cdot M\cdot v_A$ but we want to remember that $A$ was the first index. So, for the correspondence between $e(A,B)=\rho_{A\leftrightarrow B}(R(A,B))$  and
+% $\Phi(e)=v_B^t\cdot M\cdot v_A$ it is important that when looking at $e(\cI)_{ij}$ that $i$ corresponds to $A$ and $j$ to $B$. {\bf This may need to spelled out a bit more?}
+% \item If $e=\mathbf{1}(e')$  then
+% $$
+% \Phi(e)[V]:=\mathbf{1}(\Phi(e')[V'])
+% $$
+% with $V=V'$. Indeed, we just replace every entry  by $1$.
+% \item if $e=e_1\bowtie e_2$ with $\cR(e_1)=(A_1,\ldots, A_k)$ and $\cR(e_2)=(B_1,\ldots,B_\ell)$, then
+% $$
+% \Phi(e)[V]:=\Phi(e_1)[V_1]\cdot \Phi(e_2)[V_2].
+% $$
+% and where $V$ is the sorted union of $V_1$ and $V_2$.
+% \end{itemize}
+%
+%
+%
 
