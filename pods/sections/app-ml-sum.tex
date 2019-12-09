@@ -1,15 +1,14 @@
+%!TEX root = /Users/fgeerts/Documents/MLforloops/pods/main.tex
 \newcommand{\row}{\mathsf{row}}
 \newcommand{\rows}{\mathsf{rows}}
 \newcommand{\col}{\mathsf{col}}
 \newcommand{\cols}{\mathsf{cols}}
 
-We next show that \lang$(\Sigma)$ and \ARA are closely connected. To make this correspond formal we first establish a link between matrix schemas and relation schemas, and matrix instances and database instances.
+We next show that \lang$(\Sigma)$ and \ARA are closely connected. To make this correspondence formal we first establish a link between matrix schemas and relation schemas, and matrix instances and database instances.
 
 We start from a matrix schema $\Sch=(\Mnam,\size)$, where $\Mnam\subset \Mvar$ is a finite set of matrix variables, and $\size: \Mvar \mapsto \DD\times \DD$ is a function that maps each matrix variable to a pair of size symbols. On the relational side
-we have for each size symbol $\alpha\in\DD\setminus\{1\}$, attributes $\row_\alpha$ and $\col_\alpha$ in $\mathbf{att}$. Given
-$\Sch$, the domain asssignment $\mathbb{D}_\Sch$ is defined as 
-$\mathbb{D}_\Sch(\row_\alpha)=[1,\size(\alpha)]$ and 
-$\mathbb{D}_\Sch(\col_\alpha)=[1,\size(\alpha)]$. We define the database  schema $\text{Rel}(\Sch)$ such that for each $V\in\Mnam$,
+we have for each size symbol $\alpha\in\DD\setminus\{1\}$, attributes $\row_\alpha$ and $\col_\alpha$ in $\mathbf{att}$. 
+Given $\Sch$, we define the database  schema $\text{Rel}(\Sch)$ such that for each $V\in\Mnam$,
 \[
 	\text{Rel}(\Sch)(V) = \begin{cases}
 		\lbrace\row_\alpha,\col_\beta \rbrace & \text{ if $ \size(V)=(\alpha,\beta)$} \\
@@ -19,33 +18,67 @@ $\mathbb{D}_\Sch(\col_\alpha)=[1,\size(\alpha)]$. We define the database  schema
 		\lbrace\rbrace & \text{ if $\size(V)=(1,1)$}.
 \end{cases}
 \]
+
 Consider a matrix instance $\I = (\dom,\conc)$ over a schema $\Sch$.
-Let $V\in\Mnam$ with $\size(V)=(\alpha,\beta)$ and $\conc(V)$ be its corresponding matrix of dimension $\dom(\alpha)\times \dom(\beta)$.
-We then define the database instance $\text{Rel}_\Sch(\I)$  to consist of relations for each $V\in\Mnam$ defined as follows:
-$\mathcal{T}_{\mathbb{D}_{\Sch}}(\text{Rel}(\Sch)(V)) \to K$ such that
+Let $V\in\Mnam$ with $\size(V)=(\alpha,\beta)$ and let $\conc(V)$ be its corresponding matrix of dimension $\dom(\alpha)\times \dom(\beta)$.
+Given an instance $\I$ over $\Sch$, the domain asssignment $\mathbb{D}_{\I}$ is defined as 
+$\mathbb{D}_{\I}(\row_\alpha)=[1,\dom(\alpha)]$ and 
+$\mathbb{D}_{\I}(\col_\alpha)=[1,\dom(\alpha)]$. 
+We further  define the database instance $\text{Rel}_\Sch(\I)$  to consist of relations for each $V\in\Mnam$ defined as follows:
+$\mathcal{T}_{\mathbb{D}_{\I}}(\text{Rel}(\Sch)(V)) \to K$ such that
 $(\text{Rel}_{_\Sch}(I))(t):=\conc(V)_{ij}$ where (1) $t(\row_\alpha)=i$ if $\alpha\neq 1$ and equal to $1$ if $\alpha = 1$; and (2) $t(\col_\beta)=j$ if $\beta\neq 1$ and equal to $1$ if $\beta= 1$.
 
-We next translate \lang++ expressions $e$ into \ARA expressions $\Phi(e)$ by induction on the structure.
-%
-% \begin{itemize}
-% 	\item If $e=V$ then $\Phi(e):=\text{Rel}(\Sch)(V)$.
-% 	\item if $e=e^t$ then \[
-% \Phi(e) :=
-% \begin{cases}
-% \rho_{\varphi}(\Phi(e')) & \text{if } \alpha \neq 1 \neq \beta; \cr
-% \rho_{\mathrm{col}_\alpha \to \mathrm{row}_\alpha}(\Phi(e')) & \text{if } \alpha \neq 1 = \beta; \cr
-% \rho_{\mathrm{row}_\beta \to \mathrm{col}_\beta}(\Phi(e')) & \text{if } \alpha = 1 \neq \beta; \cr
-% e' & \text{if } \alpha = 1 = \beta,
-% \end{cases}
-% \]
-% where $\varphi$ maps $\mathrm{col}_\alpha$ to $\mathrm{row}_\alpha$ and $\mathrm{row}_\beta$ to $\mathrm{col}_\beta$.
-% 	\item
-% 	If $e = e_1 \cdot e_2$ where $\mathcal{S}(e_1) = \alpha \times \gamma$ and $\mathcal{S}(e_2) = \gamma \times \beta$, then we consider two cases. If $\gamma = 1$, then $\Upsilon(e) := \Upsilon(e_1) \Join \Upsilon(e_2)$. If $\gamma \neq 1$, then $\Upsilon(e) := \zeta_{C,2}(\rho_{\varphi_1}(\Upsilon(e_1)),\rho_{\varphi_2}(\Upsilon(e_2)))$, where $\varphi_1(\mathrm{col}_\gamma) = \varphi_2(\mathrm{row}_\gamma) = C \notin \{\mathrm{row}_\alpha, \mathrm{col}_\beta\}$ and $\varphi_1$ and $\varphi_2$ are the identity otherwise.
-% 	If $e=e_1(v_1,\ldots,v_k)\cdot e_2(u_1,\ldots,u_s)$ where $e_1$ is $n\times\gamma$, $e_2$ is $\gamma\times m$. Let $\rho:\row_\gamma\rightarrow C,\col_\gamma\rightarrow C.$ We have two cases:
-% 		\begin{itemize}
-% 			\item If $\gamma\neq 1$ then $E=\widehat{\pi}_C\left( \rho\left(E_1\right)\bowtie\rho\left( E_2\right)\right).$
-% 			\item If $\gamma = 1$ then $E=E_1\bowtie E_2$.
-% 		\end{itemize}
-% 	\item If $e=f(e_1,\ldots,e_s)$ we have that $E=E_1\cup\cdots\cup E_s$ if $f$ is sum and $E=E_1\bowtie\cdots\bowtie E_s$ if $f$ is multiplication.
-% 	\item If $e=\ssum v.e'(v,v_1,\ldots, v_k)$ and let $E'$ be the corresponding ARA expression of $e'$. Note that $E'$ is $E'(\row_n, \col_m,A,A_1,\ldots,A_k), E'(\row_n,A,A_1,\ldots,A_k), E'(\col_m,A,A_1,\ldots,A_k)$ or $E'(A,A_1,\ldots,A_k)$ depending on the dimensions of $e'$. Then we have that $E=\widehat{\pi}_A(E').$ Note that this implies that if $e=\ssum v_1\ssum v_2\cdots\ssum v_k.e'(v_1,\ldots,v_k)$ then $E=\widehat{\pi}_{A_1}\widehat{\pi}_{A_2}\cdots\widehat{\pi}_{A_k}E'.$
-% \end{itemize}
+We next translate \lang++ expressions $e$ into \ARA expressions $\Phi(e)$ by induction on the structure of $e$.
+
+\begin{itemize}
+	\item If $e=V$ then $\Phi(e):=\text{Rel}(\Sch)(V)$.
+	\item if $e=e_1^t$ where $\Sch(e_1)=(\alpha,\beta)$ then \[
+\Phi(e) :=
+\begin{cases}
+\rho_{\mathrm{col}_\alpha \to \mathrm{row}_\alpha,\mathrm{row}_\beta \to \mathrm{col}_\beta}(\Phi(e_1)) & \text{if } \alpha \neq 1 \neq \beta; \cr
+\rho_{\mathrm{col}_\alpha \to \mathrm{row}_\alpha}(\Phi(e_1)) & \text{if } \alpha \neq 1 = \beta; \cr
+\rho_{\mathrm{row}_\beta \to \mathrm{col}_\beta}(\Phi(e_1)) & \text{if } \alpha = 1 \neq \beta; \cr
+\phi(e_1) & \text{if } \alpha = 1 = \beta,
+\end{cases}
+\]
+\item
+	If $e = e_1 \cdot e_2$ where $\Sch(e_1) = (\alpha,\gamma)$ and $\Sch(e_2) =(\gamma,\beta)$, then we consider two cases. If $\gamma = 1$, then $\Phi(e) := \Phi(e_1) \Join \Phi(e_2)$. If $\gamma \neq 1$, then 
+	$$
+	\Phi(e) := \hat{\pi}_C(\rho_{\mathrm{col}_\gamma\to C}(\Phi(e_1))\Join\rho_{\mathrm{row}_\gamma\to C}(\Phi(e_2))).$$
+	% , where $\varphi_1(\mathrm{col}_\gamma) = \varphi_2(\mathrm{row}_\gamma) = C \notin \{\mathrm{row}_\alpha, \mathrm{col}_\beta\}$ and $\varphi_1$ and $\varphi_2$ are the identity otherwise.
+	% If $e=e_1(v_1,\ldots,v_k)\cdot e_2(u_1,\ldots,u_s)$ where $e_1$ is $n\times\gamma$, $e_2$ is $\gamma\times m$. Let $\rho:\row_\gamma\rightarrow C,\col_\gamma\rightarrow C.$ We have two cases:
+	% 	\begin{itemize}
+	% 		\item If $\gamma\neq 1$ then $E=\widehat{\pi}_C\left( \rho\left(E_1\right)\bowtie\rho\left( E_2\right)\right).$
+	% 		\item If $\gamma = 1$ then $E=E_1\bowtie E_2$.
+	% 	\end{itemize}
+	\item If $e=f(e_1,\ldots,e_k)$ with $\Sch(e_i)=(1,1)$ for all $i\in[1,k]$, then
+	$\Phi(e):=\text{Apply}[f](\Phi(e_1),\ldots,\Phi(e_k))$. 
+	% we have that $E=E_1\cup\cdots\cup E_s$ if $f$ is sum and $E=E_1\bowtie\cdots\bowtie E_s$ if $f$ is multiplication.
+	\item If $e=\ssum V.e_1$ where $\Sch(e_1)=(\alpha,\beta)$ and $\Sch(V)=(\gamma,1)$. Then,
+	in $\Phi(e_1)$ we replace $\text{Rel}(\Sch)(V)$ by $\Phi_{Id}(V)$ which computes a binary 
+	relation encoding the $\gamma\times\gamma$ idenity matrix. Intuitively, by selecting different
+	columns of the identity matrix we can extract all canonical $\gamma\times 1$ basis vectors.
+	More precisely, $\Phi_{Id}(V)$ is  defined by
+	$$
+	\sigma_{\{\mathrm{row}_\gamma,C\}}(\mathbf{1}(\text{Rel}(\Sch)(V)) \Join \mathbf{1}(\rho_{\mathrm{row}_\gamma \to C}(\text{Rel}(\Sch)(V))))$$
+	if $\gamma \neq 1$ and
+   $\mathbf{1}(\text{Rel}(\Sch)(V))$ if $\gamma = 1$.
+   Then,
+	$$
+	\Phi(e):=\hat{\pi}_C(\Phi(e_1[\text{Rel}(\Sch)(V)\gets \Phi_{Id}(\text{Rel}(\Sch)(V))])).
+	$$
+	Note that when the $C$ attribute in $\Phi(e_1[\text{Rel}(\Sch)(V)\gets \Phi_{Id}(\text{Rel}(\Sch)(V))])$
+	is instantiated with a value $j$ in $[1,n_\gamma]$, then this expression evaluates $e_1(\I[V\gets e_j^\gamma])$
+	Hence, by projecting over $C$ we range over all $j\in[1,n_\gamma]$ and sum up all $K$-values for each entry.
+	\item Todo scalar product.
+	% and let $E'$ be the corresponding ARA expression of $e'$. Note that $E'$ is $E'(\row_n, \col_m,A,A_1,\ldots,A_k), E'(\row_n,A,A_1,\ldots,A_k), E'(\col_m,A,A_1,\ldots,A_k)$ or $E'(A,A_1,\ldots,A_k)$ depending on the dimensions of $e'$. Then we have that $E=\widehat{\pi}_A(E').$ Note that this implies that if $e=\ssum v_1\ssum v_2\cdots\ssum v_k.e'(v_1,\ldots,v_k)$ then $E=\widehat{\pi}_{A_1}\widehat{\pi}_{A_2}\cdots\widehat{\pi}_{A_k}E'.$
+\end{itemize}
+
+\begin{proposition}
+	For each \lang++ expression $e$ over schema $\Sch$ such that $\Sch(e)=(\alpha,\beta)$, there exists an \ARA expression $\Phi(e)$ over schema $\text{Rel}(\Sch)$ such that $\Phi(e)$ has schema $(\mathrm{row}_\alpha,\mathrm{col}_\beta)$ and 
+	such that for any instance $\I$ over $\Sch$,
+	$$
+	e(\I)_{i,j}=\Phi(e)(\text{Rel}_{\Sch}(\I))(t)
+	$$
+	for $t(\mathrm{row}_\alpha)=i$ and $t(\mathrm{col}_\beta)=j$.
+\end{proposition}
