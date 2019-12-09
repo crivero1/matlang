@@ -82,3 +82,10 @@ We next translate \lang++ expressions $e$ into \ARA expressions $\Phi(e)$ by ind
 	$$
 	for $t(\mathrm{row}_\alpha)=i$ and $t(\mathrm{col}_\beta)=j$.
 \end{proposition}
+
+For the converse translation, i.e., from \ARA to \lang++, we need to impose some restrictions. More precisely, we only consider \ARA expression $\varphi$
+that take as input relations of arity at most two and also have a schema of arity at most two. Note that intermediate expressions can create schemas of arbitraty size. We also make the assumption that there is an order, denoted by $<$, on the attributes in $\mathbf{att}$. This is to identify which attributes correspond to rows and columns when moving the matrix setting.
+
+
+Given an \ARA schema $\mathcal{R}$ of arity at most two, we associate a matrix schema $\text{Mat}(\mathcal{R})$ as follows.
+
