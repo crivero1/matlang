@@ -308,12 +308,61 @@ A_i&=T_{i-1}A_{i-1} \\
 &=\texttt{reduce}(A_{i-1},e_i)A_{i-1}.
 \end{align*}
 
-Now, if $A=LU$ and $$E(X, v)=(1-v^*v_{min})\texttt{reduce}(XA,v)X + (v^*v_{min})\texttt{reduce}(A,v)$$
+Now, if $A=LU$ and $$E(X, v)=(1-v^*v_{min})\texttt{reduce}(XA,v)X + (v^*v_{min})\texttt{reduce}(A,v)X$$
 then $U=(\for X, v.E(X,v))\cdot A$, this is $L^{-1}=\for X, v.E(X,v)$.
 
 \subsubsection{PA=LU factorization}
 
-Here we can compute $L^{-1}P$. Then $L^{-1}PA=U$.
+Permutation matrices are elementary matrices of the form $$P=I-uu^*$$ denotes row interchange (if multiplied by left) of rows $i+k$ and $j+k$ if $u=(e_{i+k}-e_{j+k})$. Now if $T_{k} = I-c_ke_k^*$ note that $P^2=I$ and $e_k^*P=e_k^*$, since $e_{k}$ has zeros in positions $i+k$ and $j+k$. Thus $$PT_kP=P^2-Pc_ke_k^*P=I-\widehat{c}_ke_k^*$$ Where $\widehat{c}_k=Pc_k$.
+
+So far we assume that $A$ needs no row interchange during the $LU$ factorization process. Let's see if wee actually need row interchange immediately before step $k$ (reduce the $k$-th column of $A_{k}$) such that $1 \leq k < n$. Let $P$ be the elementary permutation matrix that is needed. This means that $A_{k+1}=\widehat{T}_kA_k=T_kPT_{k-1}\cdots T_1A$ where $\widehat{T}_k=T_{k}P$. The factorization ends up like $$U=T_{n-1}\cdots T_{k}PT_{k-1}\cdots T_1A = T_{n-1}\cdots \widehat{T}_{k}T_{k-1}\cdots T_1A$$. Note that $P$ is necessary if the $(k,k)$ entry of $A_{k}$ is zero. Let 
+
+\[
+a_k = 
+\begin{bmatrix}
+    0 \\
+    0 \\
+    \vdots \\
+    A_{kk} \\
+     \vdots \\
+    A_{kn}
+\end{bmatrix}
+\]
+
+We aim to compute a function that, given $a_k$ and $e_k$, outputs $P$ such that
+
+\[
+Pa_k = 
+\begin{bmatrix}
+    0 \\
+    0 \\
+    \vdots \\
+    0 \\
+    A_{ki} \\
+    A_{k(k+1)}\\
+    \vdots \\
+    A_{k(i-1)} \\
+    A_{kk} \\
+    A_{k(i+1)} \\
+    \vdots \\
+    A_{kn}
+\end{bmatrix}
+\]
+
+if $A_{kk}=0$ where $i$ is the first such that $A_ki\neq 0$ and $k<i\leq n$ (it must exists otherwise $A$ is not $PA=LU$ factorizable) and returns $I$ otherwise (no row interchanging is necessary). We define
+\begin{align*}
+\texttt{perm}(a,e_k)&=I - \\
+ &\for X,v. \dfrac{(e_kZv)(vZ_{eq}Xv_{max})(a^*v)}{(Xv_{max})(Xv_{max})-v^*v_{min}}\left[ (e_k-v)(e_k-v^*)+vv_{max}^*-v_{max}v_{max}^*\right] \\
+ & + (v^*v_{min})v_{max}v_{max}^* + X
+\end{align*}
+
+This way if $A$ is $PA=LU$ factorizable and 
+
+\begin{align*}
+	E(X, v)&=(1-v^*v_{min})\texttt{reduce}(\texttt{perm}(\texttt{col}(XA,v),v) \cdot X \cdot A,v) \texttt{perm}(\texttt{col}(XA,v),v)X \\
+	&+ (v^*v_{min})\texttt{reduce}(A,v)\texttt{perm}(\texttt{col}(A,v),v)
+\end{align*}
+Then $U=(\for X, v.E(X,v))\cdot A$, this is $L^{-1}P=\for X, v.E(X,v)$.
 
 \subsubsection{Independence of starting matrix}
 
