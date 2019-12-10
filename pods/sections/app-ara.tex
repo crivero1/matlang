@@ -33,7 +33,7 @@ $\mathcal{R}$. An \emph{\ARA expression} $\varphi$ over a database schema $\math
 \item $\pi_Y(\psi)$, where $\psi$ is an \ARA expression and $Y \subseteq \mathcal{R}(\psi)$, and $\mathcal{R}(\varphi) := Y$;
 % \item $\pi_Y^\star(\psi)$, where $\psi$ is an \ARA expression and $Y \subseteq \mathcal{S}(\psi)$, and $\mathcal{S}(\varphi) := Y$;
 \item $\sigma_{Y}(\psi)$, where $\psi$ is an \ARA expression, $Y \subseteq \mathcal{R}(\psi)$, the elements of $Y$ are mutually compatible, and $\mathcal{R}(\varphi) := \mathcal{R}(\psi)$;
-\item $\rho_\varphi(\psi)$, where $\psi$ is an \ARA expression and $\varphi: \mathcal{R}(\psi) \to Y$ a compatible one-to-one correspondence with $Y \subseteq \mathbf{att}$, and $\mathcal{R}(\varphi) := Y$; or
+\item $\rho_{\mathcal{R}(\psi) \mapsto Y}(\psi)$, where $\psi$ is an \ARA expression and $\mathcal{R}(\psi) \mapsto Y$ is a compatible one-to-one correspondence of attributes with $Y \subseteq \mathbf{att}$, and $\mathcal{R}(\varphi) := Y$; or
 \item $\psi_1 \Join \psi_2$, where $\psi_1$ and $\psi_2$ are \ARA expressions, and $\mathcal{R}(\varphi) := \mathcal{R}(\psi_1) \cup \mathcal{R}(\psi_2)$.
 \end{itemize}
 
