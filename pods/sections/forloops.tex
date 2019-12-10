@@ -21,7 +21,7 @@
 
 While \lang\ serves as a solid basis for expressing linear algebra properties, it is still somewhat lacking when defining more advanced linear algebra operators such as Gaussian eliminations, or computing an inverse of a matrix. To alleviate these issues, we propose an extended version of \lang, called \lang++ which allows us to express such properties.
 
-As before, we assume a countably infinite set of matrix variables $\Mvar = \{V_1, V_2, \ldots\}$, and a set $\Fun$  of functions $f:\mathbb{C}^n \mapsto \mathbb{C}$. Additionally, for each $n\in \mathbb{N}$, we denote by $e_1^n,\ldots ,e_n^n$ the complete list of canonical vectors of dimension $n$; that is, $e_1^n = [1\ 0 \cdots 0]^*$, $e_2^n = [0\ 1\ 0 \cdots 0]^*$, etc. The syntax of \lang++ is defined as follows:
+As before, we assume a countably infinite set of matrix variables $\Mvar = \{V_1, V_2, \ldots\}$, and a set $\Fun$  of functions $f:\mathbb{C}^n \mapsto \mathbb{C}$. Additionally, for each $n\in \mathbb{N}$, we denote by $e_1^n,\ldots ,e_n^n$ the complete list of canonical vectors of dimension $n$; that is, $e_1^n = [1\ 0 \cdots 0]^*$, $e_2^n = [0\ 1\ 0 \cdots 0]^*$, etc. When $n$ is clear from the context we will simply write $e_1,e_2$, etc. The syntax of \lang++ is defined as follows:
 
 
 \medskip
@@ -77,8 +77,6 @@ The semantics of $\ffor{v}{X}{e}$ over $\I$ is defined iteratively as follows:
 
 Notice that evaluating $\ffor{v}{X}{e}$ over an instance that already assigns values to $v$ and $X$, these values get overwritten immediately. Notice that if $e$ does not use the variable $v$, the it will have the same value in each iteration. Sometimes when we want to make it explicit that the expression $e$ uses matrix variables $X_1,\ldots ,X_n$, we write $e(X_1,\ldots ,X_n)$, where $X_1,\ldots ,X_n$ are all the matrix variables mentioned in $e$. Analogously with First Order Logic, we could define the notion of free and bound variables (i.e. the ones in the scope of a \texttt{for} operator), however, since we explicitly rewrite the value of these variables, this distinction will not play an important role.
 
-What about: $$\ffor{v}{X}{(\ffor{v}{X}{X+v\cdot v^*})}???$$
-
 %\subsection{Examples of \lang++ expressions}
 
 
@@ -104,12 +102,70 @@ The biggest novelty of $\lang++$ is the for operator. To illustrate how this ope
 %\end{enumerate}
 %Analogously, we can perform these transformations of columns, by using the transposed matrix $M^*$, and the canonical vectors of appropriate dimension.
 
+
 \medskip
 
-\noindent{\bf Canonical summation.} Notice that when defining the identity matrix, we actually only update the value of $X$ by adding some value to it. This restricted form of the $\texttt{for}$ loop will prove useful throughout the paper, and we will therefore introduce it a special operator. That is, we define:
-$$\Sigma x. e := \ffor{v}{X}{X + e}.$$
+\noindent{\bf Order.} The \texttt{for} operator assumes that canonical vectors come in some particular order, however, it does not give us an immediate access to this order. An interesting question is whether, using the \texttt{for} loops, we can define a \lang++ expression which allow us to define the order of canonical vectors. Next we show that this is indeed possible. To begin with, we can easily obtain the last canonical vector using the expression $$v_{max} := \ffor{v}{X}{v}$$
 
-Interestingly enough, this restricted version of \texttt{for} already allows us to capture the \lang\ operators that are not present in the syntax of \lang++. More precisely, we have:
+The fundamental property of iteration we use here is that the result variable is always initiated with the null matrix. Therefore the loop above will simply keep on storing the current canonical vector before returning the final one. The ability to do this sort of manipulation was one of the reasons why we initiate $A_0$ in the semantics of \texttt{for} to null matrix.
+
+To define an order relation for canonical vectors, notice that the following matrix:
+\[
+Z_{eq} = \begin{bmatrix}
+    1 & 1 & \cdots &  1 \\
+    0 & \ddots & \ddots & \vdots \\
+    \hdotsfor{3} & 1 \\
+    0 & \cdots & \cdots & 1 
+\end{bmatrix},
+\] 
+has the property that $e_i^*\cdot Z_{eq} \cdot e_j$, for two canonical vectors $e_i,e_j$ of the same dimension, is equal to one if and only $i\leq j$, and is zero otherwise. $Z_{eq}$ can easily de defined in \lang++ as follows:
+$$Z_{\text{eq}}=\ffor{v}{X}{X + \left[ (Xv_{max}) + v \right]v^* + vv^*_{max}},$$
+where $v_{max}$ is as defined above. The intuition behind this expression is that using the last canonical vector $v_{max}$, we have access to the final column of $X$ (via the product $X\cdot v_{max}$), to which we add the current canonical vector $v$, thus constructing $Z_{eq}$ by filling it column by column. By defining $$\lleq{u}{v} := u^*\cdot Z_{eq} \cdot v,$$
+we obtain an order relation that allows us to discern whether one canonical vector comes before the other in the order given by \texttt{for}. If we want a strict order, we can just use $Z := Z_{eq} - I$.
+
+Interestingly, we can also define the predecessor relation between canonical vectors. For this, we require the following matrix:
+%\[
+%S := \begin{bmatrix}
+%    0 & 1         & 0         & \cdots &  0 \\
+%    0 & \ddots & 1         & \cdots & 0 \\
+%    \vdots & \vdots & \ddots & \ddots & \vdots \\
+%    \hdotsfor{3} & \ddots & 1 \\
+%    0 & \cdots & \cdots & \cdots & 0 
+%\end{bmatrix}.
+%\]
+\[
+S = \begin{bmatrix}
+    0 & 1 & \cdots &  0 \\
+    0 & \ddots & \ddots & \vdots \\
+    \hdotsfor{3} & 1 \\
+    0 & \cdots & \cdots & 0
+\end{bmatrix},
+\] 
+Using this matrix, we have that for a canonical vector $e_i$:
+\[
+  			S\cdot e_i=\begin{cases}
+               e_{i-1}, \text{ if } i > 1 \\
+              \mathbf{0}, \text{ if } i = 1
+            \end{cases}
+		\]
+where $\mathbf{0}$ is a vector of zeros of the same type as $e_i$. Notice also that $\ones(v)^*\cdot S \cdot v$ is equal to zero, for a canonical vector $v$, if and only if $v = e_1$ is the first canonical vector, and zero otherwise. To define the first canonical vector in the order given by \texttt{for}, we can then write:
+$$v_{min} := \ffor{v}{X}{\mmin{v}\cdot v},$$
+where the expression $\mmin{v}$ is defined as $\mmin{v} := 1 - \ones(v)^*\cdot S \cdot v$, and, when evaluated over canonical vectors, will result in $1$ if and only if $v=e_1$ is the first canonical vector. Finally, we denote that $S$ can be defined using the following \lang++ expression:
+\begin{multline*}
+S:= \texttt{for }v,X.\quad X + \\
+\left[ (1 - v^*v_{max})vv_{max}^* - (Xv_{max}) v_{max}^* + (Xv_{max})v^*\right].
+\end{multline*}
+
+As mentioned previously, all of the iterations in \texttt{for} loops start by initializing $A_0$ to the null matrix. We have already seen that this property is useful for defining the extremal points of our ordering, however, sometimes we would like to start the iteration using some concrete matrix $B$. Using the operator $\mmin$, we can actually achieve this as follows. First, let $\ffor{v}{X}{e(v,X)}$ be the \texttt{for} loop that begins iterating from the null matrix. Here we write $e(v,X)$ to denote the variables that $e$ potentially (but not necessarily) uses. To start the iteration from $B$ it now suffices to use the following loop:
+$$\ffor{v}{X}{\mmin{v}\cdot e(v,X/B) + (1-\mmin{v})\cdot e(v,X)},$$
+where $e(v,X/B)$ denotes the expression obtained by replacing every occurrence of $X$ in $e$ with $B$. The modified \texttt{for} expression will now use $B$ as the assignment of $X$ in the very first iteration (as determined by $\mmin{v}$), and will proceed as before whenever $v$ is not equal to the first canonical vector, thus defining the desired result.
+
+\medskip
+
+\noindent{\bf Canonical summation.} Notice that when defining the identity matrix, we actually only update $X$ by adding some matrix to it. This restricted form of the $\texttt{for}$ loop will prove useful throughout the paper, and we will therefore introduce it a special operator. That is, we define:
+$$\Sigma v. e := \ffor{v}{X}{X + e}.$$
+
+Apart from computing the identity matrix, the summation operator also allows for computing the trace of a matrix $A$ using the expression $tr(A) := \Sigma v. v^*\cdot A \cdot v$. Interestingly enough, this restricted version of \texttt{for} already allows us to capture the \lang\ operators that are not present in the syntax of \lang++. More precisely, we have:
 \begin{itemize}
 %\item {\bf Multiplying a matrix by a scalar.} One of the fundamental operations is the ability to multiply a matrix by a scalar. While this operation is not explicitly present in \lang++, we can simulate it as follows. Let $f_c(x) := c\cdot x$. For an expression $e$ 
 %\item {\bf Function application.} Notice that in \lang, a function is applied pointwise to matrices of arbitrary size, while \lang++ only allows functions that process matrices of size $1\times 1$. Using the summation operator we can lift this condition, and allow applying a function $f:\mathbb{C}^n \mapsto \mathbb{C}$ on expressions $e_1,\ldots ,e_n$ of arbitrary (but equal) type by writing 
@@ -148,11 +204,20 @@ There is a  \lang++ expression that is not expressible in \lang.
 
 \medskip
 
-\noindent{\bf Order.}
+\noindent{\bf Product.} Analogously to the summation with respect to canonical vectors, we can define the product. More precisely, 
+if $e$ is an \lang++ expression (that possibly uses the variable $v$), we would like to define the result of evaluating $\sem{e}{\I[v := e_1]} \cdot \sem{e}{\I[v := e_2]}\cdots \cdot \sem{e}{\I[v := e_n]}$, where the product is evaluated from left to right. For this purpose, we define the following operator:
+$$\sprod v. e=\ffor {v}{X}{X\cdot e + min(v)\cdot e}.$$
+Here we use the factor $min(v)\cdot e$ to handle the case of the first canonical vector which starts with $X$ being equal to the null matrix.
 
-\medskip
+Using the product operator we can express multiple interesting properties. To begin with, we can compute the product of diagonal elements of a matrix using the expression $$dp(A) := \sprod v. v^*\cdot A \cdot v.$$
 
-\noindent{\bf Product.}
+Another property of interest is computing the transitive closure of a graph adjacency matrix $A$. It well known the transitive closure of this matrix, denoted $tc(A)$ equals to the matrix consisting of non-zero entries of $(I + A)^n$, where $n$ is the dimension of $A$. Using the product operator we can define:
+$$tc(A) := f_{>0}(\sprod v. (I + A)),$$
+where $f_{>0}(x) := 1$ if $x>0$, and $f_{>0}(x) = 0$ otherwise, is used to make the result a zero-one matrix. Notice that the expression for $tc(A)$ ignores the canonical vectors, and simply multiplies the previous result with $(I + A)$, thus computing the desired value.
+
+Using the combination of canonical sum and product, we can also define more general operators over matrices, such as the power sum operator, which, given a square matrix $A$, computes $I + A + A^2 + \cdots + A^n$. This operator, denoted by $ps(A)$ can be defined as follows:
+$$ps(A) := \ssum v.\sprod w. \left( (w^*Zv)\cdot (A-I) + I\right),$$
+where $Z$ is the (strict) order matrix defined above. The outer loop here defines which power we compute. That is, when $v$ is the $i$th canonical vector, we compute $A^i$. Computing $A^i$ is achieved via the inner product loop, which uses $w^*Zv$ to determine whether $w$ comes before $v$ in the ordering of canonical vectors. When this is the case we multiply the current result by $A$, and when $w$ is greater then or equal to $v$, we use $I$ not to affect the already computed result.
 
 \medskip
 
