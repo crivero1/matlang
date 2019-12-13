@@ -236,8 +236,8 @@ c_1 :=
 \end{bmatrix},
 \]
 with $\alpha_{j1} := -\frac{A_{j1}}{A_{11}}$ is the number with which we need to multiply the first row of $A$ in order to reduce the row $j$ of $A$. More generally, if $A$ is reduced up to column $i-1$, reducing the $i$th column is achieved by computing $T_i \cdot A$, where $T_i := I + c_i\cdot e_i^*$, with $c_i$ being the vector with zeros up to position $i$, and with the value $-\frac{A_{ji}}{A_{ii}}$ in position $j > i$. To express the matrices $T_i$ in \lang++ we will use the following expression:
-$$\ccol{A}{y} := \ffor{v}{X}{(y^*\cdot Z_{eq} \cdot v)(v^*\cdot A \cdot y)v + X},$$
-which, when $y$ is interpreted by the $j$th canonical vector, computes the vector which has zeroes in positions $1\ldots j$, and values $A_{ij}$ in positions $i>j$. Intuitively, the product $y^*\cdot Z_{eq}\cdot v$ makes all positions up to $j$ equal zero, and $v^*\cdot A\cdot y$ extracts the element $A_{ij}$ of $A$ when $v$ is interpreted by the $i$th canonical vector, and $y$ by the $j$th one.
+$$\ccol{A}{y} := \ffor{v}{X}{(y^*\cdot Z_{<} \cdot v)(v^*\cdot A \cdot y)v + X},$$
+which, when $y$ is interpreted by the $j$th canonical vector, computes the vector which has zeroes in positions $1\ldots j$, and values $A_{ij}$ in positions $i>j$. Intuitively, the product $y^*\cdot Z_{<}\cdot v$ makes all positions up to $j$ equal zero, and $v^*\cdot A\cdot y$ extracts the element $A_{ij}$ of $A$ when $v$ is interpreted by the $i$th canonical vector, and $y$ by the $j$th one.
 
 
 
