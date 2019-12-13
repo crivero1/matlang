@@ -121,7 +121,7 @@ Z_{eq} = \begin{bmatrix}
 has the property that $e_i^*\cdot Z_{eq} \cdot e_j$, for two canonical vectors $e_i,e_j$ of the same dimension, is equal to one if and only $i\leq j$, and is zero otherwise. $Z_{eq}$ can easily de defined in \lang++ as follows:
 $$Z_{\text{eq}}=\ffor{v}{X}{X + \left[ (Xv_{max}) + v \right]v^* + vv^*_{max}},$$
 where $v_{max}$ is as defined above. The intuition behind this expression is that using the last canonical vector $v_{max}$, we have access to the final column of $X$ (via the product $X\cdot v_{max}$), to which we add the current canonical vector $v$, thus constructing $Z_{eq}$ by filling it column by column. By defining $$\lleq{u}{v} := u^*\cdot Z_{eq} \cdot v,$$
-we obtain an order relation that allows us to discern whether one canonical vector comes before the other in the order given by \texttt{for}. If we want a strict order, we can just use $Z := Z_{eq} - I$.
+we obtain an order relation that allows us to discern whether one canonical vector comes before the other in the order given by \texttt{for}. If we want a strict order, we can just use $Z_< := Z_{eq} - I$.
 
 Interestingly, we can also define the predecessor relation between canonical vectors. For this, we require the following matrix:
 %\[
@@ -157,8 +157,8 @@ S:= \texttt{for }v,X.\quad X + \\
 \end{multline*}
 
 As mentioned previously, all of the iterations in \texttt{for} loops start by initializing $A_0$ to the null matrix. We have already seen that this property is useful for defining the extremal points of our ordering, however, sometimes we would like to start the iteration using some concrete matrix $B$. Using the operator $\mmin$, we can actually achieve this as follows. First, let $\ffor{v}{X}{e(v,X)}$ be the \texttt{for} loop that begins iterating from the null matrix. Here we write $e(v,X)$ to denote the variables that $e$ potentially (but not necessarily) uses. To start the iteration from $B$ it now suffices to use the following loop:
-$$\ffor{v}{X}{\mmin{v}\cdot e(v,X/B) + (1-\mmin{v})\cdot e(v,X)},$$
-where $e(v,X/B)$ denotes the expression obtained by replacing every occurrence of $X$ in $e$ with $B$. The modified \texttt{for} expression will now use $B$ as the assignment of $X$ in the very first iteration (as determined by $\mmin{v}$), and will proceed as before whenever $v$ is not equal to the first canonical vector, thus defining the desired result.
+$$\ffor{v}{X}{\mmin{v}\cdot e(v,X/B) + (1-\mmin{v})\cdot e(v,X)} \quad (\dag),$$
+where $e(v,X/B)$ denotes the expression obtained by replacing every occurrence of $X$ in $e$ with $B$. The modified \texttt{for} expression will now use $B$ as the assignment of $X$ in the very first iteration (as determined by $\mmin{v}$), and will proceed as before whenever $v$ is not equal to the first canonical vector, thus defining the desired result. Since starting iteration with a non null matrix is often useful, we will denote  by $\initf{B}{v}{X}{e}$ the expression $(\dag)$.
 
 \medskip
 
@@ -207,7 +207,7 @@ There is a  \lang++ expression that is not expressible in \lang.
 \noindent{\bf Product.} Analogously to the summation with respect to canonical vectors, we can define the product. More precisely, 
 if $e$ is an \lang++ expression (that possibly uses the variable $v$), we would like to define the result of evaluating $\sem{e}{\I[v := e_1]} \cdot \sem{e}{\I[v := e_2]}\cdots \cdot \sem{e}{\I[v := e_n]}$, where the product is evaluated from left to right. For this purpose, we define the following operator:
 $$\sprod v. e=\ffor {v}{X}{X\cdot e + min(v)\cdot e}.$$
-Here we use the factor $min(v)\cdot e$ to handle the case of the first canonical vector which starts with $X$ being equal to the null matrix.
+Here we use the factor $min(v)\cdot e$ to handle the case of the first canonical vector which starts with $X$ being equal to the null matrix. 
 
 Using the product operator we can express multiple interesting properties. To begin with, we can compute the product of diagonal elements of a matrix using the expression $$dp(A) := \sprod v. v^*\cdot A \cdot v.$$
 
@@ -221,4 +221,36 @@ where $Z$ is the (strict) order matrix defined above. The outer loop here define
 
 \medskip
 
-\noindent{\bf Algorithms in Linear Algebra.}
+\noindent{\bf Algorithms in Linear Algebra.} The real power of \lang++ comes from the fact that \texttt{for} loops allow us to express many classical linear algebra algorithms. Here we illustrate this by showing how to compute the $LU$ factorization of a matrix using Gaussian eliminations, which is one of the most commonly used matrix algorithms.
+
+For this, assume first that $A$ is a square matrix which allows $LU$ factorization without row pivoting (we deal with this case later on). This means that after reducing the column $i$ of $A$ (i.e. we make all of the entries below the diagonal zero in the column $i$), we will end up with a matrix which has the element in position $i+1,i+1$ different from zero, for each $i$ strictly less than the dimension of $A$. 
+
+To reduce the first column of $A$ it suffices to multiply $A$ from the left with the matrix $T_1 := I + c_1\cdot e_1^*$, where the vector $I$ is the identity matrix, $e_1$ is the first canonical vector, and $c_1$ is the vector 
+\[
+c_1 :=
+\begin{bmatrix}
+    0 \\
+    \alpha_{21} \\
+    \vdots \\
+    \alpha_{n1}
+\end{bmatrix},
+\]
+with $\alpha_{j1} := -\frac{A_{j1}}{A_{11}}$ is the number with which we need to multiply the first row of $A$ in order to reduce the row $j$ of $A$. More generally, if $A$ is reduced up to column $i-1$, reducing the $i$th column is achieved by computing $T_i \cdot A$, where $T_i := I + c_i\cdot e_i^*$, with $c_i$ being the vector with zeros up to position $i$, and with the value $-\frac{A_{ji}}{A_{ii}}$ in position $j > i$. To express the matrices $T_i$ in \lang++ we will use the following expression:
+$$\ccol{A}{y} := \ffor{v}{X}{(y^*\cdot Z_{eq} \cdot v)(v^*\cdot A \cdot y)v + X},$$
+which, when $y$ is interpreted by the $j$th canonical vector, computes the vector which has zeroes in positions $1\ldots j$, and values $A_{ij}$ in positions $i>j$. Intuitively, the product $y^*\cdot Z_{eq}\cdot v$ makes all positions up to $j$ equal zero, and $v^*\cdot A\cdot y$ extracts the element $A_{ij}$ of $A$ when $v$ is interpreted by the $i$th canonical vector, and $y$ by the $j$th one.
+
+
+
+Using this expression, we can now compute $T_i$s by writing:
+$$\red{A}{y} := I + f_/(\ccol{A}{y},-(y^*\cdot A\cdot y)\cdot \ones(y))y^*,$$
+where $f_/$ is the division function. Notice that $f_/(\ccol{A}{y},-(y^*\cdot A\cdot y)\cdot \ones(y))$ in fact computes the vectors $c_i$ defined above. The Gaussian elimination can now be performed by the following expression:
+$$
+U(A) :=  \left( \initf{I}{v}{X}{\red{X\cdot A}{v}\cdot X} \right) \cdot A,
+$$
+which computes the $U$ from the $LU$ factorization of $A$, whenever $A$ can be $LU$ factorized without row interchange. Notice that the latter assumption is crucial, since it will ensure that the element of $A$ in position $ii$ is different from zero after each \texttt{reduce} step. As explained previously, the inner \texttt{for} loop in fact computes the product of matrices $T_{n}\cdots T_1$, which in fact amounts to the matrix $L^{-1}$ from the $LU$ factorization of $A$. Given that each $T_i$ is easily invertible, we can also recover $L$.
+
+As stated previously, the construction above works under the assumption that no row pivoting is needed when performing the Gaussian eliminations. We can in fact show that the above assumption is not needed, thus giving us:
+\begin{proposition}\label{prop:gauss}
+There is a \lang++ expression $e(X)$ such that by interpreting $X$ with a matrix $A$ will result in the matrix $U$ from the $LU$ factorization of $A$ whenever $A$ is $LU$ factorizable, and will result in the null matrix otherwise.
+\end{proposition}
+
