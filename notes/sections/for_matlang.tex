@@ -352,8 +352,8 @@ Pa_k =
 if $A_{kk}=0$ where $i$ is the first such that $A_ki\neq 0$ and $k<i\leq n$ (it must exists otherwise $A$ is not $PA=LU$ factorizable) and returns $I$ otherwise (no row interchanging is necessary). We define
 \begin{align*}
 \texttt{perm}(a,e_k)&=I - \\
- &\for X,v. \dfrac{(e_kZv)(vZ_{eq}Xv_{max})(a^*v)}{\texttt{neq}(a, e_k)}\left[ (e_k-v)(e_k-v^*)+vv_{max}^*-v_{max}v_{max}^*\right] \\
- & + (v^*v_{min})\left[  v_{max}v_{max}^* + (e_k^*v_{min})(a^*v)\left( (e_k-v)(e_k-v^*) + v^*v_{max} - v_{max}^*v_{max} \right) \right] + X
+ &\for X,v. \dfrac{(e_kZv)(vZ_{eq}Xv_{max})(a^*v)}{\texttt{neq}(a, e_k)}\left[ (e_k-v)(e_k-v)^*+vv_{max}^*-v_{max}v_{max}^*\right] \\
+ & + (v^*v_{min})\left[  v_{max}v_{max}^* + (e_k^*v_{min})(a^*v)\left( (e_k-v)(e_k-v)^* + vv_{max}^* - v_{max}v_{max}^* \right) \right] + X
 \end{align*}
 
 where $\texttt{neq}(a, e_k)$ is the first not zero entry of $a$ since its $k$-th entry, and it is defined as $$\texttt{neq}(a, e_k)=$$
