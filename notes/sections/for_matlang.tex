@@ -352,8 +352,8 @@ Pa_k =
 if $A_{kk}=0$ where $i$ is the first such that $A_ki\neq 0$ and $k<i\leq n$ (it must exists otherwise $A$ is not $PA=LU$ factorizable) and returns $I$ otherwise (no row interchanging is necessary). We define
 \begin{align*}
 \texttt{perm}(a,e_k)&=I - \\
- &\for X,v. \dfrac{(e_kZv)(vZ_{eq}Xv_{max})(a^*v)}{\texttt{neq}(a, e_k)}\left[ (e_k-v)(e_k-v^*)+vv_{max}^*-v_{max}v_{max}^*\right] \\
- & + (v^*v_{min})\left[  v_{max}v_{max}^* + (e_k^*v_{min})(a^*v)\left( (e_k-v)(e_k-v^*) + v^*v_{max} - v_{max}^*v_{max} \right) \right] + X
+ &\for X,v. \dfrac{(e_kZv)(vZ_{eq}Xv_{max})(a^*v)}{\texttt{neq}(a, e_k)}\left[ (e_k-v)(e_k-v)^*+vv_{max}^*-v_{max}v_{max}^*\right] \\
+ & + (v^*v_{min})\left[  v_{max}v_{max}^* + (e_k^*v_{min})(a^*v)\left( (e_k-v)(e_k-v)^* + vv_{max}^* - v_{max}v_{max}^* \right) \right] + X
 \end{align*}
 
 where $\texttt{neq}(a, e_k)$ is the first not zero entry of $a$ since its $k$-th entry, and it is defined as $$\texttt{neq}(a, e_k)=$$
@@ -361,10 +361,10 @@ where $\texttt{neq}(a, e_k)$ is the first not zero entry of $a$ since its $k$-th
 This way if $A$ is $PA=LU$ factorizable and 
 
 \begin{align*}
-	E(X, v)&=(1-v^*v_{min})\texttt{reduce}(\texttt{perm}(\texttt{col}(XA,v),v) \cdot X \cdot A,v) \texttt{perm}(\texttt{col}(XA,v),v)X \\
-	&+ (v^*v_{min})\texttt{reduce}(A,v)\texttt{perm}(\texttt{col}(A,v),v)
+	E(X, v)&=(1-v^*v_{min})\texttt{reduce}(\texttt{perm}(\texttt{col}_{eq}(XA,v),v) \cdot X \cdot A,v) \texttt{perm}(\texttt{col}_{eq}(XA,v),v)X \\
+	&+ (v^*v_{min})\texttt{reduce}(A,v)\texttt{perm}(\texttt{col}_{eq}(A,v),v)
 \end{align*}
-Then $U=(\for X, v.E(X,v))\cdot A$, this is $L^{-1}P=\for X, v.E(X,v)$.
+Then $U=(\for X, v.E(X,v))\cdot A$, this is $L^{-1}P=\for X, v.E(X,v)$. Here $\texttt{col}_{eq}$ is the same as $\texttt{col}$ but uses $Z_{eq}$ instead of $Z$.
 
 \subsubsection{Independence of starting matrix}
 
