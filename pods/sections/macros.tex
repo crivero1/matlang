@@ -1,6 +1,22 @@
 \usepackage{xspace}
 \newcommand{\paths}{\text{PATHS}}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%			COMMENTS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[textwidth=2cm,textsize=small]{todonotes}
+
+\newcommand{\domagoj}[1]{\todo[inline, color=blue!15]{{\bf Domagoj:} #1}}
+\newcommand{\cristian}[1]{\todo[inline, color=orange!30]{{\bf Cristian:} #1}}
+\newcommand{\thomas}[1]{\todo[inline, color=green!30]{{\bf Thomas:} #1}}
+\newcommand{\floris}[1]{\todo[inline, color=red!30]{{\bf Floris:} #1}}
+
+%%% UNCOMMENT BELOW TO REMOVE COMMENTS
+%\renewcommand{\domagoj}[1]{}
+%\renewcommand{\cristian}[1]{}
+%\renewcommand{\thomas}[1]{}
+%\renewcommand{\floris}[1]{}
+
 %% Macros comments
 \newcommand{\tover}[1]{\textcolor{red}{#1}}
 \newcommand{\td}[1]{\textcolor{blue}{[TODO: #1]}}
@@ -92,13 +108,6 @@
 
 \newcommand{\bstring}{\{0,1\}^\ast}
 
-\newcommand{\marcelo}[1]{{\color{red} {\bf Marcelo: #1}}}
-\newcommand{\etienne}[1]{{\color{blue} {\bf Etienne: #1}}}
-\newcommand{\juan}[1]{{\textcolor{violet} {\bf Juan: #1}}}
-\newcommand{\domagoj}[1]{{\color{green} {\bf Domagoj: #1}}}
-\newcommand{\francisco}[1]{{\color{magenta} {\bf Francisco: #1}}}
-\newcommand{\martin}[1]{{\color{orange} {\bf Martin: #1}}}
-
 \newcommand{\quot}[1]{#1/\!\equiv}
 
 \newcommand{\then}{\,|\,}
@@ -173,7 +182,7 @@
 \newcommand{\mtr}[1]{\texttt{Matrices}[#1]}
 
 \newcommand{\dom}{\mathcal{D}}
-\newcommand{\conc}{\texttt{conc}}
+\newcommand{\conc}{\texttt{mat}}
 
 \newcommand{\DD}{\texttt{Symb}}
 \newcommand{\size}{\texttt{size}}
@@ -183,10 +192,12 @@
 \newcommand{\type}{\texttt{type}}
 
 \newcommand{\lang}{\texttt{MATLANG}}
+\newcommand{\langfor}{\texttt{for}-\texttt{MATLANG} }
 
-\newcommand{\ffor}[3]{\texttt{for }#1,#2 \texttt{. }#3}
+\newcommand{\ffor}[3]{\texttt{for}\, #1,#2 \texttt{.}\, #3}
 
-\newcommand{\initf}[4]{\texttt{init(}#1\texttt{)\_}\texttt{for }#2,#3 \texttt{. }#4}
+%\newcommand{\initf}[4]{\texttt{for}[#1]\, #2,#3 \texttt{.}\, #4}
+\newcommand{\initf}[4]{\texttt{for}\, #2,#3\!=\! #1 \texttt{.}\, #4}
 
 \newcommand{\lleq}[2]{\texttt{leq}(#1,#2)}
 \newcommand{\mmin}[1]{\texttt{min}(#1)}
