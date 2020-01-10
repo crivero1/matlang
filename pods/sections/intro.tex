@@ -7,3 +7,28 @@ The introduction.
 \item Stress our concrete contributions.
 \item Relate to previous work \cite{matlang,BrijderGBW19,Geerts19,HutchisonHS17}.
 \end{itemize}
+
+\domagoj{A good example for the intro is all shortest paths via Floyd-Warshall.}
+
+\noindent
+$\ffor{e_k}{\Dist}{ }$
+\\
+\hspace*{0.5cm} $\ffor{e_i}{\Dist}{ }$
+\\
+\hspace*{1cm} $\ffor{e_j}{\Dist}{ }$
+\\
+\hspace*{1.5cm} 
+$\texttt{curr} := e_i^*\cdot \Dist \cdot e_j$\\
+\hspace*{1.5cm} 
+$\texttt{new} := e_i^*\cdot \Dist \cdot e_k + e_k^*\cdot \Dist\cdot e_j$\\
+\hspace*{1.5cm}
+$\Dist + \texttt{update}(\texttt{curr},\texttt{new})\times (e_i\cdot e_j^*)$
+
+where
+
+\[
+  			\texttt{update}(x,y)=\begin{cases}
+               0, \text{ if } x<=y \\
+               y, \text{ if } x > y
+            \end{cases}.
+		\]
