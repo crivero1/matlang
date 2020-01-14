@@ -35,6 +35,9 @@ $e$ & $::=$ & $V\in \Mvar$ & (matrix variable)\\
  & $|$ & $\ffor{v}{X}{e}$ & (canonical for loop, with $v, X \in \Mvar$). 
 \end{tabular}
 
+\floris{We should indeed describe the differences with \lang: we do not have one-vector and diagonalisation.
+Also, weren't we going to restrict function applications to scalars only? It is mentioned that a difference is
+function application, but this is also included in the previous section for \lang}
 \medskip
 
 Similarly as when defining \lang\, here we start with a core set of matrix operations (i.e sum, product, and the transpose of a matrix). In addition to this, we allow applying functions, and  the $\ffor{v}{X}{e}$ construct, which allows looping over the canonical vectors of a specified dimension, and updating the context of the variable $X$ in each iteration. The latter operator is inspired by classical Linear Algebra algorithms \cite{num}, which commonly use loops whose termination conditions are determined by the matrix dimension, and will allow us to express many properties of interest.
@@ -77,7 +80,11 @@ The semantics of $\ffor{v}{X}{e}$ over $\I$ is defined iteratively as follows:
 \item Finally, set $\sem{\ffor{v}{X}{e}}{\I} = A_{n}$.
 \end{itemize}
 
-Notice that evaluating $\ffor{v}{X}{e}$ over an instance that already assigns values to $v$ and $X$, these values get overwritten immediately. Notice that if $e$ does not use the variable $v$, the it will have the same value in each iteration. Sometimes when we want to make it explicit that the expression $e$ uses matrix variables $X_1,\ldots ,X_n$, we write $e(X_1,\ldots ,X_n)$, where $X_1,\ldots ,X_n$ are all the matrix variables mentioned in $e$. Analogously with First Order Logic, we could define the notion of free and bound variables (i.e. the ones in the scope of a \texttt{for} operator), however, since we explicitly rewrite the value of these variables, this distinction will not play an important role.
+\floris{Perhaps it is insightful to already give an easy example here, e.g., clique. Perhaps even better are the very simple expressions for diag and one vector. The text below is quite
+cryptic.}
+
+Notice that evaluating $\ffor{v}{X}{e}$ over an instance that already assigns values to $v$ and $X$, these values get overwritten immediately. Notice that if $e$ does not use the variable $v$, then it will have the same value in each iteration. Sometimes when we want to make it explicit that the expression $e$ uses matrix variables $X_1,\ldots ,X_n$, we write $e(X_1,\ldots ,X_n)$, where $X_1,\ldots ,X_n$ are all the matrix variables mentioned in $e$. Analogously with First Order Logic, we could define the notion of free and bound variables (i.e. the ones in the scope of a \texttt{for} operator), however, since we explicitly rewrite the value of these variables, this distinction will not play an important role.
+
 
 \cristian{I don't understand this comment of free and bound variables. What do you mean? I believe than similar than in first order variables, one can define this concept, but here it is not used.}
 
