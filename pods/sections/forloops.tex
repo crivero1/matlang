@@ -161,9 +161,9 @@ f(e_1,\ldots, e_n)&=\\
 
 \item {\em Conjugate transpose.} Let $\texttt{conj}(a) := \overline{a}$ be the conjugate function. Then we can simulate the conjugate transpose of expression $e$ as $\texttt{conj}(e^T)$.
 \item {\em One vector.} Using the function $f(x) := 1$, we can define $$\ones(e) := f(\texttt{for } v,X. X + e\cdot v).$$
+\item {\em Multiplying a matrix by a scalar.} Let $c$ be a scalar ($1\times 1$ matrix) and $f_{\times}(a, b) := a \times b$ . Then, for an expression $e$, $c\odot e := f_{\times}(\ones(e)\cdot c \cdot \ones(e^T)^T, e)$.
 \item {\em Diagonal of a vector.} The operator $\ones(e)$ can be defined as:
-$$\ones(e) := \texttt{for } v, X. X + (v^T\cdot e) \cdot vv^T.$$
-\item {\em Multiplying a matrix by a scalar.} Let $c$ be a scalar ($1\times 1$ matrix) and $f_{\times}(a, b) := a \times b$ . Then, for an expression $e$, $f_c(e) := f_{\times}(\ones(e)\cdot c \cdot \ones(e^T)^T$.
+$$\diag(e) := \texttt{for } v, X. X + (v^T\cdot e) \odot vv^T.$$
 \end{itemize}
 
 \medskip
