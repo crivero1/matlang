@@ -162,7 +162,7 @@ f(e_1,\ldots, e_n)&=\\
 \item {\em Conjugate transpose.} Let $\texttt{conj}(a) := \overline{a}$ be the conjugate function. Then we can simulate the conjugate transpose of expression $e$ as $\texttt{conj}(e^T)$.
 \item {\em One vector.} Using the function $f(x) := 1$, we can define $$\ones(e) := f(\texttt{for } v,X. X + e\cdot v).$$
 \item {\em Multiplying a matrix by a scalar.} Let $c$ be a scalar ($1\times 1$ matrix) and $f_{\times}(a, b) := a \times b$ . Then, for an expression $e$, $c\odot e := f_{\times}(\ones(e)\cdot c \cdot \ones(e^T)^T, e)$.
-\item {\em Diagonal of a vector.} The operator $\ones(e)$ can be defined as:
+\item {\em Diagonal of a vector.} The operator $\diag(e)$ can be defined as:
 $$\diag(e) := \texttt{for } v, X. X + (v^T\cdot e) \odot vv^T.$$
 \end{itemize}
 
@@ -236,7 +236,7 @@ Apart from computing the identity matrix, the summation operator also allows for
 %which simply reconstructs the matrix obtained by applying $f$ to every position of $e_1$ through $e_n$, by using the fact that for two canonical vectors $e_i^m$ and $e_j^n$, the product $e_i^m \cdot (e_j^n)^*$ defines a $m\times n$ matrix whose only non-zero entry is in the position $ij$. From now on we will abuse the notation and allow applying $f$ to an arbitrary matrix, and not only a $1\time 1$ matrix. PERHAPS USE THE SAME NOTATION AS MATLANG TO AVOID THIS THING ALTOGETHER?
 \item {\em One vector.} Using the function $f(x) := 1$, we can define $$\ones(e) := f(\Sigma v. e\cdot v).$$
 \item {\em Diagonal of a vector.} The operator $\ones(e)$ can be defined as:
-$$\ones(e) := \Sigma v. (v^*\cdot e) \cdot vv^*.$$
+$$\diag(e) := \Sigma v. (v^*\cdot e) \cdot vv^*.$$
 \end{itemize}
 
 Using the observations above we obtain the following:
@@ -284,10 +284,9 @@ where $Z$ is the (strict) order matrix defined above. The outer loop here define
 
 \medskip
 
-\noindent{\bf Algorithms in Linear Algebra.} The real power of \langfor comes from the fact that \texttt{for} loops allow us to express many classical linear algebra algorithms. Here we illustrate this by showing how to compute the $LU$ factorization of a matrix using Gaussian eliminations, which is one of the most commonly used matrix algorithms.
-\cristian{Here we should explain what it means to be $LU$ factorizable.}
+\noindent{\bf Algorithms in Linear Algebra.} The real power of \langfor comes from the fact that \texttt{for} loops allow us to express many classical linear algebra algorithms. Here we illustrate this by showing how to compute the $LU$ factorization of a matrix using Gaussian eliminations, which is one of the most commonly used matrix algorithms. Recall that $A$ is said to be LU factorizable if there exists matrices $T_1,\ldots, T_{n}$ where $T_i=E_{n}^{(i)}\cdots E_{i+1}^{(i)}$ for some elementary matrices $E_{j}^{(i)}=I+\alpha_{ij}\cdot e_{i}e_{j}^{*}$ such that $T_{n}\cdots T_1A=U$ holds, where $U$ is an upper triangular matrix.
 
-For this, assume first that $A$ is a square matrix which allows $LU$ factorization without row pivoting (we deal with this case later on). This means that after reducing the column $i$ of $A$ (i.e. we make all of the entries below the diagonal zero in the column $i$), we will end up with a matrix which has the element in position $i+1,i+1$ different from zero, for each $i$ strictly less than the dimension of $A$. 
+Now, assume that $A$ is a square matrix which allows $LU$ factorization without row pivoting (we deal with this case later on). This means that after reducing the column $i$ of $A$ (i.e. we make all of the entries below the diagonal zero in the column $i$), we will end up with a matrix which has the element in position $i+1,i+1$ different from zero, for each $i$ strictly less than the dimension of $A$. 
 
 To reduce the first column of $A$ it suffices to multiply $A$ from the left with the matrix $T_1 := I + c_1\cdot e_1^*$, where the vector $I$ is the identity matrix, $e_1$ is the first canonical vector, and $c_1$ is the vector 
 \[
