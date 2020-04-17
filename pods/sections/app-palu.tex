@@ -9,12 +9,8 @@ Let $P$ be the matrix that denotes the necessary row interchange. We aim to redu
 
 The factorization results in $U=T_{n}\cdots T_kPT_{k-1}\cdots T_1A$. We now explain why $T_{n}\cdots T_kPT_{k-1}\cdots T_1 = L^{-1}P.$ The permutation matrix $P$ has the form $P = I - uu^*$ and denotes row interchange (if multiplied by right) of rows $i$ and $j$ if $u=(e_{i}-e_{j})$. Note that in this case $i,j>k-1$ since we are using $P$ before reducing the $k$-th column so we are interchanging rows of index strictly greater than $k-1$ (if $k=n$ there is one row to interchange so nothing happens). Now, for $T_{l}=I-c_le_l^*$ with $l\leq k-1$ we have that $e_l^*P$ because $e_l$ has zeroes in positions $i+(k-1)$ and $j+(k-1)$. Note that $P^2=I$, thus $PT_lP=P^2-Pc_le_l^*P=I-\widehat{c}_le_l^*.$ Where $\widehat{c}_l=Pc_l$. Now $$T_{n}\cdots T_kPT_{k-1}\cdots T_1=T_{n}\cdots T_kPT_{k-1}P^2T_{k-2}P^2\cdots P^2 T_1P^2=T_{n}\cdots T_k(PT_{k-1}P)(PT_{k-2}P)(P\cdots P)(PT_1P)P=T_{n}\cdots T_k\widehat{T}_{k-1}\cdots \widehat{T}_1P$$ and $L^{-1} = T_{n}\cdots T_k\widehat{T}_{k-1}\cdots \widehat{T}_1$.
 
-We aim to compute $P$. First, we will need an operator that receives an $n$ dimensional vector $a$ and a canonical vector $e_k$ of size $n$, and returns the $n\times n$ matrix that has in its $(1,1)$ position the first non zero entry of $a$ since its $k$-th entry. It is defined as:
+We aim to compute $P$. First, we will need an operator that receives an $n$ dimensional vector $a$ and outputs a canonical vector $e_k$ such that $a_k$ is the first non zero entry of $a$. If we have this function $f$, then we compute $$P=P(A,X,v) = i + \left[ v - f\left( \ccoleq{XA}{v} \right) \right]\left[ v - f\left( \ccoleq{XA}{v} \right) \right]^*.$$ Here $\ccoleq{\cdot}{\cdot}$ is the same as $\ccol{\cdot}{\cdot}$ but uses $Z_{eq}$ instead of $Z_{<}$.
 
-\begin{align*}
-\nneq{a}{e_k}=\texttt{for }&v,X.\\
-&X + \\
-&(v^* Z(Xv_{max}))(e_{k}Zv)(a^*v)\left[ v_{min}v_{min}^* +vv_{max}^* - v_{max}v_{max}^* \right] + \\ 
-&(v^*v_{min}) \left[ v_{max}v_{max}^* + (e_k^*v_{min})(vv_{max^*} - v_{max}v_{max}^*)   \right] + \\
-&(v^*v_{max})\left[ v_{max}v_{max}^* - (Xv_{max})v_{max}^* \right]
-\end{align*}
+Thus $$\initf{I}{v}{X}{\red{P(A,X,v)\cdot X\cdot A}{v}\cdot P(A,X,v)\cdot X}.$$
+
+Now we show that if we have can do the PALU factorization, we can compute $f$. Let $a$ be an $n$ dimensional vector such that there exists $1\leq k\leq n$ where $a_i=0$ for all $i<k$, this is, $k$ is the index of the first non zero entry of $a$ (it must exist, otherwise there is nothing to be proved). Let $\lbrace b_1, \ldots, b_n\rbrace$ be an $n$ dimensional basis.
