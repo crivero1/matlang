@@ -6,3 +6,144 @@ The real work begins here.
 \input{./sections/app-ml-sum.tex}
 \section{PALU}
 \input{./sections/app-palu.tex}
+
+\section{Logspace Stuff}
+
+\section*{Simulating Logspace Turing machine on input $o^n$.}
+
+We are given a logspace Turing Machine $T=\left(Q,\{0\},\ell,\rhd,\lhd,\Delta,q_0,q_m\right)$ where $Q=\{q_1,\ldots,q_m\}$ are the states, $\ell$ denotes the number of heads, $q_0$ and $q_m$ denote initial and final state, respectively, $\{0\}$ is the tape alphabet, and $\rhd$ and $\lhd$ are special symbols denoting the beginning and the end of the tape, respectively. Finally,
+$\Delta=(\Delta_Q,\Delta_1,\ldots,\Delta_\ell)$ is the transition function of $T$, where $\Delta_Q:Q\times \{\rhd,0,\lhd\}^\ell\mapsto Q$ and for $i\in[\ell]$,
+$\Delta_i:Q\times  \{\rhd,0,\lhd\}^\ell\mapsto\{\gets,\to\}$. In other words, when $T$ is in state $q$ and the $\ell$ heads read symbols $b_1,\ldots,b_\ell$, $\Delta_Q(q,b_1,\ldots,b_\ell)$ indicates to which state $T$ will transition, and moreover, $\Delta_i(q,b_1,\ldots,b_\ell)$ says in which direction (left or right) the $i$th head will move. We assume that when $T$ is in the initial state $q_0$ all heads point to the first position (i.e., they all read symbol $\rhd$). 
+
+In our setting, the tape contents will always be of the form $w_n:=\rhd 0^n \lhd$ for some $n\in\mathbb{N}$. As usual, $T$ cannot move beyond the begin and end markers, $\rhd$ and $\lhd$, respectively. We assume that $T$ accepts or rejects the input $w_n$ using $\mathcal{O}(n^k)$ steps. In other words, there exists a constant $c$ such that $T$ runs in at most $cn^k$ steps. For simplicity, we assume that $T$ runs for at most $n^{k+1}$ steps. For technical reasons, that will become clear below, we assume that once $T$ reaches the final state $q_m$, $T$ will further transition but only to the state $q_m$. That is, $\Delta$ contains transitions that make $T$ loop in $q_m$.
+
+\begin{proposition}
+Given a logspace Turing machine $T$ with $m$ states, $\ell$ heads and which runs on $w_n=\rhd 0^n \lhd$ in time $n^{k+1}$, for $n\in\mathbb{N}$, there exists (i)~a $\mathsf{MATLANG}$ 
+schema $\mathcal{S}=(\mathcal{M},\textsf{size})$ where $\mathcal{M}$ consists matrix variables\footnote{We also need a finite number of auxiliary variables, these will be specified in the proof.} $X_1,\ldots,X_m,Y_1,\ldots,Y_\ell, v_1,\ldots,v_{k+1}$ and $w$ with
+$\mathsf{size}(V)=\alpha\times 1$ for all $V\in\mathcal{M}$ and $V\neq w$ and $\mathsf{size}(w)=1\times 1$; and (ii)~a $\mathsf{MATLANG}$ expression $e_T$ over $\mathcal{S}$ such that for the instance $I=(\mathcal{D},\textsf{mat})$ over $\mathcal{S}$ with $\mathcal{D}(\alpha)=n+2$ and $\mathsf{mat}(V)=\left(\begin{smallmatrix}0\\
+0\\\vdots\\0\end{smallmatrix}\right)$ for all $V\in\mathcal{M}$ and
+$\mathsf{mat}(w)=[0]$, we have that 
+$e_T(I)=[1]$ if $T$ accepts $w_n$ and  $e_T(I)=[0]$ otherwise.
+\end{proposition}
+\begin{proof}
+We start by explaining the semantics of the matrix variables in $\mathcal{M}$. The variables $X_1,\ldots,X_m,Y_1,\allowbreak\ldots,Y_\ell$ will be used inside for loops and will be updated using \textsf{MATLANG} expressions. Initially, all these matrix variables are instantiated with the zero column vector, as described by the instance $I$. 
+
+With each state $q_i\in Q$ we associate matrix variable $X_i$.
+Then, $T$ is in state $q_i$ when
+ $X_i=\left(\begin{smallmatrix}1\\
+0\\\vdots\\0\end{smallmatrix}\right)$, otherwise $X_i=\left(\begin{smallmatrix}0\\
+0\\\vdots\\0\end{smallmatrix}\right)$.	Similarly, with each head $i\in[\ell]$ we
+associate matrix variable $Y_i$. When the $i$th head points at position $j$ in $w_n$,
+then $Y_i=\mathsf{e}_j$, i.e., it is the $j$th canonical column vector. We remark that since the dimensions is $n+2$ and $T$ cannot change the input word $w_n$, the $n+2$ canonical vectors suffice to indicate all positions in $w_n$ (which is of length $n+2$).
+
+The variables $v_1,\ldots,v_{k+1}$ represent $k+1$ canonical vectors  which are use to iterate in for loops. By iterating over then, we can perform $(n+2)^{k+1}$ iterations, which suffices for simulating the $n^{k+1}$ steps used by $T$ on input $w_n$.
+
+Finally, the variable $w$ is used for the output of $e_T$. It contains a scalar and will hold $1$ if $w_n$ is accepted by $T$ and $0$ otherwise.
+
+The expression $e_T$ uses some subexpressions in $\mathsf{MATLANG}$ which use some auxiliary variables.
+As a consequence, $e_T$ is an expression defined over an extended schema $\mathcal{S}'$. Hence, the instance $I$ in the statement of the Proposition is in fact an instance $I'$ of $\mathcal{S}'$ which
+coincides with $I$ on $\mathcal{S}$ and in which the auxiliary matrix variables are all instantiated with zero vectors or matrices, depending on their size.
+
+We list the used subexpressions next and explicitly denote the auxiliary matrix variables:
+\begin{itemize}
+	% \item $\mathsf{max}(z,Z)$, an expression over auxiliary variables $z$ and $Z$ with $\mathsf{size}(z)=\mathsf{size}(Z)=\alpha\times 1$. On input $I'$ with
+	% $\mathsf{mat}(z)=\mathsf{mat}(Z)$ the zero column vector of dimension $n+2$,
+	%  $\mathsf{max}(I)=\mathbf{e}_{n+2}$.
+	\item $\mathsf{pred}(z,Z,z',Z')$, and expression over auxiliary variables $z$, $z'$, $Z$ and $Z'$ with $\mathsf{size}(z)=\mathsf{size}(z')=\mathsf{size}(Z)=\alpha\times 1$ and $\mathsf{size}(Z')=\alpha\times\alpha$. On input $I'$ with 
+	$\mathsf{mat}(z)=\mathsf{mat}(z')=\mathsf{mat}(Z)$ the zero column vector of dimension $n+2$, and $\mathsf{mat}(Z')$ the zero $(n+2)\times (n+2)$ matrix,
+	 $\mathsf{pred}(I')$ returns an $(n+2)\times (n+2)$ matrix such that 
+	 
+	 $$\mathsf{pred}(I')\mathbf{e}_i:=\begin{cases} 
+	 \mathbf{e}_{i-1} & \text{if $i>1$}\\
+	 \mathbf{0} & \text{if $i=1$}.
+	\end{cases}
+	$$
+	In other words, $\mathsf{pred}$ defines a predecessor relation among canonical vectors of dimension $n+2$.
+	 \item $\mathsf{succ}(z,Z,z',Z')$, and expression over auxiliary variables $z$, $z'$, $Z$ and $Z'$ with $\mathsf{size}(z)=\mathsf{size}(z')=\mathsf{size}(Z)=\alpha\times 1$ and $\mathsf{size}(Z')=\alpha\times\alpha$. On input $I'$ with 
+	$\mathsf{mat}(z)=\mathsf{mat}(z')=\mathsf{mat}(Z)$ the zero column vector of dimension $n+2$, and $\mathsf{mat}(Z')$ the zero $(n+2)\times (n+2)$ matrix,
+	 $\mathsf{succ}(I')$ returns an $(n+2)\times (n+2)$ matrix such that 
+	 
+	 $$\mathsf{succ}(I')\mathbf{e}_i:=\begin{cases} 
+	 \mathbf{e}_{i+1} & \text{if $i<n+2$}\\
+	 \mathbf{0} & \text{if $i=n+2$}.
+	\end{cases}
+	$$
+	In other words, $\mathsf{succ}$ defines a successor relation among canonical vectors.
+	\item $\textsf{ismin}(v,z,Z,z',Z)$ with auxiliary variables $z$, $z'$, $Z$ and $Z'$ as before, and $v$ is one of the (vector) variables in $\mathcal{M}$. For an $(n+2)\times 1$ vector $\mathbf{v}$, on input $I'[v\gets \mathbf{v}]$	$$\mathsf{ismin}(I'[v\gets\mathbf{v}]):=\begin{cases} 1 & \text{if $\mathbf{v}=\mathbf{e}_1$}\\
+		0 & \text{otherwise}.
+		\end{cases}$$
+	\item $\textsf{ismax}(v,z,Z,z',Z)$ with auxiliary variables $z$, $z'$, $Z$ and $Z'$ as before, and 
+	and $v$ is one of the (vector) variables in $\mathcal{M}$. For an $(n+2)\times 1$ vector $\mathbf{v}$, on input $I'[v\gets \mathbf{v}]$
+	
+	$$\mathsf{ismax}(I'[v\gets\mathbf{v}]):=\begin{cases} 1 & \text{if $\mathbf{v}=\mathbf{e}_{n+2}$}\\
+		0 & \text{otherwise}.
+		\end{cases}$$
+	\item $\mathsf{min}(z,Z,z',Z',z'',Z'')$, an expressions with
+	auxiliary variables $z$, $z'$, $z''$, $Z$, $Z'$ and $Z''$ with $\mathsf{size}(z)=\mathsf{size}(z')=\mathsf{size}(z'')=\mathsf{size}(Z)=\mathsf{size}(Z'')\alpha\times 1$ and $\mathsf{size}(Z')=\alpha\times\alpha$. On input $I'$ with 
+	matrix variables instantiated with zero vectors (or matrix for $Z'$),
+ 	 $\mathsf{min}(I')=\mathbf{e}_1$. 
+	 		\item We additionally define, based on the previous expressions, 
+			$$\mathsf{test}_b(v,z,Z,z',Z'):=\begin{cases} \mathsf{ismin}(v,z,Z,z,Z') & \text{if $b=\rhd$}\\
+     \mathsf{ismax}(v,z,Z,z,Z') & \text{if $b=\lhd$}\\
+	 (1-\mathsf{ismin}(v,z,Z,z',Z'))(1-\mathsf{ismax}(v,z,Z,z',Z')) & \text{if $b=0$}.
+		\end{cases}.$$
+	When evaluated on $I'[v\gets\mathbf{v}]$, $\mathsf{test}_b(I'[v\gets\mathbf{v}])$ will be $1$ when either
+	$\mathbf{v}=\mathbf{e}_{1}$ and $b=\rhd$ (first position)
+	$\mathbf{v}=\mathbf{e}_{n+2}$ and $b=\lhd$ (last position),
+	$\mathbf{v}\neq \mathbf{e}_{1}$ and $\mathbf{v}\neq \mathbf{e}_{n+2}$  and $b=0$ (not first or last position). We use this expression below to check whether the heads are consistent with the symbols on the tape.
+	
+	
+ \item Finally, we define
+ $$
+ \mathsf{move}_d(z,Z,z',Z'):=\begin{cases}
+ e_{\mathsf{pred}}(z,Z,z',Z) & \text{if $d=\gets$}\\
+  e_{\mathsf{succ}}(z,Z,z',Z) & \text{if $d=\to$}. 
+ \end{cases},
+ $$
+ $\mathsf{move}_d(I')$ will simply return the predecessor matrix when $d=\gets$ and the successor matrix when $d=\to$. This expression will be used to move the heads.
+\end{itemize}
+We thus see that we only need $z,z',z'',Z,Z',Z''$ as auxiliary variables and these can be re-used for every occurrence of the subexpressions in $e_T$. From now one, we omit the auxiliary variables from the description of $e_T$.
+
+We define the expression $e_T$, as follows\footnote{In the expression I uses $;w$ to indicate the output variable. That is, the for loops updates all instances for $X_1,\ldots,X_m,Y_1,\ldots,Y_\ell$ and $w$, but the result of the expression is only what is in the instance corresponding to $w$. We can simulate this again if we allow constant dimensional canonical basis vectors in $\mathsf{MATLANG}$.}:
+$$
+e_T:= \mathsf{for\,} v_1,\ldots,v_{k+1},X_1,\ldots,X_m,Y_1,\ldots,Y_\ell; w.(e_w,e_{X_1},\ldots,e_{X_m},e_{Y_1},\ldots,e_{Y_\ell}),
+$$
+with 
+\begin{align*}\allowdisplaybreaks
+	e_w&:=\mathsf{ismin}(X_m)\\
+	e_{X_1}&:=\left(\prod_{j=1}^{k+1} \textsf{ismin}(v_i)\right)\cdot\mathsf{min}
+	+ \sum_{\substack{q,b_1,\ldots,b_\ell\\
+	\Delta_Q(q,b_1,\ldots,b_\ell)=q_1}} \!\!\!\!\!\!\!\!\! \textsf{ismin}(X_q)\left(\prod_{j=1}^\ell \mathsf{test}_{b_j}(Y_j)\right)\mathsf{min}\\
+	e_{X_i}&:= \sum_{\substack{q,b_1,\ldots,b_\ell\\
+	\Delta_Q(q,b_1,\ldots,b_\ell)=q_i}}\!\!\!\!\!\!\!\!\! \textsf{ismin}(X_q)\left(\prod_{j=1}^\ell \mathsf{test}_{b_j}(Y_j)\right)\mathsf{min} \quad \text{for $i\neq 1$}\\
+	e_{Y_i}&:=\left(\prod_{j=1}^{k+1} \textsf{ismin}(v_i)\right)\cdot\mathsf{min}
+	+\sum_{\substack{q,b_1,\ldots,b_\ell\\
+	\Delta_i(q,b_1,\ldots,b_\ell)=d}}\!\!\!\!\!\!\!\!\! \textsf{ismin}(X_q)\left(\prod_{j=1}^\ell \mathsf{test}_{b_j}(Y_j)\right)\mathsf{move}_d\cdot Y_i
+\end{align*}
+
+The correctness of $e_T$ is now readily verified. We do this by induction on the number of iterations in the for loop. We note that initially, all variables are assigned zero vectors and values (for $w$). 
+
+At the start of the run of $T$, we are in state $q_1$ and all heads point to the first position. We argue that after the first 
+iterations, i.e., when $v_i=\mathbf{e}_1$ for $i\in[k+1]$, we indeed have that $X_1=\mathbf{e_1}$, $X_j=\mathbf{0}$ for $j\neq 1$, and $Y_j=\mathbf{e}_1$ for $j\in[\ell]$. Indeed, in the expression for $e_{X_1}$ the test $\prod_{j=1}^{k+1} \textsf{ismin}(v_i)$ will return $1$ and hence $X_1$ is replaced by $\mathsf{min}=\mathbf{e}_1$. Since all $X_i$ are initially zero, $\mathsf{ismin}(X_i)$ evaluate to zero for all $i\in[m]$ so the second term in $e_{X_1}$ adds the zero vector to $\mathbf{e}_1$ and thus $X_1$ remains $\mathbf{e_1}$.
+Similarly, $e_{X_j}$ for $j\neq 1$ will leave $X_j$ unchanged, so these remain zero vectors. For the head positions, a similar arguments shows that after the first iterations, all $Y_i$ are set of $\mathbf{e}_1$.
+
+We next assume that up to a certain iteration $\kappa-1$, the matrix variables correctly encode a configuration of $T$ on $w_n$ and furthermore, this configuration is reachable from the initial configuration. We next show that this remains to hold in the $\kappa$th iteration.
+
+By induction, there will be a single $X_i$ which is instantiated with $\mathbf{e}_1$. Let use assume that this $X_q$. All other $X_i$ are instantiated with the zero vector. Furthermore, $Y_j=\mathbf{e}_{i_j}$ for some $i_j\in[n+2]$. 
+
+Suppose that
+$\Delta_Q(q,b_{i_1},\ldots,b_{i\ell})=p$ and
+$\Delta_j(q,b_{i_1},\ldots,b_{i\ell})=d_j$. Then, inspecting the expressions $e_{X_i}$, all $X_{q_i}$ with $q_i\neq p$ will be replaced by the zero vector. The reason is that for $X_i$ to be replaced by $\mathsf{min}$ (i.e., $\mathbf{e}_1$) when $T$ is in state $q$,
+there must be a transition $\Delta_Q(q,b_{i_1}',\ldots,b_{i_\ell}')=q_i$
+and such that the $b_{i_j}'$ corresponds to the positions encoded by
+the $Y_i$'s. In particular, $b_{i_1},\ldots,b_{i\ell}$ and 
+$b_{i_1}',\ldots,b_{i_\ell}'$ must have $\rhd$ and $\lhd$ at the same positions, and since the only remaining symbol is $0$, $b_{i_1},\ldots,b_{i\ell}$ and $b_{i_1}',\ldots,b_{i\ell}'$ must agree.
+This in turn would imply that there are two possible states $p$ and $q_i$ from $q$ while reading $b_{i_1},\ldots,b_{i\ell}$. This is impossible since $T$ is deterministic.
+
+If we next consider the expressions $e_{Y_i}$ for $i\in[\ell]$, then a similar argument shows that at most one of the terms in the second part in $e_{Y_i}$ can replace $Y_i$ with $\mathsf{move}_d\cdot Y_i$. By defining of $\mathsf{move}_d$ in terms of the predecessor or successor matrix (depending on whether $d=\gets$ or $d=\to$, respectively), and given that $Y_i$ corresponds to a canonical vector, say $\mathbf{e}_{i_s}$, then $\mathsf{move}_d\cdot Y_i$ will replace $Y_i$
+with either $\mathbf{e}_{i_s-1}$ or  $\mathbf{e}_{i_s+1}$. We note that when $Y_i$ is $\mathbf{e}_1$ or $\mathbf{e}_{n+2}$, $d$ must necessarily be $\to$ or $\gets$, respectively, since $T$ does not move beyond the end markers. 
+
+Hence, all combined we see that after the $\kappa$the iteration, $X_1,\ldots,X_m$ and $Y_1,\ldots,Y_\ell$ indeed correspond to the next configuration of $T$.
+
+We now remark that $w$ will be zero unless in one of the iterations populates $X_m$ with $\mathbf{e}_{1}$, i.e., the $T$ is in the final state. By assumption, $T$ will continue to be in the final state from that point on, and thus after perform our $(n+2)^k$, $w$ will remain $1$. If no final state is encountered, $w$ remains $0$, as desired.
+\end{proof}
