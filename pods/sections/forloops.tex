@@ -21,38 +21,51 @@
 
 While \lang\ serves as a solid basis for expressing linear algebra properties, it is still somewhat lacking when defining more advanced linear algebra operators such as Gaussian eliminations, or computing an inverse of a matrix. To alleviate these issues, we propose an extended version of \lang, called \langfor which allows us to express such properties.
 
-As before, we assume a countably infinite set of matrix variables $\Mvar = \{V_1, V_2, \ldots\}$, and a set $\Fun$  of functions $f:\mathbb{C}^n \mapsto \mathbb{C}$. Additionally, for each $n\in \mathbb{N}$, we denote by $e_1^n,\ldots ,e_n^n$ the complete list of canonical vectors of dimension $n$; that is, $e_1^n = [1\ 0 \cdots 0]^*$, $e_2^n = [0\ 1\ 0 \cdots 0]^*$, etc. When $n$ is clear from the context we will simply write $e_1,e_2$, etc. The syntax of \langfor is defined as follows:
+%As before, we assume a countably infinite set of matrix variables $\Mvar = \{V_1, V_2, \ldots\}$, and a set $\Fun$  of functions $f:\mathbb{C}^n \mapsto \mathbb{C}$. Additionally, for each $n\in \mathbb{N}$, we denote by $e_1^n,\ldots ,e_n^n$ the complete list of canonical vectors of dimension $n$; that is, $e_1^n = [1\ 0 \cdots 0]^*$, $e_2^n = [0\ 1\ 0 \cdots 0]^*$, etc. When $n$ is clear from the context we will simply write $e_1,e_2$, etc. The syntax of \langfor is defined as follows:
+
+
+%\medskip
+
+%\begin{tabular}{lcll}
+%$e$ & $::=$ & $V\in \Mvar$ & (matrix variable)\\
+ %& $|$ & $e^*$ & (conjugate transpose)\\ 
+ %& $|$ & $e_1 \cdot e_2$ & (matrix multiplication)\\   
+ %& $|$ & $e_1 + e_2$ & (matrix addition)\\    
+ %& $|$ & $f(e_1,\ldots ,e_n)$ & (application of $f\in \Fun$)\\
+ %& $|$ & $\ffor{v}{X}{e}$ & (canonical for loop, with $v, X \in \Mvar$). 
+%\end{tabular}
+
+As before, we assume a countably infinite set of matrix variables $\Mvar = \{V_1, V_2, \ldots\}$, and a set $\Fun$  of functions $f:\mathbb{C}^n \mapsto \mathbb{C}$. Additionally, for each $n\in \mathbb{N}$, we denote by $e_1^n,\ldots ,e_n^n$ the complete list of canonical vectors of dimension $n$; that is, $e_1^n = [1\ 0 \cdots 0]^*$, $e_2^n = [0\ 1\ 0 \cdots 0]^*$, etc. When $n$ is clear from the context we will simply write $e_1,e_2$, etc. The syntax of \langfor is defined as \lang\, but with an extra expression.
 
 
 \medskip
 
 \begin{tabular}{lcll}
-$e$ & $::=$ & $V\in \Mvar$ & (matrix variable)\\
- & $|$ & $e^*$ & (conjugate transpose)\\ 
- & $|$ & $e_1 \cdot e_2$ & (matrix multiplication)\\   
- & $|$ & $e_1 + e_2$ & (matrix addition)\\    
- & $|$ & $f(e_1,\ldots ,e_n)$ & (application of $f\in \Fun$)\\
- & $|$ & $\ffor{v}{X}{e}$ & (canonical for loop, with $v, X \in \Mvar$). 
+ $\ffor{v}{X}{e}$ & (canonical for loop, with $v, X \in \Mvar$). 
 \end{tabular}
 
-\floris{We should indeed describe the differences with \lang: we do not have one-vector and diagonalisation.
-Also, weren't we going to restrict function applications to scalars only? It is mentioned that a difference is
-function application, but this is also included in the previous section for \lang}
 \medskip
 
-Similarly as when defining \lang\, here we start with a core set of matrix operations (i.e sum, product, and the transpose of a matrix). In addition to this, we allow applying functions, and  the $\ffor{v}{X}{e}$ construct, which allows looping over the canonical vectors of a specified dimension, and updating the context of the variable $X$ in each iteration. The latter operator is inspired by classical Linear Algebra algorithms \cite{num}, which commonly use loops whose termination conditions are determined by the matrix dimension, and will allow us to express many properties of interest.
+%Similarly as when defining \lang\, here we start with a core set of matrix operations (i.e sum, product, and the transpose of a matrix). In addition to this, we allow applying functions, and  the $\ffor{v}{X}{e}$ construct, which allows looping over the canonical vectors of a specified dimension, and updating the context of the variable $X$ in each iteration. The latter operator is inspired by classical Linear Algebra algorithms \cite{num}, which commonly use loops whose termination conditions are determined by the matrix dimension, and will allow us to express many properties of interest.
 
-A \langfor {\em schema} $\Sch$ is a pair $\Sch=(\Mnam,\size)$, where $\Mnam\subset \Mvar$ is a finite set of matrix variables, and $\size: \Mvar \mapsto \DD\times \DD$ is a function that maps each matrix variable to a pair of {\em size symbols}. Given a schema $\Sch$, the type of a \langfor expression, denoted $\ttype(e)$, is defined inductively as follows:
-\begin{itemize}
-\item $\ttype(V) = \size(V)$, for a matrix variable $V$,
-\item $\ttype(e^*) = (\beta,\alpha)$, if $\ttype(e)=(\alpha,\beta)$; and undefined if $\ttype(e)$ is undefined,
-\item $\ttype(e_1 \cdot e_2) = (\alpha,\gamma)$, whenever $\ttype(e_1)=(\alpha,\beta)$, and $\ttype(e_2)=(\beta,\gamma)$; and is undefined otherwise,
-\item $\ttype(e_1 + e_2) = \ttype(e_1)$, if $\ttype(e_1) = \ttype(e_2)$; and is undefined otherwise,
+%A \langfor {\em schema} $\Sch$ is a pair $\Sch=(\Mnam,\size)$, where $\Mnam\subset \Mvar$ is a finite set of matrix variables, and $\size: \Mvar \mapsto \DD\times \DD$ is a function that maps each matrix variable to a pair of {\em size symbols}. Given a schema $\Sch$, the type of a \langfor expression, denoted $\ttype(e)$, is defined inductively as follows:
+%\begin{itemize}
+%\item $\ttype(V) = \size(V)$, for a matrix variable $V$,
+%\item $\ttype(e^*) = (\beta,\alpha)$, if $\ttype(e)=(\alpha,\beta)$; and undefined if $\ttype(e)$ is undefined,
+%\item $\ttype(e_1 \cdot e_2) = (\alpha,\gamma)$, whenever $\ttype(e_1)=(\alpha,\beta)$, and $\ttype(e_2)=(\beta,\gamma)$; and is undefined otherwise,
+%\item $\ttype(e_1 + e_2) = \ttype(e_1)$, if $\ttype(e_1) = \ttype(e_2)$; and is undefined otherwise,
 %\item $\ttype(f(e_1,\ldots ,e_n)) = (1,1)$, whenever $\ttype(e_1)= \cdots =\ttype(e_n)=(1,1)$, and $f:\mathbb{C}^n\mapsto \mathbb{C}$; and is undefined otherwise,
-\item $\ttype(f(e_1,\ldots ,e_n)) = (\alpha,\beta)$, whenever $\ttype(e_1) = \ldots = \ttype(e_k) = (\alpha,\beta)$, and $f:\mathbb{C}^n \mapsto  \mathbb{C}$; and is undefined otherwise, and,
+%\item $\ttype(f(e_1,\ldots ,e_n)) = (\alpha,\beta)$, whenever $\ttype(e_1) = \ldots = \ttype(e_k) = (\alpha,\beta)$, and $f:\mathbb{C}^n \mapsto  \mathbb{C}$; and is undefined otherwise, and,
+%\item $\ttype(\ffor{v}{X}{e}) = \ttype(e)$, if $\ttype(X) = \ttype(e)$, and $\ttype(v) = (\gamma,1)$; and is undefined otherwise.
+%\end{itemize}
+%\cristian{Is this the same than in the previous section? Is there any difference?}
+
+To extend \lang\, we add $\ffor{v}{X}{e}$ construct, which allows looping over the canonical vectors of a specified dimension, and updating the context of the variable $X$ in each iteration. The latter operator is inspired by classical Linear Algebra algorithms \cite{num}, which commonly use loops whose termination conditions are determined by the matrix dimension, and will allow us to express many properties of interest.
+
+A \langfor {\em schema} $\Sch$ is a pair $\Sch=(\Mnam,\size)$, where $\Mnam\subset \Mvar$ is a finite set of matrix variables, and $\size: \Mvar \mapsto \DD\times \DD$ is a function that maps each matrix variable to a pair of {\em size symbols}. Given a schema $\Sch$, the type of a \langfor expression, denoted $\ttype(e)$, is defined inductively as \lang\, and we add the following:
+\begin{itemize}
 \item $\ttype(\ffor{v}{X}{e}) = \ttype(e)$, if $\ttype(X) = \ttype(e)$, and $\ttype(v) = (\gamma,1)$; and is undefined otherwise.
 \end{itemize}
-\cristian{Is this the same than in the previous section? Is there any difference?}
 
 We remark that in the expression $\ffor{v}{X}{e}$, we require that $\ttype(X) = \ttype(e)$ since, intuitively, this expression updates the content of the variable $X$ in each iteration using the result of $e$. As we will see below, evaluating $e$ will depend on a canonical vector stored in $v$, and the current content of $X$. %Another difference from \lang\ is that we allow function application only on scalars (more precisely, on $1\times 1$ matrices).
 
@@ -61,18 +74,18 @@ An expression $e$ is well-typed over a schema $\Sch$ if its type is defined. For
 A \langfor {\em instance} $\I$ over a schema $\Sch$, is a pair $\I = (\dom,\conc)$, where $\dom : \DD \mapsto \mathbb{N}$ assigns a value to each size symbol, and $\conc : \Mnam \mapsto \mtr{\mathbb{C}}$ assigns a concrete matrix to each matrix variable $M\in \Mnam$, such that $\dim(\conc(M)) = \dom(\alpha)\times \dom(\beta)$, where $\size(M) = (\alpha,\beta)$. As before, we assume that $\dom(1) = 1$, for every instance $\I$. 
  %(meaning that $e_1^n = \begin{bmatrix} 1 \\ 0 \\ \vdots \\ 0 \end{bmatrix}$, etc.).
 If $\I$ is an instance, $V$ a matrix variable such that $\size(V)= (\alpha,\beta)$, and $M$ a matrix of dimension $\dom(\alpha)\times \dom(\beta)$, then $\I[V := M]$ denotes an instance that coincides with $\I$, apart from the fact that the value of the matrix variable $V$ is the matrix $M$. 
-If $e$ is a well-typed expression according to $\Sch$, then we denote by $\sem{e}{\I}$ the matrix obtained by evaluating $e$ over $\I$, and define it as follows:
-\begin{itemize}
-\item $\sem{M}{\I} = \conc(M)$, for $M\in \Mnam$;
-\item $\sem{e^*}{\I} = \sem{e}{\I}^*$, where $M^*$ is the conjugate transpose of a matrix $M$;
-\item $\sem{e_1\cdot e_2}{\I} = \sem{e_1}{\I} \cdot \sem{e_2}{\I}$;
-\item $\sem{e_1 + e_2}{\I} = \sem{e_1}{\I} + \sem{e_2}{\I}$;
+%If $e$ is a well-typed expression according to $\Sch$, then we denote by $\sem{e}{\I}$ the matrix obtained by evaluating $e$ over $\I$, and define it as follows:
+%\begin{itemize}
+%\item $\sem{M}{\I} = \conc(M)$, for $M\in \Mnam$;
+%\item $\sem{e^*}{\I} = \sem{e}{\I}^*$, where $M^*$ is the conjugate transpose of a matrix $M$;
+%\item $\sem{e_1\cdot e_2}{\I} = \sem{e_1}{\I} \cdot \sem{e_2}{\I}$;
+%\item $\sem{e_1 + e_2}{\I} = \sem{e_1}{\I} + \sem{e_2}{\I}$;
 %\item $\sem{f(e_1,\ldots ,e_n)}{\I}$ is a $1\times 1$ matrix whose only entry has the value $f(\sem{e_1}{\I},\ldots ,\sem{e_n}{\I})$. Here we abuse the notation and use $\sem{e}{\I}$ to denote both a $1\times 1$ matrix, and a scalar from $\mathbb{C}$.
-\item $\sem{f(e_1,\ldots ,e_n)}{\I}$ is a matrix $A$ of the same size as $\sem{e_1}{\I}$, and where $A_{ij}$ has the value $f(\sem{e_1}{\I}_{ij},\ldots ,\sem{e_n}{\I}_{ij})$.
-\end{itemize}
-\cristian{The same as with the type function, we can reuse the semantics of the previous section.}
+%\item $\sem{f(e_1,\ldots ,e_n)}{\I}$ is a matrix $A$ of the same size as $\sem{e_1}{\I}$, and where $A_{ij}$ has the value $f(\sem{e_1}{\I}_{ij},\ldots ,\sem{e_n}{\I}_{ij})$.
+%\end{itemize}
+%\cristian{The same as with the type function, we can reuse the semantics of the previous section.}
 
-The semantics of $\ffor{v}{X}{e}$ over $\I$ is defined iteratively as follows:
+If $e$ is a well-typed expression according to $\Sch$, then we denote by $\sem{e}{\I}$ the matrix obtained by evaluating $e$ over $\I$, and define it as in \lang\, adding the new operator. The semantics of $\ffor{v}{X}{e}$ over $\I$ is defined iteratively as follows:
 \begin{itemize}
 \item Let $\ttype(v)= (\gamma,1)$, and $\ttype(e) = (\alpha,\beta)$. Set $n := \dom(\gamma)$.
 \item Let $A_0 = \mathbf{0}$, be the null matrix of size $\dom(\alpha)\times \dom(\beta)$.
@@ -113,6 +126,45 @@ The biggest novelty of $\langfor$ is the for operator. To illustrate how this op
 %\end{enumerate}
 %Analogously, we can perform these transformations of columns, by using the transposed matrix $M^*$, and the canonical vectors of appropriate dimension.
 
+\medskip
+
+\noindent{\bf Core operators} 
+Note that the  \texttt{for} operator is much more powerful that it seems. We can simulate some operations of the original \lang\ semantics. Assume the allowed expressions are
+
+\begin{tabular}{lcll}
+$e$ & $:=$ & $V\in \Mvar$ & (matrix variable)\\
+ & $|$ & $e^T$ & (transpose)\\ 
+ & $|$ & $e_1 \cdot e_2$ & (matrix multiplication)\\   
+ & $|$ & $e_1 + e_2$ & (matrix addition)\\    
+ & $|$ & $\text{apply}[f](e_1,\ldots ,e_n)$ & (application of $f\in \Fun$)\\
+ & $|$ & $\ffor{v}{X}{e}$ & (canonical for loop, with $v, X \in \Mvar$). 
+\end{tabular}
+
+Where function application $\text{apply}[f]$ works only on scalars. This is 
+
+\begin{itemize}
+\item $\ttype(\text{apply}[f](e_1,\ldots ,e_n)) = (1,1)$, whenever $\ttype(e_1)= \cdots =\ttype(e_n)=(1,1)$, and $f:\mathbb{C}^n\mapsto \mathbb{C}$; and is undefined otherwise.
+\item $\sem{\text{apply}[f](e_1,\ldots ,e_n)}{\I}$ is a $1\times 1$ matrix whose only entry has the value $f(\sem{e_1}{\I},\ldots ,\sem{e_n}{\I})$.
+\end{itemize}
+
+We have the following:
+
+\begin{itemize}
+\item {\em Pointwise function application.} Note that
+
+\begin{align*}
+f(e_1,\ldots, e_n)&=\\ 
+&\texttt{for }v,X.\quad X + \\
+&\quad \texttt{for }w,Y.\quad Y + \\ 
+&\quad \quad v\left[ \text{apply}[f](v^Te_1w, \ldots, v^Te_nw) \right] w^T 
+\end{align*}
+
+\item {\em Conjugate transpose.} Let $\texttt{conj}(a) := \overline{a}$ be the conjugate function. Then we can simulate the conjugate transpose of expression $e$ as $\texttt{conj}(e^T)$.
+\item {\em One vector.} Using the function $f(x) := 1$, we can define $$\ones(e) := f(\texttt{for } v,X. X + e\cdot v).$$
+\item {\em Multiplying a matrix by a scalar.} Let $c$ be a scalar ($1\times 1$ matrix) and $f_{\times}(a, b) := a \times b$ . Then, for an expression $e$, $c\odot e := f_{\times}(\ones(e)\cdot c \cdot \ones(e^T)^T, e)$.
+\item {\em Diagonal of a vector.} The operator $\diag(e)$ can be defined as:
+$$\diag(e) := \texttt{for } v, X. X + (v^T\cdot e) \odot vv^T.$$
+\end{itemize}
 
 \medskip
 
@@ -184,7 +236,7 @@ Apart from computing the identity matrix, the summation operator also allows for
 %which simply reconstructs the matrix obtained by applying $f$ to every position of $e_1$ through $e_n$, by using the fact that for two canonical vectors $e_i^m$ and $e_j^n$, the product $e_i^m \cdot (e_j^n)^*$ defines a $m\times n$ matrix whose only non-zero entry is in the position $ij$. From now on we will abuse the notation and allow applying $f$ to an arbitrary matrix, and not only a $1\time 1$ matrix. PERHAPS USE THE SAME NOTATION AS MATLANG TO AVOID THIS THING ALTOGETHER?
 \item {\em One vector.} Using the function $f(x) := 1$, we can define $$\ones(e) := f(\Sigma v. e\cdot v).$$
 \item {\em Diagonal of a vector.} The operator $\ones(e)$ can be defined as:
-$$\ones(e) := \Sigma v. (v^*\cdot e) \cdot vv^*.$$
+$$\diag(e) := \Sigma v. (v^*\cdot e) \cdot vv^*.$$
 \end{itemize}
 
 Using the observations above we obtain the following:
@@ -232,10 +284,9 @@ where $Z$ is the (strict) order matrix defined above. The outer loop here define
 
 \medskip
 
-\noindent{\bf Algorithms in Linear Algebra.} The real power of \langfor comes from the fact that \texttt{for} loops allow us to express many classical linear algebra algorithms. Here we illustrate this by showing how to compute the $LU$ factorization of a matrix using Gaussian eliminations, which is one of the most commonly used matrix algorithms.
-\cristian{Here we should explain what it means to be $LU$ factorizable.}
+\noindent{\bf Algorithms in Linear Algebra.} The real power of \langfor comes from the fact that \texttt{for} loops allow us to express many classical linear algebra algorithms. Here we illustrate this by showing how to compute the $LU$ factorization of a matrix using Gaussian eliminations, which is one of the most commonly used matrix algorithms. Recall that $A$ is said to be LU factorizable if there exists matrices $T_1,\ldots, T_{n}$ where $T_i=E_{n}^{(i)}\cdots E_{i+1}^{(i)}$ for some elementary matrices $E_{j}^{(i)}=I+\alpha_{ij}\cdot e_{i}e_{j}^{*}$ such that $T_{n}\cdots T_1A=U$ holds, where $U$ is an upper triangular matrix.
 
-For this, assume first that $A$ is a square matrix which allows $LU$ factorization without row pivoting (we deal with this case later on). This means that after reducing the column $i$ of $A$ (i.e. we make all of the entries below the diagonal zero in the column $i$), we will end up with a matrix which has the element in position $i+1,i+1$ different from zero, for each $i$ strictly less than the dimension of $A$. 
+Now, assume that $A$ is a square matrix which allows $LU$ factorization without row pivoting (we deal with this case later on). This means that after reducing the column $i$ of $A$ (i.e. we make all of the entries below the diagonal zero in the column $i$), we will end up with a matrix which has the element in position $i+1,i+1$ different from zero, for each $i$ strictly less than the dimension of $A$. 
 
 To reduce the first column of $A$ it suffices to multiply $A$ from the left with the matrix $T_1 := I + c_1\cdot e_1^*$, where the vector $I$ is the identity matrix, $e_1$ is the first canonical vector, and $c_1$ is the vector 
 \[
