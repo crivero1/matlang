@@ -312,9 +312,13 @@ U(A) :=  \left( \initf{I}{v}{X}{\red{X\cdot A}{v}\cdot X} \right) \cdot A,
 $$
 which computes the $U$ from the $LU$ factorization of $A$, whenever $A$ can be $LU$ factorized without row interchange. Notice that the latter assumption is crucial, since it will ensure that the element of $A$ in position $ii$ is different from zero after each \texttt{reduce} step. As explained previously, the inner \texttt{for} loop in fact computes the product of matrices $T_{n}\cdots T_1$, which in fact amounts to the matrix $L^{-1}$ from the $LU$ factorization of $A$. Given that each $T_i$ is easily invertible, we can also recover $L$.
 
-As stated previously, the construction above works under the assumption that no row pivoting is needed when performing the Gaussian eliminations. We can in fact show that the above assumption is not needed, thus giving us:
+As stated previously, the construction above works under the assumption that no row pivoting is needed when performing the Gaussian eliminations, giving us:
 \begin{proposition}\label{prop:gauss}
-There is a \langfor expression $e(X)$ such that by interpreting $X$ with a matrix $A$ will result in the matrix $U$ from the $LU$ factorization of $A$ whenever $A$ is $LU$ factorizable, and will result in the null matrix otherwise.
+There is a \langfor expression $e(X)$ such that by interpreting $X$ with a matrix $A$ will result in the matrix $U$ from the $LU$ factorization of $A$ whenever $A$ is $LU$ factorizable
 \end{proposition}
-\cristian{This is the PALU result? We should also explain this PALU decomposition here.}
+
+If $A$ needs row interchange to be $LU$ factorizable we say that $A$ is $PALU$ factorizable, where the factorization is $PA=LU$. To accomplish this, we need something extra.
+ \begin{proposition}\label{prop:palu}
+There is a \langfor expression $e(X)$ such that by interpreting $X$ with a matrix $A$ will result in the matrix $U$ from the $PALU$ factorization of $A$ whenever $A$ is $PALU$ factorizable if and only if there exists a \langfor expression $e'(X)$ such that by interpreting $X$ with a vector $A$ outputs a canonical vector $e_k$ such that $A_k$ is the first non zero entry of $A$.
+\end{proposition}
 
