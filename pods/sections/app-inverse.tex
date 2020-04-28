@@ -1,0 +1,23 @@
+To see why proposition \ref{prop:determinant} is true it suffices to do $$\texttt{det}(A)=dp(U(A))$$ assuming $A$ is $LU$ factorizable, since $U$ is upper diagonal.
+Now, to prove \ref{prop:inverse} we will need to elaborate a bit more. Define 
+\[
+D_U = \begin{bmatrix}
+    u_{11} & \cdots & \cdots &  \vdots \\
+    0 & u_{22} & \cdots &  \vdots \\
+    0 & \ddots & \vdots & \vdots \\
+    \vdots & \cdots& \cdots & u_{nn}
+\end{bmatrix}.
+\]
+
+This is, $D_U$ is the diagonal matrix of $U$. We compute this as $$ \getdiag{U} = \ssum v. (v^*Uv) \odot vv^*.$$
+Let $U'=U-D_U$, then $$ U^{-1}=\left[ D_U+U' \right]^{-1}= \left[ D_U\left( I+D_U^{-1}U'\right) \right]^{-1} = \left( I+D_U^{-1}U'\right)^{-1}D_U^{-1} $$
+Note that $$D_U^{-1}=\ssum v. f_{/}(1,v^*D_Uv)\odot vv^*=\ssum v. f_{/}(1,v^*Uv)\odot vv^*.$$
+Where $f_{/}$ is the division function. In the last equality we take advantage of the fact that the diagonal of $U$ and $D_U$ are the same.
+We now focus on calculating $\left( I+D_U^{-1}U'\right)^{-1}$. First, by construction, $D_U^{-1}U'$ is strictly upper triangular and thus nilpotent, such that $\left( D_U^{-1}U'\right)^n=0$, where $n$ is the dimension of $A$. Recall the following algebraic identity and apply it to $x=D_U^{-1}U'$. $$(1+x)\left( \sum_{i=0}^{m}(-x)^i \right)=1-(-x)^{m+1}$$
+Choosing $m=n-1$ we have $$\left(I+D_U^{-1}U' \right)\left( \sum_{i=0}^{n-1}(-D_U^{-1}U')^i \right)=I+ \left( -D_U^{-1}U'\right)^n =I. $$
+So $$\left(I+D_U^{-1}U' \right)^{-1}=\sum_{i=0}^{n-1}(-D_U^{-1}U')^i=\sum_{i=0}^{n}(-D_U^{-1}U')^i.$$
+In our language $$ps([-1]\odot D_U^{-1}U')=\sum_{i=0}^{n}(-D_U^{-1}U')^i=\left(I+D_U^{-1}U' \right)^{-1}.$$
+We define $$\diaginverse{U}=\ssum v. f_{/}(1,v^*Uv)\odot vv^*.$$
+Finally $$U^{-1}= ps\left([-1]\odot \left[\diaginverse{U}(U-\getdiag{U})\right] \right)\diaginverse{U}.$$
+Recall that we have $L^{-1}=\initf{I}{v}{X}{\red{X\cdot A}{v}\cdot X}.$ So $A^{-1}=U^{-1}L^{-1}.$
+$$\text{compute }L^{-1}\rightarrow\text{compute }U=L^{-1}A\rightarrow\text{compute }U^{-1}\rightarrow\text{compute }A^{-1}=U^{-1}L^{-1}$$
