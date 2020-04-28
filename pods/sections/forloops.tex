@@ -317,7 +317,22 @@ As stated previously, the construction above works under the assumption that no 
 There is a \langfor expression $e(X)$ such that by interpreting $X$ with a matrix $A$ will result in the matrix $U$ from the $LU$ factorization of $A$ whenever $A$ is $LU$ factorizable.
 \end{proposition}
 
-If $A$ needs row interchange to be $LU$ factorizable we say that $A$ is $PALU$ factorizable, where the factorization is $PA=LU$. To accomplish this, we need something extra.
+Now, since $A^{-1}=U^{-1}L^{-1}$ and using that $U$ is upper triangular, we can obtain the determinant and inverse of $A$ and thus
+
+
+\thomas{I don't know how much of the proof goes here or if it's ok as it is.}
+
+
+ \begin{proposition}\label{prop:determinant}
+There is a \langfor expression $e(X)$ such that by interpreting $X$ with a matrix $A$ will result in the $1\times 1$ matrix with $\texttt{det}(A)$ in its only entry whenever $A$ is $LU$ factorizable.
+\end{proposition}
+
+\begin{proposition}\label{prop:inverse}
+There is a \langfor expression $e(X)$ such that by interpreting $X$ with a matrix $A$ will result in the matrix $A^{-1}$ whenever $A$ is $LU$ factorizable.
+\end{proposition}
+
+If $A$ needs row interchange to be $LU$ factorizable (this is, $PA$ is $LU$ factorizable) we say that $A$ is $PALU$ factorizable, where the factorization is $PA=LU$. To accomplish this, we need something extra.
+
  \begin{proposition}\label{prop:palu}
 There is a \langfor expression $e(X)$ such that by interpreting $X$ with a matrix $A$ will result in the matrix $U$ from the $PALU$ factorization of $A$ whenever $A$ is $PALU$ factorizable if and only if there exists a \langfor expression $e'(X)$ such that by interpreting $X$ with a vector $A$ outputs a canonical vector $e_k$ where $A_k$ is the first non zero entry of $A$.
 \end{proposition}
