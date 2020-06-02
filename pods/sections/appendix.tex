@@ -155,10 +155,10 @@ We consider  deterministic Turing Machines  (TM) $T$ consisting of $\ell$ read-o
 a work tape, denoted by $W$, and a write-only output tape, denoted by $O$. The TM $T$ has a set $Q$ of $m$
 states, denoted by $q_0,\ldots,q_m$. We assume that $q_0$ is the initial state and $q_m$ is the accepting state.
 The input and tape alphabet are $\Sigma=\{0,1\}$ and $\Gamma=\Sigma\cup\{\rhd,\lhd\}$, respectively. The special symbol $\rhd$ denotes the beginning of each of the tapes, the symbol $\lhd$ denotes the end of the $\ell$ input tapes. The transition function $\Delta$ is defined as usual, i.e., 
-$\Delta:Q\times \Gamma^{\ell+2} \to Q\times \Gamma^{\ell+2}\times \{\leftarrow,\sqcup,\rightarrow\}^{\ell+2}$ such that $\Delta(q,(a_1,\ldots,a_{\ell+2}))=\bigl(q',(b_1,\ldots,b_{\ell+2}),(\mathsf{d}_1,\ldots,\mathsf{d}_{\ell+2})\bigr)$ with $\mathsf{d}_i\in \{\leftarrow,\sqcup,\rightarrow\}$, means that when $T$ is in state $q$ and the $\ell+2$ heads on the tapes read symbols $a_1,\ldots,a_{\ell+2}$, respectively, then $T$ transitions to state $q'$, writes $b_1,\ldots,b_{\ell+2}$ on the respective tapes at the position to which the tape's head points at, and finally moves the head on tape $i$ according to $\mathsf{d}_i$. More specifically, $\leftarrow$  indicates a move to the left, 
+$\Delta:Q\times \Gamma^{\ell+2} \to Q\times \Gamma^{2}\times \{\leftarrow,\sqcup,\rightarrow\}^{\ell+2}$ such that $\Delta(q,(a_1,\ldots,a_{\ell},b,c))=\bigl(q',(b',c'),(\mathsf{d}_1,\ldots,\mathsf{d}_{\ell+2})\bigr)$ with $\mathsf{d}_i\in \{\leftarrow,\sqcup,\rightarrow\}$, means that when $T$ is in state $q$ and the $\ell+2$ heads on the tapes read symbols $a_1,\ldots,a_{\ell},b,c$, respectively, then $T$ transitions to state $q'$, writes $b',c'$ on the work and output tapes, respectively, at the position to which the work and output tapes' heads points at, and finally moves the heads on the tapes according $\mathsf{d}_1,\ldots,\mathsf{d}_{\ell+2}$. More specifically, $\leftarrow$  indicates a move to the left, 
 $\rightarrow$ a move to the right, and finally, $\sqcup$ indicates that the head does not move.
 
-We assume that $\Delta$ is defined such that it ensures that on none of the tapes, heads can move beyond the leftmost marker $\rhd$. Furthermore, the tapes $R_1,\ldots,R_\ell$ are treated as read-only the head cannot move beyond the end markers $\lhd$ on each of the input tapes. Similarly, $\Delta$ ensures that the output tape $O$ is write only, i.e., its head cannot move to the left. 
+We assume that $\Delta$ is defined such that it ensures that on none of the tapes, heads can move beyond the leftmost marker $\rhd$. Furthermore, the tapes $R_1,\ldots,R_\ell$ are treated as read-only the head cannot move beyond the end markers $\lhd$ on each of the input tapes. Similarly, $\Delta$ ensures that the output tape $O$ is write only, i.e., its head cannot move to the left.  We also assume that $\Delta$ does not change $\lhd$ or write $\rhd$ on the work and output tape.
 
 A configuration of $T$ is defined in the usual way. That is, a configuration the input tapes is of the form
 $\rhd w_1qw_2\lhd$ with $w_1,w_2\in\Sigma^*$ and represents that the current tape content is $\rhd w_1w_2\lhd$, $T$ is state $q$ and the head is position on the first symbol of $w_2$. Similarly, a configuration of the work and output tape are represented by $\rhd w_1qw_2$. A configuration of $T$ is consists of configurations for all tapes. Given two configurations $c_1$ and $c_2$, we say that $c_1$
@@ -187,7 +187,6 @@ $$
 for words $w_1,\ldots,w_\ell\in\Sigma^n$ and such that $\mathsf{vec}(w_i)$ is the $n\times 1$-vector encoding the symbols in $w_i$, we have that $e_f(I)=\mathsf{vec}(f_n(w_1,\ldots,w_n))$.
 \end{proposition}
 \begin{proof}
-	We assume that $n> 3$ and deal with $n\leq 2$ later on.
 We start by explaining the semantics of the matrix variables in $\mathcal{M}$. The variables $R_1,\ldots,R_\ell$ will hold the input vectors, $W_1,\ldots,W_s$ will hold the contents of the work
 tape, and $O$ will hold the contents of the output tape. The vectors corresponding to the work and output tape are initially set to the zero vector.
 
@@ -202,7 +201,9 @@ Then, $T$ is in state $q_i$ when
 0\\\vdots\\0\end{smallmatrix}\right)$, otherwise $Q_i=\left(\begin{smallmatrix}0\\
 0\\\vdots\\0\end{smallmatrix}\right)$.	
 
-The variables $v_1,\ldots,v_{k}$ represent $k$ canonical vectors  which are use to iterate in for loops. By iterating over then, we can perform $(n)^{k}$ iterations, which suffices for simulating the $\mathcal{O}(cn^{k-1})$ steps used by $T$ to reach an accepting configuration. (We recall that $T$ loops when reaching an accepting configuration.)
+The variables $v_1,\ldots,v_{k}$ represent $k$ canonical vectors  which are use to iterate in for loops. By iterating over then, we can perform $(n)^{k}$ iterations, which suffices for simulating the $\mathcal{O}(n^{k-1})$ steps used by $T$ to reach an accepting configuration. (We recall that $T$ loops when reaching an accepting configuration.) In the following
+we assume that $n$ is sufficiently large, say $n\geq N$, such that $T$ runs in at most $cn^{k-1}$ steps. We deal with
+the finite number of cases $n<N$ later on.
 
 The expression $e_f$ uses some subexpressions in $\mathsf{MATLANG}$ which use some auxiliary variables.
 As a consequence, $e_f$ is an expression defined over an extended schema $\mathcal{S}'$. Hence, the instance $I$ in the statement of the Proposition is in fact an instance $I'$ of $\mathcal{S}'$ which
@@ -284,8 +285,20 @@ with
 	\left(\sum_{i=1}^s \mathsf{test}_{b}(W_i^t\cdot H_{W_i})\right)\mathsf{min}
 	 \quad \text{for $j\neq 1$}\\
 	e_{H_i}&:=\left(\prod_{j=1}^{k+1} \textsf{ismin}(v_i)\right)\cdot\mathsf{min}
-	+\sum_{\substack{q,b_1,\ldots,b_\ell\\
-	\Delta_i(q,b_1,\ldots,b_\ell)=d}}\!\!\!\!\!\!\!\!\! \textsf{ismin}(X_q)\left(\prod_{j=1}^\ell \mathsf{test}_{b_j}(Y_j)\right)\mathsf{move}_d\cdot Y_i
+	+\sum_{\substack{(q,a_1,\ldots,a_\ell,b,d)\\
+	\Delta(q,a_1,\ldots,a_\ell,b,c)=(\star,\mathsf{d_i},\star)}}\!\!\!\!\!\!\!\!\! \textsf{isconf}(q,a_1,\ldots,a_\ell,b,d)\cdot\mathsf{move}_d\cdot H_i\\
+	e_{H_{W_i}}&:=\left(\prod_{j=1}^{k+1} \textsf{ismin}(v_i)\right)\cdot\mathsf{min}
+	+\sum_{\substack{(q,a_1,\ldots,a_\ell,b,d)\\
+	\Delta(q,a_1,\ldots,a_\ell,b,c)=(\star,\mathsf{d_i},\star)}}\!\!\!\!\!\!\!\!\! \textsf{isconf}(q,a_1,\ldots,a_\ell,b,d)\cdot\mathsf{move}_d\cdot H_i\\
+	e_{H_O}&:=\left(\prod_{j=1}^{k+1} \textsf{ismin}(v_i)\right)\cdot\mathsf{min}
+	+\sum_{\substack{(q,a_1,\ldots,a_\ell,b,d)\\
+	\Delta(q,a_1,\ldots,a_\ell,b,c)=(\star,\mathsf{d_i},\star)}}\!\!\!\!\!\!\!\!\! \textsf{isconf}(q,a_1,\ldots,a_\ell,b,d)\cdot\mathsf{move}_d\cdot H_i\\
+	e_{O}&:=\left(\prod_{j=1}^{k+1} \textsf{ismin}(v_i)\right)\cdot\mathsf{min}
+	+\sum_{\substack{(q,a_1,\ldots,a_\ell,b,d)\\
+	\Delta(q,a_1,\ldots,a_\ell,b,c)=(\star,\mathsf{d_i},\star)}}\!\!\!\!\!\!\!\!\! \textsf{isconf}(q,a_1,\ldots,a_\ell,b,d)\cdot\mathsf{move}_d\cdot H_i\\
+	e_{W_i}&:=\left(\prod_{j=1}^{k+1} \textsf{ismin}(v_i)\right)\cdot\mathsf{min}
+	+\sum_{\substack{(q,a_1,\ldots,a_\ell,b,d)\\
+	\Delta(q,a_1,\ldots,a_\ell,b,c)=(\star,\mathsf{d_i},\star)}}\!\!\!\!\!\!\!\!\! \textsf{isconf}(q,a_1,\ldots,a_\ell,b,d)\cdot\mathsf{move}_d\cdot H_i
 \end{align*}
 
 The correctness of $e_T$ is now readily verified. We do this by induction on the number of iterations in the for loop. We note that initially, all variables are assigned zero vectors and values (for $w$). 
