@@ -189,23 +189,36 @@ $$\mathsf{mat}(R_i)=\mathsf{vec}(w_i)\in \mathbb{R}^n\text{, for $i\in[\ell]$ an
 for words $w_1,\ldots,w_\ell\in\Sigma^n$ and such that $\mathsf{vec}(w_i)$ is the $n\times 1$-vector encoding the word $w_i$, we have that the $\mathsf{mat}(O)=\mathsf{vec}(f_n(w_1,\ldots,w_n))\in\mathbb{R}^n$ after evaluating $e_f(I)$.
 \end{proposition}
 \begin{proof}
-Let us first assume that $n$ is large enough such that $T$ runs in $sn$ space and $cn^{k-1}\leq n^k$ time for constants $s$ and $c$. We deal with smaller $n$ later on.	
-We  first explain the semantics of the matrix variables in $\mathcal{M}$ before getting to the construction of the expression $e_f$ in detail.  The variables $R_1,\ldots,R_\ell$ will hold the input vectors, $W_1,\ldots,W_s$ will hold the contents of the work
+	The expression $e_f$ we construct will simulate the TM $T$. To have some more control on the space and time consumption of $T$, let us first assume that $n$ is large enough, say larger than $n\geq N$, such that $T$ runs in $sn$ space and $cn^{k-1}\leq n^k$ time for constants $s$ and $c$. We deal with $n<N$ later on.
+
+To simulate $T$ we need to encode states, tapes and head positions. The matrix variables in 
+$\mathcal{M}$ mentioned in the proposition will take these roles. More specifically, the variables $R_1,\ldots,R_\ell$ will hold the input vectors, $W_1,\ldots,W_s$ will hold the contents of the work
 tape, where $s$ is the constant mentioned earlier, and $O$ will hold the contents of the output tape. The vectors corresponding to the work and output tape are initially set to the zero vector. The vector for the input tape $R_i$ is set to $\mathsf{vec}(w_i)$, for $i\in[\ell]$.
 
  With each tape we associate a matrix variable encoding the position of the head. More specifically, $H_1,\ldots,H_\ell$ correspond to the input tape heads,
-$H_{W_1},\ldots, H_{W_s}$ are the heads for the work tape, and $H_O$ is the head of the output tape. All these vectors are initialised with the zero vector. Later on, these vectors have will be zero except for the position to which the head points to. In those positions the head vectors hold either value $1$ or $2$. We use these two values to identify whether or not we are at the beginning of the tape (and thus reading $\rhd$)
-or at the end of the (input) tapes (and thus reading $\lhd$). This is needed because of vectors are of size $n$ while the tape contents are of size $n+2$ (for input tapes), $n+1$ (for the output tape) and $sn+1$ (for the work tape). In other words, we do not have sufficient space to store $\rhd$ and $\lhd$. We provide more details on this later in the proof.
-%
+$H_{W_1},\ldots, H_{W_s}$ are the heads for the work tape, and $H_O$ is the head of the output tape. All these vectors are initialised with the zero vector. Later on, these vectors will be zero except for a single position, indicating the positions in the corresponding tapes the heads point to. For those positions $j$, $1<j<n$, the head vectors will carry value $1$.  When $j=1$ or $n$ and when it concerns positions for the input tape, the head vectors can carry value $1$ or $2$. We need to treat these border cases separately
+because we only have $n$ positions available to store the input words, whereas the actual input tapes consist of $n+2$ symbols because of $\rhd$ and $\lhd$. So when, for example, $H_1$ has a $1$ in its first
+entry, we interpret it as the head is pointing to the first symbol of the input word $w_1$. When $H_1$
+has a $2$ in its first position, we interpret it as the head pointing to $\rhd$. The end marker $\lhd$ is
+dealt with in the same way, by using value $1$ or $2$ in the last position of $H_1$. We use this encoding
+for all input tapes, and also for the work tape $W_1$ and output tape $O$ with the exception that no end marker $\lhd$ is present.
+
+ 
 % ,Y_1,\allowbreak\ldots,Y_\ell$ will be used inside for loops and will be updated using \textsf{MATLANG} expressions. Initially, all these matrix variables are instantiated with the zero column vector, as described by the instance $I$.
-Furthermore, with each state $q_i\in Q$ we associate matrix variable $Q_i$.
-Then, $T$ is in state $q_i$ when
+
+To encode the states, we use the variables $Q_1,\ldots,Q_m$. We will ensure that when $T$ is in state $q_i$ when
  $\mathsf{mat}(Q_i)=(1,0,\ldots,0)^t\in\mathbb{R}^n$, otherwise $\mathsf{mat}(Q_i)$ is the zero vector in $\mathbb{R}^n$.	
 
-The variables $v_1,\ldots,v_{k}$ represent $k$ canonical vectors  which are use to iterate in for loops. By iterating over then, we can perform $n^{k}$ iterations, which suffices for simulating the $\mathcal{O}(n^{k-1})$ steps used by $T$ to reach an accepting configuration. (We recall that $T$ loops when reaching an accepting configuration.)
+Finally, the variables $v_1,\ldots,v_{k}$ represent $k$ canonical vectors  which are use to iterate in for loops. By iterating over then, we can perform $n^{k}$ iterations, which suffices for simulating the $\mathcal{O}(n^{k-1})$ steps used by $T$ to reach an accepting configuration. 
+% (We recall that $T$ loops when reaching an accepting configuration.)
+
+With these matrix variables in place, we start by defining $e_f$. It will consists of two subexpressions
+$e_f^{\geq N}$, for dealing with $n\geq N$, and $e_f^{<N}$, for dealing with $n<N$. We explain the expresion
+$e_f^{\geq N}$ first.
 
 
-The expression $e_f$ relies on some subexpressions in $\mathsf{MATLANG}$ which use some auxiliary variables. As a consequence, $e_f$ is in fact an expression defined over an extended schema $\mathcal{S}'$. Hence, the instance $I$ in the statement of the Proposition is  an instance $I'$ of $\mathcal{S}'$ which
+
+In our  expressions we use subexpressions which we defined before. These subexpression require some auxiliary variables, as detailed below. As a consequence, $e_f$ will be an expressions defined over an extended schema $\mathcal{S}'$. Hence, the instance $I$ in the statement of the Proposition is  an instance $I'$ of $\mathcal{S}'$ which
 coincides with $I$ on $\mathcal{S}$ and in which the auxiliary matrix variables are all instantiated with zero vectors or matrices, depending on their size.
 
 \floris{The expressions below are used in other proofs as well, I just wanted to check how many auxiliary variables are needed. We can extract the list below and place it somewhere else.}
@@ -251,15 +264,15 @@ We next list the used subexpressions and explicitly denote the auxiliary matrix 
 \end{itemize}
 We thus see that we only need $z,z',z'',Z,Z',Z''$ as auxiliary variables and these can be re-used whenever $e_f$ calls these functions. From now one, we omit the auxiliary variables from the description of $e_f$.
 
-To start with the description of $e_f$ we further need to be able to check which transitions of $T$ can be applied based on a current configuration. More precisely,
-suppose that we want to check whether $\delta(q_i,(a_1,\ldots,a_{\ell},b,c))$ is applicable.
-This pours down to checking whether $T$ is in state $q_i$, we do this by checking 
-$\mathsf{ismin}(Q_i)$, and whether the heads on the tapes read symbols $a_1,\ldots,a_{\ell},b,c$. We check the latter by the following expressions:
+
+Let us first define $e_f^{\geq N}$. Since we want to simulate $T$ we need to be able to check which transitions of $T$ can be applied based on a current configuration. More precisely,
+suppose that we want to check whether $\delta(q_i,(a_1,\ldots,a_{\ell},b,c))$ is applicable, then we need to check whether $T$ is in state $q_i$, we can do this by checking 
+$\mathsf{ismin}(Q_i)$, and whether the heads on the tapes read symbols $a_1,\ldots,a_{\ell},b,c$. We check the latter by the following expressions.
 For the input tapes $R_i$ we define
 $$
 \mathsf{test\_inp}^i_b:=\begin{cases}
-1- O^t\cdot H_O & \text{if $b=0$}\\
-O^t\cdot H_O & \text{if $b=1$}\\
+(1-\mathsf{ismin}(1/2\cdot H_i))\cdot(1-\mathsf{ismax}(1/2\cdot H_i))\cdot(1- R_i^t\cdot H_i) & \text{if $b=0$}\\
+(1-\mathsf{ismin}(1/2\cdot H_i))\cdot(1-\mathsf{ismax}(1/2\cdot H_i))\cdot(R_i^t\cdot H_i) & \text{if $b=1$}\\
 \mathsf{ismin}(1/2\cdot H_i) & \text{if $b=\rhd$}\\
 \mathsf{ismax}(1/2\cdot H_i) & \text{if $b=\lhd$},\\
 \end{cases}
@@ -267,29 +280,31 @@ $$
 which return $1$ if and only if either $b\in\{0,1\}$ is the value in $\mathsf{mat}(R_i)$ at the position encoded by $\mathsf{mat}(H_i)$, or when $b=\rhd$ and $\mathsf{mat}(H_i)$ is the vector $(2,0,\ldots,0)\in\mathbb{R}^n$, or when $b=\lhd$ and $\mathsf{mat}(H_i)$ is the vector $(0,0,\ldots,2)\in\mathbb{R}^n$. Similarly, for the output tape we define
 $$
 \mathsf{test\_out}_b:=\begin{cases}
-1- O^t\cdot H_O & \text{if $b=0$}\\
-O^t\cdot H_O & \text{if $b=1$}\\
-\mathsf{ismin}(1/2\cdot H_O) & \text{if $b=\rhd$}.\\
+(1-\mathsf{ismin}(1/2\cdot H_O))\cdot(1- O^t\cdot H_O) & \text{if $b=0$}\\
+(1-\mathsf{ismin}(1/2\cdot H_O))\cdot(O^t\cdot H_O) & \text{if $b=1$}\\
+\mathsf{ismin}(1/2\cdot H_O) & \text{if $b=\rhd$},\\
 \end{cases}
 $$
-Finally, for the work tapes $W_1,\ldots,W_s$ we define
+and for the work tapes $W_1,\ldots,W_s$ we define
 $$
 \mathsf{test\_work}^i_b:=\begin{cases}
-1- W_i^t\cdot H_{W_i} & \text{if $b=0$}\\
-W_i^t\cdot H_{W_i} & \text{if $b=1$}\\
+(1-\mathsf{ismin}(1/2\cdot H_{W_i}))\cdot(1- W_i^t\cdot H_{W_i})) & \text{if $b=0$}\\
+(1-\mathsf{ismin}(1/2\cdot H_{W_i}))\cdot (W_i^t\cdot H_{W_i}) & \text{if $b=1$}\\
 \mathsf{ismin}(1/2\cdot H_{W_i}) & \text{if $b=\rhd$ and $i=1$}.\\
 \end{cases}
 $$
-We combine all these expressions into a single expression 
+We then combine all these expressions into a single expression for $q_i\in Q$, $a_1,\ldots,a_\ell,b,c\in\Gamma$:
 $$
 \mathsf{isconf}_{q_i,a_1,\ldots,a_\ell,b,c}:=
 \mathsf{ismin}(Q_i)\cdot \left(\prod_{j=1}^{\ell} \mathsf{test\_inp}_{a_j}^j\right)
-\cdot\mathsf{test\_outp}_{c}\cdot\left(\sum_{j=1}^s \mathsf{test}_b^j\right).
+\cdot\left(\sum_{j=1}^s \mathsf{test}_b^j\right)\cdot \mathsf{test\_outp}_{c}.
 $$
-This expression will return $1$ if and only if the vectors representing the tapes, head positions and states are such that $\mathsf{Q_i}$ is the first canonical vector (and thus $T$ is in state $q_i$), the heads point to entries in the tape vectors storing the symbols $a_1,\ldots,a_{\ell}, b,c$ or they point to the first (or last for input tapes) positions but have value $2$ (when the symbols are $\rhd$ or $\lhd$). To ensure that at the beginning of the simulation of $T$ by $e_f$ we correctly encode that we are in the initial configuration, we thus need to initialise all vectors $\mathsf{mat}(H_1),\mathsf{mat}(H_2),\ldots, \mathsf{mat}(H_\ell), \mathsf{mat}(H_{W_1}),\mathsf{mat}(H_O)$ with the vector $(2,0,0,\ldots,0)\in\mathbb{R}$ since all heads read the symbol $\rhd$. Similarly, we have to initialise $\mathsf{Q_1}$ with the first canonical vector since $T$ is in state $q_0$.
+This expression will return $1$ if and only if the vectors representing the tapes, head positions and states are such that $\mathsf{Q_i}$ is the first canonical vector (and thus $T$ is in state $q_i$), the heads point to entries in the tape vectors storing the symbols $a_1,\ldots,a_{\ell}, b,c$ or they point to the first (or last for input tapes) positions but have value $2$ (when the symbols are $\rhd$ or $\lhd$). 
+
+To ensure that at the beginning of the simulation of $T$ by $e_f^{\geq N}$ we correctly encode that we are in the initial configuration, we thus need to initialise all vectors $\mathsf{mat}(H_1),\mathsf{mat}(H_2),\ldots, \mathsf{mat}(H_\ell), \mathsf{mat}(H_{W_1}),\mathsf{mat}(H_O)$ with the vector $(2,0,0,\ldots,0)\in\mathbb{R}$ since all heads read the symbol $\rhd$. Similarly, we have to initialise $\mathsf{Q_1}$ with the first canonical vector since $T$ is in state $q_0$.
 
 We furthermore need to be able to correctly adjust head positions. We do this by means of the predecessor and successor expressions described above. 
-A consequence of our encoding is that we need to treat the border cases (corresponding to $\rhd$ and $\lhd$) differently. More specifically, for the input tapes we define 
+A consequence of our encoding is that we need to treat the border cases (corresponding to $\rhd$ and $\lhd$) differently. More specifically, for the input tapes $R_i$ and heads $H_i$ we define 
 $$
 \mathsf{move\_inp}^i_{\mathsf{d}}:=
 \begin{cases}
@@ -300,7 +315,7 @@ $$
 H_i & \text{if $\mathsf{d}=\sqcup$}. 
 \end{cases}
 $$
-In other words, we shift to the previous (or next) canonical vector when $\mathsf{d}$ is $\leftarrow$ or $\rightarrow$, respectively, unless we need to move to or from the position that will hold $\rhd$ or $\lhd$. In those case we readjust $\mathsf{mat}(H_i)$ (which will either $(1,0,\ldots,0)$, $(2,0,\ldots,0)$, $(0,\ldots,0,1)$ or $(0,\ldots,0,2)$) by either dividing or multiplying with $2$. In this way we can correctly infer whether or not the head point to the begin and end markers. For the output we proceed in a similar way, but only taking into account the begin marker and recall that we do not have moves to the left:
+In other words, we shift to the previous (or next) canonical vector when $\mathsf{d}$ is $\leftarrow$ or $\rightarrow$, respectively, unless we need to move to or from the position that will hold $\rhd$ or $\lhd$. In those case we readjust $\mathsf{mat}(H_i)$ (which will either $(1,0,\ldots,0)$, $(2,0,\ldots,0)$, $(0,\ldots,0,1)$ or $(0,\ldots,0,2)$) by either dividing or multiplying with $2$. In this way we can correctly infer whether or not the head points to the begin and end markers. For the output tape we proceed in a similar way, but only taking into account the begin marker and recall that we do not have moves to the left:
 $$
 \mathsf{move\_outp}_{\mathsf{d}}:=
 \begin{cases}
@@ -313,46 +328,57 @@ Since we represent the work tape by $s$ vectors $W_1,\ldots,W_s$ we need to ensu
 $$
 \mathsf{move\_work}^i_{\mathsf{d}}:=
 \begin{cases}
-	-\mathsf{ismin}(H_{W_i})H_{W_i} + (1-\mathsf{ismin}(H_{W_i}))\cdot e_{\mathsf{pred}}\cdot H_{W_i} + \mathsf{ismin}(H_{W_{i+1}})\mathsf{max} & \text{if $\mathsf{d}=\leftarrow$}\\
-		-\mathsf{ismax}(H_{W_i})H_{W_i} + (1-\mathsf{ismax}(H_{W_i}))\cdot e_{\mathsf{succ}}\cdot H_{W_i} + \mathsf{ismax}(H_{W_{i-1}})\mathsf{min} & \text{if $\mathsf{d}=\rightarrow$}\\
+	-\mathsf{ismin}(H_{W_i})\cdot H_{W_i} + (1-\mathsf{ismin}(H_{W_i}))\cdot e_{\mathsf{pred}}\cdot H_{W_i} + \mathsf{ismin}(H_{W_{i+1}})\cdot\mathsf{max} & \text{if $\mathsf{d}=\leftarrow$}\\
+		-\mathsf{ismax}(H_{W_i})\cdot H_{W_i} + (1-\mathsf{ismax}(H_{W_i}))\cdot e_{\mathsf{succ}}\cdot H_{W_i} + \mathsf{ismax}(H_{W_{i-1}})\cdot\mathsf{min} & \text{if $\mathsf{d}=\rightarrow$}\\
 	H_{W_i} & \text{if $\mathsf{d}=\sqcup$}. 	
 \end{cases}
 $$
-Similarly for $i=s$ we define
+In other words, we set the $H_{W_i}$ to zero when a move brings us to either $W_{i-1}$ or $W_{i+1}$, we
+move the successor or predecessor when staying within $W_i$, or initialise $H_{W_i}$ with the first or last canonical vector when moving from $W_{i-1}$ to $W_i$ (right move) or from $W_{i+1}$ to $W_i$ (left move).
+For $i=s$ we can ignore the parts in the previous expression that involve $W_{s+1}$ (which does not exist):
 $$
 \mathsf{move\_work}^s_{\mathsf{d}}:=
 \begin{cases}
-	-\mathsf{ismin}(H_{W_s})H_{W_i} + (1-\mathsf{ismin}(H_{W_s}))\cdot e_{\mathsf{pred}}\cdot H_{W_s}  & \text{if $\mathsf{d}=\leftarrow$}\\
-		-\mathsf{ismax}(H_{W_s})H_{W_s} + (1-\mathsf{ismax}(H_{W_s}))\cdot e_{\mathsf{succ}}\cdot H_{W_s} + \mathsf{ismax}(H_{W_{s-1}})\mathsf{min} & \text{if $\mathsf{d}=\rightarrow$}\\
+	-\mathsf{ismin}(H_{W_s})\cdot H_{W_i} + (1-\mathsf{ismin}(H_{W_s}))\cdot e_{\mathsf{pred}}\cdot H_{W_s}  & \text{if $\mathsf{d}=\leftarrow$}\\
+		-\mathsf{ismax}(H_{W_s}) \cdot H_{W_s} + (1-\mathsf{ismax}(H_{W_s}))\cdot e_{\mathsf{succ}}\cdot H_{W_s} + \mathsf{ismax}(H_{W_{s-1}})\cdot \mathsf{min} & \text{if $\mathsf{d}=\rightarrow$}\\
 	H_{W_s} & \text{if $\mathsf{d}=\sqcup$}. 	
 \end{cases}
 $$
-For $i=1$ we again have to take $\rhd$ into account:
+For $i=1$, we can ignore the part involving $W_{0}$ (which does not exist) but have to take $\rhd$ into account:
 $$
 \mathsf{move\_work}^1_{\mathsf{d}}:=
 \begin{cases}
-	2\mathsf{ismin}(H_{W_1})H_{W_i} + (1-\mathsf{ismin}(H_{W_1}))\cdot e_{\mathsf{pred}}\cdot H_{W_1} + \mathsf{ismin}(H_{W_{2}})\mathsf{max} & \text{if $\mathsf{d}=\leftarrow$}\\
-		1/2\mathsf{ismin}(1/2H_{W_1})H_{W_1} + (1-\mathsf{ismax}(1/2H_{W_1}))\cdot e_{\mathsf{succ}}\cdot H_{W_1}  & \text{if $\mathsf{d}=\rightarrow$}\\
+	2\cdot \mathsf{ismin}(H_{W_1})\cdot H_{W_i} + (1-\mathsf{ismin}(H_{W_1}))\cdot e_{\mathsf{pred}}\cdot H_{W_1} + \mathsf{ismin}(H_{W_{2}})\cdot\mathsf{max} & \text{if $\mathsf{d}=\leftarrow$}\\
+		1/2\cdot\mathsf{ismin}(1/2\cdot H_{W_1})\cdot H_{W_1} + (1-\mathsf{ismax}(1/2\cdot H_{W_1}))\cdot e_{\mathsf{succ}}\cdot H_{W_1}  & \text{if $\mathsf{d}=\rightarrow$}\\
 	H_{W_1} & \text{if $\mathsf{d}=\sqcup$}. 	
 \end{cases}
 $$
-A final ingredient for defining $e_f$ are expressions which update the work and output tape.
+A final ingredient for defining $e_f^{\geq N}$ are expressions which update the work and output tape.
 To define these expression, we need the position and symbol to put on the tape. For the output tape we define
 $$
 \mathsf{write\_outp}_b:=\begin{cases}
-O & \text{if $b=\rhd$}\\
-(1-O^t\cdot H_O)O + (O^t\cdot H_O)\cdot (O-H_O) &\text{if $b=0$}\\
-(1-O^t\cdot H_O)(O+H_O) + (O^t\cdot H_O)\cdot O &\text{if $b=1$}\\
+\mathsf{ismin}(1/2\cdot H_O)\cdot O & \text{if $b=\rhd$}\\
+(1-\mathsf{ismin}(1/2\cdot H_O))\cdot\left((1-O^t\cdot H_O)\cdot O + (O^t\cdot H_O)\cdot (O-H_O)\right) &\text{if $b=0$}\\
+(1-\mathsf{ismin}(1/2\cdot H_O))\cdot\left((1-O^t\cdot H_O)\cdot (O+H_O) + (O^t\cdot H_O)\cdot O\right) &\text{if $b=1$}\\
 \end{cases}
 $$
-and similarly for the work tapes
+and similarly for the work tapes $i\neq 1$:
 $$
 \mathsf{write\_work}_b^i:=\begin{cases}
 W_i & \text{if $b=\rhd$}\\
-(1-W_i^t\cdot H_{W_i})W_i + (W_i^t\cdot H_{W_i})\cdot (W_i-H_{W_i}) &\text{if $b=0$}\\
-(1-W_i^t\cdot H_{W_i})(W_i+H_{W_i}) + (W_i^t\cdot H_{W_i})\cdot W_i &\text{if $b=1$}.
+(1-W_i^t\cdot H_{W_i})\cdot W_i + (W_i^t\cdot H_{W_i})\cdot (W_i-H_{W_i}) &\text{if $b=0$}\\
+(1-W_i^t\cdot H_{W_i})\cdot (W_i+H_{W_i}) + (W_i^t\cdot H_{W_i})\cdot W_i &\text{if $b=1$},
 \end{cases}
 $$
+and for  $W_1$ we have to take care again of the begin marker:
+$$
+\mathsf{write\_work}_b^1:=\begin{cases}
+\mathsf{ismin}(1/2\cdot H_{W_1})\cdot W_1 & \text{if $b=\rhd$}\\
+(1-\mathsf{ismin}(1/2\cdot H_{W_1})\cdot\left((1-W_1^t\cdot H_{W_1})\cdot W_1 + (W_1^t\cdot H_{W_1})\cdot (W_1-H_{W_1})\right) &\text{if $b=0$}\\
+(1-\mathsf{ismin}(1/2\cdot H_{W_1})\cdot\left((1-W_1^t\cdot H_{W_1})\cdot (W_1+H_{W_1}) + (W_1^t\cdot H_{W_1})\cdot W_1\right) &\text{if $b=1$}.
+\end{cases}
+$$
+
 
 
 
@@ -377,12 +403,12 @@ $$
 %  $\mathsf{move}_d(I')$ will simply return the predecessor matrix when $d=\gets$ and the successor matrix when $d=\to$. This expression will be used to move the heads.
 % We define the expression $e_T$, as follows\footnote{In the expression I uses $;w$ to indicate the output variable. That is, the for loops updates all instances for $X_1,\ldots,X_m,Y_1,\ldots,Y_\ell$ and $w$, but the result of the expression is only what is in the instance corresponding to $w$. We can simulate this again if we allow constant dimensional canonical basis vectors in $\mathsf{MATLANG}$.}:
 
-We are now finally ready to define $e_f$ for $n$ sufficiently large:
+We are now finally ready to define $e_f^{\geq N}$:
 \begin{multline*}
-e_f:= \mathsf{for\,} v_1,\ldots,v_{k},Q_1,\ldots,Q_m,H_1,\ldots,H_\ell,W_1,\ldots,W_s, H_{W_1},\ldots,H_{W_s},O,H_O . \\
+e_f^{\geq N}:= \mathsf{for\,} v_1,\ldots,v_{k},Q_1,\ldots,Q_m,H_1,\ldots,H_\ell,W_1,\ldots,W_s, H_{W_1},\ldots,H_{W_s},O,H_O . \\
 (e_{Q_1},\ldots,e_{Q_m},e_{H_1},\ldots,e_{H_\ell},e_{W_1},\ldots,e_{W_s},e_{H_{W_1}},\ldots,e_{H_{W_s}},e_{O}, e_{H_O})
 \end{multline*}
-with expressions (we use $\star$ to mark irrelevant information in the transitions)
+with expressions (we use $\star$ below to mark irrelevant information in the transitions):
  \allowdisplaybreaks
 \begin{align*}
 	e_{Q_1}&:=\left(\prod_{j=1}^{k} \textsf{ismin}(v_i)\right)\cdot\mathsf{min}
@@ -401,49 +427,51 @@ with expressions (we use $\star$ to mark irrelevant information in the transitio
 	+\sum_{\substack{(q,a_1,\ldots,a_\ell,b,d)\\
 	\Delta(q,a_1,\ldots,a_\ell,b,c)=(\star,\mathsf{d}_{\ell+2})}}\!\!\!\!\!\!\!\!\! \mathsf{isconf}_{q,a_1,\ldots,a_\ell,b,c}\cdot\mathsf{move\_outp}_{\mathsf{d}_{\ell+2}}\\
 	e_{W_i}&:=\sum_{\substack{(q,a_1,\ldots,a_\ell,b,d)\\
-	\Delta(q,a_1,\ldots,a_\ell,b,c)=(b',c',\star)}}\!\!\!\!\!\!\!\!\! \mathsf{isconf}_{q,a_1,\ldots,a_\ell,b,c}\cdot\mathsf{write\_work}_{b'}^i\\
+	\Delta(q,a_1,\ldots,a_\ell,b,c)=(\star,b',c',\star)}}\!\!\!\!\!\!\!\!\! \mathsf{isconf}_{q,a_1,\ldots,a_\ell,b,c}\cdot\mathsf{write\_work}_{b'}^i\\
 	e_{O}&:=\sum_{\substack{(q,a_1,\ldots,a_\ell,b,d)\\
-	\Delta(q,a_1,\ldots,a_\ell,b,c)=(b',c',\star)}}\!\!\!\!\!\!\!\!\! \mathsf{isconf}_{q,a_1,\ldots,a_\ell,b,c}\cdot\mathsf{write\_outp}_{c'}.
+	\Delta(q,a_1,\ldots,a_\ell,b,c)=(\star,b',c',\star)}}\!\!\!\!\!\!\!\!\! \mathsf{isconf}_{q,a_1,\ldots,a_\ell,b,c}\cdot\mathsf{write\_outp}_{c'}.
 \end{align*}
-To deal with small $n$, we observe that there are only a finite number of cases to
-consider. More specifically, we for each $n<N$ and every possible input words
-$w_1,\ldots,w_\ell$ of size $n$, we define MATLANG expression which check whether
-$\mathsf{mat}(R)=\mathsf{vec}(w_i)$ for each $i\in[\ell]$, and then put $f_n(w_1,\ldots,w_\ell)$ as a vector in $\mathsf{mat}(O)$. It is readily (?) verified
-that such an expression can be formed. Let $e_{w1,\ldots,w_\ell,f_n(w_1,\ldots,w_\ell)}$
-be this expression. By considering 
+
+The correctness of $e_f^{\geq N}$ should be clear from the construction (one can formally verify this by
+induction on the number of iterations). We next explain how the border cases $n<N$ can be dealt with.
+For each $n<N$ and every possible input words
+$w_1,\ldots,w_\ell$ of size $n$, we define a MATLANG expression which check whether
+$\mathsf{mat}(R_i)=\mathsf{vec}(w_i)$ for each $i\in[\ell]$. This can be easily done since $n$ can be regarded as a constant. For example, to check whether $\mathsf{mat}(R_i)=(0,1,1)^t$ we simply write
 $$
-e_n:=\mathsf{dim\_is_n}\left(\sum_{w1,\ldots,w_\ell\in\Sigma^n} e_{w_1,\ldots,w_\ell,f_n(w_1,\ldots,w_\ell)}\right)
+(1- R_i^t\cdot \mathsf{min})\cdot (R_i^t\cdot e_{\mathsf{succ}}\cdot\min)\cdot (1- R_i^t\cdot e_{\mathsf{succ}}\cdot e_{\mathsf{succ}}\cdot \min)\cdot (1- \mathbf{1}(R_i)^t\cdot e_{\mathsf{succ}}\cdot e_{\mathsf{succ}}\cdot e_{\mathsf{succ}}\cdot \min)
 $$
-we can thus ensure that when the dimension is $n$, we can generate the appropriate output.
-By combining this into an expression
+which will evaluate to $1$ if and only if $\mathsf{mat}(R_i)=(0,1,1)^t$. We note that the factor is in place to check that the dimension $\mathsf{mat}(R_i)$ is three.
+  We denote by
+$e_{n,w}^i$ the expression which evaluates to $1$ if and only if $\mathsf{mat}(R_i)=\mathsf{vec}(w)$
+for $|w|=n$.
+We can similarly
+write any word $w$ of fixed size in the matrix variable $O$. For example, suppose that $w=101$
+then we write 
 $$
-e_f:=\sum_{n< N} e_n + \mathsf{dim\_is_greater\_than_N}\cdot e_f'
+O+ \mathsf{min}+  e_{\mathsf{succ}}\cdot e_{\mathsf{succ}}\cdot\mathsf{min}.
 $$
-we obtain our final expression.
+We write $e_{n,w}$ be the expression which write $w$ of size $|w|=n$ in matrix variable $O$.
+Then, the expressions
+$$
+e_{n,w_1,\ldots,w_n,w}:=e_{n,w_1}^1\cdot\cdots\cdot e_{nw_{\ell}}^\ell\cdot e_{n,w}
+$$
+will write $w$ in $O$ if and only if $\mathsf{mat}(R_i)=\mathsf{vec}(w_i)$ for $i\in[\ell]$.
+We now simply take the disjunction over all words $w_1,\ldots,w_\ell\in\Sigma^n$ and $w=f_n(w_1,\ldots,w_\ell)\in\Sigma^n$:
+$$
+e_n:=\sum_{w_1,\ldots,w_\ell\in\Sigma^n} e_{n,w_1,\ldots,w_\ell,f_n(w_1,\ldots,w_\ell)},
+$$
+which correctly evaluates $f_n$. We next take a further disjunction by letting ranging from 
+$n=0,\ldots, N-1$:
+$$
+e_f^{<N}:=\sum_{n=0}^{N-1} e_n
+$$
+Since every possible input is covered and only a unique expression $ e_{n,w_1,\ldots,w_\ell,f_n(w_1,\ldots,w_\ell)}$ will be triggered $e_f^{<N}$ will correctly
+evaluate $f$ on inputs smaller than $N$.
 
-The correctness of $e_T$ is now readily verified. We do this by induction on the number of iterations in the for loop. We note that initially, all variables are assigned zero vectors and values (for $w$). 
-
-At the start of the run of $T$, we are in state $q_1$ and all heads point to the first position. We argue that after the first 
-iterations, i.e., when $v_i=\mathbf{e}_1$ for $i\in[k+1]$, we indeed have that $X_1=\mathbf{e_1}$, $X_j=\mathbf{0}$ for $j\neq 1$, and $Y_j=\mathbf{e}_1$ for $j\in[\ell]$. Indeed, in the expression for $e_{X_1}$ the test $\prod_{j=1}^{k+1} \textsf{ismin}(v_i)$ will return $1$ and hence $X_1$ is replaced by $\mathsf{min}=\mathbf{e}_1$. Since all $X_i$ are initially zero, $\mathsf{ismin}(X_i)$ evaluate to zero for all $i\in[m]$ so the second term in $e_{X_1}$ adds the zero vector to $\mathbf{e}_1$ and thus $X_1$ remains $\mathbf{e_1}$.
-Similarly, $e_{X_j}$ for $j\neq 1$ will leave $X_j$ unchanged, so these remain zero vectors. For the head positions, a similar arguments shows that after the first iterations, all $Y_i$ are set of $\mathbf{e}_1$.
-
-We next assume that up to a certain iteration $\kappa-1$, the matrix variables correctly encode a configuration of $T$ on $w_n$ and furthermore, this configuration is reachable from the initial configuration. We next show that this remains to hold in the $\kappa$th iteration.
-
-By induction, there will be a single $X_i$ which is instantiated with $\mathbf{e}_1$. Let use assume that this $X_q$. All other $X_i$ are instantiated with the zero vector. Furthermore, $Y_j=\mathbf{e}_{i_j}$ for some $i_j\in[n+2]$. 
-
-Suppose that
-$\Delta_Q(q,b_{i_1},\ldots,b_{i\ell})=p$ and
-$\Delta_j(q,b_{i_1},\ldots,b_{i\ell})=d_j$. Then, inspecting the expressions $e_{X_i}$, all $X_{q_i}$ with $q_i\neq p$ will be replaced by the zero vector. The reason is that for $X_i$ to be replaced by $\mathsf{min}$ (i.e., $\mathbf{e}_1$) when $T$ is in state $q$,
-there must be a transition $\Delta_Q(q,b_{i_1}',\ldots,b_{i_\ell}')=q_i$
-and such that the $b_{i_j}'$ corresponds to the positions encoded by
-the $Y_i$'s. In particular, $b_{i_1},\ldots,b_{i\ell}$ and 
-$b_{i_1}',\ldots,b_{i_\ell}'$ must have $\rhd$ and $\lhd$ at the same positions, and since the only remaining symbol is $0$, $b_{i_1},\ldots,b_{i\ell}$ and $b_{i_1}',\ldots,b_{i\ell}'$ must agree.
-This in turn would imply that there are two possible states $p$ and $q_i$ from $q$ while reading $b_{i_1},\ldots,b_{i\ell}$. This is impossible since $T$ is deterministic.
-
-If we next consider the expressions $e_{Y_i}$ for $i\in[\ell]$, then a similar argument shows that at most one of the terms in the second part in $e_{Y_i}$ can replace $Y_i$ with $\mathsf{move}_d\cdot Y_i$. By defining of $\mathsf{move}_d$ in terms of the predecessor or successor matrix (depending on whether $d=\gets$ or $d=\to$, respectively), and given that $Y_i$ corresponds to a canonical vector, say $\mathbf{e}_{i_s}$, then $\mathsf{move}_d\cdot Y_i$ will replace $Y_i$
-with either $\mathbf{e}_{i_s-1}$ or  $\mathbf{e}_{i_s+1}$. We note that when $Y_i$ is $\mathbf{e}_1$ or $\mathbf{e}_{n+2}$, $d$ must necessarily be $\to$ or $\gets$, respectively, since $T$ does not move beyond the end markers. 
-
-Hence, all combined we see that after the $\kappa$the iteration, $X_1,\ldots,X_m$ and $Y_1,\ldots,Y_\ell$ indeed correspond to the next configuration of $T$.
-
-We now remark that $w$ will be zero unless in one of the iterations populates $X_m$ with $\mathbf{e}_{1}$, i.e., the $T$ is in the final state. By assumption, $T$ will continue to be in the final state from that point on, and thus after perform our $(n+2)^k$, $w$ will remain $1$. If no final state is encountered, $w$ remains $0$, as desired.
+Our final expression $e_f$ is now given by
+$$
+e_f:=e_f^{<N} + \mathsf{dim\_is\_greater\_than_N}\cdot e_f^{\geq 0}
+$$
+where $\mathsf{dim\_is\_greater\_than_N}$ is the expression
+$\mathbf{1}(R_i)^t\cdot\underbrace{e_{\mathsf{succ}}\cdot\cdots\cdot e_{\mathsf{succ}}}_{\text{$N$ times}}$ which will evaluate to $1$ if an only if the input dimension is larger or equal than $N$.
 \end{proof}
