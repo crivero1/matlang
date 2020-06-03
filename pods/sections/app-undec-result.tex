@@ -1,12 +1,21 @@
 %!TEX root = /Users/fgeerts/Documents/MLforloops/pods/main.tex
 
-\floris{Not finished...}
-In this section we consider the problem of deciding the class
+\floris{Many small details missing....}
+Let $e$ be a MATLANG expression over a matrix schema $\mathcal{S}=(\mathcal{M},\textsf{size})$.
+We define the size function of $\mathcal{M}$ as the sum $\sum_{V\in\mathcal{M}} \textsf{size}(V)$. Since
+$\textsf{size}$ in $\mathcal{S}$ assigns either $1\times 1$, $\alpha\times 1$, $1\times\alpha$ or $\alpha\times\alpha$ to matrix variables in $\mathcal{M}$, the size of $\mathcal{M}$ is a polynomial $s(\alpha)$ in $\alpha$. 
+
+We have seen that with any MATLANG expression $e$ over a matrix schema $\mathcal{S}$ we can associate a logspace computable function which on input $1^n$ returns an arithmetic circuit $\Phi_{s(n)}$ of size $s(n)$ such that for every instance $I=(\mathcal{D},\textsf{mat})$ over $\mathcal{S}$ with $\mathcal{D}(\alpha)=n$, $e(I)$ can be obtained from evaluating $\Phi_{s(n)}$ on $I$. 
+
+We are here interested in deciding whether a given a MATLANG expression $\mathcal{S}$ whether we can
+associate with it a uniform arithmetic circuit family $\{\Phi_{s(n)}\mid n=1,2,\}$ which has polynomial degree. More precisely, we want to decide membership in the following class
 $$
-\{ e\in \mathsf{MATLANG}\mid\text{$\{\Phi_n^e\mid n=1,2,\ldots\}$ is of polynomial degree}\},
+\{ e\in \mathsf{MATLANG}\mid \text{$e$ can be evaluated by uniform polynomial degree circuits}\}.
 $$
-where $\{\Phi_n^e\mid n=1,2,\ldots\}$ denotes the uniform family of arithmetic circuits associated with $e$.
-We show that this problem is undecidable. To see this, we use that the problem of deciding the class
+\floris{The above is the question right? That is, we do not want to know whether the circuits that we can generate are polynomially bounded. But want to know the existence of such a family...}
+
+We show that this problem is undecidable. To see this, we use that the problem of deciding membership
+in 
 $$
 \{ \langle M\rangle\mid \text{$M$ is a deterministic TM which halts on the empty input}\}
 $$
@@ -15,26 +24,26 @@ with $Q=\{q_1,\ldots,q_m\}$ its states, $q_1$ being the initial state and $q_m$ 
 the halting state, $\Gamma$ is the tape alphabet, and $\Delta$ is a transition function
 from $Q\times \Gamma\to Q\times\Gamma\times \{\leftarrow,\sqcup,\rightarrow\}$. The 
 simulation by a MATLANG expression of a linear space TM can be easily modified to
-any TM $M$ provided that we limit the execution of $M$ to exactly $n$ steps. Similarly
+any TM $M$ provided that we limit the execution of $M$ to exactly $n$ steps. Let $e_M$ denote this expression. Similarly
 as in the linear space TM simulation, we have relation $Q_1,\ldots,Q_m$ encoding the
 states, a single relation $T$ encoding the tape and relation $H_T$ encoding the position
-of the tape. We note that we do not have any input so when initialising the matrices
-for these relations, we can use a tape of size $n$. By contrast to the linear space 
+of the tape. We note that we do not have any input and our tape has length $n$ when the matrix variables are assigned $n$ as size. By contrast to the linear space 
 simulation, we also use a single vector $v$ (instead of $k$ such vectors) 
-to simulate $n$ steps of $M$. We modify the expression such that it return $0$ if $M$
-halts in at most $n$ steps, and $1$ if $M$ did not halt yet after $n$ steps.
+to simulate $n$ steps of $M$. We modify the expression such that it returns $1$ if $M$
+halts in at most $n$ steps, and $0$ if $M$ did not halt yet after $n$ steps.
 
-As a consequence, when $M$ halts, there is a $N$ such that our MATLANG expression
-$e_M$ will return $1$ when the relations have dimension $n\geq N$. Otherwise, when
-$M$ does not halt, we have that $e_M$ returns $0$ for all dimensions. It now suffices
-to consider the matlang expression
+As a consequence, when $M$ does not halt, $e_M$ will always return $0$
+for any $n$. When $M$ halts, there will be an $n$ such that $e_M$ returns $1$.
+It now suffices to consider the matlang expression
 $$
-d_M:=e_M\cdot e_{2^x}
+d_M:=e_M\cdot e_{\mathsf{exp}}
 $$
-where $e_{2^x}$ computes the functions $2^{2^n}$. If we let 
-$\Phi_n$ denote the circuit corresponding to $d_M$ for dimension $n$,
-then this will be a polynomial degree family of circuits if 
- $e_{2^x}$ is called only
+where $e_{\mathsf{exp}}$ computes the functions $x^{2^n}$. 
+\floris{this expression needs to be detailed....}
+Then, when $M$ does not halt we can clearly compute $d_M$ with a constant circuit ``0''
+for any $n$, otherwise, the circuit needed will be of exponential degree
+for at least one $n$. 
+\floris{Is the latter clear?}
 
 
 
