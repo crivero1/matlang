@@ -1,0 +1,50 @@
+%!TEX root = /Users/fgeerts/Documents/MLforloops/pods/main.tex
+
+\floris{Not finished...}
+In this section we consider the problem of deciding the class
+$$
+\{ e\in \mathsf{MATLANG}\mid\text{$\{\Phi_n^e\mid n=1,2,\ldots\}$ is of polynomial degree}\},
+$$
+where $\{\Phi_n^e\mid n=1,2,\ldots\}$ denotes the uniform family of arithmetic circuits associated with $e$.
+We show that this problem is undecidable. To see this, we use that the problem of deciding the class
+$$
+\{ \langle M\rangle\mid \text{$M$ is a deterministic TM which halts on the empty input}\}
+$$
+is undecidable. Consider a TM $M$ described by $(Q,\Gamma=\{0,1\},q_0,q_m,\Delta)$
+with $Q=\{q_1,\ldots,q_m\}$ its states, $q_1$ being the initial state and $q_m$ being
+the halting state, $\Gamma$ is the tape alphabet, and $\Delta$ is a transition function
+from $Q\times \Gamma\to Q\times\Gamma\times \{\leftarrow,\sqcup,\rightarrow\}$. The 
+simulation by a MATLANG expression of a linear space TM can be easily modified to
+any TM $M$ provided that we limit the execution of $M$ to exactly $n$ steps. Similarly
+as in the linear space TM simulation, we have relation $Q_1,\ldots,Q_m$ encoding the
+states, a single relation $T$ encoding the tape and relation $H_T$ encoding the position
+of the tape. We note that we do not have any input so when initialising the matrices
+for these relations, we can use a tape of size $n$. By contrast to the linear space 
+simulation, we also use a single vector $v$ (instead of $k$ such vectors) 
+to simulate $n$ steps of $M$. We modify the expression such that it return $0$ if $M$
+halts in at most $n$ steps, and $1$ if $M$ did not halt yet after $n$ steps.
+
+As a consequence, when $M$ halts, there is a $N$ such that our MATLANG expression
+$e_M$ will return $1$ when the relations have dimension $n\geq N$. Otherwise, when
+$M$ does not halt, we have that $e_M$ returns $0$ for all dimensions. It now suffices
+to consider the matlang expression
+$$
+d_M:=e_M\cdot e_{2^x}
+$$
+where $e_{2^x}$ computes the functions $2^{2^n}$. If we let 
+$\Phi_n$ denote the circuit corresponding to $d_M$ for dimension $n$,
+then this will be a polynomial degree family of circuits if 
+ $e_{2^x}$ is called only
+
+
+
+%
+% 3/ Based on e_M(n) we now consider the ML expression
+%
+%  d_M(n):=e_M(n) Pow(n)
+%
+% with Pow(n)=2^n (or any other ML expression which cannot
+% be computed by a poly degree circuit). Then, d_M(n) will be of
+% poly degree if M does not halt in n steps. And since we
+% want to know whether it is poly degree for all n (uniform circuits)
+% M should not halt. Hence, the poly degree problem cannot be decidable.
