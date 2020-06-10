@@ -21,9 +21,19 @@
 % NOW ESTABLISH A LINK WITH UNIFORM CIRCUITS
 
 
-In this section we explore the expressive power of $\langfor$. Given that \langfor\ expressions compute functions over matrices whose entries are not only boolean, but can in fact be elements of an arbitrary field, a natural candidate for comparison is the class of arithmetic circuits \cite{allender}. As we show in the remainder of this section, \langfor\ actually captures the expressive power of arithmetic circuits. To state our results formally, we first recall some basic definitions regarding arithmetic circuits.
+In this section we explore the expressive power of $\langfor$. Given that \langfor\ expressions compute functions over matrices whose entries are not only boolean, but can in fact be elements of an arbitrary field, a natural candidate for comparison is the class of arithmetic circuits \cite{allender}. As we show in the remainder of this section, \langfor\ actually captures the expressive power of arithmetic circuits. 
 
-An {\em arithmetic circuit} $\Phi$ over a set $X=\{x_1,\ldots,x_n\}$ of variables is a directed
+In order to derive this result, we first look at the connection of \langfor\ and Turing machines. When observing a \langfor\ expression over some schema, perhaps the most crucial characteristic is the fact that depending on the instance, the number of iterations that a for loop does changes, as does the size of the matrix computed by our expression. This is analogous to how the number of steps a Turing machine takes changes depending on the input size, and gives some intuition on why \langfor\ expressions might be able to simulate Turing machines. Indeed, what we show is that \langfor\ expressions can actually  simulate Turing machines that use linear space and run in polynomial time. Formally, we prove the following.
+
+\begin{theorem}
+\label{th-tm-ml}
+Let $T$ be a Turing machine with $\ell$ read only input tapes, a work tape, and an output tape. 
+\end{theorem}
+
+
+
+
+Next we move to comparison with arithmetic circuits. An {\em arithmetic circuit} $\Phi$ over a set $X=\{x_1,\ldots,x_n\}$ of variables is a directed
 acyclic labelled graph. The vertices of $\Phi$ are called {\em gates} and denoted by $g_1,\ldots,g_m$;
 the edges in $\Phi$ are called {\em wires}. The children of a gate $g$ correspond to all gates
 $g'$ such that $(g,g')$ is an edge. The parents of $g$ correspond to all gates $g'$ 
@@ -37,7 +47,7 @@ The {\em size} of $\Phi$, denoted by $|\Phi|$, is its number of gates. The {\em 
 by $\mathsf{depth}(\Phi)$, is the length of the longest directed path from the any output gate to any of the input gates. When $\Phi$ has a single output gate, then $\Phi$ corresponds to a polynomial in $\mathbb{F}[X]$ in a natural way. In this case, the {\em degree} of $\Phi$ is the degree of the polynomial corresponding to $\Phi$.
 If $v_1,\ldots ,v_n$ are values in $\mathbb{F}$, then by we define the result of the circuit on this input as the value computed by the corresponding polynomial, and denote this value with $\Phi_k(v_1,\ldots ,v_k)$.
 
-\domagoj{Should we already present the result without talking about uniformity?}
+%\domagoj{Should we already present the result without talking about uniformity?}
 
 % MAYBE OVERCOMPLICATING
 %In order to talk about efficient evaluation of arithmetic circuits in terms of complexity classes defined by Turing machines, we need a notion of uniformity of circuit families. An {\em arithmetic circuit family} is a set of arithmetic circuits $\{\Phi_n\mid n=1,2,\ldots\}$ where $\Phi_n$ has $n$ input variables. An arithmetic circuit family is {\em uniform} if there exist \logspace-Turing machines\footnote{There are several versions of this definition that give a different amount of resources to the Turing machine. See \cite{allender} for an in-depth discussion on the subject.} $M_1$ and $M_2$, such that:
@@ -50,11 +60,12 @@ If $v_1,\ldots ,v_n$ are values in $\mathbb{F}$, then by we define the result of
 %
 %SHOULD EXPLAIN BRIEFLY HOW TO EVALUATE A CIRCUIT!
 
-In order to talk about efficient evaluation of arithmetic circuits in terms of complexity classes defined by Turing machines, we need a notion of uniformity of circuit families. An {\em arithmetic circuit family} is a set of arithmetic circuits $\{\Phi_n\mid n=1,2,\ldots\}$ where $\Phi_n$ has $n$ input variables. An arithmetic circuit family is {\em uniform} if there exists a \logspace-Turing machine\footnote{There are several versions of this definition that give a different amount of resources to the Turing machine. See \cite{allender} for an in-depth discussion on the subject.}, which on input $1^n$, returns an encoding of the arithmetic circuit $\Phi_n$ for each $n$. Additionally, we assume that there is a \logspace-machine which, when started on input $1^n$, and an encoding of a gate $g$, outputs the relevant information about $g$ in $\Phi_n$ (e.g. whether it is a sum or a product gate, the list of its children, whether it is an output gate, etc.).
+In order to talk about efficient evaluation of arithmetic circuits in terms of complexity classes defined by Turing machines, we need a notion of uniformity of circuit families. An {\em arithmetic circuit family} is a set of arithmetic circuits $\{\Phi_n\mid n=1,2,\ldots\}$ where $\Phi_n$ has $n$ input variables. An arithmetic circuit family is {\em uniform} if there exists a \logspace-Turing machine\footnote{There are several versions of this definition that give a different amount of resources to the Turing machine. See \cite{allender} for an in-depth discussion on the subject.}, which on input $1^n$, returns an encoding of the arithmetic circuit $\Phi_n$ for each $n$.
+% Additionally, we assume that there is a \logspace-machine which, when started on input $1^n$, and an encoding of a gate $g$, outputs the relevant information about $g$ in $\Phi_n$ (e.g. whether it is a sum or a product gate, the list of its children, whether it is an output gate, etc.).
 We observe that uniform arithmetic circuit families are necessarily of polynomial size. 
 We can then show the following.
 
-\domagoj{The thing about the second machine is crucial, but it might be a bit confusing here, as we only need it to explain how one actually computes the output of a circuit. Because of this I'm thinking of maybe presenting the connection without uniformity.}
+%\domagoj{The thing about the second machine is crucial, but it might be a bit confusing here, as we only need it to explain how one actually computes the output of a circuit. Because of this I'm thinking of maybe presenting the connection without uniformity.}
 
 \begin{theorem}
 \label{th-circuits-ml}
