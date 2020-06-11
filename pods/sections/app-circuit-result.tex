@@ -114,7 +114,7 @@ The corresponding $\lbrace 0,1 \rbrace^n\rightarrow\lbrace 0,1 \rbrace^n$ functi
 	\item[--] $\getroot$: outputs the $\texttt{id}$ of the root gate of the circuit.
 \end{itemize}
 
-The previous functions are all definable by an $L$-transducer and can be defined from the $L$-transducer of $f$. Then, for each of these functions, there is a \langfor expression that simulates them.
+The previous functions are all definable by an $L$-transducer and can be defined from the $L$-transducer of $f$. Then, by proposition \ref{prop:transducer}, for each of these functions there is a \langfor expression that simulates them.
 
 Now, we give the pseudo-code of the top-down evaluation. We define the functions $Initialize$ (algorithm \ref{alg:init_code}), $Aggregate$ (algorithm \ref{alg:agg_code}) and $Evaluate$ (algorithm \ref{alg:eval_code}). The main algorithm is $Evaluate$.
 

@@ -26,7 +26,7 @@ $f_n(w_1,\ldots,w_\ell)$ on its the output tape when (necessarily) reaching an a
 % We say that a function
 % $f:\underbrace{\Sigma^n\times\cdots \times \Sigma^n}_{\text{$\ell$ times}}\to \Sigma^n$ is computable by a linear space machine $T$ if when $T$ is run on input $w_1,\ldots,w_\ell$ it halts and has $f(w_1,\ldots,w_\ell)$ on its output tape. We say that $f$ is a \textit{linear space poly function} if it is computable by a linear space TM $T$ which in addition runs in polynomial time, i.e., it hals in at most
 % $\mathcal{O}(n^k)$ steps for a certain $k$ on any inputs $w_1,\ldots,w_\ell$ of size $n$.
-\begin{proposition}
+\begin{proposition} \label{prop:transducer}
 Let $f=\bigcup_{n\geq 0}f_n:(\Sigma^n)^\ell\to \Sigma^n$ be a linear space input-ouput function computed by a linear space  machine $T$ with $m$ states, $\ell$ input tapes, which consumes $\mathcal{O}(n)$ space and runs in $\mathcal{O}(n^{k-1})$ time on inputs of size $n$. There exists (i)~a $\mathsf{MATLANG}$ 
 schema $\mathcal{S}=(\mathcal{M},\textsf{size})$ where $\mathcal{M}$ consists matrix variables\footnote{We also need a finite number of auxiliary variables, these will be specified in the proof.} $Q_1,\ldots,Q_m,R_1,\ldots,R_\ell,H_1,\ldots,H_\ell,W_1,\ldots,W_s,H_{W_1},\ldots,H_{W_s},O,H_O, v_1,\ldots,v_{k}$  with
 $\mathsf{size}(V)=\alpha\times 1$ for all $V\in\mathcal{M}$; and (ii)~a $\mathsf{MATLANG}$ expression $e_f$ over $\mathcal{S}$ such that for the instance $I=(\mathcal{D},\textsf{mat})$ over $\mathcal{S}$ with $\mathcal{D}(\alpha)=n$ and 
