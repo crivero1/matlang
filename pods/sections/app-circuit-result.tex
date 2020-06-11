@@ -336,7 +336,7 @@ For the initialize step, we define the $\langfor$ expressions: INIT${\_}$PLUS (a
 	\text{INPUT} &:= \isinput{G^*\cdot G_{top}}\odot \left[ G + \left(V + \left( A^* \cdot \getinput{G^*\cdot G_{top}} \cdot S\cdot V_{top} \right)\right)\cdot e_{V} + S\cdot V_{top}\cdot e_{V_{top}}^* \right]
 \end{align*} 
 
-Here, $G^*\cdot G_{top}$ is to get the current id in the top of the stack. In INIT${\_}$PLUS we get the current stack $G$, we add $S\cdot G_{top} \cdot \getfirst{G^*\cdot G_{top}}^*$ which is an $n\times n$ matrix with the first child of $G^*\cdot G_{top}$, then $S\cdot G_{top}\cdot e_{G_{top}}^*$ adds $S\cdot G_{top}$ to the $n-1$ column to mark the gate we added as the top. Next, we do the same with the values by adding $V\cdot e_{V} + S\cdot V_{top}\cdot e_{V_{top}}^*$
+Here, $G^*\cdot G_{top}$ is to get the current id in the top of the stack. In INIT${\_}$PLUS we get the current stack $G$, we add $S\cdot G_{top} \cdot \getfirst{G^*\cdot G_{top}}^*$ which is an $n\times n$ matrix with the first child of $G^*\cdot G_{top}$ in the next row. Then $S\cdot G_{top}\cdot e_{G_{top}}^*$ adds $S\cdot G_{top}$ to the $n-1$ column to mark the gate we added as the top. Next, we do the same with the values by adding $V\cdot e_{V} + S\cdot V_{top}\cdot e_{V_{top}}^*$.
 
 The $\langfor$ expression equivalent to algorithm \ref{alg:init_code} is $$\text{INIT}:=\text{INIT{\_}PLUS}+\text{INIT{\_}PROD}+\text{CONST}+\text{INPUT}.$$
 
