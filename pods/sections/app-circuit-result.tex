@@ -7,19 +7,61 @@ Then we have that:
 	\item the depth of the circuit is at most $k'\log (n)$ for some $k'$.
 \end{itemize}
 
-So, let $k$ such that $\forall n\geq k:$
+So, let $n_0$ and $k$ such that $\forall n\geq n_0:$
 
 \begin{align*}[right=\empheqrbrace (\star)]
     2W(n)&\leq n^k \\
-	k\log (n) &\leq n-3 \\
-	k'\log(n) &\leq n
+	k \ceil{\log (n)} &\leq n-3 \\
+	k' \ceil{\log(n)} &\leq n
 \end{align*}
 
-We know $k$ exists. Let $n\geq k$. Towards the end, we will deal with the case when $n<k$.
+We know $n_0$ and $k$ exist. Let $n\geq n_0$. Towards the end, we will deal with the case when $n<n_0$.
 
-Let $g$ be a gate. The children of $g$ are denoted by $g_1,\ldots, g_k$.
+Let $g$ be a gate. The children of $g$ are denoted by $g_1,\ldots, g_l$.
+\begin{center}
+\begin{tikzpicture}[level distance=1.5cm,
+  level 1/.style={sibling distance=1.5cm},
+  every node/.style = {
+  	shape=circle,
+    draw,
+    align=center,
+    top color=white,
+    bottom color=white
+    }]
+  \node {\( g \)}
+    child {node { \( g_1 \) }}
+    child {node { \( \cdots \) }}
+    child {node { \( g_l \) }};
+\end{tikzpicture}
+\end{center}
 
-For the pseudo-code, $G$ and $V$ denote stacks of gates and values, respectively. The property that holds during the simulation is that the value in $V[i]$ is the value that $G[i]$ currently outputs. The algorithm ends with $G=\left[ g_{\texttt{root}}\right]$ and $V=\left[ v_{\texttt{root}}\right]$ after traversing the circuit, and returns $v_{\texttt{root}}$.
+For example, a circuit that encodes the function $f(a_1,a_2,a_3,a_4)=a_1a_2 +a_3a_4$ is 
+
+\begin{center}
+\begin{tikzpicture}[level distance=1.5cm,
+  level 1/.style={sibling distance=3cm},
+  level 2/.style={sibling distance=1.5cm},
+  every node/.style = {
+  	shape=circle,
+    draw,
+    align=center,
+    top color=white,
+    bottom color=white
+    }
+  ]
+  \node { \( + \) }
+    child { node { \( \times \) }
+      child { node { \( a_1 \) } }
+      child {node { \( a_2 \) } }
+    }
+    child { node { \( \times \) }
+      child { node { \( a_3 \) } }
+      child { node { \( a_4 \) } }
+    };
+\end{tikzpicture}
+\end{center}
+
+We can simulate the polynomial $x^2+xy$ by doing $f(A)$ where $A=[x \hspace{1ex} x \hspace{1ex} x \hspace{1ex} y]^*$. The main idea is to traverse the circuit top down in a depth first search way and store visited gates in a stack and its corresponding current values in another stack, and aggregate in the iterations according to the gate type.
 
 For a stack $S$, the operations are standard:
 
@@ -30,15 +72,19 @@ For a stack $S$, the operations are standard:
 	\item $\gettop{S}$: the top element in the stack.
 \end{itemize}
 
-During the evaluation algorithm there will be two possible configurations of $G$ and $V$.
+For the pseudo-code, $\cG$ and $\cV$ denote stacks of gates and values, respectively. The property that holds during the simulation is that the value in $\cV[i]$ is the value that $\cG[i]$ currently outputs. The algorithm ends with $\cG=\left[ g_{\texttt{root}}\right]$ and $\cV=\left[ v_{\texttt{root}}\right]$ after traversing the circuit, and returns $v_{\texttt{root}}$
+
+During the evaluation algorithm there will be two possible configurations of $\cG$ and $\cV$.
 
 \begin{enumerate}
-	\item $\getsize{G} = \getsize{V} + 1$: this means that $\gettop{G}$ is a gate that we visit for the first time and we need to initialize its value.
+	\item $\getsize{\cG} = \getsize{\cV} + 1$: this means that $\gettop{\cG}$ is a gate that we visit for the first time and we need to initialize its value.
 	
-	\item $\getsize{G} = \getsize{V}$: here $\gettop{V}$ is the value of evaluating the circuit in gate $\gettop{G}$. Therefore, we need to aggregate the value $\gettop{V}$ to the parent gate of $g$.
+	\item $\getsize{\cG} = \getsize{\cV}$: here $\gettop{\cV}$ is the value of evaluating the circuit in gate $\gettop{\cG}$. Therefore, we need to aggregate the value $\gettop{\cV}$ to the parent gate of $g$.
 \end{enumerate}
 
 We assume the circuit has input gates, $+, \times$-gates and allow constant $1$-gate.
+
+The idea is to traverse the circuit top down in a depth first search way. For example, in the circuit $f(a_1,a_2,a_3,a_4)=a_1a_2 +a_3a_4$ above, we would initialize the output gate value as $0$ because it is a $+$ gate, so $\cG=\lbrace +\rbrace$, $\cV=\lbrace 0\rbrace$. Then stack the left $\times$ gate to $\cG$, stack its initial value (i.e. $1$) to $\cV$. Now stack $a_1$ to $\cG$ and its value (i.e. $a_1$) to $\cV$. Since we are on an input gate we pop the gate and value pair off of $\cG$ and $\cV$ respectively, aggregate $a_1$ to $\gettop{\cV}$ and continue by stacking the $a_2$ gate to $\cG$. We pop $a_2$ off of $\cV$ (and its gate off of $\cG$) and aggregate its value to $\gettop{\cV}$. We pop and aggregate the value of the left $\times$ gate to $\gettop{\cV}$ (the root value). Then continue with the right $\times$ gate branch similarly.
 
 For the pseudo-code, we supply ourselves with the following functions:
 
@@ -70,24 +116,24 @@ The corresponding $\lbrace 0,1 \rbrace^n\rightarrow\lbrace 0,1 \rbrace^n$ functi
 
 The previous functions are all definable by an $L$-transducer and can be defined from the $L$-transducer of $f$. Then, for each of these functions, there is a \langfor expression that simulates them.
 
-Now, we give the pseudo-code of the top-down evaluation. We define the functions $Initialize$, $Aggregate$ and $Evaluate$. The main algorithm is $Evaluate$.
+Now, we give the pseudo-code of the top-down evaluation. We define the functions $Initialize$ (algorithm \ref{alg:init_code}), $Aggregate$ (algorithm \ref{alg:agg_code}) and $Evaluate$ (algorithm \ref{alg:eval_code}). The main algorithm is $Evaluate$.
 
 \begin{algorithm}
 \caption{Initialize (pseudo-code)}\label{alg:init_code}
 \begin{algorithmic}[1]
-\Function{Initialize}{$G, V, A$}\Comment{The stacks and input. Here, $\getsize{G} =  \getsize{V} + 1$}
-	\If{$\isplus{\gettop{G}}$}
-		\State $\push{V}{0}$
-		\State $\push{G}{\getfirst{\gettop{G}}}$
-	\ElsIf{$\isprod{\gettop{G}}$}
-		\State $\push{V}{1}$
-		\State $\push{G}{\getfirst{\gettop{G}}}$
-	\ElsIf{$\isone{\gettop{G}}$}
-		\State $\push{V}{1}$
-	\ElsIf{$\isinput{\gettop{G}}$}
-		\State $\push{V}{A\left[ \getinput{\gettop{G}} \right]}$
+\Function{Initialize}{$\cG, \cV, A$}\Comment{The stacks and input. Here, $\getsize{\cG} =  \getsize{\cV} + 1$}
+	\If{$\isplus{\gettop{\cG}}$}
+		\State $\push{\cV}{0}$
+		\State $\push{\cG}{\getfirst{\gettop{\cG}}}$
+	\ElsIf{$\isprod{\gettop{\cG}}$}
+		\State $\push{\cV}{1}$
+		\State $\push{\cG}{\getfirst{\gettop{\cG}}}$
+	\ElsIf{$\isone{\gettop{\cG}}$}
+		\State $\push{\cV}{1}$
+	\ElsIf{$\isinput{\gettop{\cG}}$}
+		\State $\push{\cV}{A\left[ \getinput{\gettop{\cG}} \right]}$
 	\EndIf
-	\State \textbf{return} $G, V$
+	\State \textbf{return} $\cG, \cV$
 \EndFunction
 \end{algorithmic}
 \end{algorithm}
@@ -95,18 +141,18 @@ Now, we give the pseudo-code of the top-down evaluation. We define the functions
 \begin{algorithm}
 \caption{Aggregate (pseudo-code)}\label{alg:agg_code}
 \begin{algorithmic}[1]
-\Function{Aggregate}{$G, V$}\Comment{Here, $\getsize{G} =  \getsize{V}$}
-	\State $g = \pop{G}$
-	\State $v = \pop{V}$
-	\If{$\isplus{\gettop{G}}$}
-		\State $\gettop{V} = \gettop{V} + v$
-	\ElsIf{$\isprod{\gettop{G}}$}
-		\State $\gettop{V} = \gettop{V} \cdot v$
+\Function{Aggregate}{$\cG, \cV$}\Comment{Here, $\getsize{\cG} =  \getsize{\cV}$}
+	\State $g = \pop{\cG}$
+	\State $v = \pop{\cV}$
+	\If{$\isplus{\gettop{\cG}}$}
+		\State $\gettop{\cV} = \gettop{\cV} + v$
+	\ElsIf{$\isprod{\gettop{\cG}}$}
+		\State $\gettop{\cV} = \gettop{\cV} \cdot v$
 	\EndIf
-	\If{$\isnotlast{\gettop{G}}{g}$}
-		\State $\push{G}{\nextgate{\gettop{G}}{g}}$
+	\If{$\isnotlast{\gettop{\cG}}{g}$}
+		\State $\push{\cG}{\nextgate{\gettop{\cG}}{g}}$
 	\EndIf
-	\State \textbf{return} $G, V$
+	\State \textbf{return} $\cG, \cV$
 \EndFunction
 \end{algorithmic}
 \end{algorithm}
@@ -114,25 +160,27 @@ Now, we give the pseudo-code of the top-down evaluation. We define the functions
 \begin{algorithm}
 \caption{Evaluate (pseudo-code)}\label{alg:eval_code}
 \begin{algorithmic}[1]
-\Function{Evaluate}{$A$}\Comment{Input $ n\times 1$ vector $A$. Here, $G$ and $V$ are empty}
-	\State $\push{G}{\getroot}$
-	\While{$\getsize{G}\neq 1$ or $\getsize{V}\neq 1$}
-		\If{$\getsize{G}\neq \getsize{V}$}
-			\State $(G,V) := \texttt{Initialize}(G,V,A)$
+\Function{Evaluate}{$A$}\Comment{Input $ n\times 1$ vector $A$. Here, $\cG$ and $\cV$ are empty}
+	\State $\push{\cG}{\getroot}$
+	\While{$\getsize{\cG}\neq 1$ or $\getsize{\cV}\neq 1$}
+		\If{$\getsize{\cG}\neq \getsize{V}$}
+			\State $(\cG,\cV) := \texttt{Initialize}(\cG,\cV,A)$
 		\Else
-			\State $(G,V):= \texttt{Aggregate}(G,V)$
+			\State $(\cG,\cV):= \texttt{Aggregate}(\cG,\cV)$
 		\EndIf
 	\EndWhile
-	\State \textbf{return} $\gettop{V}$
+	\State \textbf{return} $\gettop{\cV}$
 \EndFunction
 \end{algorithmic}
 \end{algorithm}
 
-The $Evaluate$ algorithm gives us the output of the circuit. Note that after each iteration it either holds that $\getsize{G} =  \getsize{V} + 1$ or $\getsize{G} =  \getsize{V}$. Furthermore, when we start we have $\getsize{G}=1$ and $\getsize{V}=0$. The condition $\getsize{G}= 1$ and $\getsize{V}=1$ holds only when we have traversed all the circuit, and the value in $\gettop{V}$ is the value that the root of the circuit outputs after its computation. Next, we show how to encode this algorithm in $\langfor$.
+The $Evaluate$ algorithm gives us the output of the circuit. Note that after each iteration it either holds that $\getsize{\cG} =  \getsize{\cV} + 1$ or $\getsize{\cG} =  \getsize{\cV}$. Furthermore, when we start we have $\getsize{\cG}=1$ and $\getsize{\cV}=0$. The condition $\getsize{\cG}= 1$ and $\getsize{\cV}=1$ holds only when we have traversed all the circuit, and the value in $\gettop{\cV}$ is the value that the root of the circuit outputs after its computation.
 
-Let $k\in\mathbb{N}$ be big enough for $\star$ to hold and let $n\geq k$. Hence, the number of gates (values) is bounded by $n^k$ and we need $k\log (n)$ bits to encode the id of each gate.
+Next, we show how to encode this algorithm in $\langfor$.
 
-To simulate the two stacks $G$ and $V$ we keep a matrix $X$ of dimensions $\texttt{\#gates} \times n$.
+Let $n_0\in\mathbb{N}$ be big enough for $\star$ to hold and let $n\geq k$. Hence, the number of gates (values) is bounded by $n^k$ and we need $k\log (n)$ bits to encode the id of each gate.
+
+To simulate the two stacks $\cG$ and $\cV$ we keep a matrix $X$ of dimensions $n \times n$.
 
 \begin{itemize}
 	\item Column $n$ will store a canonical vector that marks the top of stack $V$ (values).
@@ -140,6 +188,22 @@ To simulate the two stacks $G$ and $V$ we keep a matrix $X$ of dimensions $\text
 	\item Column $n-2$ is the stack of values where $X[1, n-2]$ is the bottom of the stack.
 	\item Columns $1$ to $n-3$ are the stack of gates.
 \end{itemize}
+
+If we have $j$ gates in the stack and currently $\getsize{\cG}=\getsize{\cV}$ then $X$ would look like:
+
+\[
+X = \begin{bmatrix}
+    \texttt{id}_1 & v_1 & 0 & 0 \\
+    \texttt{id}_2 & v_2 & 0 & 0 \\
+    \vdots & \vdots & \vdots & \vdots \\
+    \texttt{id}_j & v_j & 1 & 1 \\
+    0 & 0 & 0 & 0 \\
+    \vdots & \vdots & \vdots & \vdots \\
+     0 & 0 & 0 & 0
+\end{bmatrix}.
+\]
+
+Since $n\geq n_0$, $(\star)$ holds and thus we never use more than $n-3$ bits to encode an $\texttt{id}$ and $j\leq n$ given that we never keep more gates than the depth of the tree. As a consequence, we never keep more than $n$ values either.
 
 We make a series of definitions to make the notation more clear.
 
@@ -205,6 +269,61 @@ For a canonical vector, let $$\Iden{e_i}:=\ssum v. less(v,e_i)\cdot (v\cdot v^*)
  	G &:= \Iden{G_{top}}\cdot X \cdot \Iden{e_{max-3}}
 \end{align*}
 
+For example, if we are in a step where $\getsize{\cG}=\getsize{\cV} + 1$ then
+
+\[
+X = \begin{bmatrix}
+    \texttt{id}_1 & v_1 & 0 & 0 \\
+    \texttt{id}_2 & v_2 & 0 & 0 \\
+    \vdots & \vdots & \vdots & \vdots \\
+    \texttt{id}_{j-1} & v_{j-1} & 0 & 1 \\
+    \texttt{id}_j & 0 & 1 & 0 \\
+    0 & 0 & 0 & 0 \\
+    \vdots & \vdots & \vdots & \vdots \\
+     0 & 0 & 0 & 0
+\end{bmatrix}, 
+G = \begin{bmatrix}
+    \texttt{id}_1  \\
+    \texttt{id}_2 \\
+    \vdots   \\
+    \texttt{id}_{j-1} \\
+    \texttt{id}_j \\
+    0 \\
+    \vdots \\
+     0 
+\end{bmatrix}, 
+V = \begin{bmatrix}
+    v_1  \\
+    v_2 \\
+    \vdots   \\
+    v_{j-1} \\
+    0 \\
+    0 \\
+    \vdots \\
+     0 
+\end{bmatrix}, 
+G_{top} = \begin{bmatrix}
+    0  \\
+    0 \\
+    \vdots   \\
+    0 \\
+    1 \\
+    0 \\
+    \vdots \\
+     0 
+\end{bmatrix}, 
+V_{top} = \begin{bmatrix}
+    0  \\
+    0 \\
+    \vdots   \\
+    1 \\
+    0 \\
+    0 \\
+    \vdots \\
+     0 
+\end{bmatrix}
+\]
+
 Here, $V$ is a vector encoding the stack of values in $X$ and $G$ is a matrix encoding the stack of gates in $X$. Note that what is \textit{over} the top of the stacks is always set to zero due to $\Iden{G_{top}}$ and $\Iden{V_{top}}$.
 
 To set the initial state (algorithm \ref{alg:eval_code} line 2) we define the $\langfor$ expression: $$\text{START}:= e_{min}\cdot \getroot^* + e_{min}\cdot e_{G_{top}}^*.$$
@@ -215,9 +334,64 @@ For the initialize step, we define the $\langfor$ expressions: INIT${\_}$PLUS (a
 	\text{INIT{\_}PROD} &:= \isprod{G^*\cdot G_{top}}\odot \left[ G + S\cdot G_{top} \cdot \getfirst{G^*\cdot G_{top}}^* + S\cdot G_{top}\cdot e_{G_{top}}^* +(V + S\cdot v_{top})\cdot e_{V} + S\cdot V_{top}\cdot e_{V_{top}}^* \right] \\
 	\text{CONST} &:= \isone{G^*\cdot G_{top}}\odot \left[ G + (V + S\cdot v_{top})\cdot e_{V} + S\cdot V_{top}\cdot e_{V_{top}}^* \right] \\
 	\text{INPUT} &:= \isinput{G^*\cdot G_{top}}\odot \left[ G + \left(V + \left( A^* \cdot \getinput{G^*\cdot G_{top}} \cdot S\cdot V_{top} \right)\right)\cdot e_{V} + S\cdot V_{top}\cdot e_{V_{top}}^* \right]
-\end{align*}
+\end{align*} 
+
+Here, $G^*\cdot G_{top}$ is to get the current id in the top of the stack. In INIT${\_}$PLUS we get the current stack $G$, we add $S\cdot G_{top} \cdot \getfirst{G^*\cdot G_{top}}^*$ which is an $n\times n$ matrix with the first child of $G^*\cdot G_{top}$, then $S\cdot G_{top}\cdot e_{G_{top}}^*$ adds $S\cdot G_{top}$ to the $n-1$ column to mark the gate we added as the top. Next, we do the same with the values by adding $V\cdot e_{V} + S\cdot V_{top}\cdot e_{V_{top}}^*$
 
 The $\langfor$ expression equivalent to algorithm \ref{alg:init_code} is $$\text{INIT}:=\text{INIT{\_}PLUS}+\text{INIT{\_}PROD}+\text{CONST}+\text{INPUT}.$$
+
+The idea is to return the matrix for the next iteration. Recall that here $\getsize{\cG}=\getsize{\cV} + 1$. So, when the operation is INPUT or CONST, if we start with
+
+\[
+\begin{bmatrix}
+    \texttt{id}_1 & v_1 & 0 & 0 \\
+    \texttt{id}_2 & v_2 & 0 & 0 \\
+    \vdots & \vdots & \vdots & \vdots \\
+    \texttt{id}_{j-1} & v_{j-1} & 0 & 1 \\
+    \texttt{id}_j & 0 & 1 & 0 \\
+    0 & 0 & 0 & 0 \\
+    \vdots & \vdots & \vdots & \vdots \\
+     0 & 0 & 0 & 0
+\end{bmatrix}, \text{ then we return }
+\begin{bmatrix}
+    \texttt{id}_1 & v_1 & 0 & 0 \\
+    \texttt{id}_2 & v_2 & 0 & 0 \\
+    \vdots & \vdots & \vdots & \vdots \\
+    \texttt{id}_{j-1} & v_{j-1} & 0 & 0 \\
+    \texttt{id}_j & v_j & 1 & 1 \\
+    0 & 0 & 0 & 0 \\
+    \vdots & \vdots & \vdots & \vdots \\
+     0 & 0 & 0 & 0
+\end{bmatrix}.
+\]
+
+When the operation is INIT{\_}PLUS or INIT{\_}PROD, if we start with 
+
+\[
+\begin{bmatrix}
+    \texttt{id}_1 & v_1 & 0 & 0 \\
+    \texttt{id}_2 & v_2 & 0 & 0 \\
+    \vdots & \vdots & \vdots & \vdots \\
+    \texttt{id}_{j-1} & v_{j-1} & 0 & 1 \\
+    \texttt{id}_j & 0 & 1 & 0 \\
+    0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 \\
+    \vdots & \vdots & \vdots & \vdots \\
+     0 & 0 & 0 & 0
+\end{bmatrix}, \text{ then we return }
+\begin{bmatrix}
+    \texttt{id}_1 & v_1 & 0 & 0 \\
+    \texttt{id}_2 & v_2 & 0 & 0 \\
+    \vdots & \vdots & \vdots & \vdots \\
+    \texttt{id}_{j-1} & v_{j-1} & 0 & 0 \\
+    \texttt{id}_j & v_j & 0 & 1 \\
+    \texttt{id}_{j+1} & 0 & 1 & 0 \\
+    0 & 0 & 0 & 0 \\
+    \vdots & \vdots & \vdots & \vdots \\
+     0 & 0 & 0 & 0
+\end{bmatrix}.
+\]
+
 
 For the aggregate expression (algorithm \ref{alg:agg_code}) we do the following. Let $$\pondIden{e_i}{c}=\ssum v. (v^*\cdot e_i)\cdot c\cdot v\cdot v^* + (1-v^*\cdot e_i)\cdot v \cdot v^*,$$ namely, it is the identity with $c$ in position $(i,i)$.
 
@@ -230,8 +404,6 @@ We define the expressions: AGG${\_}$PLUS (algorithm \ref{alg:agg_code}, lines 4,
 	\text{IS{\_}NOT{\_}LAST} &:= \isnotlast{G^* \cdot \left( P \cdot G_{top}\right)}{G^* \cdot G_{top}} \odot \left[  G_{top} \cdot \nextgate{G^* \cdot \left( P\cdot G_{top} \right) }{G^* \cdot G_{top}} + G_{top}\cdot e_{G_{top}}^* \right] \\
 	\text{IS{\_}LAST} &:= \left( 1 - \isnotlast{G^* \cdot \left( P \cdot G_{top}\right)}{G^* \cdot G_{top}} \right)\odot \left[ \left( P\cdot G_{top} \right) \cdot e_{G_{top}}^* \right]
 \end{align*}
-
-\thomas{I think there are some subtractions missing on some parts, since we are \textit{replacing} things in $X$. In POP I would add $-G-V_{top}\cdot e_{V_{top}}^*$. In AGG${\_}$PLUS and AGG${\_}$PROD add $-V\cdot e_{V}^*$ and in IS${\_}$LAST add $-G_{top}\cdot e_{G_{top}}^*$. }
 
 The $\langfor$ expression equivalent to algorithm \ref{alg:agg_code} is $$\text{AGG}:=\text{POP} + \text{AGG{\_}PLUS}+\text{AGG{\_}PROD}+\text{IS{\_}NOT{\_}LAST}+\text{IS{\_}LAST}.$$
 
@@ -247,9 +419,9 @@ The $Evaluate$ method (algorithm \ref{alg:eval_code}) is defined as follows:
 
 Note that the $ \texttt{for}$-expression does the evaluation. The final output is in $X[1,max-2]$, we extract this value by multiplying the final result as $e_{min}^*\cdot [\texttt{for}(\ldots )]\cdot e_{V}$.
 
-Finally, we need to take care of all $n<k$, where $(\star)$ does not necessarily hold. For any $i$, let: $$\text{Eval}[i,A]:= \text{ the } 1\times 1 \text{ matrix with the value of the polynomial } f(A) \text{ when } n=i.$$
+Finally, we need to take care of all $n<n_0$, where $(\star)$ does not necessarily hold. For any $i$, let: $$\text{Eval}[i,A]:= \text{ the } 1\times 1 \text{ matrix with the value of the polynomial } f(A) \text{ when } n=i.$$
 
-Then we define: $$f(A)=\ssum_{i=0}^{k-1}(e_{min+1}\cdot e_{max}^*)\odot \text{EVAL}[i,A] + \left( (S^*k\cdot e_{min})^*\cdot \ones (e_{min}) \right)\odot \text{EVAL}[A].$$ Above, $(e_{min+1}\cdot e_{max}^*)$ checks if the dimension is equal to $i$, and $(S^*k\cdot e_{min})^*\cdot \ones (e_{min})$ checks if the dimension is greater or equal than $k$.
+Then we define: $$f(A)=\ssum_{i=0}^{n_0-1}(e_{min+1}\cdot e_{max}^*)\odot \text{EVAL}[i,A] + \left( (S^{n_0}\cdot e_{min})^*\cdot \ones (e_{min}) \right)\odot \text{EVAL}[A].$$ Above, $(e_{min+1}\cdot e_{max}^*)$ checks if the dimension is equal to $i$, and $(S^{n_0}\cdot e_{min})^*\cdot \ones (e_{min})$ checks if the dimension is greater or equal than $n_0$.
 
 
 
