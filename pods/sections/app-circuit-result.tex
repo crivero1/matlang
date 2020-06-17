@@ -203,7 +203,11 @@ X = \begin{bmatrix}
 \end{bmatrix}.
 \]
 
-Since $n\geq n_0$, $(\star)$ holds and thus we never use more than $n-3$ bits to encode an $\texttt{id}$ and $j\leq n$ given that we never keep more gates than the depth of the tree. As a consequence, we never keep more than $n$ values either.
+Since $n\geq n_0$, $(\star)$ holds and thus we never use more than $n-3$ bits to encode an $\texttt{id}$. Also, $j\leq n$ given that we never keep more gates than the depth of the tree. As a consequence, we never keep more than $n$ values either.
+
+\thomas{The following remark is necessary because of dimensions (check typing of START). I don't know if the reverse part is correct, but it makes sense to me since that way zeroes to the right actually mean nothing in the binary number (if it is reversed).}
+
+An important detail is that the $\texttt{ids}$ of the gates are encoded as $\texttt{id}_r000$ for it to have dimension $n$, where $\texttt{id}_r$ is the corresponding binary number in reverse.
 
 We make a series of definitions to make the notation more clear.
 
@@ -421,7 +425,7 @@ Note that the $ \texttt{for}$-expression does the evaluation. The final output i
 
 Finally, we need to take care of all $n<n_0$, where $(\star)$ does not necessarily hold. For any $i$, let: $$\text{Eval}[i,A]:= \text{ the } 1\times 1 \text{ matrix with the value of the polynomial } f(A) \text{ when } n=i.$$
 
-Then we define: $$f(A)=\ssum_{i=0}^{n_0-1}(e_{min+1}\cdot e_{max}^*)\odot \text{EVAL}[i,A] + \left( (S^{n_0}\cdot e_{min})^*\cdot \ones (e_{min}) \right)\odot \text{EVAL}[A].$$ Above, $(e_{min+1}\cdot e_{max}^*)$ checks if the dimension is equal to $i$, and $(S^{n_0}\cdot e_{min})^*\cdot \ones (e_{min})$ checks if the dimension is greater or equal than $n_0$.
+Then we define: $$f(A)=\ssum_{i=0}^{n_0-1}(e_{min+i}\cdot e_{max}^*)\odot \text{EVAL}[i,A] + \left( (S^{n_0}\cdot e_{min})^*\cdot \ones (e_{min}) \right)\odot \text{EVAL}[A].$$ Above, $(e_{min+i}\cdot e_{max}^*)$ checks if the dimension is equal to $i$, and $(S^{n_0}\cdot e_{min})^*\cdot \ones (e_{min})$ checks if the dimension is greater or equal than $n_0$.
 
 
 
