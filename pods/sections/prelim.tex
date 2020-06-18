@@ -1,12 +1,72 @@
-Recall the basics of \lang\ \cite{matlang}, and linear algebra. Perhaps stress where \lang\ falls short with respect to natural linear algebra questions.
+%!TEX root = /Users/fgeerts/Documents/MLforloops/pods/main.tex
+We start by recalling the matrix query language \lang, introduced in \cite{matlang}, which serves as our starting point.
 
-\bigskip
+\smallskip
+\noindent
+\textbf{Syntax.}\,  Let $\Mvar = \{V_1, V_2, \ldots\}$ be a countably infinite set of \textit{matrix variables} and $\Fun=\bigcup_{k>1}\Fun_k$ be a set of \textit{functions} with
+$\Fun_k$ a set of functions of the  form $f:\RR^k \to \RR$, where $\RR$ denotes the set of real numbers. The syntax of \lang\ expressions is defined by the following grammar\footnote{The original syntax also permits the operator $\llet$, which replaces every occurrence of $V$ in $e_2$ with the value of $e_1$. Since this is just syntactic sugar, we omit this operator. We also explicitly include matrix addition and scalar multiplication, although these can be simulated by pointwise function applications. Finally, we use transposition instead of conjugate transposition since we work with matrices over the reals.}:
 
-$\dim(M)$ gives the dimension of the matrix $M$, where $\dim(M)\in \mathbb{N}^2$. We use $\mtr{\mathbb{F}}$ to denote the set of all matrices over some field $\mathbb{F}$.
 
-\bigskip
+\begin{tabular}{lcll}
+$e$ & $::=$ & $V\in \Mvar$ & (matrix variable)\\
+ & $|$ & $e^T$ & (transpose)\\ 
+ & $|$ & $\ones(e)$ & (one-vector)\\ 
+ & $|$ & $\diag(e)$ & (diagonalization of a vector)\\  
+ & $|$ & $e_1 \cdot e_2$ & (matrix multiplication)\\   
+ & $|$ & $e_1 + e_2$ & (matrix additions)\\   
+ & $|$ & $a\times e$ & (scalar multiplication, $a\in\RR$)\\   
+  & $|$ & $f(e_1,\ldots ,e_k)$ & (pointwise application of $f\in\Fun_k$).    
+\end{tabular}
+
+As an example \lang\ expression, consider 
+$\mathsf{cwalk}:= (\ones(V))^T\cdot f_{\odot}\bigl(V\cdot V, \diag(\ones(V)\bigr)\cdot\ones(V)$ with $f_\odot:\RR^2\to\RR:(x,y)\mapsto x\cdot y$.
+To define the semantics of \lang\ expressions, we first require the notions 
+of a schema and instance. A \lang\ \textit{schema} $\Sch$ is a pair $\Sch=(\Mnam,\size)$, where $\Mnam\subset \Mvar$ is a finite set of matrix variables, and $\size: \Mvar \mapsto \DD\times \DD$ is a function that maps each matrix variable to a pair of \textit{size symbols}. The $\size$ function helps us determine whether certain matrix operations, such as multiplication, can be performed for matrices adhering to a schema. 
+We denote size symbols by letters $\alpha,\beta,\gamma$. We also assume that $1\in \DD$. For our example expression $\mathsf{cwalk}$ we let $\Sch$  consist of $\Mnam:=\{V\}$ and $\size(V):=(\alpha,\alpha)$.
+To help us determine whether a \lang\ expression can always be evaluated, we define the \textit{type} of an expression $e$, with respect to a schema $\Sch$, denoted by $\ttype(e)$ as follows:
+\begin{itemize}
+\item $\ttype(V):= \size(V)$, for a matrix variable $V$,
+\item $\ttype(e^T):= (\beta,\alpha)$, if $\ttype(e)=(\alpha,\beta)$, and undefined if $\ttype(e)$ is undefined;
+\item $\ttype(\ones(e)):= (\alpha,1)$, if $\ttype(e)=(\alpha,\beta)$, and undefined if $\ttype(e)$ is undefined;
+\item $\ttype(\diag(e)):= (\alpha,\alpha)$, if $\ttype(e)=(\alpha,1)$, and undefined otherwise;
+\item $\ttype(e_1 \cdot e_2):= (\alpha,\gamma)$, whenever $\ttype(e_1)=(\alpha,\beta)$, and $\ttype(e_2)=(\beta,\gamma)$, and undefined otherwise;
+\item $\ttype(e_1 + e_2):=\ttype(e_1)$ if $\ttype(e_1)=\ttype(e_2)$, and undefined otherwise;
+\item $\ttype(a\times e):=\ttype(e)$; and
+\item $\ttype(f(e_1,\ldots ,e_k)):= (\alpha,\beta)$, whenever $\ttype(e_1) = \ldots = \ttype(e_k) = (\alpha,\beta)$, and $f\in\Fun_k$, and is undefined otherwise.
+\end{itemize}
+When $\Sch$ is clear from the context we simply write $\type(e)$. We call an expression \textit{well-typed} according to the schema $\Sch$, if it has a defined type. It is readily verified that $\mathsf{cwalk}$ is well-typed and more specifically, $\ttype(\mathsf{cwalk})=(1,1)$.
+Note that a well-typed expression can be evaluated regardless of the actual sizes of the matrices assigned to matrix variables, as we describe next.
+
+% $\dim(M)$ gives the dimension of the matrix $M$, where $\dim(M)\in \mathbb{N}^2$. We
+\smallskip
+\noindent
+\textbf{Semantics.}\, We use $\mtr{\RR}$ to denote the set of all real matrices and for 
+$A\in\mtr{\RR}$, $\dim(A)\in\NN^2$ denotes its dimensions.
+ % over some field $\mathbb{F}$.
+A \lang\ \textit{instance} $\I$ over a schema $\Sch$ is a pair $\I = (\dom,\conc)$, where $\dom : \DD \mapsto \NN$ assigns a value to each size symbol (and thus in turn  dimensions to each matrix variable), and $\conc : \Mnam \mapsto \mtr{\RR}$ assigns a concrete matrix to each matrix variable $M\in \Mnam$, such that $\dim(\conc(M)) = \dom(\alpha)\times \dom(\beta)$, where $\size(M) = (\alpha,\beta)$. That is, an instance tells us the dimensions of each matrix variable, and also the concrete matrices assigned to the variable names in $\Mnam$. We assume that $\dom(1) = 1$, for every instance $\I$. If $e$ is a well-typed expression according to $\Sch$, then we denote by $\sem{e}{\I}$ the matrix obtained by evaluating $e$ over $\I$, and define it as follows:
+\begin{itemize}
+\item $\sem{M}{\I} = \conc(M)$, for $M\in \Mnam$;
+\item $\sem{e^T}{\I} = \sem{e}{\I}^T$, where $A^T$ is the conjugate transpose of a matrix $A$;
+\item $\sem{\ones(e)}{\I}$ is a $n\times 1$ size vector with 1 as all of its entries, where $\dim(\sem{e}{\I})=(n,m)$;
+\item $\sem{\diag(e)}{\I}$ is a diagonal matrix with the vector $\sem{e}{\I}$ on its main diagonal, and zero in every other position;
+\item $\sem{e_1\cdot e_2}{\I} = \sem{e_1}{\I} \cdot \sem{e_2}{\I}$;
+\item $\sem{e_1+ e_2}{\I} = \sem{e_1}{\I} + \sem{e_2}{\I}$;
+\item $\sem{a\times e}{\I} = a\times \sem{e}{\I}$; and
+\item $\sem{f(e_1,\ldots ,e_k)}{\I}$ is a matrix $A$ of the same size as $\sem{e_1}{\I}$, and where $A_{ij}$ has the value $f(\sem{e_1}{\I}_{ij},\ldots ,\sem{e_k}{\I}_{ij})$.
+\end{itemize}
+This concludes the specification of \lang. For our example expression $\mathsf{cwalk}$,  consider the instance $\I$ such that $\dom(\alpha)=n$ and $\conc(V)$ is an adjacency matrix $A_G$ of an undirected graph $G$ consists of $n$ vertices. Then, $\sem{\mathsf{cwalk}}{\I}$ returns the number of paths of length two in $G$ which start in and end at the same vertices.
+
+Although \lang\ forms a solid basis for a matrix query language, it is limited in expressive power. Indeed, \lang\ is subsumed by first order logic with aggregates that uses only three variables \cite{matlang}. As consequence, no \lang\ expression exists that can compute the transitive closure of a graph (represented by its adjacency matrix) or can compute the inverse of a matrix. Furthermore, no \lang\ expression exists which detects four-cliques in a graph \cite{matlang}. Rather than extending \lang\ with specific linear algebra operators, such as matrix inversion, we next introduce a limited form of recursion in \lang.
+As we will see shortly, this extension allows us to express many linear algebra algorithms, including matrix inversion and testing for cliques of arbitrary size.
 
 %FIRST TRY
+
+%
+%
+% Recall the basics of \lang\ \cite{matlang}, and linear algebra. Perhaps stress where \lang\ falls short with respect to natural linear algebra questions.
+%
+% \bigskip
+
 %
 %Since the baseline for our study is the \lang\ language introduced in \cite{matlang}, here we briefly recap its syntax and semantics. Let $\Mnam = \{M_1, M_2,\ldots\}$ be a countably infinite set of {\em matrix names}, $\Mvar = \{V_1, V_2, \ldots\}$ a countably infinite set of {\em matrix variables}, and $\Fun$ a set of functions $f:\mathbb{C}^n \mapsto \mathbb{C}$, where $\mathbb{C}$ denotes the set of complex numbers. A {\em vocabulary} $\Voc$ is a triple $\Voc = (\Mnam', \Mvar, \Fun)$, where $\Mnam'\subset \Mnam$ is a finite subset of matrix names. An {\em $\Voc$-instance} $\I$ maps every $M\in \Mnam'$ to a concrete matrix, and assigns a dimension $(m,n)$, with $m,n\in \mathbb{N}$ to every matrix variable. That is, if $M\in \Mnam'$, then $\I(M)$ is a matrix over $\mathbb{C}$ of some dimension, and if $V\in \Mvar$, then $\ddim(\I(V)) = (m,n)$; that is, $V$ is a placeholder for a matrix of a specific dimension\footnote{Note that in \cite{matlang} the authors introduce the notion of abstract typing for vocabulary symbols. To simplify the notation, and stay closer to standard definitions of First order logic, we opt to assign matrix types to variables directly on an instance level.}.
 %
@@ -49,43 +109,5 @@ $\dim(M)$ gives the dimension of the matrix $M$, where $\dim(M)\in \mathbb{N}^2$
 
 
 
-
-Since the baseline for our study is the \lang\ language introduced in \cite{matlang}, here we briefly recap its syntax and semantics. Let $\Mvar = \{V_1, V_2, \ldots\}$ be a countably infinite set of {\em matrix variables}, and $\Fun$ a set of functions $f:\mathbb{C}^n \mapsto \mathbb{C}$, where $\mathbb{C}$ denotes the set of complex numbers. The syntax of \lang\ expressions is defined by the following grammar\footnote{The original syntax also permits the operator $\llet$, which replaces every occurrence of $M$ in $e_2$ with the value of $e_1$. Since this is just syntactic sugar, we omit this operator.}:
-
-\medskip
-
-\begin{tabular}{lcll}
-$e$ & $::=$ & $V\in \Mvar$ & (matrix variable)\\
-% & $|$ & $\llet$ & (local binding)\\
- & $|$ & $e^*$ & (conjugate transpose)\\ 
- & $|$ & $\ones(e)$ & (one-vector)\\ 
- & $|$ & $\diag(e)$ & (diagonalization of a vector)\\  
- & $|$ & $e_1 \cdot e_2$ & (matrix multiplication)\\   
- & $|$ & $f(e_1,\ldots ,e_n)$ & (pointwise application of $f$).    
-\end{tabular}
-
-\medskip
-
-To define the semantics of \lang\ expressions, we first require the notion of an instance, and a schema. A \lang\ {\em schema} $\Sch$ is a pair $\Sch=(\Mnam,\size)$, where $\Mnam\subset \Mvar$ is a finite set of matrix variables, and $\size: \Mvar \mapsto \DD\times \DD$ is a function that maps each matrix variable to a pair of {\em size symbols}. The idea here is that since different matrices can have different sizes, the function $\size$ helps us determine whether certain matrix operations, such as multiplication, can be performed for matrices adhering to a schema. We denote size symbols by letters $\alpha,\beta,\gamma$. We also assume that $1\in \DD$. To help us determine whether a \lang\ expression can always be evaluated, we define the {\em type} of an expression $e$, with respect to a schema $\Sch$, denoted by $\ttype(e)$ as follows:
-\begin{itemize}
-\item $\ttype(V) = \size(V)$, for a matrix variable $V$,
-\item $\ttype(e^*) = (\beta,\alpha)$, if $\ttype(e)=(\alpha,\beta)$, and undefined if $\ttype(e)$ is undefined,
-\item $\ttype(\ones(e)) = (\alpha,1)$, if $\ttype(e)=(\alpha,\beta)$, and undefined if $\ttype(e)$ is undefined,
-\item $\ttype(\diag(e)) = (\alpha,\alpha)$, if $\ttype(e)=(\alpha,1)$, and undefined otherwise,
-\item $\ttype(e_1 \cdot e_2) = (\alpha,\gamma)$, whenever $\ttype(e_1)=(\alpha,\beta)$, and $\ttype(e_2)=(\beta,\gamma)$, and is undefined otherwise, and
-\item $\ttype(f(e_1,\ldots ,e_n)) = (\alpha,\beta)$, whenever $\ttype(e_1) = \ldots = \ttype(e_k) = (\alpha,\beta)$, and $f:\mathbb{C}^n \mapsto  \mathbb{C}$, and is undefined otherwise.
-\end{itemize}
-
-\medskip
-
-When $\Sch$ is clear from the context we will simply write $\type(e)$. We call an expression {\em well-typed} according to the schema $\Sch$, if it has a defined type. Note that a well-typed expression can be evaluated regardless of the actual sizes of the matrices assigned to matrix variables, as we describe next.
-
-A \lang\ {\em instance} $\I$ over a schema $\Sch$, is a pair $\I = (\dom,\conc)$, where $\dom : \DD \mapsto \mathbb{N}$ assigns a value to each size symbol (and thus in turn a dimension to each matrix variable), and $\conc : \Mnam \mapsto \mtr{\mathbb{C}}$ assigns a concrete matrix to each matrix variable $M\in \Mnam$, such that $\dim(\conc(M)) = \dom(\alpha)\times \dom(\beta)$, where $\size(M) = (\alpha,\beta)$. That is, an instance tells us the dimension of each matrix variable, and also the concrete matrices assigned to the variable names in $\Mnam$. We assume that $\dom(1) = 1$, for every instance $\I$. If $e$ is a well-typed expression according to $\Sch$, then we denote by $\sem{e}{\I}$ the matrix obtained by evaluating $e$ over $\I$, and define it as follows:
-\begin{itemize}
-\item $\sem{M}{\I} = \conc(M)$, for $M\in \Mnam$;
-\item $\sem{e^*}{\I} = \sem{e}{\I}^*$, where $M^*$ is the conjugate transpose of a matrix $M$;
-\item $\sem{\ones(e)}{\I}$ is a $n\times 1$ size vector with 1 as all of its entries;
-\item $\sem{\diag(e)}{\I}$ is a diagonal matrix with the vector $\sem{e}{\I}$ on its main diagonal, and zero in every other position;
-\item $\sem{e_1\cdot e_2}{\I} = \sem{e_1}{\I} \cdot \sem{e_2}{\I}$;
-\item $\sem{f(e_1,\ldots ,e_n)}{\I}$ is a matrix $A$ of the same size as $\sem{e_1}{\I}$, and where $A_{ij}$ has the value $f(\sem{e_1}{\I}_{ij},\ldots ,\sem{e_n}{\I}_{ij})$.
-\end{itemize}
+%
+% Since the baseline for our study is the \lang\ language introduced in \cite{matlang}, here we briefly recap its syntax and semantics.
