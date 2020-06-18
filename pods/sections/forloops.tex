@@ -37,7 +37,7 @@
 %\end{tabular}
 
 
-To extend \lang\ we take inspiration from classical Linear Algebra algorithms, such as those described in \cite{num}. Many of these algorithms are based on \textit{for loops} and in which the termination conditions for the loops are determined by matrix dimensions. We have seen how shortest path can be computed using for loops in the Introduction. As an other example, consider the following program which takes
+To extend \lang\ we take inspiration from classical linear algebra algorithms, such as those described in \cite{num}. Many of these algorithms are based on \textit{for loops} and in which the termination conditions for the loops are determined by matrix dimensions. We have seen how shortest path can be computed using for loops in the Introduction. As an other example, consider the following program which takes
 an $n\times n$ matrix $A$ as input:
 \begin{tabbing}
 $4\mathsf{clique}:=0$\\
@@ -56,13 +56,17 @@ where $f_{>0}:\RR\to\RR$ such that $f_{>0}(x):=1$ if $x>0$ and $f_{>0}(x):=0$ ot
 We see later than more advanced linear algebra operators such as Gaussian eliminations, or computing an inverse of a matrix, can be expressed in terms of such for loops. With this motivation in mind, we next extend \lang\ with for loops. We refer to this extension as \langfor. This section is organized as follows.
 
 
-\subsection{Syntax and Semantics}
+\subsection{\langfor}
+We start by defining our extension of \lang.
+
 %
 %
 %  which commonly use loops whose termination conditions are determined by the matrix dimension, and will allow us to express many properties of interest.
 %
 % As before, we assume a countably infinite set of matrix variables $\Mvar = \{V_1, V_2, \ldots\}$, and a set $\Fun$  of functions $f:\mathbb{C}^n \mapsto \mathbb{C}$. Additionally, for each $n\in \mathbb{N}$, we denote by $e_1^n,\ldots ,e_n^n$ the complete list of canonical vectors of dimension $n$; that is, $e_1^n = [1\ 0 \cdots 0]^*$, $e_2^n = [0\ 1\ 0 \cdots 0]^*$, etc. When $n$ is clear from the context we willsimply write $e_1,e_2$, etc. 
-The syntax of \langfor is defined as \lang\, but with an extra rule in the grammar:
+\smallskip
+\noindent
+\textbf{Syntax and semantics.}\, The syntax of \langfor is defined as \lang\, but with an extra rule in the grammar:
 \medskip
 
 \begin{tabular}{lcll}
@@ -70,7 +74,9 @@ The syntax of \langfor is defined as \lang\, but with an extra rule in the gramm
 \end{tabular}
 
 \medskip
-Intuitively, $X$ is a matrix variable which is iteratively updated according to the expression $e$ and in which the iterations are controlled by the dimension of the (vector) variable $v$. Given a schema $\Sch$, the type of a \langfor expression, denoted $\ttype(e)$, is defined inductively as in \lang\, but with following rule:
+Intuitively, $X$ is a matrix variable which is iteratively updated according to the expression $e$. The iterations of the form ``\texttt{for} $i\in [1..n]$'' will be simulated by letting $v$ loop over \textit{canonical vectors} of dimension $n$. That is,
+for each $n\in \mathbb{N}$, we denote by $b_1^n,\ldots ,b_n^n$ the complete list of canonical vectors of dimension $n$; that is, $b_1^n = [1\ 0 \cdots 0]^T$, $b_2^n = [0\ 1\ 0 \cdots 0]^T$, etc. When $n$ is clear from the context we simply write $b_1,b_2,\ldots$. In addition, $e$ may depend on $v$. Let us make this more precise.
+Given a schema $\Sch$, the type of a \langfor expression, denoted $\ttype(e)$, is defined inductively as in \lang\, but with following rule:
 \begin{itemize}
 \item $\ttype(\ffor{v}{X}{e}) = \ttype(e)$, if $\ttype(X) = \ttype(e)$, and $\ttype(v) = (\gamma,1)$; and is undefined otherwise.
 \end{itemize}
@@ -96,11 +102,11 @@ We remark that in the expression $\ffor{v}{X}{e}$, we require that $\ttype(X) = 
 % As we will see below, evaluating $e$ will depend on a canonical vector stored in $v$, and the current content of $X$. %Another difference from \lang\ is that we allow function application only on scalars (more precisely, on $1\times 1$ matrices).
 %
 A \langfor\ expression $e$ is well-typed over a schema $\Sch$ if its type is defined. For well-typed expressions we can define the evaluation, just as for \lang. It remains
-to define the semantics of $\ffor{v}{X}{e}$ over an instance $\I$. We define its semantics iteratively, as follows:
+to define the semantics of $\ffor{v}{X}{e}$ over an instance $\I$. We need the following notation. Let $\I$ be an instance and $V\in \Mnam$. Then $\I[V := A]$ denotes an instance that coincides with $\I$, apart from the fact that the value of the matrix variable $V$ is the matrix $A$. We now define:
 \begin{itemize}
 \item Let $\ttype(v)= (\gamma,1)$, and $\ttype(e) = (\alpha,\beta)$. Set $n := \dom(\gamma)$.
 \item Let $A_0 = \mathbf{0}$, be the null matrix of size $\dom(\alpha)\times \dom(\beta)$.
-\item For $i=1,\ldots n$, compute $A_i = \sem{e}{\I[v := e^{n}_i, X:= A_{i-1}]}$.
+\item For $i=1,\ldots n$, compute $A_i = \sem{e}{\I[v := b^{n}_i, X:= A_{i-1}]}$.
 \item Finally, set $\sem{\ffor{v}{X}{e}}{\I} = A_{n}$.
 \end{itemize}
 
@@ -136,12 +142,19 @@ to define the semantics of $\ffor{v}{X}{e}$ over an instance $\I$. We define its
 %%needs dimensions:
 %Next we illustrate the versatility of the introduced language. To begin, we note that, unlike the original \lang\ proposal, we have at our disposals canonical vectors of arbitrary dimension. The most basic use of canonical vectors is for accessing a position $ij$ of some matrix $M$, a property which lies outside of the scope of \lang. For this, we can simply use the expression $(e_i^{n})^*\cdot M \cdot e_j^m$, where $M$ is a matrix of size $m\times n$, $e_i^n$ is the $i$th canonical vector of dimension $n$, and likewise, $e_j^m$ is the $j$th canonical vector of dimension $m$.
 
-To illustrate how \langfor works, we next present a series of properties that the language can express, introduce some operators that will be commonly used throughout the paper, and show how the proposed language captures original \lang.
+For a better understanding how \langfor  works, we next present a series of properties that the language can express and introduce some operators that will be commonly used throughout the paper.
+% , and show how the proposed language captures original \lang.
 
-\medskip
 
-\noindent{\bf For loops.} 
-The biggest novelty of $\langfor$ is the for operator. To illustrate how this operator can be used, we first show how one can construct the identity matrix of needed dimension in \langfor. For this, it suffices to use the expression $$\ffor{v}{X}{X + v\cdot v^*}.$$ For this expression to be well-typed, $v$ has to be a vector variable of type $\alpha\times 1$, and $X$ a matrix variable such that $\size(X) = (\alpha,\alpha)$. When evaluated over some instance $\I$, this loop starts by initializing $X$ as the null matrix of dimension $n\times n$, where $n=\dom(\alpha)$, and then adds to $X$ the matrix $e_1^n\cdot (e_1^n)^*$ in the first iteration, the matrix $e_2^n\cdot (e_2^n)^*$ in the second iteration, and so on, until $X$ equals the identity matrix of dimension $n\times n$ in the end.
+\smallskip
+\noindent
+\textbf{Examples.}
+As first example, we first show one can construct the identity matrix of a certain dimension. For this, it suffices to use the expression $$\ffor{v}{X}{X + v\cdot v^*}.$$ For this expression to be well-typed, $v$ has to be a vector variable of type $\alpha\times 1$, and $X$ a matrix variable such that $\size(X) = (\alpha,\alpha)$. When evaluated over some instance $\I$, this loop starts by initializing $X$ as the null matrix of dimension $n\times n$, where $n=\dom(\alpha)$, and then adds to $X$ the matrix $b_1^n\cdot (b_1^n)^T$ in the first iteration, the matrix $b_2^n\cdot (b_2^n)^T$ in the second iteration, and so on, until finally $b_n^n\cdot (b_n^n)^T$ is added. Hence, $X$ equals the identity matrix of dimension $n\times n$ in the end.
+
+As another example	
+
+% \noindent{\bf For loops.}
+% The biggest novelty of $\langfor$ is the for operator. To illustrate how this operator can be used, we first show how one can construct the identity matrix of needed dimension in \langfor.
 
 %%NOT DOABLE IF NO ACCESS TO DIMENSION
 %\noindent{\bf Elementary matrix operations.} Here we show the true value of adding canonical vectors to the language, by illustrating how they allow us to express elementary matrix operations \cite{linalg}:
@@ -153,7 +166,8 @@ The biggest novelty of $\langfor$ is the for operator. To illustrate how this op
 %\end{enumerate}
 %Analogously, we can perform these transformations of columns, by using the transposed matrix $M^*$, and the canonical vectors of appropriate dimension.
 
-
+To begin with, consider the expression $$v_{max} := \ffor{v}{X}{v}.$$
+we can easily obtain the last canonical vector using the expression
 \medskip
 
 \noindent{\bf Core operators} 
