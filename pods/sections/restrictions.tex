@@ -6,3 +6,63 @@ The general language is quite expressive, so it makes sense to study its natural
 \item Connect with logical quantifiers
 \item Connect with ARA
 \end{itemize}
+
+\subsection{Special Cases}
+\medskip
+
+\noindent{\bf Canonical summation.} Notice that when defining the identity matrix, we actually only update $X$ by adding some matrix to it. This restricted form of the $\texttt{for}$ loop will prove useful throughout the paper, and we will therefore introduce it a special operator. That is, we define:
+$$\Sigma v. e := \ffor{v}{X}{X + e}.$$
+
+Apart from computing the identity matrix, the summation operator also allows for computing the trace of a matrix $A$ using the expression $tr(A) := \Sigma v. v^*\cdot A \cdot v$. Interestingly enough, this restricted version of \texttt{for} already allows us to capture the \lang\ operators that are not present in the syntax of \langfor. More precisely, we have:
+\begin{itemize}
+%\item {\bf Multiplying a matrix by a scalar.} One of the fundamental operations is the ability to multiply a matrix by a scalar. While this operation is not explicitly present in \langfor, we can simulate it as follows. Let $f_c(x) := c\cdot x$. For an expression $e$ 
+%\item {\bf Function application.} Notice that in \lang, a function is applied pointwise to matrices of arbitrary size, while \langfor only allows functions that process matrices of size $1\times 1$. Using the summation operator we can lift this condition, and allow applying a function $f:\mathbb{C}^n \mapsto \mathbb{C}$ on expressions $e_1,\ldots ,e_n$ of arbitrary (but equal) type by writing 
+%$$\Sigma x_i \Sigma x_j. f(x_i^*\cdot e_1\cdot x_j, \ldots ,x_i^*\cdot e_n\cdot x_j) \cdot x_i\cdot x_j^*,$$
+%which simply reconstructs the matrix obtained by applying $f$ to every position of $e_1$ through $e_n$, by using the fact that for two canonical vectors $e_i^m$ and $e_j^n$, the product $e_i^m \cdot (e_j^n)^*$ defines a $m\times n$ matrix whose only non-zero entry is in the position $ij$. From now on we will abuse the notation and allow applying $f$ to an arbitrary matrix, and not only a $1\time 1$ matrix. PERHAPS USE THE SAME NOTATION AS MATLANG TO AVOID THIS THING ALTOGETHER?
+\item {\em One vector.} Using the function $f(x) := 1$, we can define $$\ones(e) := f(\Sigma v. e\cdot v).$$
+\item {\em Diagonal of a vector.} The operator $\ones(e)$ can be defined as:
+$$\diag(e) := \Sigma v. (v^*\cdot e) \cdot vv^*.$$
+\end{itemize}
+
+Using the observations above we obtain the following:
+\begin{corollary}
+\lang\ is subsumed by \langfor.
+\end{corollary}
+
+To show that the inclusion here is strict, we illustrate how one can detect whether a undirected graph has a four clique, which it is not definable in \lang~\cite{BrijderGBW19}. For this, we define an expression $f(u,v) := 1 - u^*\cdot v$. Notice that when $u$ and $v$ are interpreted by two canonical vector of the same dimension, we have that:
+\[
+  			f(u,v)=1-u^*v=\begin{cases}
+               0 \text{ if } u=v \\
+               1 \text{ if } u\neq v
+            \end{cases}
+		\]
+
+To distinguish four-cliques, we will need to determine whether we are dealing with four different nodes. For this, we will utilize the function $$g(u,v,w,r)=f(u,v)\cdot f(u,w)\cdot f(u,r)\cdot f(v,w)\cdot f(v,r)\cdot f(w,r),$$
+which, when evaluated over four canonical vectors of the same dimension, will give us 1 if and only if the four vectors are distinct. With this at hand, we can now define:		
+\begin{multline*}
+\texttt{4-clique}(A) := \ssum v_1.\ssum v_2. \ssum v_3. \ssum v_4.\\ (v_1^*Av_2)(v_1^*Av_3)(v_1^*Av_4)(v_2^*Av_3)(v_2^*Av_4)(v_3^*Av_4) \cdot
+\\g(v_1,v_2,v_3,v_4).
+\end{multline*}
+
+When $A$ is an adjacency matrix of an undirected graph $G$, then we have that $\texttt{4-clique}(A)$ is different from zero if and only if $G$ has a four-clique. Using this, and the fact that \lang\ is subsumed by First Order Logic with aggregates that uses only three variables \cite{matlang}, we immediately obtain the following:
+
+\begin{corollary}
+There is a  \langfor expression that is not expressible in \lang.
+\end{corollary}
+
+\medskip
+
+\noindent{\bf Product.} Analogously to the summation with respect to canonical vectors, we can define the product. More precisely, 
+if $e$ is an \langfor expression (that possibly uses the variable $v$), we would like to define the result of evaluating $\sem{e}{\I[v := e_1]} \cdot \sem{e}{\I[v := e_2]}\cdots \cdot \sem{e}{\I[v := e_n]}$, where the product is evaluated from left to right. For this purpose, we define the following operator:
+$$\sprod v. e=\ffor {v}{X}{X\cdot e + min(v)\cdot e}.$$
+Here we use the factor $min(v)\cdot e$ to handle the case of the first canonical vector which starts with $X$ being equal to the null matrix. 
+
+Using the product operator we can express multiple interesting properties. To begin with, we can compute the product of diagonal elements of a matrix using the expression $$dp(A) := \sprod v. v^*\cdot A \cdot v.$$
+
+Another property of interest is computing the transitive closure of a graph adjacency matrix $A$. It is well known the transitive closure of this matrix, denoted $tc(A)$ equals to the matrix consisting of non-zero entries of $(I + A)^n$, where $n$ is the dimension of $A$. Using the product operator we can define:
+$$tc(A) := f_{>0}(\sprod v. (I + A)),$$
+where $f_{>0}(x) := 1$ if $x>0$, and $f_{>0}(x) = 0$ otherwise, is used to make the result a zero-one matrix. Notice that the expression for $tc(A)$ ignores the canonical vectors, and simply multiplies the previous result with $(I + A)$, thus computing the desired value.
+
+Using the combination of canonical sum and product, we can also define more general operators over matrices, such as the power sum operator, which, given a square matrix $A$, computes $I + A + A^2 + \cdots + A^n$. This operator, denoted by $ps(A)$ can be defined as follows:
+$$ps(A) := \ssum v.\sprod w. \left( (w^*Zv)\cdot (A-I) + I\right),$$
+where $Z$ is the (strict) order matrix defined above. The outer loop here defines which power we compute. That is, when $v$ is the $i$th canonical vector, we compute $A^i$. Computing $A^i$ is achieved via the inner product loop, which uses $w^*Zv$ to determine whether $w$ comes before $v$ in the ordering of canonical vectors. When this is the case we multiply the current result by $A$, and when $w$ is greater then or equal to $v$, we use $I$ not to affect the already computed result.
