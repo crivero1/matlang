@@ -21,31 +21,30 @@
 % NOW ESTABLISH A LINK WITH UNIFORM CIRCUITS
 
 
-In this section we explore the expressive power of $\langfor$. Given that \langfor\ expressions compute functions over matrices whose entries are not only boolean, but can in fact be elements of an arbitrary field, a natural candidate for comparison is the class of arithmetic circuits \cite{allender}. As we show in the remainder of this section, \langfor\ actually captures the expressive power of arithmetic circuits. 
+In this section we explore the expressive power of $\langfor$. Given that \langfor\ expressions compute functions over matrices whose entries are not only boolean, but can in fact be arbitrary elements from $\RR$, a natural candidate for comparison is the class of arithmetic circuits \cite{allender}. As we show in the remainder of this section, \langfor\ actually captures the expressive power of arithmetic circuits. To show this result, we first recall the definition of arithmetic circuits.
+%
+%In order to derive this result, we first look at the connection of \langfor\ and Turing machines. When observing a \langfor\ expression over some schema, perhaps the most crucial characteristic is the fact that depending on the instance, the number of iterations that a for loop does changes, as does the size of the matrix computed by our expression. This is analogous to how the number of steps a Turing machine takes changes depending on the input size, and gives some intuition on why \langfor\ expressions might be able to simulate Turing machines. Indeed, what we show is that \langfor\ expressions can actually  simulate Turing machines that use linear space and run in polynomial time. Formally, we prove the following.
+%
+%\begin{theorem}
+%\label{th-tm-ml}
+%Let $T$ be a Turing machine with $\ell$ read only input tapes, a work tape, and an output tape. 
+%\end{theorem}
+%
+%Next we move to comparison with arithmetic circuits. 
 
-In order to derive this result, we first look at the connection of \langfor\ and Turing machines. When observing a \langfor\ expression over some schema, perhaps the most crucial characteristic is the fact that depending on the instance, the number of iterations that a for loop does changes, as does the size of the matrix computed by our expression. This is analogous to how the number of steps a Turing machine takes changes depending on the input size, and gives some intuition on why \langfor\ expressions might be able to simulate Turing machines. Indeed, what we show is that \langfor\ expressions can actually  simulate Turing machines that use linear space and run in polynomial time. Formally, we prove the following.
-
-\begin{theorem}
-\label{th-tm-ml}
-Let $T$ be a Turing machine with $\ell$ read only input tapes, a work tape, and an output tape. 
-\end{theorem}
-
-
-
-
-Next we move to comparison with arithmetic circuits. An {\em arithmetic circuit} $\Phi$ over a set $X=\{x_1,\ldots,x_n\}$ of variables is a directed
+An {\em arithmetic circuit} $\Phi$ over a set $X=\{x_1,\ldots,x_n\}$ of variables is a directed
 acyclic labelled graph. The vertices of $\Phi$ are called {\em gates} and denoted by $g_1,\ldots,g_m$;
 the edges in $\Phi$ are called {\em wires}. The children of a gate $g$ correspond to all gates
 $g'$ such that $(g,g')$ is an edge. The parents of $g$ correspond to all gates $g'$ 
-such that $(g,g')$ is an edge. The {\em in-degree} of a gate $g$ refers to its number of children,
-the {\em out-degree} to its number of parents. Gates with in-degree $0$ are called {\em input gates}
-and are labelled by either a variable in $X$ or a constant $0$ or $1$. Every other gate
-is labelled by either $+$ or $\times$ and are referred to as {\em sum gates} or {\em product gates}, respectively.
+such that $(g,g')$ is an edge. The {\em in-degree}, or a {\em fan-in}, of a gate $g$ refers to its number of children,
+the {\em out-degree} to its number of parents. We will not assume any restriction on the in-degree of a gate, and will thus consider circuits with unbounded fan-in. Gates with in-degree $0$ are called {\em input gates}
+and are labelled by either a variable in $X$ or a constant $0$ or $1$. All other gates
+are labelled by either $+$ or $\times$, and are referred to as {\em sum gates} or {\em product gates}, respectively.
 Gates with out-degree $0$ are called {\em output gates}. When talking about arithmetic circuits, one usually focuses on circuits with $n$ input gates and a single output gate.
 
 The {\em size} of $\Phi$, denoted by $|\Phi|$, is its number of gates. The {\em depth} of $\Phi$, denoted
-by $\mathsf{depth}(\Phi)$, is the length of the longest directed path from the any output gate to any of the input gates. When $\Phi$ has a single output gate, then $\Phi$ corresponds to a polynomial in $\mathbb{F}[X]$ in a natural way. In this case, the {\em degree} of $\Phi$ is the degree of the polynomial corresponding to $\Phi$.
-If $v_1,\ldots ,v_n$ are values in $\mathbb{F}$, then by we define the result of the circuit on this input as the value computed by the corresponding polynomial, and denote this value with $\Phi_k(v_1,\ldots ,v_k)$.
+by $\mathsf{depth}(\Phi)$, is the length of the longest directed path from the any output gate to any of the input gates. The {\em degree} of a gate is defined inductively: a leaf node has degree 1, a plus node has a degree equal to the maximum of  degrees of its children, and a product node has a degree equal to the sum of the degrees of its children. When $\Phi$ has a single output gate, the degree of $\Phi$, denoted by $\mathsf{degree}(\Phi)$, is defined as the degree of its output gate. If $\phi$ has a single output gate and its input gates take values from $\RR$, then $\Phi$ corresponds to a polynomial in $\RR[X]$ in a natural way. In this case, the {\em degree} of $\Phi$ equals the degree of the polynomial corresponding to $\Phi$.
+If $v_1,\ldots ,v_n$ are values in $\RR$, then we define the result of the circuit on this input as the value computed by the corresponding polynomial, and denote this value with $\Phi_k(v_1,\ldots ,v_k)$.
 
 %\domagoj{Should we already present the result without talking about uniformity?}
 
@@ -60,30 +59,32 @@ If $v_1,\ldots ,v_n$ are values in $\mathbb{F}$, then by we define the result of
 %
 %SHOULD EXPLAIN BRIEFLY HOW TO EVALUATE A CIRCUIT!
 
-In order to talk about efficient evaluation of arithmetic circuits in terms of complexity classes defined by Turing machines, we need a notion of uniformity of circuit families. An {\em arithmetic circuit family} is a set of arithmetic circuits $\{\Phi_n\mid n=1,2,\ldots\}$ where $\Phi_n$ has $n$ input variables. An arithmetic circuit family is {\em uniform} if there exists a \logspace-Turing machine\footnote{There are several versions of this definition that give a different amount of resources to the Turing machine. See \cite{allender} for an in-depth discussion on the subject.}, which on input $1^n$, returns an encoding of the arithmetic circuit $\Phi_n$ for each $n$.
+%In order to talk about efficient evaluation of arithmetic circuits in terms of complexity classes defined by Turing machines, we need a notion of uniformity of circuit families. 
+In order to talk about efficient evaluation of arithmetic circuits, we need a way to compute their output algorithmically. Namely, we need a way to access their components such as the children of some gate, the value of an input gate, the operation  carried out by the gate, etc. The most general way to do this is via Turing machines. Additionally, this will allow us to handle inputs of arbitrary size, similarly as when working with Turing machines. This idea is captured by the notion of uniform circuit families. 
+
+An {\em arithmetic circuit family} is a set of arithmetic circuits $\{\Phi_n\mid n=1,2,\ldots\}$ where $\Phi_n$ has $n$ input variables and a single output variable. An arithmetic circuit family is {\em uniform} if there exists a \logspace-Turing machine\footnote{There are several versions of this definition that give a different amount of resources to the Turing machine. See \cite{AllenderJMV98} for an in-depth discussion on the subject.}, which on input $1^n$, returns an encoding of the arithmetic circuit $\Phi_n$ for each $n$.
 % Additionally, we assume that there is a \logspace-machine which, when started on input $1^n$, and an encoding of a gate $g$, outputs the relevant information about $g$ in $\Phi_n$ (e.g. whether it is a sum or a product gate, the list of its children, whether it is an output gate, etc.).
-We observe that uniform arithmetic circuit families are necessarily of polynomial size. 
-We can then show the following.
+We observe that uniform arithmetic circuit families are necessarily of polynomial size, however, their degree can grow exponentially. A circuit family 
+$\{\Phi_n\mid n=1,2,\ldots\}$ is said to be of polynomial degree if $\mathsf{degree}(\Phi_n)\in O(p(n))$, for some polynomial $p(n)$. Similarly, a circuit family is of logarithmic depth, whenever $\mathsf{depth}(\Phi_n)\in O(logn)$. We can now show that \langfor\ subsumes uniform arithmetic circuit families that are of polynomial degree and logarithmic depth. 
 
 %\domagoj{The thing about the second machine is crucial, but it might be a bit confusing here, as we only need it to explain how one actually computes the output of a circuit. Because of this I'm thinking of maybe presenting the connection without uniformity.}
 
 \begin{theorem}
 \label{th-circuits-ml}
-For any uniform arithmetic circuit family $\{\Phi_n\mid n=1,2,\ldots\}$ there is a \langfor\ schema $\Sch$ and an expression $e_\Phi$ using a matrix variable $v$, with $\ttype(v)=(\alpha,1)$ and $\ttype(e) = (1,1)$, such that for any input $v_1,\ldots ,v_k$ to the circuit $\Phi_k$:
+For any uniform arithmetic circuit family $\{\Phi_n\mid n=1,2,\ldots\}$ of polynomial degree and logarithmic depth there is a \langfor\ schema $\Sch$ and an expression $e_\Phi$ using a matrix variable $v$, with $\ttype(v)=(\alpha,1)$ and $\ttype(e) = (1,1)$, such that for any input $v_1,\ldots ,v_n$ to the circuit $\Phi_n$:
 \begin{itemize}
-\item If $\I = (\dom,\conc)$ is a \lang\ instance such that $\dom(\alpha) = k$ and $\conc(v) = (v_1 \ldots v_k)^*$
-\item Then $\sem{e}{\I} = \Phi_k(v_1,\ldots ,v_k)$.
+\item If $\I = (\dom,\conc)$ is a \lang\ instance such that $\dom(\alpha) = n$ and $\conc(v) = (v_1 \ldots v_n)^*$
+\item Then $\sem{e}{\I} = \Phi_n(v_1,\ldots ,v_n)$.
 \end{itemize}
 \end{theorem}
 
-It is important to note that the expression $e_\Phi$ does not change depending on the input size, meaning that it is uniform in the same sense as the circuit family being generated by a single Turing machine. 
+It is important to note that the expression $e_\Phi$ does not change depending on the input size, meaning that it is uniform in the same sense as the circuit family being generated by a single Turing machine. The different input sizes for a \langfor\ instance are handled by the typing mechanism of the language. The expression $e_\Phi$ on input $(v_1,\ldots ,v_n)^*$ basically simulates depth-first evaluation of the arithmetic circuit $\Phi_n$. 
 
-NEED TO EXPLAIN THE PROOF + TM RESULT
+In order to do this, we consider an algorithm for evaluating $\Phi_n$ on input $(v_1,\ldots ,v_n)$ that maintains  two stacks: the gates-stack that tracks the current gate being evaluated, and the values-stack that stores the value that is being computed for this gate. The idea behind having two stacks is that whenever the number of items on the gates-stack is higher by one than the number of items on the values-stack, we know that we are processing a fresh gate, and we have to initialize its current value (to 0 if it is a plus gate, and to 1 if it is a product gate), and push it to the values-stack. We then proceed by processing the children of the head of the gates-stack one by one, and aggregate the results using sum if we are working with a plus gate, and product otherwise. 
 
-\begin{theorem}
-\label{th-tm-ml}
-Let...
-\end{theorem}
+In order to store these two stacks, we can use vectors of size $n$, where $n$ is the number of inputs. Here we crucially depend on the fact that the circuit is of logarithmic depth, and therefore the size of the two stacks is bounded by $n$ (apart from the portion before the asymptotic bound kicks-in, which can be hard coded into the formula). 
+
+...
 
 Now that we know that arithmetic circuits can be simulated using \langfor\ expressions, it is natural to ask whether the same holds in the other direction. That is, we are asking whether for each \langfor\ expression $e$ over some schema $\Sch$ there is a uniform family of arithmetic circuits computing precisely the same result depending on the input size. In order to show this, we need to extend the 
 
