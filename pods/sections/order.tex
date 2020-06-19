@@ -1,6 +1,24 @@
-\noindent{\bf Order.} The \texttt{for} operator assumes that canonical vectors come in some particular order, however, it does not give us an immediate access to this order. An interesting question is whether, using the \texttt{for} loops, we can define a \langfor expression which allow us to define the order of canonical vectors. Next we show that this is indeed possible. To begin with, we can easily obtain the last canonical vector using the expression $$v_{max} := \ffor{v}{X}{v}$$
+%!TEX root = /Users/fgeerts/Documents/MLforloops/pods/main.tex
+%
+%
+% \noindent{\bf Order.}
+With the introduction of \texttt{for} loops we not only extend \lang\ with bounded recursion, we also introduce order information. Indeed, the semantics of the \texttt{for} operator assumes that the canonical vectors $b_1,b_2,\ldots$
+are accessed in this order. It implies, among other things, that \langfor\ expressions are not permutation-invariant.
+We can, for example, return the bottom right-most entry in a matrix. Indeed, consider the expression $v_{max} := \ffor{v}{X}{v}$ which, for it to well-typed requires both $v$ and $X$ to be of type $(\alpha,1)$. Then, $\sem{v_{max}}{\I}=b_n^n$, for $n=\dom(\alpha)$, simply because the $X=\mathbf{0}$ initially, but $X$ will be overwritten by $b_1^n,b_2^n,\ldots,b_n^n$, in this order. Hence, at the end of the evaluation $b_n^n$ is returned.
+To extract the bottom right-most entry we now simply use $v_{max}^T\cdot M\cdot v_{max}$.
 
-The fundamental property of iteration we use here is that the result variable is always initiated with the null matrix. Therefore the loop above will simply keep on storing the current canonical vector before returning the final one. The ability to do this sort of manipulation was one of the reasons why we initiate $A_0$ in the semantics of \texttt{for} to null matrix.
+
+%
+% assumes that canonical vectors come in some particular order.
+
+
+
+ however, it does not give us an immediate access to this order. An interesting question is whether, using the \texttt{for} loops, we can define a \langfor expression which allow us to define the order of canonical vectors. Next we show that this is indeed possible. 
+ 
+ \floris{I am here. Not sure how insightful details about the encodings are. Should we just state that we can do it?}
+ % To begin with, we can easily obtain the last canonical vector using the expression $$v_{max} := \ffor{v}{X}{v}$$
+%
+% The fundamental property of iteration we use here is that the result variable is always initiated with the null matrix. Therefore the loop above will simply keep on storing the current canonical vector before returning the final one. The ability to do this sort of manipulation was one of the reasons why we initiate $A_0$ in the semantics of \texttt{for} to null matrix.
 
 To define an order relation for canonical vectors, notice that the following matrix:
 \[
