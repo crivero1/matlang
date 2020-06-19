@@ -1,0 +1,52 @@
+The real power of \langfor comes from the fact that \texttt{for} loops allow us to express many classical linear algebra algorithms. Here we illustrate this by showing how to compute the $LU$ factorization of a matrix using Gaussian eliminations, which is one of the most commonly used matrix algorithms. Recall that $A$ is said to be LU factorizable if there exists matrices $T_1,\ldots, T_{n}$ where $T_i=E_{n}^{(i)}\cdots E_{i+1}^{(i)}$ for some elementary matrices $E_{j}^{(i)}=I+\alpha_{ij}\cdot e_{i}e_{j}^{*}$ such that $T_{n}\cdots T_1A=U$ holds, where $U$ is an upper triangular matrix.
+
+Now, assume that $A$ is a square matrix which allows $LU$ factorization without row pivoting (we deal with this case later on). This means that after reducing the column $i$ of $A$ (i.e. we make all of the entries below the diagonal zero in the column $i$), we will end up with a matrix which has the element in position $i+1,i+1$ different from zero, for each $i$ strictly less than the dimension of $A$. 
+
+To reduce the first column of $A$ it suffices to multiply $A$ from the left with the matrix $T_1 := I + c_1\cdot e_1^*$, where the vector $I$ is the identity matrix, $e_1$ is the first canonical vector, and $c_1$ is the vector 
+\[
+c_1 :=
+\begin{bmatrix}
+    0 \\
+    \alpha_{21} \\
+    \vdots \\
+    \alpha_{n1}
+\end{bmatrix},
+\]
+with $\alpha_{j1} := -\frac{A_{j1}}{A_{11}}$ is the number with which we need to multiply the first row of $A$ in order to reduce the row $j$ of $A$. More generally, if $A$ is reduced up to column $i-1$, reducing the $i$th column is achieved by computing $T_i \cdot A$, where $T_i := I + c_i\cdot e_i^*$, with $c_i$ being the vector with zeros up to position $i$, and with the value $-\frac{A_{ji}}{A_{ii}}$ in position $j > i$. To express the matrices $T_i$ in \langfor we will use the following expression:
+$$\ccol{A}{y} := \ffor{v}{X}{(y^*\cdot Z_{<} \cdot v)(v^*\cdot A \cdot y)v + X},$$
+which, when $y$ is interpreted by the $j$th canonical vector, computes the vector which has zeroes in positions $1\ldots j$, and values $A_{ij}$ in positions $i>j$. Intuitively, the product $y^*\cdot Z_{<}\cdot v$ makes all positions up to $j$ equal zero, and $v^*\cdot A\cdot y$ extracts the element $A_{ij}$ of $A$ when $v$ is interpreted by the $i$th canonical vector, and $y$ by the $j$th one.
+
+
+
+Using this expression, we can now compute $T_i$s by writing:
+$$\red{A}{y} := I + f_/(\ccol{A}{y},-(y^*\cdot A\cdot y)\cdot \ones(y))y^*,$$
+where $f_/$ is the division function. Notice that $f_/(\ccol{A}{y},-(y^*\cdot A\cdot y)\cdot \ones(y))$ in fact computes the vectors $c_i$ defined above. The Gaussian elimination can now be performed by the following expression:
+$$
+U(A) :=  \left( \initf{I}{v}{X}{\red{X\cdot A}{v}\cdot X} \right) \cdot A,
+$$
+which computes the $U$ from the $LU$ factorization of $A$, whenever $A$ can be $LU$ factorized without row interchange. Notice that the latter assumption is crucial, since it will ensure that the element of $A$ in position $ii$ is different from zero after each \texttt{reduce} step. As explained previously, the inner \texttt{for} loop in fact computes the product of matrices $T_{n}\cdots T_1$, which in fact amounts to the matrix $L^{-1}$ from the $LU$ factorization of $A$. Given that each $T_i$ is easily invertible, we can also recover $L$.
+
+As stated previously, the construction above works under the assumption that no row pivoting is needed when performing the Gaussian eliminations, giving us:
+\begin{proposition}\label{prop:gauss}
+There is a \langfor expression $e(X)$ such that by interpreting $X$ with a matrix $A$ will result in the matrix $U$ from the $LU$ factorization of $A$ whenever $A$ is $LU$ factorizable.
+\end{proposition}
+
+Now, since $A^{-1}=U^{-1}L^{-1}$ and using that $U$ is upper triangular, we can obtain the determinant and inverse of $A$ and thus
+
+
+\thomas{I don't know how much of the proof goes here or if it's ok as it is.}
+
+
+ \begin{proposition}\label{prop:determinant}
+There is a \langfor expression $e(X)$ such that by interpreting $X$ with a matrix $A$ will result in the $1\times 1$ matrix with $\texttt{det}(A)$ in its only entry whenever $A$ is $LU$ factorizable.
+\end{proposition}
+
+\begin{proposition}\label{prop:inverse}
+There is a \langfor expression $e(X)$ such that by interpreting $X$ with a matrix $A$ will result in the matrix $A^{-1}$ whenever $A$ is $LU$ factorizable.
+\end{proposition}
+
+If $A$ needs row interchange to be $LU$ factorizable (this is, $PA$ is $LU$ factorizable) we say that $A$ is $PALU$ factorizable, where the factorization is $PA=LU$. To accomplish this, we need something extra.
+
+ \begin{proposition}\label{prop:palu}
+There is a \langfor expression $e(X)$ such that by interpreting $X$ with a matrix $A$ will result in the matrix $U$ from the $PALU$ factorization of $A$ whenever $A$ is $PALU$ factorizable if and only if there exists a \langfor expression $e'(X)$ such that by interpreting $X$ with a vector $A$ outputs a canonical vector $e_k$ where $A_k$ is the first non zero entry of $A$.
+\end{proposition}

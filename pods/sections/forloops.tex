@@ -37,7 +37,7 @@
 %\end{tabular}
 
 
-To extend \lang\ we take inspiration from classical linear algebra algorithms, such as those described in \cite{num}. Many of these algorithms are based on \textit{for loops} and in which the termination conditions for the loops are determined by matrix dimensions. We have seen how shortest path can be computed using for loops in the Introduction. As an other example, consider the following program which takes
+To extend \lang\ we take inspiration from classical linear algebra algorithms, such as those described in \cite{num}. Many of these algorithms are based on \textit{for loops} and in which the termination conditions for the loops are determined by matrix dimensions. We have seen how shortest path can be computed using for loops in the Introduction. As another example, consider the following program which takes
 an $n\times n$ matrix $A$ as input:
 \begin{tabbing}
 $4\mathsf{clique}:=0$\\
@@ -45,14 +45,14 @@ $4\mathsf{clique}:=0$\\
 \> \texttt{if} \= $i\neq j$ \& $i\neq k$ \& $i\neq \ell$ \& $j\neq k$ \& $j\neq \ell$ \& $k\neq\ell$ \texttt{do}:\\
 \> \> $4\mathsf{clique}:= 4\mathsf{clique} + A_{ij}\cdot A_{ik}\cdot A_{i\ell} \cdot A_{jk}\cdot A_{j\ell} \cdot A_{k\ell}$.  
 \end{tabbing}
-Clearly, when $A$ is the adjacency matrix of a graph $G$, $4\mathsf{clique}\neq 0$ if and only if $G$ contains a four-clique. As another example, again with an $n\times n$ matrix $A$ as input, is the following:
+Clearly, when $A$ is the adjacency matrix of a graph $G$, $4\mathsf{clique}\neq 0$ if and only if $G$ contains a four-clique. Another program, again with an $n\times n$ matrix $A$ as input, is the following:
 \begin{tabbing}
 B:=I\quad /* $I$ is the $n\times n$ identity matrix */\\\	
 \texttt{for}\=\,  $i\in[1..n]$.\\
 \> $B:=B\cdot (I+A)$\quad \\
 \textsf{TC}:=$f_{>0}(B)$,
 \end{tabbing}
-where $f_{>0}:\RR\to\RR$ such that $f_{>0}(x):=1$ if $x>0$ and $f_{>0}(x):=0$ otherwise. It is readily verified that when $A$ is the adjacency matrix of a graph $G$, then \textsf{TC} is the adjacency matrix of the transitive closure of $G$. These two examples already show that for loops allow computing properties beyond what \lang\ can express.
+where $f_{>0}:\RR\to\RR$ is such that $f_{>0}(x):=1$ if $x>0$ and $f_{>0}(x):=0$ otherwise. It is readily verified that when $A$ is the adjacency matrix of a graph $G$, then \textsf{TC} is the adjacency matrix of the transitive closure of $G$. These two examples already show that for loops allow computing properties beyond what \lang\ can express.
 We see more advanced examples, such as Gaussian elimination and computing an inverse of a matrix, later in the paper. With this motivation in mind, we next extend \lang\ with for loops. We refer to this extension as \langfor. 
 
 %
@@ -70,7 +70,7 @@ We see more advanced examples, such as Gaussian elimination and computing an inv
 
 \medskip
 Intuitively, $X$ is a matrix variable which is iteratively updated according to the expression $e$. We simulate iterations of the form ``\texttt{for} $i\in [1..n]$'' by letting $v$ loop over the \textit{canonical vectors} of dimension $n$. That is,
-for each $n\in \mathbb{N}$, we denote by $b_1^n,\ldots ,b_n^n$ the complete list of canonical vectors of dimension $n$; that is, $b_1^n = [1\ 0 \cdots 0]^T$, $b_2^n = [0\ 1\ 0 \cdots 0]^T$, etc. When $n$ is clear from the context we simply write $b_1,b_2,\ldots$. In addition, $e$ may depend on $v$. We next make this more precise and start by
+for each $n\in \mathbb{N}$, we denote by $b_1^n,\ldots ,b_n^n$ the complete list of canonical vectors of dimension $n$; that is, $b_1^n = [1\ 0 \cdots 0]^T$, $b_2^n = [0\ 1\ 0 \cdots 0]^T$, etc. When $n$ is clear from the context we simply write $b_1,b_2,\ldots$. In addition, $e$ may depend on $v$. We next make the semantics precise and start by
 declaring the type of loop expressions.
 Given a schema $\Sch$, the type of a \langfor expression $e$, denoted $\ttype(e)$, is defined inductively as in \lang\, but with following extra rule:
 \begin{itemize}
@@ -94,7 +94,7 @@ Given a schema $\Sch$, the type of a \langfor expression $e$, denoted $\ttype(e)
 % To extend \lang\, we add $\ffor{v}{X}{e}$ construct, which allows looping over the canonical vectors of a specified dimension, and updating the context of the variable $X$ in each iteration. The latter operator is i
 %
 % A \langfor {\em schema} $\Sch$ is a pair $\Sch=(\Mnam,\size)$, where $\Mnam\subset \Mvar$ is a finite set of matrix variables, and $\size: \Mvar \mapsto \DD\times \DD$ is a function that maps each matrix variable to a pair of {\em size symbols}. 
-We remark that in the expression $\ffor{v}{X}{e}$, we require that $\ttype(X) = \ttype(e)$ since, as this expression updates the content of the variable $X$ in each iteration using the result of $e$. We further restrict the type of 
+We remark that in the expression $\ffor{v}{X}{e}$, we require that $\ttype(X) = \ttype(e)$ as this expression updates the content of the variable $X$ in each iteration using the result of $e$. We further restrict the type of 
 $v$ to be of a vector type, i.e., $\ttype(v)=(\gamma,1)$, since $v$ will be instantiated with canonical vectors.
 % As we will see below, evaluating $e$ will depend on a canonical vector stored in $v$, and the current content of $X$. %Another difference from \lang\ is that we allow function application only on scalars (more precisely, on $1\times 1$ matrices).
 %
@@ -142,9 +142,13 @@ For a better understanding how \langfor  works, we provide some simple examples.
 % next present a series of properties that the language can express and introduce some operators that will be commonly used throughout the paper.
 % , and show how the proposed language captures original \lang.
 \subsection{Examples}
-We first show one can construct the identity matrix of a certain dimension. For this, it suffices to use the expression $$e_{\mathsf{Id}}:=\ffor{v}{X}{X + v\cdot v^T}.$$ For this expression to be well-typed, $v$ has to be a vector variable of type $\alpha\times 1$, and $X$ a matrix variable of type $(\alpha,\alpha)$. When evaluated over some instance $\I$, this loop starts by initializing $X$ as the zero matrix of dimension $n\times n$, where $n=\dom(\alpha)$, and then adds to $X$ the matrix $b_1^n\cdot (b_1^n)^T$ in the first iteration, the matrix $b_2^n\cdot (b_2^n)^T$ in the second iteration, and so on, until finally $b_n^n\cdot (b_n^n)^T$ is added. Hence, $X$ equals the identity matrix of dimension $n\times n$ in the end.
-As another example, recall the $\diag$ operator from \lang.	This operator is redundant in \langfor. Indeed, consider the \langfor\ expression $$e_{\mathsf{diag}}:=\texttt{for } v, X. X + (v^T\cdot e) \times v\cdot v^T,$$ where $e$ is a \langfor\  expression of type $(\alpha,1)$. One can verify that for the above expression to be well-typed, $v$ needs to be of type $(\alpha,1)$ and $X$ of type $(\alpha,\alpha)$. When evaluated over some instance $\I$, $X$ is initialised with the zero matrix of dimension $n\times n$, where $n=\dom(\alpha)$. Then, in iteration $i$, the $n\times n$-matrix 
-$b_i^T\cdot \sem{e}{\I}\times (b_i\cdot b_i^T)$ is added. In other words, on the $i$th element of the diagonal, represented by $b_i\cdot b_i^T$, the value $b_i^T\cdot\sem{e}{\I}=\sem{e}{\I}_{i}$ is added. That is, the expression $e_{\mathsf{diag}}$ evaluates to $\sem{\diag(e)}{\I}$. It also readily verified that the one-vector operator in \lang\ becomes redundant in \langfor. Furthermore, general function applications can be simulated in \langfor\ by just assuming function applications $f(e_1,\ldots,e_k)$ for $f\in\Fun_k$ where $\ttype(e_i)=(1,1)$ for all $i\in[k]$. Indeed,  consider the \langfor\ expression 
+We first show how one can construct the identity matrix of a certain dimension. For this, it suffices to use the expression $$e_{\mathsf{Id}}:=\ffor{v}{X}{X + v\cdot v^T}.$$ For this expression to be well-typed, $v$ has to be a vector variable of type $\alpha\times 1$ and $X$ a matrix variable of type $(\alpha,\alpha)$. When evaluated over some instance $\I$, this loop starts by initializing $X$ as the zero matrix of dimension $n\times n$, where $n=\dom(\alpha)$, and then adds to $X$ the matrix $b_1^n\cdot (b_1^n)^T$ in the first iteration, the matrix $b_2^n\cdot (b_2^n)^T$ in the second iteration, and so on, until finally $b_n^n\cdot (b_n^n)^T$ is added. Hence, $X$ equals the identity matrix of dimension $n\times n$ in the end.
+As another example, recall the $\diag$ operator from \lang.	This operator is redundant in \langfor. Indeed, a minor variation of the expression $e_{\mathsf{Id}}$ suffices:
+$$e_{\mathsf{diag}}:=\texttt{for } v, X. X + (v^T\cdot e) \times v\cdot v^T,$$ where $e$ is a \langfor\  expression of type $(\alpha,1)$. The difference with $e_{\mathsf{Id}}$ is that instead of the value $1$, the value 
+$b_i^T\cdot\sem{e}{\I}=\sem{e}{\I}_{i}$ is put on position $i$ on the diagonal, when evaluating $e_{\mathsf{diag}}$ on $\I$.
+%  One can verify that for the above expression to be well-typed, $v$ needs to be of type $(\alpha,1)$ and $X$ of type $(\alpha,\alpha)$. When evaluated over some instance $\I$, $X$ is initialised with the zero matrix of dimension $n\times n$, where $n=\dom(\alpha)$. Then, in iteration $i$, the $n\times n$-matrix
+% $b_i^T\cdot \sem{e}{\I}\times (b_i\cdot b_i^T)$ is added. In other words, on the $i$th element of the diagonal, represented by $b_i\cdot b_i^T$, the value $b_i^T\cdot\sem{e}{\I}=\sem{e}{\I}_{i}$ is added. 
+That is, the expression $e_{\mathsf{diag}}$ evaluates to $\sem{\diag(e)}{\I}$. It also readily verified that the one-vector operator in \lang\ becomes redundant in \langfor. Furthermore, general function applications can be simulated in \langfor\ by just assuming function applications $f(e_1,\ldots,e_k)$ for $f\in\Fun_k$ where $\ttype(e_i)=(1,1)$ for all $i\in[k]$. Indeed,  consider the \langfor\ expression 
 \begin{multline*}
 e=\texttt{for }v,X.\, X + \\ 
 \texttt{for }w,Y.\, Y + v\cdot f(v^T\cdot e_1\cdot w, \ldots, v^T\cdot e_n\cdot w)\cdot w^T. 
@@ -211,26 +215,25 @@ to start the iteration given some concrete matrix  originating from the result o
 with the difference that $A_0:=\sem{e_0}{\I}$. We observe, however, that $\initf{e_0}{v}{X}{e}$ can already
 be expressed in \langfor. In other words, we do not loose generality by assuming an initialisation of $A_0$ by $\mathbf{0}$.
 The key insight is that in \langfor\ we can check during evaluation whether or not
-the current canonical vector $b_i^n$ is equal to the $b_1^n$. This is not entirely trivial to see and is due to fact that \texttt{for} loops iterate over the canonical vectors in a fixed order. We will explore the impact of this order in the next section. In that section, we also define the operator $\mmin$, which when evaluated on an instance, will return $1$ if its input vector is $b_1^n$, and return $0$ otherwise. Given $\mmin$, consider the
+the current canonical vector $b_i^n$ is equal to the $b_1^n$. This is not entirely trivial to see and is due to fact that \texttt{for} loops iterate over the canonical vectors in a fixed order. We will explore the impact of this order in the next section. In that section, we also define the operator $\mmin$, which when evaluated on an instance, will return $1$ if its input vector is $b_1^n$, and return $0$ otherwise. Given $\mmin$, consider now the
 \langfor\ expression
  $$\ffor{v}{X}{\mmin{v}\cdot e(v,X/e_0) + (1-\mmin{v})\cdot e(v,X)},$$
- where we explicitly list $v$ and $X$ as matrix variable which $e$ potentially depends on, and where
+ where we explicitly list $v$ and $X$ as matrix variables on which $e$ potentially depends on, and where
  $e(v,X/e_0)$ denotes the expression obtained by replacing every occurrence of $X$ in $e$ with $e_0$.
 %
 %  As mentioned previously, all of the iterations in \texttt{for} loops start by initializing $A_0$ to the null matrix. We have already seen that this property is useful for defining the extremal points of our ordering, however, sometimes we would like to start the iteration using some concrete matrix $B$. Using the operator $\mmin$, we can actually achieve this as follows. First, let $\ffor{v}{X}{e(v,X)}$ be the \texttt{for} loop that begins iterating from the null matrix. Here we write $e(v,X)$ to denote the variables that $e$ potentially (but not necessarily) uses. To start the iteration from $B$ it now suffices to use the following loop:
 % $$\ffor{v}{X}{\mmin{v}\cdot e(v,X/B) + (1-\mmin{v})\cdot e(v,X)} \quad (\dag),$$
 % where $e(v,X/B)$ denotes the expression obtained by replacing every occurrence of $X$ in $e$ with $B$.
-When evaluating this expression on an instance $\I$, $A_0$ is initial set to zero vector, in the first iteration (when $\mmin{v}=1$ and thus $v=b_1^n$)
+When evaluating this expression on an instance $\I$, $A_0$ is initial set to the zero matrix, in the first iteration (when  $v=b_1^n$ and thus $\mmin{v}=1$)
 we have $A_1=\sem{e}{\I[v:=b_1^n,X:=\sem{e_0}{\I}]}$, and for consecutive iterations (when only the part related to $1-\mmin{v}$ applies) $A_i$ is updated as before. Clearly, the result of this evaluation is equal to
 $\sem{\initf{e_0}{v}{X}{e}}{\I}$. 
 
-As an illustration, we consider the transitive closure program from the beginning of this section. We can
+As illustration, we consider the transitive closure program from the beginning of this section. We can
 express this in \langfor. Indeed, consider the expression 
 $$
 f_{>0}\left(\initf{e_{\mathsf{Id}}}{v}{X}{X\cdot (e_{\mathsf{Id}}+M)}\right),
 $$
 where $e_{\mathsf{Id}}$ is the \langfor\ expression constructing the identity matrix $I$, as explained earlier.
-
 Observe that we start the loop using an initialisation by $I$. Hence, when evaluated on an instance $\I$ such that $M$ is an adjacency matrix $A$ of a graph, the expression above simply computes $(I+A)^n$, followed by the pointwise function application $f_{>0}$. In other words, it returns the adjacency matrix of the transitive closure of $G$.
 % \smallskip
 % \noindent
@@ -295,111 +298,59 @@ Observe that we start the loop using an initialisation by $I$. Hence, when evalu
 % $$\diag(e) := \texttt{for } v, X. X + (v^T\cdot e) \odot vv^T.$$
 % \end{itemize}
 %
-\section{Order!!}
-
-\noindent{\bf Order.} The \texttt{for} operator assumes that canonical vectors come in some particular order, however, it does not give us an immediate access to this order. An interesting question is whether, using the \texttt{for} loops, we can define a \langfor expression which allow us to define the order of canonical vectors. Next we show that this is indeed possible. To begin with, we can easily obtain the last canonical vector using the expression $$v_{max} := \ffor{v}{X}{v}$$
-
-The fundamental property of iteration we use here is that the result variable is always initiated with the null matrix. Therefore the loop above will simply keep on storing the current canonical vector before returning the final one. The ability to do this sort of manipulation was one of the reasons why we initiate $A_0$ in the semantics of \texttt{for} to null matrix.
-
-To define an order relation for canonical vectors, notice that the following matrix:
-\[
-Z_{eq} = \begin{bmatrix}
-    1 & 1 & \cdots &  1 \\
-    0 & \ddots & \ddots & \vdots \\
-    \hdotsfor{3} & 1 \\
-    0 & \cdots & \cdots & 1 
-\end{bmatrix},
-\] 
-has the property that $e_i^*\cdot Z_{eq} \cdot e_j$, for two canonical vectors $e_i,e_j$ of the same dimension, is equal to one if and only $i\leq j$, and is zero otherwise. $Z_{eq}$ can easily de defined in \langfor as follows:
-$$Z_{\text{eq}}=\ffor{v}{X}{X + \left[ (Xv_{max}) + v \right]v^* + vv^*_{max}},$$
-where $v_{max}$ is as defined above. The intuition behind this expression is that using the last canonical vector $v_{max}$, we have access to the final column of $X$ (via the product $X\cdot v_{max}$), to which we add the current canonical vector $v$, thus constructing $Z_{eq}$ by filling it column by column. By defining $$\lleq{u}{v} := u^*\cdot Z_{eq} \cdot v,$$
-we obtain an order relation that allows us to discern whether one canonical vector comes before the other in the order given by \texttt{for}. If we want a strict order, we can just use $Z_< := Z_{eq} - I$.
-
-Interestingly, we can also define the predecessor relation between canonical vectors. For this, we require the following matrix:
-%\[
-%S := \begin{bmatrix}
-%    0 & 1         & 0         & \cdots &  0 \\
-%    0 & \ddots & 1         & \cdots & 0 \\
-%    \vdots & \vdots & \ddots & \ddots & \vdots \\
-%    \hdotsfor{3} & \ddots & 1 \\
-%    0 & \cdots & \cdots & \cdots & 0 
-%\end{bmatrix}.
-%\]
-\[
-S = \begin{bmatrix}
-    0 & 1 & \cdots &  0 \\
-    0 & \ddots & \ddots & \vdots \\
-    \hdotsfor{3} & 1 \\
-    0 & \cdots & \cdots & 0
-\end{bmatrix},
-\] 
-Using this matrix, we have that for a canonical vector $e_i$:
-\[
-  			S\cdot e_i=\begin{cases}
-               e_{i-1}, \text{ if } i > 1 \\
-              \mathbf{0}, \text{ if } i = 1
-            \end{cases}
-		\]
-where $\mathbf{0}$ is a vector of zeros of the same type as $e_i$. Notice also that $\ones(v)^*\cdot S \cdot v$ is equal to zero, for a canonical vector $v$, if and only if $v = e_1$ is the first canonical vector, and zero otherwise. To define the first canonical vector in the order given by \texttt{for}, we can then write:
-$$v_{min} := \ffor{v}{X}{\mmin{v}\cdot v},$$
-where the expression $\mmin{v}$ is defined as $\mmin{v} := 1 - \ones(v)^*\cdot S \cdot v$, and, when evaluated over canonical vectors, will result in $1$ if and only if $v=e_1$ is the first canonical vector. Finally, we denote that $S$ can be defined using the following \langfor expression:
-\begin{multline*}
-S:= \texttt{for }v,X.\quad X + \\
-\left[ (1 - v^*v_{max})vv_{max}^* - (Xv_{max}) v_{max}^* + (Xv_{max})v^*\right].
-\end{multline*}
-
-
-
-
-\section{Algorithms in Linear Algebra.} The real power of \langfor comes from the fact that \texttt{for} loops allow us to express many classical linear algebra algorithms. Here we illustrate this by showing how to compute the $LU$ factorization of a matrix using Gaussian eliminations, which is one of the most commonly used matrix algorithms. Recall that $A$ is said to be LU factorizable if there exists matrices $T_1,\ldots, T_{n}$ where $T_i=E_{n}^{(i)}\cdots E_{i+1}^{(i)}$ for some elementary matrices $E_{j}^{(i)}=I+\alpha_{ij}\cdot e_{i}e_{j}^{*}$ such that $T_{n}\cdots T_1A=U$ holds, where $U$ is an upper triangular matrix.
-
-Now, assume that $A$ is a square matrix which allows $LU$ factorization without row pivoting (we deal with this case later on). This means that after reducing the column $i$ of $A$ (i.e. we make all of the entries below the diagonal zero in the column $i$), we will end up with a matrix which has the element in position $i+1,i+1$ different from zero, for each $i$ strictly less than the dimension of $A$. 
-
-To reduce the first column of $A$ it suffices to multiply $A$ from the left with the matrix $T_1 := I + c_1\cdot e_1^*$, where the vector $I$ is the identity matrix, $e_1$ is the first canonical vector, and $c_1$ is the vector 
-\[
-c_1 :=
-\begin{bmatrix}
-    0 \\
-    \alpha_{21} \\
-    \vdots \\
-    \alpha_{n1}
-\end{bmatrix},
-\]
-with $\alpha_{j1} := -\frac{A_{j1}}{A_{11}}$ is the number with which we need to multiply the first row of $A$ in order to reduce the row $j$ of $A$. More generally, if $A$ is reduced up to column $i-1$, reducing the $i$th column is achieved by computing $T_i \cdot A$, where $T_i := I + c_i\cdot e_i^*$, with $c_i$ being the vector with zeros up to position $i$, and with the value $-\frac{A_{ji}}{A_{ii}}$ in position $j > i$. To express the matrices $T_i$ in \langfor we will use the following expression:
-$$\ccol{A}{y} := \ffor{v}{X}{(y^*\cdot Z_{<} \cdot v)(v^*\cdot A \cdot y)v + X},$$
-which, when $y$ is interpreted by the $j$th canonical vector, computes the vector which has zeroes in positions $1\ldots j$, and values $A_{ij}$ in positions $i>j$. Intuitively, the product $y^*\cdot Z_{<}\cdot v$ makes all positions up to $j$ equal zero, and $v^*\cdot A\cdot y$ extracts the element $A_{ij}$ of $A$ when $v$ is interpreted by the $i$th canonical vector, and $y$ by the $j$th one.
-
-
-
-Using this expression, we can now compute $T_i$s by writing:
-$$\red{A}{y} := I + f_/(\ccol{A}{y},-(y^*\cdot A\cdot y)\cdot \ones(y))y^*,$$
-where $f_/$ is the division function. Notice that $f_/(\ccol{A}{y},-(y^*\cdot A\cdot y)\cdot \ones(y))$ in fact computes the vectors $c_i$ defined above. The Gaussian elimination can now be performed by the following expression:
-$$
-U(A) :=  \left( \initf{I}{v}{X}{\red{X\cdot A}{v}\cdot X} \right) \cdot A,
-$$
-which computes the $U$ from the $LU$ factorization of $A$, whenever $A$ can be $LU$ factorized without row interchange. Notice that the latter assumption is crucial, since it will ensure that the element of $A$ in position $ii$ is different from zero after each \texttt{reduce} step. As explained previously, the inner \texttt{for} loop in fact computes the product of matrices $T_{n}\cdots T_1$, which in fact amounts to the matrix $L^{-1}$ from the $LU$ factorization of $A$. Given that each $T_i$ is easily invertible, we can also recover $L$.
-
-As stated previously, the construction above works under the assumption that no row pivoting is needed when performing the Gaussian eliminations, giving us:
-\begin{proposition}\label{prop:gauss}
-There is a \langfor expression $e(X)$ such that by interpreting $X$ with a matrix $A$ will result in the matrix $U$ from the $LU$ factorization of $A$ whenever $A$ is $LU$ factorizable.
-\end{proposition}
-
-Now, since $A^{-1}=U^{-1}L^{-1}$ and using that $U$ is upper triangular, we can obtain the determinant and inverse of $A$ and thus
-
-
-\thomas{I don't know how much of the proof goes here or if it's ok as it is.}
-
-
- \begin{proposition}\label{prop:determinant}
-There is a \langfor expression $e(X)$ such that by interpreting $X$ with a matrix $A$ will result in the $1\times 1$ matrix with $\texttt{det}(A)$ in its only entry whenever $A$ is $LU$ factorizable.
-\end{proposition}
-
-\begin{proposition}\label{prop:inverse}
-There is a \langfor expression $e(X)$ such that by interpreting $X$ with a matrix $A$ will result in the matrix $A^{-1}$ whenever $A$ is $LU$ factorizable.
-\end{proposition}
-
-If $A$ needs row interchange to be $LU$ factorizable (this is, $PA$ is $LU$ factorizable) we say that $A$ is $PALU$ factorizable, where the factorization is $PA=LU$. To accomplish this, we need something extra.
-
- \begin{proposition}\label{prop:palu}
-There is a \langfor expression $e(X)$ such that by interpreting $X$ with a matrix $A$ will result in the matrix $U$ from the $PALU$ factorization of $A$ whenever $A$ is $PALU$ factorizable if and only if there exists a \langfor expression $e'(X)$ such that by interpreting $X$ with a vector $A$ outputs a canonical vector $e_k$ where $A_k$ is the first non zero entry of $A$.
-\end{proposition}
+% \section{Order!!}
+%
+% \noindent{\bf Order.} The \texttt{for} operator assumes that canonical vectors come in some particular order, however, it does not give us an immediate access to this order. An interesting question is whether, using the \texttt{for} loops, we can define a \langfor expression which allow us to define the order of canonical vectors. Next we show that this is indeed possible. To begin with, we can easily obtain the last canonical vector using the expression $$v_{max} := \ffor{v}{X}{v}$$
+%
+% The fundamental property of iteration we use here is that the result variable is always initiated with the null matrix. Therefore the loop above will simply keep on storing the current canonical vector before returning the final one. The ability to do this sort of manipulation was one of the reasons why we initiate $A_0$ in the semantics of \texttt{for} to null matrix.
+%
+% To define an order relation for canonical vectors, notice that the following matrix:
+% \[
+% Z_{eq} = \begin{bmatrix}
+%     1 & 1 & \cdots &  1 \\
+%     0 & \ddots & \ddots & \vdots \\
+%     \hdotsfor{3} & 1 \\
+%     0 & \cdots & \cdots & 1
+% \end{bmatrix},
+% \]
+% has the property that $e_i^*\cdot Z_{eq} \cdot e_j$, for two canonical vectors $e_i,e_j$ of the same dimension, is equal to one if and only $i\leq j$, and is zero otherwise. $Z_{eq}$ can easily de defined in \langfor as follows:
+% $$Z_{\text{eq}}=\ffor{v}{X}{X + \left[ (Xv_{max}) + v \right]v^* + vv^*_{max}},$$
+% where $v_{max}$ is as defined above. The intuition behind this expression is that using the last canonical vector $v_{max}$, we have access to the final column of $X$ (via the product $X\cdot v_{max}$), to which we add the current canonical vector $v$, thus constructing $Z_{eq}$ by filling it column by column. By defining $$\lleq{u}{v} := u^*\cdot Z_{eq} \cdot v,$$
+% we obtain an order relation that allows us to discern whether one canonical vector comes before the other in the order given by \texttt{for}. If we want a strict order, we can just use $Z_< := Z_{eq} - I$.
+%
+% Interestingly, we can also define the predecessor relation between canonical vectors. For this, we require the following matrix:
+% %\[
+% %S := \begin{bmatrix}
+% %    0 & 1         & 0         & \cdots &  0 \\
+% %    0 & \ddots & 1         & \cdots & 0 \\
+% %    \vdots & \vdots & \ddots & \ddots & \vdots \\
+% %    \hdotsfor{3} & \ddots & 1 \\
+% %    0 & \cdots & \cdots & \cdots & 0
+% %\end{bmatrix}.
+% %\]
+% \[
+% S = \begin{bmatrix}
+%     0 & 1 & \cdots &  0 \\
+%     0 & \ddots & \ddots & \vdots \\
+%     \hdotsfor{3} & 1 \\
+%     0 & \cdots & \cdots & 0
+% \end{bmatrix},
+% \]
+% Using this matrix, we have that for a canonical vector $e_i$:
+% \[
+%   			S\cdot e_i=\begin{cases}
+%                e_{i-1}, \text{ if } i > 1 \\
+%               \mathbf{0}, \text{ if } i = 1
+%             \end{cases}
+% 		\]
+% where $\mathbf{0}$ is a vector of zeros of the same type as $e_i$. Notice also that $\ones(v)^*\cdot S \cdot v$ is equal to zero, for a canonical vector $v$, if and only if $v = e_1$ is the first canonical vector, and zero otherwise. To define the first canonical vector in the order given by \texttt{for}, we can then write:
+% $$v_{min} := \ffor{v}{X}{\mmin{v}\cdot v},$$
+% where the expression $\mmin{v}$ is defined as $\mmin{v} := 1 - \ones(v)^*\cdot S \cdot v$, and, when evaluated over canonical vectors, will result in $1$ if and only if $v=e_1$ is the first canonical vector. Finally, we denote that $S$ can be defined using the following \langfor expression:
+% \begin{multline*}
+% S:= \texttt{for }v,X.\quad X + \\
+% \left[ (1 - v^*v_{max})vv_{max}^* - (Xv_{max}) v_{max}^* + (Xv_{max})v^*\right].
+% \end{multline*}
+%
+%
+%
+%

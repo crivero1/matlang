@@ -1,0 +1,53 @@
+\noindent{\bf Order.} The \texttt{for} operator assumes that canonical vectors come in some particular order, however, it does not give us an immediate access to this order. An interesting question is whether, using the \texttt{for} loops, we can define a \langfor expression which allow us to define the order of canonical vectors. Next we show that this is indeed possible. To begin with, we can easily obtain the last canonical vector using the expression $$v_{max} := \ffor{v}{X}{v}$$
+
+The fundamental property of iteration we use here is that the result variable is always initiated with the null matrix. Therefore the loop above will simply keep on storing the current canonical vector before returning the final one. The ability to do this sort of manipulation was one of the reasons why we initiate $A_0$ in the semantics of \texttt{for} to null matrix.
+
+To define an order relation for canonical vectors, notice that the following matrix:
+\[
+Z_{eq} = \begin{bmatrix}
+    1 & 1 & \cdots &  1 \\
+    0 & \ddots & \ddots & \vdots \\
+    \hdotsfor{3} & 1 \\
+    0 & \cdots & \cdots & 1 
+\end{bmatrix},
+\] 
+has the property that $e_i^*\cdot Z_{eq} \cdot e_j$, for two canonical vectors $e_i,e_j$ of the same dimension, is equal to one if and only $i\leq j$, and is zero otherwise. $Z_{eq}$ can easily de defined in \langfor as follows:
+$$Z_{\text{eq}}=\ffor{v}{X}{X + \left[ (Xv_{max}) + v \right]v^* + vv^*_{max}},$$
+where $v_{max}$ is as defined above. The intuition behind this expression is that using the last canonical vector $v_{max}$, we have access to the final column of $X$ (via the product $X\cdot v_{max}$), to which we add the current canonical vector $v$, thus constructing $Z_{eq}$ by filling it column by column. By defining $$\lleq{u}{v} := u^*\cdot Z_{eq} \cdot v,$$
+we obtain an order relation that allows us to discern whether one canonical vector comes before the other in the order given by \texttt{for}. If we want a strict order, we can just use $Z_< := Z_{eq} - I$.
+
+Interestingly, we can also define the predecessor relation between canonical vectors. For this, we require the following matrix:
+%\[
+%S := \begin{bmatrix}
+%    0 & 1         & 0         & \cdots &  0 \\
+%    0 & \ddots & 1         & \cdots & 0 \\
+%    \vdots & \vdots & \ddots & \ddots & \vdots \\
+%    \hdotsfor{3} & \ddots & 1 \\
+%    0 & \cdots & \cdots & \cdots & 0 
+%\end{bmatrix}.
+%\]
+\[
+S = \begin{bmatrix}
+    0 & 1 & \cdots &  0 \\
+    0 & \ddots & \ddots & \vdots \\
+    \hdotsfor{3} & 1 \\
+    0 & \cdots & \cdots & 0
+\end{bmatrix},
+\] 
+Using this matrix, we have that for a canonical vector $e_i$:
+\[
+  			S\cdot e_i=\begin{cases}
+               e_{i-1}, \text{ if } i > 1 \\
+              \mathbf{0}, \text{ if } i = 1
+            \end{cases}
+		\]
+where $\mathbf{0}$ is a vector of zeros of the same type as $e_i$. Notice also that $\ones(v)^*\cdot S \cdot v$ is equal to zero, for a canonical vector $v$, if and only if $v = e_1$ is the first canonical vector, and zero otherwise. To define the first canonical vector in the order given by \texttt{for}, we can then write:
+$$v_{min} := \ffor{v}{X}{\mmin{v}\cdot v},$$
+where the expression $\mmin{v}$ is defined as $\mmin{v} := 1 - \ones(v)^*\cdot S \cdot v$, and, when evaluated over canonical vectors, will result in $1$ if and only if $v=e_1$ is the first canonical vector. Finally, we denote that $S$ can be defined using the following \langfor expression:
+\begin{multline*}
+S:= \texttt{for }v,X.\quad X + \\
+\left[ (1 - v^*v_{max})vv_{max}^* - (Xv_{max}) v_{max}^* + (Xv_{max})v^*\right].
+\end{multline*}
+
+
+
