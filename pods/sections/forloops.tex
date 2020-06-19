@@ -148,12 +148,12 @@ $$e_{\mathsf{diag}}:=\texttt{for } v, X. X + (v^T\cdot e) \times v\cdot v^T,$$ w
 $b_i^T\cdot\sem{e}{\I}=\sem{e}{\I}_{i}$ is put on position $i$ on the diagonal, when evaluating $e_{\mathsf{diag}}$ on $\I$.
 %  One can verify that for the above expression to be well-typed, $v$ needs to be of type $(\alpha,1)$ and $X$ of type $(\alpha,\alpha)$. When evaluated over some instance $\I$, $X$ is initialised with the zero matrix of dimension $n\times n$, where $n=\dom(\alpha)$. Then, in iteration $i$, the $n\times n$-matrix
 % $b_i^T\cdot \sem{e}{\I}\times (b_i\cdot b_i^T)$ is added. In other words, on the $i$th element of the diagonal, represented by $b_i\cdot b_i^T$, the value $b_i^T\cdot\sem{e}{\I}=\sem{e}{\I}_{i}$ is added. 
-That is, the expression $e_{\mathsf{diag}}$ evaluates to $\sem{\diag(e)}{\I}$. It also readily verified that the one-vector operator in \lang\ becomes redundant in \langfor. Furthermore, general function applications can be simulated in \langfor\ by just assuming function applications $f(e_1,\ldots,e_k)$ for $f\in\Fun_k$ where $\ttype(e_i)=(1,1)$ for all $i\in[k]$. Indeed,  consider the \langfor\ expression 
+That is, the expression $e_{\mathsf{diag}}$ evaluates to $\sem{\diag(e)}{\I}$. It is also readily verified that the one-vector operator in \lang\ becomes redundant in \langfor. Furthermore, general function applications can be simulated in \langfor\ by just assuming function applications $f(e_1,\ldots,e_k)$ for $f\in\Fun_k$ where $\ttype(e_i)=(1,1)$ for all $i\in[k]$. Indeed,  consider the \langfor\ expression 
 \begin{multline*}
 e=\texttt{for }v,X.\, X + \\ 
-\texttt{for }w,Y.\, Y + v\cdot f(v^T\cdot e_1\cdot w, \ldots, v^T\cdot e_n\cdot w)\cdot w^T. 
+\texttt{for }w,Y.\, Y + v\cdot f(v^T\cdot e_1\cdot w, \ldots, v^T\cdot e_k\cdot w)\cdot w^T. 
 \end{multline*}
-In the expression above, we basically loop over all positions in $\sem{e_i}{\I}$, one by one, and apply the function on those positions.  One can see that $\sem{e}{\I}=\sem{f(e_1,\ldots,e_k)}{\I}$ for $e_i$'s of arbitrary type, but that $f$ is only
+In the expression above, we basically loop over all positions in $\sem{e_i}{\I}$, one by one, and apply the function $f$ on those positions.  One can see that $\sem{e}{\I}=\sem{f(e_1,\ldots,e_k)}{\I}$ for $e_i$'s of arbitrary type, but that $f$ is only
 applied on expressions of type $(1,1)$, such as $v^T\cdot e_i\cdot w$. 
 %
 %
@@ -181,7 +181,7 @@ applied on expressions of type $(1,1)$, such as $v^T\cdot e_i\cdot w$.
 % \item $\sem{\text{apply}[f](e_1,\ldots ,e_n)}{\I}$ is a $1\times 1$ matrix whose only entry has the value $f(\sem{e_1}{\I},\ldots ,\sem{e_n}{\I})$.
 % \end{itemize}
 
-These examples illustrate the we can limit \langfor to consist of the following ``core'' operators: transposition, matrix multiplication and pointwise function application $f(e_1,\ldots,e_k)$ for $f\in\Fun_k$ where each $e_i$
+These examples illustrate that we can limit \langfor to consist of the following ``core'' operators: transposition, matrix multiplication and pointwise function application $f(e_1,\ldots,e_k)$ for $f\in\Fun_k$ where each $e_i$
 has type $(1,1)$. 
 
 We also observe that the $4\textsf{clique}$ program mentioned at the beginning of this section can 
