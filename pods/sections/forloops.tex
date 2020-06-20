@@ -214,7 +214,7 @@ to start the iteration given some concrete matrix  originating from the result o
 with the difference that $A_0:=\sem{e_0}{\I}$. We observe, however, that $\initf{e_0}{v}{X}{e}$ can already
 be expressed in \langfor. In other words, we do not loose generality by assuming an initialisation of $A_0$ by $\mathbf{0}$.
 The key insight is that in \langfor\ we can check during evaluation whether or not
-the current canonical vector $b_i^n$ is equal to the $b_1^n$. This is not entirely trivial to see and is due to fact that \texttt{for} loops iterate over the canonical vectors in a fixed order. We will explore the impact of this order in the next section. In that section, we also define the operator $\mmin$, which when evaluated on an instance, will return $1$ if its input vector is $b_1^n$, and return $0$ otherwise. Given $\mmin$, consider now the
+the current canonical vector $b_i^n$ is equal to the $b_1^n$. This is not entirely trivial to see and is due to fact that \texttt{for} loops iterate over the canonical vectors in a fixed order. We will explore the impact of this order in the next section. In particular, we can define a \langfor expression $\mmin$, which when evaluated on an instance, will return $1$ if its input vector is $b_1^n$, and return $0$ otherwise. Given $\mmin$, consider now the
 \langfor\ expression
  $$\ffor{v}{X}{\mmin{v}\cdot e(v,X/e_0) + (1-\mmin{v})\cdot e(v,X)},$$
  where we explicitly list $v$ and $X$ as matrix variables on which $e$ potentially depends on, and where
