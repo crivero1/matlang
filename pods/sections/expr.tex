@@ -89,7 +89,7 @@ The question that remains to answer is how do we access the information about ea
 
 For instance, we can construct a \logspace\ machine that checks, given two gates $g_1$ and $g_2$ whether $g_2$ is a child of $g_1$. Similarly, we can construct a machine that, given $g_1$ and $g_2$ tells us whether $g_2$ is the final child of $g_1$, or the one that produces the following child of $g_1$ (according to the ordering given by the machine $M_\Phi$). Defining these machines based of $M_\Phi$ is similar to the algorithm for the composition of two \logspace\ transducers, and is based on "hard-coding" the values such as $g_1$ and $g_2$ into the machine $M_\Phi$. An important detail here is also that these computations can be carried out using only linear amount of space on the output tape. We remark that this, more operational, definition of arithmetic circuits is quite commonly used when evaluating them \cite{allender}.
 
-In order to access this information in \langfor, we can actually show that any polynomial-time Turing machine that on input $w_1,\ldots ,w_\ell\in \{0,1\}^n$ runs in linear space, and produces an output $w\in \{0,1\}$ of size $n$, can in fact be simulated using a \langfor\ expression that, when interpreted n an instance assigning $w_1,\ldots ,w_n$ to its variables, produces a vector of size $n\times 1$ corresponding to $w$.
+In order to access this information in \langfor, we can actually show that any polynomial-time Turing machine that on input $w_1,\ldots ,w_\ell\in \{0,1\}^n$ runs in linear space, and produces an output $w\in \{0,1\}^n$ of size $n$, can in fact be simulated using a \langfor\ expression that, when interpreted on an instance assigning $w_1,\ldots ,w_n$ to its variables, produces a vector of size $n\times 1$ corresponding to $w$.
 
 To simulate the circuit evaluation algorithm that uses two stacks, in \langfor\ we can use a binary matrix of size $n\times n$, where $n$ is the number of inputs. The idea here is that each gate, encoded as a binary number, is represented by the positions $1\ldots n-3$ of each row. The remaining three columns are reserved for the values-stack, the number of elements on the gates stack, and the number of elements on the values stack, respectively. The number of elements is encoded as a canonical vector of size $n$. Here we crucially depend on the fact that the circuit is of logarithmic depth, and therefore the size of the two stacks is bounded by $n$ (apart from the portion before the asymptotic bound kicks-in, which can be hard coded into the formula). Similarly, given that the circuits are of polynomial size, we can assume that gate ids can be encoded into $n-3$ bits.
 
@@ -110,6 +110,41 @@ For any function $f$ computed by a uniform family of arithmetic circuits of poly
 
 \domagoj{If needed the corollary can be merged into Theorem 6.1. I prefer it here to separate the degree vs. size discussion.}
 
-Now that we know that arithmetic circuits can be simulated using \langfor\ expressions, it is natural to ask whether the same holds in the other direction. That is, we are asking whether for each \langfor\ expression $e$ over some schema $\Sch$ there is a uniform family of arithmetic circuits computing precisely the same result depending on the input size. In order to show this, we need to extend the 
+\domagoj{Maybe add the division corollary; or maybe after the equivalence result.}
 
-EXTEND THE CIRCUITS...
+Now that we know that arithmetic circuits can be simulated using \langfor\ expressions, it is natural to ask whether the same holds in the other direction. That is, we are asking whether for each \langfor\ expression $e$ over some schema $\Sch$ there is a uniform family of arithmetic circuits computing precisely the same result depending on the input size. One challenge here is that when working with \langfor, even if the final result of our expression is a single number (i.e. a matrix of size $1\times 1$), applying various expressions can lead to intermediate results which are of arbitrary size, which would make an inductive translation impossible. 
+
+%THIS IS WHAT I THOUGHT WE WOULD DO; APPENDIX IS A BIT DIFFERENT:
+In order to circumvent this issue, we need to consider arithmetic circuits which can take matrices as input, and can also compute a matrix. One way to do this is to allow multiple output gates, and have some sort of encoding of input positions and output positions. This is, for example, how one treats the classical claim that arithmetic circuits can compute matrix product \cite{?}. While this is indeed a viable option, we find it far more elegant to extend arithmetic circuits such that they can receive matrices as inputs, and can compute matrix result as their output.
+
+Formally, an {\em arithmetic circuit over matrices} is an expression $\Phi(A_1,\ldots ,A_k)$, where $\Phi$ is an arithmetic circuit with multiple output gates, and $A_1,\ldots ,A_k$ are matrices of dimension $\alpha\times \beta$, with $\alpha,\beta \in \{n,1\}$. Each matrix entry of $A_i$ corresponds to an input gate of $\Phi$. That is, if some $A_i$ is of dimension $n\times n$, then this will correspond to $n^2$ input gates of $\Phi$, and similarly for other supported dimensions. The matrices $A_1,\ldots ,A_k$ do not need to be all of the same dimension. Furthermore, we will assume that $\Phi$ has $\alpha\times \beta$ output gates, with $\alpha,\beta \in \{n,1\}$, and denote this by $\mathtt{type}(\Phi) = \alpha \times \beta$. The idea here is that $\Phi$ on input $A_1,\ldots ,A_k$ computes a matrix of dimension $\alpha\times \beta$. Here we will abuse the notation and write $\Phi(A_1,\ldots ,A_k)$ both when entries of $A_i$ denote uninstantiated inputs (i.e. variables), and when they interpret concrete values. The notion of uniform circuits families, degree, etc., are defined same as before. Note that this adds no expressive power to (ordinary) arithmetic circuits with multiple output gates. With this notation at hand, we can now show that \langfor\ is subsumed by arithmetic circuit families over matrices.
+
+\domagoj{Should probably make the definition more precise. I.e. variables vs instantiations!}
+
+\begin{theorem}
+\label{th-ml-to-circuits}
+Let $e$ be a \langfor\ expression over a schema $\Sch$, and let $V_1,\ldots ,V_k$ be the variables of $e$ such that $\ttype(V_i)\in \{(\alpha,\alpha), (\alpha,1), (1,\alpha), (1,1)\}$. Then there exists a uniform arithmetic circuit family over matrices $\Phi_n(A_1,\ldots ,A_k)$ such that:
+\begin{itemize}
+\item For any instance $\I = (\dom,\conc)$ such that $\dom(\alpha) = n$ and $\conc(V_i) = A_i$ it holds that:
+\item $\sem{e}{\I} = \Phi_n(A_1,\ldots ,A_k)$.
+\end{itemize}
+\end{theorem}
+
+{\em Proof idea.} The approach we take here is showing how to compose various circuits, while still being able to generate them using \logspace\ machines. This is an inductive construction, which handles the complexity restriction in a similar way as when composing two \logspace\ transducers. \qed
+
+Interestingly, one can easily extend the proof of Theorem \ref{th-circuits-ml} to support arithmetic circuits over matrices. Combining the two results gives us the desired equivalence in terms of functions we can compute.
+
+\begin{corollary}
+\label{th-equivalence}
+Let $f$ be a function taking as its input matrices $A_1,\ldots ,A_k$ of dimensions $\alpha\times \beta$, with $\alpha,\beta \in \{n,1\}$. The $f$ is computed by a uniform circuit family over matrices of polynomial degree if and only if there is a \langfor\ expression of polynomial degree for $f$. 
+\end{corollary}
+
+\domagoj{Pretty sure this is what we want to show. Need to define the degree of a \langfor\ expression. Now it makes sense to present the undecidability result here.}
+
+MISSING:
+
+1. UNDECIDABILITY
+
+2. DIVISION
+
+3. COMMENT ON GENERAL DEPTH REDUCTION DEPENDING ON THE FUNCTIONS
