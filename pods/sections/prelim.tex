@@ -59,7 +59,7 @@ with $f_\odot:\RR^2\to\RR:(x,y)\mapsto x\cdot y$.
 Let $\Sch$  consist of $\Mnam:=\{V\}$ and $\size(V):=(\alpha,\alpha)$ such that
 matrices assigned to $V$ are square matrices.
 It is readily verified that $\mathsf{cwalk}$ is well-typed and more specifically, $\ttype(\mathsf{cwalk})=(1,1)$, i.e., it returns an element of $\RR$ on any input instance.
-For example, take $\I$ such that $\dom(\alpha)=n$ and let $\conc(V)$ be an adjacency matrix $A$ of an undirected graph $G$ consisting of $n$ vertices. Then, $\sem{\mathsf{cwalk}}{\I}$ returns the number of paths of length two in $G$ which start in and end at the same vertex.
+For example, take $\I$ such that $\dom(\alpha)=n$ and let $\conc(V)$ be an adjacency matrix $A$ of an undirected graph $G$ consisting of $n$ vertices. Then, $\sem{\mathsf{cwalk}}{\I}$ returns the number of paths of length two in $G$ which start in and end at the same vertex.\qed
 \end{example}
 Although \lang\ forms a solid basis for a matrix query language, it is limited in expressive power. Indeed, \lang\ is subsumed by first order logic with aggregates that uses only three variables \cite{matlang}. As consequence, no \lang\ expression exists that can compute the transitive closure of a graph (represented by its adjacency matrix) or can compute the inverse of a matrix. Furthermore, no \lang\ expression exists which detects four-cliques in a graph \cite{matlang}. Rather than extending \lang\ with specific linear algebra operators, such as matrix inversion, we next introduce a limited form of recursion in \lang.
 As we will see shortly, this extension allows us to express many linear algebra algorithms, including matrix inversion and testing for cliques of arbitrary size.
