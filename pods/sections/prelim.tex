@@ -17,11 +17,9 @@ $e$ & $::=$ & $V\in \Mvar$ & (matrix variable)\\
   & $|$ & $f(e_1,\ldots ,e_k)$ & (pointwise application of $f\in\Fun_k$).    
 \end{tabular}
 
-As an example \lang\ expression, consider 
-$\mathsf{cwalk}:= (\ones(V))^T\cdot f_{\odot}\bigl(V\cdot V, \diag(\ones(V)\bigr)\cdot\ones(V)$ with $f_\odot:\RR^2\to\RR:(x,y)\mapsto x\cdot y$.
 To define the semantics of \lang\ expressions, we first require the notions 
 of a schema and instance. A \lang\ \textit{schema} $\Sch$ is a pair $\Sch=(\Mnam,\size)$, where $\Mnam\subset \Mvar$ is a finite set of matrix variables, and $\size: \Mvar \mapsto \DD\times \DD$ is a function that maps each matrix variable to a pair of \textit{size symbols}. The $\size$ function helps us determine whether certain matrix operations, such as multiplication, can be performed for matrices adhering to a schema. 
-We denote size symbols by letters $\alpha,\beta,\gamma$. We also assume that $1\in \DD$. For our example expression $\mathsf{cwalk}$ we let $\Sch$  consist of $\Mnam:=\{V\}$ and $\size(V):=(\alpha,\alpha)$.
+We denote size symbols by letters $\alpha,\beta,\gamma$. We also assume that $1\in \DD$. 
 To help us determine whether a \lang\ expression can always be evaluated, we define the \textit{type} of an expression $e$, with respect to a schema $\Sch$, denoted by $\ttype(e)$, inductively as follows:
 \begin{itemize}
 \item $\ttype(V):= \size(V)$, for a matrix variable $V$;
@@ -33,7 +31,7 @@ To help us determine whether a \lang\ expression can always be evaluated, we def
 \item $\ttype(a\times e):=\ttype(e)$; and
 \item $\ttype(f(e_1,\ldots ,e_k)):= (\alpha,\beta)$, whenever $\ttype(e_1) = \ldots = \ttype(e_k) = (\alpha,\beta)$, and $f\in\Fun_k$, and is undefined otherwise.
 \end{itemize}
-When $\Sch$ is clear from the context we simply write $\type(e)$. We call an expression \textit{well-typed} according to the schema $\Sch$, if it has a defined type. It is readily verified that $\mathsf{cwalk}$ is well-typed and more specifically, $\ttype(\mathsf{cwalk})=(1,1)$.
+When $\Sch$ is clear from the context we simply write $\type(e)$. We call an expression \textit{well-typed} according to the schema $\Sch$, if it has a defined type. 
 Note that a well-typed expression can be evaluated regardless of the actual sizes of the matrices assigned to matrix variables, as we describe next.
 
 % $\dim(M)$ gives the dimension of the matrix $M$, where $\dim(M)\in \mathbb{N}^2$. We
@@ -53,8 +51,16 @@ A \lang\ \textit{instance} $\I$ over a schema $\Sch$ is a pair $\I = (\dom,\conc
 \item $\sem{a\times e}{\I} = a\times \sem{e}{\I}$; and
 \item $\sem{f(e_1,\ldots ,e_k)}{\I}$ is a matrix $A$ of the same size as $\sem{e_1}{\I}$, and where $A_{ij}$ has the value $f(\sem{e_1}{\I}_{ij},\ldots ,\sem{e_k}{\I}_{ij})$.
 \end{itemize}
-This concludes the specification of \lang. For our example expression $\mathsf{cwalk}$,  consider the instance $\I$ such that $\dom(\alpha)=n$ and $\conc(V)$ is an adjacency matrix $A$ of an undirected graph $G$ consisting of $n$ vertices. Then, $\sem{\mathsf{cwalk}}{\I}$ returns the number of paths of length two in $G$ which start in and end at the same vertex.
+This concludes the specification of \lang. 
 
+\begin{example}Consider the \lang\ expression  
+$$\mathsf{cwalk}:= (\ones(V))^T\cdot f_{\odot}\bigl(V\cdot V, \diag(\ones(V)\bigr)\cdot\ones(V),$$
+with $f_\odot:\RR^2\to\RR:(x,y)\mapsto x\cdot y$.
+Let $\Sch$  consist of $\Mnam:=\{V\}$ and $\size(V):=(\alpha,\alpha)$ such that
+matrices assigned to $V$ are square matrices.
+It is readily verified that $\mathsf{cwalk}$ is well-typed and more specifically, $\ttype(\mathsf{cwalk})=(1,1)$, i.e., it returns an element of $\RR$ on any input instance.
+For example, take $\I$ such that $\dom(\alpha)=n$ and let $\conc(V)$ be an adjacency matrix $A$ of an undirected graph $G$ consisting of $n$ vertices. Then, $\sem{\mathsf{cwalk}}{\I}$ returns the number of paths of length two in $G$ which start in and end at the same vertex.
+\end{example}
 Although \lang\ forms a solid basis for a matrix query language, it is limited in expressive power. Indeed, \lang\ is subsumed by first order logic with aggregates that uses only three variables \cite{matlang}. As consequence, no \lang\ expression exists that can compute the transitive closure of a graph (represented by its adjacency matrix) or can compute the inverse of a matrix. Furthermore, no \lang\ expression exists which detects four-cliques in a graph \cite{matlang}. Rather than extending \lang\ with specific linear algebra operators, such as matrix inversion, we next introduce a limited form of recursion in \lang.
 As we will see shortly, this extension allows us to express many linear algebra algorithms, including matrix inversion and testing for cliques of arbitrary size.
 
