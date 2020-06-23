@@ -161,7 +161,9 @@ $b_i^T\cdot\sem{e}{\I}=\sem{e}{\I}_{i}$ is put on position $i$ on the diagonal, 
 That is, the expression $e_{\mathsf{diag}}$ evaluates to $\sem{\diag(e)}{\I}$.\qed
 \end{example}
 It is also readily verified that the one-vector operator in \lang\ becomes redundant in \langfor. Furthermore, general function applications can be simulated in \langfor\ by just assuming function applications $f(e_1,\ldots,e_k)$ for $f\in\Fun_k$ where $\ttype(e_i)=(1,1)$ for all $i\in[k]$, as is illustrated next.
-\begin{example}Consider the \langfor\ expression 
+As before, we write \langfor$(\Fun)$ when \langfor\ expressions require certain function applications in some set $\Fun$.
+
+\begin{example}Consider the \langfor$(f)$ expression 
 \begin{multline*}
 e=\texttt{for }v,X.\, X + \\ 
 \texttt{for }w,Y.\, Y + v\cdot f(v^T\cdot e_1\cdot w, \ldots, v^T\cdot e_k\cdot w)\cdot w^T. 
@@ -248,7 +250,7 @@ $\sem{\initf{e_0}{v}{X}{e}}{\I}$.
 As illustration, we consider the transitive closure program from the beginning of this section.
 \begin{example}
  We can
-express this in \langfor. Indeed, consider the expression 
+express this in \langfor$(f_>)$. Indeed, consider the expression 
 $$
 f_{>0}\left(\initf{e_{\mathsf{Id}}}{v}{X}{X\cdot (e_{\mathsf{Id}}+M)}\right),
 $$

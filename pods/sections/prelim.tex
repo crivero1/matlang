@@ -1,3 +1,4 @@
+%!TEX root = /Users/fgeerts/Documents/MLforloops/pods/main.tex
 We start by recalling the matrix query language \lang, introduced in \cite{matlang}, which serves as our starting point.
 
 \smallskip
@@ -16,6 +17,10 @@ $e$ & $::=$ & $V\in \Mvar$ & (matrix variable)\\
  & $|$ & $a\times e$ & (scalar multiplication, $a\in\RR$)\\   
   & $|$ & $f(e_1,\ldots ,e_k)$ & (pointwise application of $f\in\Fun_k$).    
 \end{tabular}
+
+In the following, we write \lang$(\Fun)$ for some set $\Fun$ of functions when
+these are needed for some results to hold. When we simply write \lang, we
+mean that any function can be used (including no function at all).
 
 To define the semantics of \lang\ expressions, we first require the notions 
 of a schema and instance. A \lang\ \textit{schema} $\Sch$ is a pair $\Sch=(\Mnam,\size)$, where $\Mnam\subset \Mvar$ is a finite set of matrix variables, and $\size: \Mvar \mapsto \DD\times \DD$ is a function that maps each matrix variable to a pair of \textit{size symbols}. The $\size$ function helps us determine whether certain matrix operations, such as multiplication, can be performed for matrices adhering to a schema. 
@@ -53,9 +58,8 @@ A \lang\ \textit{instance} $\I$ over a schema $\Sch$ is a pair $\I = (\dom,\conc
 \end{itemize}
 This concludes the specification of \lang. 
 
-\begin{example}Consider the \lang\ expression  
-$$\mathsf{cwalk}:= (\ones(V))^T\cdot f_{\odot}\bigl(V\cdot V, \diag(\ones(V)\bigr)\cdot\ones(V),$$
-with $f_\odot:\RR^2\to\RR:(x,y)\mapsto x\cdot y$.
+\begin{example}Consider the \lang$(f_\odot)$ expression with $f_\odot:\RR^2\to\RR:(x,y)\mapsto x\cdot y$:
+$$\mathsf{cwalk}:= (\ones(V))^T\cdot f_{\odot}\bigl(V\cdot V, \diag(\ones(V)\bigr)\cdot\ones(V).$$
 Let $\Sch$  consist of $\Mnam:=\{V\}$ and $\size(V):=(\alpha,\alpha)$ such that
 matrices assigned to $V$ are square matrices.
 It is readily verified that $\mathsf{cwalk}$ is well-typed and more specifically, $\ttype(\mathsf{cwalk})=(1,1)$, i.e., it returns an element of $\RR$ on any input instance.
