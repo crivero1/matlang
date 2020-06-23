@@ -58,28 +58,41 @@ $i$th row in $T_{i-1}\cdot\cdots\cdot T_1\cdot A$ is zero, one replaces the $i$t
 \noindent
 \textbf{Implementing LU decomposition in \langfor.} 
 We first assume that the input matrices are LU-factorizable. We deal with general matrices later on.
-To implement the above procedure, for each column $j$ we need to compute the vector $c_j$. We do this in two steps. First, we extract from our input matrix $M$ its $j$th column, but set all its upper diagonal entries to zero. This can be achieved by the following expression:
+To implement the above procedure, for each column $j$ we need to compute the vector $c_j$. We do this in two steps. First, we extract from our input matrix its $j$th column and set all its upper diagonal entries to zero. This can be achieved by the following expression:
 $$\ccol{M}{y} := \ffor{v}{X}{\mathsf{ssucc}(y,v)\cdot(v^T\cdot M \cdot y)\cdot v + X}.$$
-Indeed, when $M$ is assigned to a matrix $A$ and $y$ to $b_j$, the vector $X$ will only be incremented with
-entry $A_{ij}$ (computed in $v^T\cdot M \cdot y$) in position $i$ when $i>j$ due to $\mathsf{ssucc}(y,v)$.
+Indeed, when $M$ is assigned to a matrix $A$ and $y$ to $b_j$, we have that $X$ will be initially assigned
+$A_0=\mathbf{0}$ and $A_i=A_{i-1}+ b_j^T\cdot A\cdot b_i$ if $i>j$ (because $\mathsf{ssucc}(b_j,b_i)=1$ if $i>j$) and $A_i=A_{i-1}$ otherwise (because $\mathsf{ssucc}(b_j,b_i)=0$ for $i\leq j$). 
+% vector $X$ will only be incremented with
+% entry $A_{ij}$ (computed in $v^T\cdot M \cdot y$) in position $i$ when $i>j$ due to $\mathsf{ssucc}(y,v)$.
 %
 %
 % computes the vector which has zeroes in positions $1\ldots j$, and values $A_{ij}$ in positions $i>j$. Intuitively, the product $y^*\cdot Z_{<}\cdot v$ makes all positions up to $j$ equal zero, and $v^*\cdot A\cdot y$ extracts the element $A_{ij}$ of $A$ when $v$ is interpreted by the $i$th canonical vector, and $y$ by the $j$th one.
-
-
-
-Using this expression, we can now compute $T_i$s by writing:
-$$\red{A}{y} := I + f_/(\ccol{A}{y},-(y^*\cdot A\cdot y)\cdot \ones(y))y^*,$$
-where $f_/$ is the division function. Notice that $f_/(\ccol{A}{y},-(y^*\cdot A\cdot y)\cdot \ones(y))$ in fact computes the vectors $c_i$ defined above. The Gaussian elimination can now be performed by the following expression:
+Using $\ccol{M}{y}$, we can now compute $T_i$s by writing:
+$$\red{M}{y} := I + f_/(\ccol{M}{y},-(y^T\cdot M\cdot y)\cdot \ones(y))\cdot y^T,$$
+where $f_/:\RR^2\to\RR:(x,y)\mapsto x/y$ is the division function. It should be clear that when $M$ is assigned to $A$ and $y$ to $b_j$, $f_/(\ccol{A}{b_j},-(b_j^T\cdot A\cdot b_j)\cdot \ones(b_j))$ is equal to the vector $c_i$ used in the definition of $T_i$. To perform the reduction steps for all columns, we consider
+the expression
 $$
-U(A) :=  \left( \initf{I}{v}{X}{\red{X\cdot A}{v}\cdot X} \right) \cdot A,
+e_{U}(M) :=  \left( \initf{I}{y}{X}{\red{X\cdot M}{y}\cdot X} \right) \cdot M.
 $$
-which computes the $U$ from the $LU$ factorization of $A$, whenever $A$ can be $LU$ factorized without row interchange. Notice that the latter assumption is crucial, since it will ensure that the element of $A$ in position $ii$ is different from zero after each \texttt{reduce} step. As explained previously, the inner \texttt{for} loop in fact computes the product of matrices $T_{n}\cdots T_1$, which in fact amounts to the matrix $L^{-1}$ from the $LU$ factorization of $A$. Given that each $T_i$ is easily invertible, we can also recover $L$.
-
-As stated previously, the construction above works under the assumption that no row pivoting is needed when performing the Gaussian eliminations, giving us:
+That is, when $M$ is assigned $A$, $X$ will be initially $A_0=I$, and then
+$A_i=\red{A_{i-1}\cdot A}{b_i}=T_i\cdot T_{i-1}\cdots T_1\cdot A$, as desired.
+We show in the appendix that, because we can obtain the matrices $T_i$ in \langfor\ and that these
+are easily invertible, we can construct an expression $e_L(M)$ which evaluates to $L$ when $M$ is assigned to
+$A$. We may thus conclude the following.
 \begin{proposition}\label{prop:gauss}
-There is a \langfor expression $e(X)$ such that by interpreting $X$ with a matrix $A$ will result in the matrix $U$ from the $LU$ factorization of $A$ whenever $A$ is $LU$ factorizable.
+There are \langfor expressions $e_L(M)$ and $e_U(M)$ such that
+$\sem{e_L}{\I}=L$ and $\sem{e_U}{\I}=U$ form an LU-decomposition of $A$,
+where $\conc(V)=A$ and $A$ is LU-factorizable.
+% such that by interpreting $X$ with a matrix $A$ will result in the matrix $U$ from the $LU$ factorization of $A$ whenever $A$ is $LU$ factorizable.
 \end{proposition}
+
+%
+% which computes the $U$ from the $LU$ factorization of $A$, whenever $A$ can be $LU$ factorized without row interchange. Notice that the latter assumption is crucial, since it will ensure that the element of $A$ in position $ii$ is different from zero after each \texttt{reduce} step. As explained previously, the inner \texttt{for} loop in fact computes the product of matrices $T_{n}\cdots T_1$, which in fact amounts to the matrix $L^{-1}$ from the $LU$ factorization of $A$. Given that each $T_i$ is easily invertible, we can also recover $L$.
+%
+% As stated previously, the construction above works under the assumption that no row pivoting is needed when performing the Gaussian eliminations, giving us:
+% \begin{proposition}\label{prop:gauss}
+% There is a \langfor expression $e(X)$ such that by interpreting $X$ with a matrix $A$ will result in the matrix $U$ from the $LU$ factorization of $A$ whenever $A$ is $LU$ factorizable.
+% \end{proposition}
 
 
 If $A$ needs row interchange to be $LU$ factorizable (this is, $PA$ is $LU$ factorizable) we say that $A$ is $PALU$ factorizable, where the factorization is $PA=LU$. To accomplish this, we need something extra.
@@ -89,9 +102,11 @@ There is a \langfor expression $e(X)$ such that by interpreting $X$ with a matri
 \end{proposition}
 
 
-Now, since $A^{-1}=U^{-1}L^{-1}$ and using that $U$ is upper triangular, we can obtain the determinant and inverse of $A$ and thus
+
 
 \subsection{Determinant and inverse}
+
+Now, since $A^{-1}=U^{-1}L^{-1}$ and using that $U$ is upper triangular, we can obtain the determinant and inverse of $A$ and thus
 \thomas{I don't know how much of the proof goes here or if it's ok as it is.}
 
 
