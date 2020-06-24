@@ -35,7 +35,9 @@
 
 In this section we explore the expressive power of $\langfor$. Given that arithmetic circuits \cite{allender} are often said to capture linear algebra operations \cite{Raz02,ShpilkaY10}, they seem as a natural candidate for comparison. Intuitively, an arithmetic circuit is similar to a boolean circuit \cite{aroraB2009}, except that it has gates computing the sum and the product function, and processing elements of $\RR$ instead of boolean values. To handle inputs of different sizes, a notion of uniform families of arithmetic circuits is defined via a Turing machine generating a description of the circuit for each input size $n$.
 
-What we show in the remainder of this section is that any function $f$ which operates on matrices, and is computed by a uniform family of arithmetic circuits of bounded degree, can also be computed by a \langfor\ expression, and vice versa. In order to keep the notation light, we will focus on circuits that take $n$ inputs and have a single output, and \langfor\ schemas where each variable has type $(\alpha,\alpha),(\alpha,1),(1,\alpha)$, or $(1,1)$, although all of our results hold without these restrictions as well. We begin by showing how circuit families can be simulated by \langfor\ expressions.
+What we show in the remainder of this section is that any function $f$ which operates on matrices, and is computed by a uniform family of arithmetic circuits of bounded degree, can also be computed by a \langfor\ expression, and vice versa. In order to keep the notation light, we will focus on 
+%circuits that take $n$ inputs and have a single output, and
+ \langfor\ schemas where each variable has type $(\alpha,\alpha),(\alpha,1),(1,\alpha)$, or $(1,1)$, although all of our results hold without these restrictions as well. We begin by showing how circuit families can be simulated by $\langfor.$
 
 \subsection{From arithmetic circuits to \langfor}
 
@@ -149,21 +151,32 @@ It is not difficult to see that the proof of Theorem \ref{th-circuits-ml} can be
 Let $f$ be a function taking as its input matrices $A_1,\ldots ,A_k$ of dimensions $\alpha\times \beta$, with $\alpha,\beta \in \{n,1\}$. The $f$ is computed by a uniform circuit family over matrices of polynomial degree if and only if there is a \langfor\ expression of polynomial degree for $f$. 
 \end{corollary}
 
-Note that ...
-
-\domagoj{Need to add the undecidability result.}
+Note that this result crucially depends on the fact that \langfor\ expressions are of polynomial degree. Some \langfor\ expression are easily seen to produce results which are not polynomial. An example of such an expression is, for instance, $e_{\texttt{exp}} = \ffor{v}{X}{X\cdot X}$, over a schema $\Sch$ with $\ttype(v)= (\gamma,1)$, and $\ttype(X)=(1,1)$. Over an instance which assigns $n$ to $\gamma$ this expression computes the function $x^{2^n}$. A natural question to ask then is whether we can determine the degree of a \langfor\ expression. As we show in the following proposition, this question is in fact undecidable.
 
 \begin{proposition}
 \label{prop-undec}
 Given a \langfor\ expression $e$ over a schema $\Sch$, it is undecidable to check whether $e$ is of polynomial degree.
 \end{proposition}
 
+In general, determining a syntactic subclass of \langfor\ expressions which are of polynomial degree seems similar to the analysis of terminating conditions of programs with for loops \cite{florisKnows?}. We leave the study of \langfor\ fragments which can be simulated by circuits of polynomial degree for future work.
+
 \subsection{Supporting additional operators}
 
-MISSING:
+%MISSING:
+%
+%1. UNDECIDABILITY
+%
+%2. DIVISION
+%
+%3. COMMENT ON GENERAL DEPTH REDUCTION DEPENDING ON THE FUNCTIONS
 
-1. UNDECIDABILITY
+The equivalence of \langfor\ and arithmetic circuits we prove above assume that both use only the functions plus and sum. However, both arithmetic circuits and \langfor\ expressions can be allowed to use a multitude of functions over $\RR$. The most natural addition to the set of functions is the division operator, which is crucially needed in many linear algebra algorithms, such as, for instance, Gaussian elimination. Interestingly, the equivalence in this case still holds, mainly due to a surprising result which shows that (almost all) divisions can in fact be removed for arithmetic circuits which allow sum, product, and division gates \cite{allender}.
 
-2. DIVISION
+More precisely, in \cite{strassen1973vermeidung,borodin1982fast,kaltofen1988greatest} it was shown that for any function of the form $f = g/h$, where $g$ and $h$ are relatively prime polynomials of degree $d$, if $f$ is computed by an arithmetic circuit of size $s$, then both $g$ and $h$ can be computed by a circuit whose size is polynomial in $s + d$. Given that we can postpone the division without affecting the final result, this, in essence, tells us that division can be eliminated (pushed to the top of the circuit), and we can work with plus-sum circuits instead. The degree of a circuit for $f$, can then be defined as the maximum of degrees of circuits for $g$ and $h$. Given this fact, we can again use the depth reduction procedure of \cite{AllenderJMV98}, and extend Corollary \ref{cor-circ-ml} to circuits with division.
 
-3. COMMENT ON GENERAL DEPTH REDUCTION DEPENDING ON THE FUNCTIONS
+\begin{corollary}
+\label{cor-division}
+Let $f$ be a function taking as its input matrices $A_1,\ldots ,A_k$ of dimensions $\alpha\times \beta$, with $\alpha,\beta \in \{n,1\}$. The $f$ is computed by a uniform circuit family over matrices of polynomial degree that allows divisions, if and only if there is a \langfor($\div$)\ expression of polynomial degree for $f$.
+\end{corollary}
+
+An interesting line of future work here is to see which additional functions can be added to arithmetic circuits and \langfor\ formulas, in order to preserve their equivalence. Note that this will crucially depend on the fact that these functions have to allow the depth reduction of \cite{AllenderJMV98} in order to be supported.
