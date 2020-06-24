@@ -7,7 +7,8 @@ actually is. We will (partially) answer this in the next section by connecting \
 arithmetic circuits of polynomial degree. Through this connection, one can move back and forth between \langfor and arithmetic circuits, and as a consequence, anything computable by such a circuit can be
 computed by \langfor as well. When it comes to specific linear algebra algorithms, the detour via circuits
 can often be avoided. Indeed, in this section we illustrate that \langfor is able to
-compute, in a natural way, the so-called LU decomposition of matrices, and consequently \langfor is expressive enough to compute matrix inversion and the determinant. 
+compute, in a natural way, the so-called LU decomposition of matrices, and consequently \langfor is expressive enough to compute matrix inversion and the determinant. By contrast, matrix inversion and determinant need to be explicitly
+added as separate operators in \lang~\cite{matlang,matlang-journal}.
 % In fact, many of the algorithms presented in \cite{num} translate naturally in \langfor.
 
 \subsection{LU decomposition}
@@ -21,19 +22,14 @@ A lower-upper (LU) decomposition factors a matrix $A$ as the product of a lower 
 \textbf{LU decomposition by Gaussian elimination.} LU decomposition can be seen as matrix form of Gaussian elimination in which the columns of $A$
 are reduced, one by one, to obtain the matrix $U$. The reduction of columns of $A$ is achieved
 as follows. Consider the first column $[A_{11},\ldots,A_{n1}]^T$ of $A$ and  define 
-\[
-c_1 :=
-\begin{bmatrix}
-    0 \\
-    \alpha_{21} \\
-    \vdots \\
-    \alpha_{n1}
-\end{bmatrix},
-\]
+$c_1 := [0, \alpha_{21},\ldots, \alpha_{n1}]^T$ 
 with $\alpha_{j1} := -\frac{A_{j1}}{A_{11}}$. Let $T_1=I+ c_1\cdot e_1^T$ and consider
 $T_1\cdot A$. We note that the first column of $T_1\cdot A$ is now equal to $[A_{11},0,\ldots,0]^T$. That is,
-all of its entries below the diagonal are zero. One then iteratively performs a similar computation, using $T_{i-1}\cdot\cdots\cdot T_1\cdot A$ and a matrix $T_i=I+c_i\cdot e_i^T$, to obtain a matrix whose $i$the column is zero below the diagonal (whilst preserving this property for all previous columns). At the end of this process, $T_n\cdot\cdots\cdot T_1\cdot A=U$ where $U$ is the desired upper triangular matrix.
-Furthermore, it is easily verified that each $T_i$ is invertible and by defining $L=T_1^{-1}\cdot\cdots\cdot T_n^{-1}$ one obtains a lower triangular matrix satisfying $A=L\cdot U$. Of course, the above procedure is only successful when the denominators used in the definition of the vectors $c_i$ are non-zero. When this is the case we call a matrix $A$ \textit{LU-factorizable}. In case when such a denominator is zero in one of the reduction steps, one can remedy this situation by \textit{row pivoting}. That is, when the $i$th entry of the
+all of its entries below the diagonal are zero. One then iteratively performs a similar computation, using a matrix $T_i=I+c_i\cdot e_i^T$, where $c_i$ now depends on the $i$th column in $T_{i-1}\cdot\cdots\cdot T_1\cdot A$. As a consequence, $T_i\cdot T_{i-1}\cdots \cdot T_1\cdot A$ is upper triangular
+in its first $i$ columns. At the end of this process, $T_n\cdot\cdots\cdot T_1\cdot A=U$ where $U$ is the desired upper triangular matrix.
+Furthermore, it is easily verified that each $T_i$ is invertible and by defining $L=T_1^{-1}\cdot\cdots\cdot T_n^{-1}$ one obtains a lower triangular matrix satisfying $A=L\cdot U$. Of course, the above procedure is only successful when the denominators used in the definition of the vectors $c_i$ are non-zero. When this is the case we call a matrix $A$ \textit{LU-factorizable}. 
+
+In case when such a denominator is zero in one of the reduction steps, one can remedy this situation by \textit{row pivoting}. That is, when the $i$th entry of the
 $i$th row in $T_{i-1}\cdot\cdots\cdot T_1\cdot A$ is zero, one replaces the $i$th row by  $j$th row in this matrix, with $j>i$, provided that $i$the entry of the $j$th row is non-zero. If no such row exists, this implies that all elements below the diagonal are zero already in column $i$ and one can proceed with the next column. One can formulate this in matrix terms by stating that there exists a permutation matrix $P$, which pivots rows, such that $P\cdot A=L\cdot U$. Any matrix $A$ is LU-factorizable \textit{with pivoting}.
  
  %
@@ -59,33 +55,38 @@ $i$th row in $T_{i-1}\cdot\cdots\cdot T_1\cdot A$ is zero, one replaces the $i$t
 \textbf{Implementing LU decomposition in \langfor.} 
 We first assume that the input matrices are LU-factorizable. We deal with general matrices later on.
 To implement the above procedure, we need to compute the vector $c_i$ for each column $i$. We do this in two steps. First, we extract from our input matrix its $j$th column and set all its upper diagonal entries to zero. This can be achieved by the following expression:
-$$\ccol{M}{y} := \ffor{v}{X}{\mathsf{ssucc}(y,v)\cdot(v^T\cdot M \cdot y)\cdot v + X}.$$
+$$\ccol{V}{y} := \ffor{v}{X}{\mathsf{succ}^+(y,v)\cdot(v^T\cdot M \cdot y)\cdot v + X}.$$
 Indeed, when $M$ is assigned to a matrix $A$ and $y$ to $b_i$, we have that $X$ will be initially assigned
-$A_0=\mathbf{0}$ and in consecutive iterations,  $A_j=A_{j-1}+ b_i^T\cdot A\cdot b_j$ if $j>i$ (because $\mathsf{ssucc}(b_i,b_j)=1$ if $j>i$) and $A_j=A_{j-1}$ otherwise (because $\mathsf{ssucc}(b_i,b_j)=0$ for $j\leq i$). It is now clear that the result of this evaluation is the desired column vector.
+$A_0=\mathbf{0}$ and in consecutive iterations,  $A_j=A_{j-1}+ b_i^T\cdot A\cdot b_j$ if $j>i$ (because $\mathsf{succ}^+(b_i,b_j)=1$ if $j>i$) and $A_j=A_{j-1}$ otherwise (because $\mathsf{succ}^+(b_i,b_j)=0$ for $j\leq i$). It is now clear that the result of this evaluation is the desired column vector.
 % vector $X$ will only be incremented with
 % entry $A_{ij}$ (computed in $v^T\cdot M \cdot y$) in position $i$ when $i>j$ due to $\mathsf{ssucc}(y,v)$.
 %
 %
 % computes the vector which has zeroes in positions $1\ldots j$, and values $A_{ij}$ in positions $i>j$. Intuitively, the product $y^*\cdot Z_{<}\cdot v$ makes all positions up to $j$ equal zero, and $v^*\cdot A\cdot y$ extracts the element $A_{ij}$ of $A$ when $v$ is interpreted by the $i$th canonical vector, and $y$ by the $j$th one.
-Using $\ccol{M}{y}$, we can now compute $T_i$ by the following expression:
-$$\red{M}{y} := I + f_/(\ccol{M}{y},-(y^T\cdot M\cdot y)\cdot \ones(y))\cdot y^T,$$
-where $f_/:\RR^2\to\RR:(x,y)\mapsto x/y$ is the division function. It should be clear that when $M$ is assigned to $A$ and $y$ to $b_i$, $f_/(\ccol{A}{b_i},-(b_i^T\cdot A\cdot b_i)\cdot \ones(b_i))$ is equal to the vector $c_i$ used in the definition of $T_i$. To perform the reduction steps for all columns, we consider
+Using $\ccol{V}{y}$, we can now compute $T_i$ by the following expression:
+$$\red{V}{y} := e_{\mathsf{Id}}+ f_/(\ccol{V}{y},-(y^T\cdot V\cdot y)\cdot \ones(y))\cdot y^T,$$
+where $f_/:\RR^2\to\RR:(x,y)\mapsto x/y$ is the division function. It should be clear that when $V$ is assigned to $A$ and $y$ to $b_i$, $f_/(\ccol{A}{b_i},-(b_i^T\cdot A\cdot b_i)\cdot \ones(b_i))$ is equal to the vector $c_i$ used in the definition of $T_i$. To perform the reduction steps for all columns, we consider
 the expression
 $$
-e_{U}(M) :=  \left( \initf{I}{y}{X}{\red{X\cdot M}{y}\cdot X} \right) \cdot M.
+e_{U}(V) :=  \left( \initf{e_{\mathsf{Id}}}{y}{X}{\red{X\cdot V}{y}\cdot X} \right) \cdot V.
 $$
-That is, when $M$ is assigned $A$, $X$ will be initially $A_0=I$, and then
+That is, when $V$ is assigned $A$, $X$ will be initially $A_0=I$, and then
 $A_i=\red{A_{i-1}\cdot A}{b_i}=T_i\cdot T_{i-1}\cdots T_1\cdot A$, as desired.
 We show in the appendix that, because we can obtain the matrices $T_i$ in \langfor\ and that these
-are easily invertible, we can construct an expression $e_L(M)$ which evaluates to $L$ when $M$ is assigned to
+are easily invertible, we can also construct an expression $e_L(V)$ which evaluates to $L$ when $V$ is assigned to
 $A$. We may thus conclude the following.
 \begin{proposition}\label{prop:gauss}
-There exists \langfor$(f_/)$ expressions $e_L(M)$ and $e_U(M)$ such that
+There exists \langfor$(f_/)$ expressions $e_L(V)$ and $e_U(V)$ such that
 $\sem{e_L}{\I}=L$ and $\sem{e_U}{\I}=U$ form an LU-decomposition of $A$,
 where $\conc(V)=A$ and $A$ is LU-factorizable.\qed
 % such that by interpreting $X$ with a matrix $A$ will result in the matrix $U$ from the $LU$ factorization of $A$ whenever $A$ is $LU$ factorizable.
 \end{proposition}
-
+We remark that the proposition holds when division is added as a function in $\Fun$
+in \langfor. When row pivoting is needed, we can also obtain a permutation matrix
+$P$ such that $P\cdot A=L\cdot U$ holds by means of an expression \langfor, provided
+that we additionally allow the function $f_{>0}$, as defined in Example~\ref{ex:programtc}. This function allows for computing the following
+operation: Given a vector $v$, return $\mathsf{minnz}(v)=b_j$ where $j$ is the first entry in $v$ that holds a non-zero value, or returns $\mathsf{minnz}(v)=\mathbf{0}$ if such non-zero value exists.  The expressibility of $P$, $L$ and $U$
+such that $P\cdot A=L\cdot U$ now follows from the following proposition.
 %
 % which computes the $U$ from the $LU$ factorization of $A$, whenever $A$ can be $LU$ factorized without row interchange. Notice that the latter assumption is crucial, since it will ensure that the element of $A$ in position $ii$ is different from zero after each \texttt{reduce} step. As explained previously, the inner \texttt{for} loop in fact computes the product of matrices $T_{n}\cdots T_1$, which in fact amounts to the matrix $L^{-1}$ from the $LU$ factorization of $A$. Given that each $T_i$ is easily invertible, we can also recover $L$.
 %
@@ -94,34 +95,58 @@ where $\conc(V)=A$ and $A$ is LU-factorizable.\qed
 % There is a \langfor expression $e(X)$ such that by interpreting $X$ with a matrix $A$ will result in the matrix $U$ from the $LU$ factorization of $A$ whenever $A$ is $LU$ factorizable.
 % \end{proposition}
 
-
-If row pivoting is needed $A$, i.e., such that $P\cdot A$ is LU-factorizable for a permutation matrix $P$,
-we can construct $P$ in \langfor, provided that we can express the following: Given a vector $v$, find $\mathsf{minnz}(v)=b_j$ where $j$ is the first entry in $v$ that holds a non-zero value.
-One can show this can be expressed in \langfor$(f>0)$. More generally:
+%
+% If row pivoting is needed for $A$, i.e., such that $P\cdot A$ is LU-factorizable for a permutation matrix $P$,
+% we can construct $P$ in \langfor, provided that we can express the following: Given a vector $v$, find $\mathsf{minnz}(v)=b_j$ where $j$ is the first entry in $v$ that holds a non-zero value.
+% One can show this can be expressed in \langfor$(f>0)$. More generally:
  %
  % needs row interchange to be $LU$ factorizable (this is, $PA$ is $LU$ factorizable) we say that $A$ is $PALU$ factorizable, where the factorization is $PA=LU$. To accomplish this, we need something extra.
 
  \begin{proposition}\label{prop:palu}
 There exist \langfor$(\Fun)$ expressions $e_P(M)$, $e_L(M)$ and $e_U(M)$ such that for
-$P=\sem{e_P}(\I)$, $L=\sem{e_L}{\I}$ and $U=\sem{e_U}{\I}$, $P\cdot A=L\cdot U$ holds
-if and only if $\Fun$ include division $f_/$ and \langfor$(\Fun)$ can express the function
-$\mathsf{minnz}(V)$.
+$P=\sem{e_P}{\I}$, $L=\sem{e_L}{\I}$ and $U=\sem{e_U}{\I}$, $P\cdot A=L\cdot U$ holds
+if and only if $\Fun$ includes division $f_/$ and \langfor$(\Fun)$ can express the function $\mathsf{minnz}(\cdot)$.\qed
  %
  % such that by interpreting $X$ with a matrix $A$ will result in the matrix $U$ from the $PALU$ factorization of $A$ whenever $A$ is $PALU$ factorizable if and only if there exists a \langfor expression $e'(X)$ such that by interpreting $X$ with a vector $A$ outputs a canonical vector $e_k$ where $A_k$ is the first non zero entry of $A$.
 \end{proposition}
 As mentioned above, \langfor$(f_/,f_>)$ suffice to compute LU decomposition with pivoting for arbitrary matrices.
 
 \subsection{Determinant and inverse}
-
-Now, since $A^{-1}=U^{-1}L^{-1}$ and using that $U$ is upper triangular, we can obtain the determinant and inverse of $A$ and thus
-\thomas{I don't know how much of the proof goes here or if it's ok as it is.}
-
+We next highlight two important consequence of the previous results. First,
+by observing that $\mathsf{det}(A)=\mathsf{det}(P)\cdot \mathsf{U}$ when 
+$P\cdot A=L\cdot U$, we need to show that we can compute the determinant of
+the permutation matrix $P$ (which will be $+1$ or $-1$) and the determinant
+of $U$. For the latter, since $U$ is upper triangular $\mathsf{det}(U)=\prod_{i}U_{ii}$, which can easily be computed in \langfor.
+Moreover, $\mathsf{det}(P)=1$ when $P$ corresponds to an even permutation and
+$\mathsf{det}(P)=-1$ otherwise. One can determine in \langfor $\mathsf{det}(P)=1$
+or $\mathsf{det}(P)=-1$.
 
  \begin{proposition}\label{prop:determinant}
-There is a \langfor expression $e(X)$ such that by interpreting $X$ with a matrix $A$ will result in the $1\times 1$ matrix with $\texttt{det}(A)$ in its only entry whenever $A$ is $LU$ factorizable.
+There is a \langfor$(f_/,f_{>0})$-expression $e_{\mathsf{det}}(V)$ such 
+that $\sem{e_{\mathsf{det}}}{\I}=\mathsf{det}(A)$ when $\I$ assigns $V$
+to $A$.\qed
+%
+% that by interpreting $X$ with a matrix $A$ will result in the $1\times 1$ matrix with $\texttt{det}(A)$ in its only entry whenever $A$ is $LU$ factorizable.
 \end{proposition}
 
+In case that $\mathsf{det}(A)\neq 0$ we can further obtain the inverse matrix $A^{-1}$ of $A$ from $P^T\cdot L^{-1}\cdot U$. Due to the simplicity of the lower triangular matrix $L$, one can show that \langfor\ can compute its inverse. Hence,
+%
+% Now, since $A^{-1}=U^{-1}L^{-1}$ and using that $U$ is upper triangular, we can obtain the determinant and inverse of $A$ and thus
+% \thomas{I don't know how much of the proof goes here or if it's ok as it is.}
+
+%
+%  \begin{proposition}\label{prop:determinant}
+% There is a \langfor expression $e(X)$ such that by interpreting $X$ with a matrix $A$ will result in the $1\times 1$ matrix with $\texttt{det}(A)$ in its only entry whenever $A$ is $LU$ factorizable.
+% \end{proposition}
+
 \begin{proposition}\label{prop:inverse}
-There is a \langfor expression $e(X)$ such that by interpreting $X$ with a matrix $A$ will result in the matrix $A^{-1}$ whenever $A$ is $LU$ factorizable.
+There is a \langfor$(f_/,f_{>0})$ expression $e_{\mathsf{inv}}(V)$ such
+$\sem{e_{\mathsf{inv}}}{\I}=A^{-1}$ when $\I$ assigns $V$
+to $A$ and $A$ is invertible, and $\sem{e_{\mathsf{inv}}}{\I}=\mathbf{0}$ when
+$A$ is not invertible.\qed
+ % that by interpreting $X$ with a matrix $A$ will result in the matrix $A^{-1}$ whenever $A$ is $LU$ factorizable.
 \end{proposition}
+
+\floris{some final comments.}
+
 
