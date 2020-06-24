@@ -12,14 +12,13 @@ $e$ & $::=$ & $V\in \Mvar$ & (matrix variable)\\
  & $|$ & $\ones(e)$ & (one-vector)\\ 
  & $|$ & $\diag(e)$ & (diagonalization of a vector)\\  
  & $|$ & $e_1 \cdot e_2$ & (matrix multiplication)\\   
- & $|$ & $e_1 + e_2$ & (matrix additions)\\   
+ & $|$ & $e_1 + e_2$ & (matrix addition)\\   
  & $|$ & $a\times e$ & (scalar multiplication, $a\in\RR$)\\   
   & $|$ & $f(e_1,\ldots ,e_k)$ & (pointwise application of $f\in\Fun_k$).    
 \end{tabular}
 \vspace{1ex}
 
-We thus see that $\lang$ is parametrized by a collection of functions $\Fun$.
-In the remainder of the paper we only make this dependence explicit, and write
+$\lang$ is parameterized by a collection of functions $\Fun$ but in the remainder of the paper we only make this dependence explicit, and write
 \lang$(\Fun)$, for some set $\Fun$ of functions, when these functions are crucial
 for some results to hold. When we simply write \lang, we
 mean that any function can be used (including not using any function at all).
@@ -28,7 +27,7 @@ mean that any function can be used (including not using any function at all).
 \smallskip
 \noindent
 \textbf{Schemas and typing.}\,
-To define the semantics of \lang\ expressions, we need a notion of schema and well-typedness of expressions. A \lang\ \textit{schema} $\Sch$ is a pair $\Sch=(\Mnam,\size)$, where $\Mnam\subset \Mvar$ is a finite set of matrix variables, and $\size: \Mvar \mapsto \DD\times \DD$ is a function that maps each matrix variable to a pair of \textit{size symbols}. The $\size$ function helps us determine whether certain matrix operations, such as matrix multiplication, can be performed for matrices adhering to a schema. 
+To define the semantics of \lang\ expressions we need a notion of schema and well-typedness of expressions. A \lang\ \textit{schema} $\Sch$ is a pair $\Sch=(\Mnam,\size)$, where $\Mnam\subset \Mvar$ is a finite set of matrix variables, and $\size: \Mvar \mapsto \DD\times \DD$ is a function that maps each matrix variable to a pair of \textit{size symbols}. The $\size$ function helps us determine whether certain matrix operations, such as matrix multiplication, can be performed for matrices adhering to a schema. 
 We denote size symbols by letters $\alpha,\beta,\gamma$. We also assume that $1\in \DD$. 
 To help us determine whether a \lang\ expression can always be evaluated, we define the \textit{type} of an expression $e$, with respect to a schema $\Sch$, denoted by $\ttype(e)$, inductively as follows:
 \begin{itemize}
