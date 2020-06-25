@@ -1,25 +1,28 @@
-Here we prove proposition \ref{prop:palu}. Recall that $A$ is said to be LU factorizable if there exists matrices $T_1,\ldots, T_{n}$ where $T_i=E_{n}^{(i)}\cdots E_{i+1}^{(i)}$ for $1\leq i < n$ and $T_n=E^{(n)}_n$ for some elementary matrices $E_{j}^{(i)}=I+\alpha_{ij}\cdot e_{i}e_{j}^{*}$ such that $T_{n}\cdots T_1A=U$ holds, where $U$ is an upper triangular matrix. Define $A_k=T_{k-1}A_{k-1}$ for $1< k\leq n+1$ and $A_1=A$. Keep in mind that $A_k$ is $A$ with its columns reduced up to index $k-1$ (so $A_{n+1}=U$). 
+Here we prove proposition \ref{prop:palu}. Recall that $A$ is said to be LU factorizable if there exists matrices $T_1,\ldots, T_{n}$ where $T_i=I+c_ib_i$ for $1\leq i < n$ and $T_n=I$ such that $T_{n}\cdots T_1A=U$ holds, where $U$ is an upper triangular matrix. Define $A_k=T_{k-1}A_{k-1}$ for $1< k\leq n+1$ and $A_1=A$. Keep in mind that $A_k$ is $A$ with its columns reduced up to index $k-1$ (so $A_{n+1}=U$). 
 
-If $A$ needs no row interchange we compute $$L^{-1}=\left( \initf{I}{v}{X}{\red{X\cdot A}{v}\cdot X} \right),$$ where in step $v=e_k$ we do $T_k=\red{X\cdot A}{v}$. It is worth noting that because of the definition of $\ccol{\cdot}{\cdot}$ inside $\red{\cdot}{\cdot}$, we always get $T_n=I$.
+If $A$ needs no row interchange we compute $$L^{-1}=\initf{I}{v}{X}{\red{X\cdot A}{v}\cdot X},$$ where in step $v=b_k$ we do $T_k=\red{X\cdot A}{v}$. It is worth noting that because of the definition of $\ccol{\cdot}{\cdot}$ inside $\red{\cdot}{\cdot}$, we always get $T_n=I$.
 
 
 Now, let's assume that during the LU factorization process we need row interchange immediately before step $k$, $1\leq k\leq n$, so we now aim to reduce the $k$-th column of $A_k=T_{k-1}\cdots T_1A$, or $A_k=A$ if $k=1$, but now $A_k$ has a zero pivot. 
 
 Let $P$ be the matrix that denotes the necessary row interchange. We aim to reduce the $k$-th column of $PA_{k}$ since $A_{k}$ has a zero pivot. So to compute $T_k$ we do $\red{P\cdot X\cdot A}{v}$ in the iteration. Furthermore, we need to apply the permutation $P$ to the current result, so the expression ends as $\initf{I}{v}{X}{\red{P\cdot X\cdot A}{v}\cdot P\cdot X}$.
 
-The factorization results in $U=T_{n}\cdots T_kPT_{k-1}\cdots T_1A$. We now explain why $T_{n}\cdots T_kPT_{k-1}\cdots T_1 = L^{-1}P.$ The permutation matrix $P$ has the form $P = I - uu^*$ and denotes row interchange (if multiplied by right) of rows $i$ and $j$ if $u=(e_{i}-e_{j})$. Note that in this case $i,j>k-1$ since we are using $P$ before reducing the $k$-th column so we are interchanging rows of index strictly greater than $k-1$ (if $k=n$ there is one row to interchange so nothing happens). Now, for $T_{l}=I-c_le_l^*$ with $l\leq k-1$ we have that $e_l^*P$ because $e_l$ has zeroes in positions $i+(k-1)$ and $j+(k-1)$. Note that $P^2=I$, thus $PT_lP=P^2-Pc_le_l^*P=I-\widehat{c}_le_l^*.$ Where $\widehat{c}_l=Pc_l$. Now $$T_{n}\cdots T_kPT_{k-1}\cdots T_1=T_{n}\cdots T_kPT_{k-1}P^2T_{k-2}P^2\cdots P^2 T_1P^2=T_{n}\cdots T_k(PT_{k-1}P)(PT_{k-2}P)(P\cdots P)(PT_1P)P=T_{n}\cdots T_k\widehat{T}_{k-1}\cdots \widehat{T}_1P$$ and $L^{-1} = T_{n}\cdots T_k\widehat{T}_{k-1}\cdots \widehat{T}_1$.
+The factorization results in $U=T_{n}\cdots T_kPT_{k-1}\cdots T_1A$. We now explain why $T_{n}\cdots T_kPT_{k-1}\cdots T_1 = L^{-1}P.$ The permutation matrix $P$ has the form $P = I - uu^T$ and denotes row interchange (if multiplied by left) of rows $i$ and $j$ if $u=(b_{i}-b_{j})$. Note that in this case $i,j>k-1$ since we are using $P$ before reducing the $k$-th column so we are interchanging rows of index strictly greater than $k-1$ (if $k=n$ there is one row to interchange so nothing happens).
 
-The goal is to compute $P$ within the iteration. The output of the PALU algorithm is $L^{-1}P$.
+Now, for $T_{l}=I-c_lb_l^T$ with $l\leq k-1$ we have that $b_l^TP=b_l$ because $b_l$ has zeroes in positions $i$ and $j$. Note that $P^2=I$, thus $PT_lP=P^2-Pc_lb_l^TP=I-\widehat{c}_lb_l^T=\widehat{T}_l.$ Where $\widehat{c}_l=Pc_l$. Now $$T_{n}\cdots T_kPT_{k-1}\cdots T_1=T_{n}\cdots T_kPT_{k-1}P^2T_{k-2}P^2\cdots P^2 T_1P^2=T_{n}\cdots T_k(PT_{k-1}P)(PT_{k-2}P)(P\cdots P)(PT_1P)P=T_{n}\cdots T_k\widehat{T}_{k-1}\cdots \widehat{T}_1P$$ and $L^{-1} = T_{n}\cdots T_k\widehat{T}_{k-1}\cdots \widehat{T}_1$.
 
-Let $\nneq{\cdot}$ be the operator that receives an $n$ dimensional vector $a$ and outputs a canonical vector $e_k$ such that $a_k$ is the first non zero entry of $a$. 
+The goal is to compute $P$ within the iteration. The output of the PALU algorithm is $L^{-1}P$, this is, we aim to construct an expression $e_{L^{-1}P}(V)$ such that $U=e_{L^{-1}P}(A)\cdot A$.
 
-We prove that we can compute $\nneq$ if and only if we can compute PALU.
+Let $\mathsf{minnz}(\cdot)$ be the operator that receives an $n$ dimensional vector $a$ and outputs a canonical vector $b_k$ such that $a_k$ is the first non zero entry of $a$, or $\mathbf{0}$ if such nonzero value doesn't exist. 
 
-First, let $A$ be a PALU factorizable matrix. If we have the function $\nneq$, then we compute $$P=P(A,X,v) = I - \left[ v - \nneq{ \ccoleq{XA}{v} } \right]\left[ v - \nneq{ \ccoleq{XA}{v} } \right]^*.$$ Here $\ccoleq{\cdot}{\cdot}$ is the same as $\ccol{\cdot}{\cdot}$ but uses $Z_{eq}$ instead of $Z_{<}$.
+We prove that we can compute $\mathsf{minnz}$ if and only if we can compute $e_{L^{-1}P}$.
 
-Thus $$\text{PALU}(A):=\initf{I}{v}{X}{\red{P(A,X,v)\cdot X\cdot A}{v}\cdot P(A,X,v)\cdot X}= L^{-1}P.$$
+First, let $A$ be a PALU factorizable matrix. If we have $\mathsf{minnz}$ we can define $\nneq{a}{v} = \mathsf{minnz}(a) + (1 - \ones(a)^T\cdot \mathsf{minnz}(a))\times v$.
+Then we compute $$e_{P}(A,v) := e_{\mathsf{Id}} - \left[ v - \nneq{ \ccoleq{A}{v} }{v} \right]\left[ v - \nneq{ \ccoleq{A}{v} }{v} \right]^T.$$ Here $\ccoleq{\cdot}{\cdot}$ is the same as $\ccol{\cdot}{\cdot}$ but uses $S_{\leq}$ instead of $S_{<}$.
 
-Now we show that if we have can do the PALU factorization, we can compute $\nneq$. Let $a$ be an $n$ dimensional vector such that there exists $k:1\leq k\leq n$ where $a_i=0$ for all $i<k$, this is, $k$ is the index of the first non zero entry of $a$ (it must exist, otherwise there is nothing to be proved). Let $\lbrace b_1, \ldots, b_n\rbrace$ be an $n$ dimensional basis. Then, without loss of generality, $a$ is a linear combination of $b_1, \ldots, b_k$, with $k \leq n$. Now, let $A = \left[ a\hspace{1em} b_2 \hspace{1em} \cdots \hspace{1em}  b_n \right].$ Note that $A$ is PALU factorizable since $\lbrace a, b_2, \ldots, b_n\rbrace$ is a linearly independent set of $\mathbb{R}^n$. Furthermore, if we run the PALU algorithm the factorization results in
+Thus $$e_{L^{-1}P}(A):=\initf{e_{\mathsf{Id}}}{v}{X}{\red{e_{P}(XA,v)\cdot X\cdot A}{v}\cdot e_{P}(XA,v)\cdot X}$$
+
+Now we show that if we have can do the PALU factorization, we can compute $\mathsf{minnz}$. Let $a$ be an $n$ dimensional vector such that there exists $k:1\leq k\leq n$ where $a_i=0$ for all $i<k$, this is, $k$ is the index of the first non zero entry of $a$ (it must exist, otherwise there is nothing to be proved and we return $\mathbf{0}$). Let $\lbrace b_1, \ldots, b_n\rbrace$ be an $n$ dimensional basis. Then, without loss of generality, $a$ is a linear combination of $b_1, \ldots, b_k$, with $k \leq n$. Now, let $A = \left[ a\hspace{1em} b_2 \hspace{1em} \cdots \hspace{1em}  b_n \right].$ Note that $A$ is PALU factorizable since $\lbrace a, b_2, \ldots, b_n\rbrace$ is a linearly independent set of $\mathbb{R}^n$. Furthermore, if we run the PALU algorithm the factorization results in
 
 \[
 U=(L^{-1}P)A = \begin{bmatrix}
@@ -29,10 +32,18 @@ U=(L^{-1}P)A = \begin{bmatrix}
 \end{bmatrix}.
 \]
 
-So, if we have the PALU function such that $PALU(A)=(L^{-1}P)$, we can compute $\nneq$ in the following way. $$\nneq{a}=\ffor{v}{X}{X+\left( v^*ZX\cdot\dfrac{a^*v}{v_{min}^*\left[ \text{PALU}(A)\cdot A\right]v_{min}} \right)\odot v + min(v)\odot\left( v_{max} + \dfrac{a^*v}{v_{min}^*\left[ \text{PALU}(A)\cdot A\right]v_{min}}\odot (v-v_{max})\right)}$$
+So, if we have the PALU function such that $e_{L^{-1}P}(A)=(L^{-1}P)$, we can compute $\mathsf{minnz}$ in the following way. $$\mathsf{minnz}(a)=\ffor{v}{X}{X+\left( \mathsf{succ}(v,X)\cdot\dfrac{a^Tv}{v_{min}^T\left[ e_{L^{-1}P}(A)\cdot A\right]v_{min}} \right)\odot v + min(v)\odot\left( v_{max} + \dfrac{a^Tv}{v_{min}^T\left[ e_{L^{-1}P}(A)\cdot A\right]v_{min}}\odot (v-v_{max})\right)}$$
 
-In the expression above $a^*v$ extracts an entry of $a$, which will be zero until $v=e_k$, and we normalize it with $a_k$ obtained from $v_{min}^*\left[\text{PALU}(A)\cdot A\right]v_{min}$, so we add $v$ only in this case and $X=e_k$ is set. From then on $v^*ZX$ will always be zero and we will end up with $\nneq{a}=e_k$ as expected. For initialization, we use $min(v)$ as usual and we add $v_{max}$ to set $X=v_{max}$ so $v^*ZX=1$ until something changes. If $a_1\neq 0$ then we add $v-v_{max}$ and thus set $X=e_1$ and $v^*ZX=0$ since then, so $\nneq{a}=e_1$, as expected.
+In the expression above $a^Tv$ extracts an entry of $a$, which will be zero until $v=b_k$, and we normalize it with $a_k$ obtained from $v_{min}^T\left[ e_{L^{-1}P}(A)\cdot A\right]v_{min}$, so we add $v$ only in this case and $X=b_k$ is set. From then on $\mathsf{succ}(v,X)$ will always be zero and we will end up with $\mathsf{minnz}(a)=b_k$ as expected. For initialization, we use $min(v)$ as usual and we add $v_{max}$ to set $X=v_{max}$ so $\mathsf{succ}(v,X)=1$ until something changes. If $a_1\neq 0$ then we add $v-v_{max}$ and thus set $X=b_1$ and $\mathsf{succ}(v,X)=0$ since then, so $\mathsf{minnz}(a)=b_1$, as expected.
 
 Note that the expression depends on the normalization of $a_k$, and would not be possible if we didn't have $a_k$ from the PALU algorithm.
 
-Thus we can do PALU if and only if we can compute $\nneq$.
+Thus we can compute $\mathsf{minnz}$ if and only if we can compute $e_{L^{-1}P}$.
+
+If we have $f_{>0}$ we can define $$\mathsf{minnz}(a)=\ffor{v}{X}\left( 1-\ones(v)^TX \right) \times f_{>0}(v^Ta)\times v.$$
+Note that we sum $v$ only when the corresponding entry is nonzero and there is not a vector stored in $X$.
+So, for any matrix, we can compute its gaussian elimitation as 
+$$
+e_{U}(V) :=  e_{L^{-1}P}(V) \cdot V.
+$$
+Note that the matrix that performs the gaussian elimination is $e_{L^{-1}P}(V)$.

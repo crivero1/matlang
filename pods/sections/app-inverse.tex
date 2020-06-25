@@ -1,23 +1,69 @@
-To see why proposition \ref{prop:determinant} is true it suffices to do $$\texttt{det}(A)=dp(U(A))$$ assuming $A$ is $LU$ factorizable, since $U$ is upper diagonal.
-Now, to prove \ref{prop:inverse} we will need to elaborate a bit more. Define 
+Let's see why proposition \ref{prop:determinant} is true. To get the gaussian elimination of $A$ we do $e_{U}(A)$. From linear algebra we know that if $PA=LU$
+then
+$$
+\mathsf{det}(P)\mathsf{det}(A)=\mathsf{det}(PA)=\mathsf{det}(LU)=\mathsf{det}(U)
+$$
+since $\mathsf{det}(L)=\mathsf{det}(L^{-1})=1$. We define
+$$
+e_{\mathsf{det}(U)}(V):=\initf{e_{\mathsf{Id}}}{v}{X}v^T\cdot e_{U}(V) \cdot v \cdot X.
+$$
+Note that $X$ has to be $1\times 1$, and starts as $[1]$. This computes $\mathsf{det}(U)$ from the $PA=LU$ factorization.
+Similarly, we take advantage that $L^{-1}$ has ones in its diagonal, and define
+$$
+e_{\mathsf{det}(P)}(V):=\initf{e_{\mathsf{Id}}}{v}{X}\left( 2\cdot v^T \cdot e_{L^{-1}P}(V) \cdot v - 1 \right)\cdot \mathsf{succ}^+\left( v, \mathsf{minnz}(\mathsf{fullcol}(V,v)) \right) \cdot X.
+$$
+Where
+$$
+\mathsf{fullcol}(V,y):= \ffor{v}{X}{(v^T\cdot V \cdot y)\times v + X}.
+$$
+Basically $\mathsf{fullcol}$ extracts the column indicated by canonical vector $y$. In $e_{\mathsf{det}(P)}(V)$, we multiply the current result by $\left( 2\cdot v^T \cdot e_{L^{-1}P}(V) \cdot v - 1 \right)$, which is $1$ if the current diagonal entry is not zero, and $-1$ if it's zero.
+And we do this only if $\mathsf{succ}^+\left( v, \mathsf{minnz}(\mathsf{fullcol}(V,v)) \right)$ outputs $1$, which happens when the first nonzero entry of the column indicated by $v$ comes after the diagonal (indicated by $v$).
+So, when we interpret $V$ as the matrix $A$, we count as one interchange a zero entry in the diagonal of $e_{L^{-1}P}(A)$ with only zero values upwards, we multiply by $-1$ everytime this happens. We can do this because $L^{-1}$ has ones in its diagonal.
+Therefore we can define
+$$
+e_{\mathsf{det}}(V)=f_/\left( e_{\mathsf{det}(U)}(V), e_{\mathsf{det}(P)}(V) \right)
+$$
+Here, when interpreting $V$ as the matrix $A$, we basically do
+$$
+\mathsf{det}(A)=\dfrac{\mathsf{det}(U)}{\mathsf{det}(P)}.
+$$
+Note that if $A$ is singular then $\mathsf{det}(U)=0$ and we know that $\mathsf{det}(P)$ is $1$ or $-1$. If we don't allow $f_{>0}$ and if $A$ is $LU$ factorizable, since $\mathsf{det}(A)=\mathsf{det}(U)$ we define
+$$
+e_{\mathsf{ALU-det}}(V):=\initf{e_{\mathsf{Id}}}{v}{X}v^T\cdot e_{\mathsf{ALU}}(V) \cdot v \cdot X.
+$$
+
+\thomas{Maybe replace $\ssum$ and $\sprod$ by $\ffor{v}{X}{e}$}
+Now, to prove \ref{prop:inverse} we will need to elaborate a bit more.
+Define $$e_{\mathsf{ps}}(V)=\ssum v.\sprod w. \left( \mathsf{succ}^+(w,v)\times (A-e_{\mathsf{Id}}) + e_{\mathsf{Id}} \right).$$
+Here, $e_{\mathsf{ps}}(A)$ results in $I+A+A^2+\cdots + A^n$. In the expression, the outer loop defines which power we compute. That is, when $v$ is the $i$th canonical vector, we compute $A^i$.
+Computing $A^i$ is achieved via the inner product loop, which uses $\mathsf{succ}^+(w,v)$ to determine whether $w$ comes before $v$ in the ordering of canonical vectors.
+When this is the case, we multiply the current result by $A$, and when $w$ is greater or equal than $v$, we use the identity not to affect the already computed result.
+Let
 \[
 D_U = \begin{bmatrix}
-    u_{11} & \cdots & \cdots &  \vdots \\
-    0 & u_{22} & \cdots &  \vdots \\
+    u_{11} & \cdots & \cdots &  0 \\
+    0 & u_{22} & \cdots &  0 \\
     0 & \ddots & \vdots & \vdots \\
     \vdots & \cdots& \cdots & u_{nn}
 \end{bmatrix}.
 \]
 
-This is, $D_U$ is the diagonal matrix of $U$. We compute this as $$ \getdiag{U} = \ssum v. (v^*Uv) \odot vv^*.$$
+This is, $D_U$ is the diagonal matrix of $U$. We compute this as $$ e_{\mathsf{getDiag}}(U) = \ssum v. (v^TUv) \times vv^T.$$
 Let $U'=U-D_U$, then $$ U^{-1}=\left[ D_U+U' \right]^{-1}= \left[ D_U\left( I+D_U^{-1}U'\right) \right]^{-1} = \left( I+D_U^{-1}U'\right)^{-1}D_U^{-1} $$
-Note that $$D_U^{-1}=\ssum v. f_{/}(1,v^*D_Uv)\odot vv^*=\ssum v. f_{/}(1,v^*Uv)\odot vv^*.$$
+Note that $$D_U^{-1}=\ssum v. f_{/}(1,v^TD_Uv)\times vv^T=\ssum v. f_{/}(1,v^TUv)\times vv^T.$$
 Where $f_{/}$ is the division function. In the last equality we take advantage of the fact that the diagonal of $U$ and $D_U$ are the same.
 We now focus on calculating $\left( I+D_U^{-1}U'\right)^{-1}$. First, by construction, $D_U^{-1}U'$ is strictly upper triangular and thus nilpotent, such that $\left( D_U^{-1}U'\right)^n=0$, where $n$ is the dimension of $A$. Recall the following algebraic identity and apply it to $x=D_U^{-1}U'$. $$(1+x)\left( \sum_{i=0}^{m}(-x)^i \right)=1-(-x)^{m+1}$$
 Choosing $m=n-1$ we have $$\left(I+D_U^{-1}U' \right)\left( \sum_{i=0}^{n-1}(-D_U^{-1}U')^i \right)=I- \left( -D_U^{-1}U'\right)^n =I. $$
 So $$\left(I+D_U^{-1}U' \right)^{-1}=\sum_{i=0}^{n-1}(-D_U^{-1}U')^i=\sum_{i=0}^{n}(-D_U^{-1}U')^i.$$
-In our language $$ps([-1]\odot D_U^{-1}U')=\sum_{i=0}^{n}(-D_U^{-1}U')^i=\left(I+D_U^{-1}U' \right)^{-1}.$$
-We define $$\diaginverse{U}=\ssum v. f_{/}(1,v^*Uv)\odot vv^*.$$
-Finally $$U^{-1}= ps\left([-1]\odot \left[\diaginverse{U}(U-\getdiag{U})\right] \right)\diaginverse{U}.$$
-Recall that we have $L^{-1}=\initf{I}{v}{X}{\red{X\cdot A}{v}\cdot X}.$ So $A^{-1}=U^{-1}L^{-1}.$
+In our language $$e_{\mathsf{ps}}([-1]\times D_U^{-1}U')=\sum_{i=0}^{n}(-D_U^{-1}U')^i=\left(I+D_U^{-1}U' \right)^{-1}.$$
+We define $$e_{\mathsf{diagInverse}}(U):=\ssum v. f_{/}(1,v^TUv)\times vv^T.$$
+So $$U^{-1}= e_{\mathsf{ps}}\left([-1]\times \left[e_{\mathsf{diagInverse}}(U)(U-e_{\mathsf{getDiag}}(U))\right] \right)e_{\mathsf{diagInverse}}(U).$$
+Define $$e_{U^{-1}}(V):= e_{\mathsf{ps}}\left([-1]\times \left[e_{\mathsf{diagInverse}}(e_U(V))(e_U(V)-e_{\mathsf{getDiag}}(e_U(V)))\right] \right)e_{\mathsf{diagInverse}}(e_U(V)).$$
+Recall that we have $e_{L^{-1}}.$ So $A^{-1}=U^{-1}L^{-1}.$
 $$\text{compute }L^{-1}\rightarrow\text{compute }U=L^{-1}A\rightarrow\text{compute }U^{-1}\rightarrow\text{compute }A^{-1}=U^{-1}L^{-1}$$
+If $PA=LU$, we have to change $e_{\mathsf{diagInverse}}(U)$ a little to account for the case when $A$ is singular ($\mathsf{det}(U)=0$):
+$$e_{\mathsf{diagInverse}}(U)=\ssum v. f_{/}(f_{>0}(\mathsf{det}(U)),v^T\left( f_{>0}(\mathsf{det}(U))(U-I) + I \right)v)\times vv^T.$$
+Let $e_{\mathsf{diagprod}}(U)=\sprod v. v^TUv$, note that if $U$ is from $PA=LU$ then $e_{\mathsf{diagprod}}(U)=\mathsf{det}(U)$. We define
+$$e_{\mathsf{diagInverse}}(U):=\ssum v. f_{/}\left(f_{>0}(e_{\mathsf{diagprod}}(U)),v^T\left( f_{>0}(e_{\mathsf{diagprod}}(U))(V-I) + I \right)v\right)\times vv^T.$$
+Here, $e_{\mathsf{diagInverse}}(U)$ computes $D_U^{-1}$ if $f_{>0}(e_{\mathsf{diagprod}}(U))=1$, this is $\mathsf{det}(U)\neq 0$, and outputs the zero matrix otherwise thus $e_{U^{-1}}$ does not change and outputs the zero matriz if $A$ is singular.
+Finally $$e_{\mathsf{inv}}(V):=e_{U^{-1}}(V)\cdot e_{L^{-1}P}(V).$$
