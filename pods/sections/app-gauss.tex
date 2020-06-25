@@ -1,1 +1,32 @@
-Here we prove proposition \ref{prop:gauss}.
+Here we prove proposition \ref{prop:gauss}. We define
+$$
+e_{L^{-1}}(V) :=  \initf{e_{\mathsf{Id}}}{y}{X}{\red{X\cdot V}{y}\cdot X}.
+$$
+Note that, in the iteration, if $V$ is $A$, $X$ is initially $A_0=I$ then
+\begin{align*}
+  A_i&=\red{A_{i-1}\cdot A}{b_i}\cdot A_{i-1} \\
+  &=T_iA_{i-1} \\
+  &=T_iT_{i-1}\cdots T_1A_0 \\
+  &=T_iT_{i-1}\cdots T_1.
+\end{align*}
+Such that $T_nT_{n-1}\cdots T_1A=U$. Note that because of the definition of $\ccol{\cdot}{\cdot}$ inside $\red{\cdot}{\cdot}$, we always get $T_n=I$.
+So we have
+$$
+e_{\mathsf{ALU}}(V) :=  e_{L^{-1}}(V) \cdot V.
+$$ 
+
+Since
+\begin{align*}
+  L^{-1}&=(I-c_1b_1^T)\cdots (I-c_{n-1}b_{n-1}^T) \\
+  &=I-c_1b_1^T-\cdots - c_{n-1}b_{n-1}^T
+\end{align*}
+and
+\begin{align*}
+  L&=(I+c_1b_1^T)\cdots (I+c_{n-1}b_{n-1}^T) \\
+  &=I+c_1b_1^T+\cdots + c_{n-1}b_{n-1}^T
+\end{align*}
+
+we can get $L$ from $L^{-1}$ just by multiplying every entry below the diagonal by $-1$, or we can do $L=-1\times L^{-1} + 2I$, which is the same since $L$ and $L^{-1}$ are lower triangular. So we define
+$$
+e_{L}(V) :=  -1\times e_{L^{-1}}(V) + 2\times e_{\mathsf{Id}}
+$$
