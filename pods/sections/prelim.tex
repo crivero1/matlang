@@ -27,8 +27,8 @@ mean that any function can be used (including not using any function at all).
 \smallskip
 \noindent
 \textbf{Schemas and typing.}\,
-To define the semantics of \lang\ expressions we need a notion of schema and well-typedness of expressions. A \lang\ \textit{schema} $\Sch$ is a pair $\Sch=(\Mnam,\size)$, where $\Mnam\subset \Mvar$ is a finite set of matrix variables, and $\size: \Mvar \mapsto \DD\times \DD$ is a function that maps each matrix variable to a pair of \textit{size symbols}. The $\size$ function helps us determine whether certain matrix operations, such as matrix multiplication, can be performed for matrices adhering to a schema. 
-We denote size symbols by letters $\alpha,\beta,\gamma$. We also assume that $1\in \DD$. 
+To define the semantics of \lang\ expressions we need a notion of schema and well-typedness of expressions. A \lang\ \textit{schema} $\Sch$ is a pair $\Sch=(\Mnam,\size)$, where $\Mnam\subset \Mvar$ is a finite set of matrix variables, and $\size: \Mnam \mapsto \DD\times \DD$ is a function that maps each matrix variable in $\Mnam$ to a pair of \textit{size symbols}. The $\size$ function helps us determine whether certain matrix operations, such as matrix multiplication, can be performed for matrices adhering to a schema. 
+We denote size symbols by greek letters $\alpha,\beta,\gamma$. We also assume that $1\in \DD$. 
 To help us determine whether a \lang\ expression can always be evaluated, we define the \textit{type} of an expression $e$, with respect to a schema $\Sch$, denoted by $\ttype(e)$, inductively as follows:
 \begin{itemize}
 \item $\ttype(V):= \size(V)$, for a matrix variable $V\in\Mnam$;
@@ -43,7 +43,7 @@ To help us determine whether a \lang\ expression can always be evaluated, we def
 \item $\ttype(e_1 + e_2):=(\alpha,\beta)$ if $\ttype(e_1)=\ttype(e_2)=(\alpha,\beta)$;
  % and undefined otherwise;
 \item $\ttype(a\times e):=(\alpha,\beta)$ if $\ttype(e)=(\alpha,\beta)$; and
-\item $\ttype(f(e_1,\ldots ,e_k)):= (\alpha,\beta)$, whenever $\ttype(e_1) = \ldots = \ttype(e_k) := (\alpha,\beta)$ and $f\in\Fun_k$.
+\item $\ttype(f(e_1,\ldots ,e_k)):= (\alpha,\beta)$, whenever $\ttype(e_1) = \cdots = \ttype(e_k) := (\alpha,\beta)$ and $f\in\Fun_k$.
  % and is undefined otherwise.
 \end{itemize}
 When $\Sch$ is clear from the context we simply write $\type(e)$. We call an expression \textit{well-typed} according to the schema $\Sch$, if it has a defined type. 
@@ -71,11 +71,11 @@ This concludes the description and semantics of \lang. We next provide some simp
 \begin{example}Consider the \lang$(f_\odot)$ expression with $f_\odot:\RR^2\to\RR:(x,y)\mapsto x\cdot y$:
 $$\mathsf{cwalk}:= (\ones(V))^T\cdot f_{\odot}\bigl(V\cdot V, \diag(\ones(V)\bigr)\cdot\ones(V).$$
 Let $\Sch$  consist of $\Mnam:=\{V\}$ and $\size(V):=(\alpha,\alpha)$ such that
-matrices assigned to $V$ by instance $\I$ are square matrices.
+matrices assigned to $V$ by instances $\I$ over $\Sch$ are square matrices.
 It is readily verified that $\mathsf{cwalk}$ is well-typed and more specifically, $\ttype(\mathsf{cwalk})=(1,1)$, i.e., it returns an element of $\RR$ on any  instance $\I$. Let $\I$ be such that $\dom(\alpha)=n$ and  $\conc(V)$ is an adjacency matrix $A$ of an undirected graph $G$ consisting of $n$ vertices. Then, it is readily verified that $\sem{\mathsf{cwalk}}{\I}$ returns the number of paths of length two in $G$ which start in and end at the same vertex.\qed
 \end{example}
 Although \lang\ forms a solid basis for a matrix query language, it is limited in expressive power. Indeed, \lang\ is subsumed by first order logic with aggregates that uses only three variables \cite{matlang}. As consequence, no \lang\ expression exists that can compute the transitive closure of a graph (represented by its adjacency matrix) or can compute the inverse of a matrix. Furthermore, no \lang\ expression exists which detects four-cliques in a graph \cite{matlang}.
-Also, $\lang$ is not expressive enough to compute the inverse of a matrix or perform classical linear algebra algorithms such as LU-decomposition.
+Also, $\lang$ is not expressive enough to perform classical linear algebra algorithms such as LU-decomposition (Gaussian elimination).
  Rather than extending \lang\ with specific linear algebra operators, such as matrix inversion, we next introduce a limited form of recursion in \lang.
 As we will see shortly, this extension allows us to express many linear algebra algorithms, including matrix inversion and LU-decomposition.
 \floris{The paragraph above needs to be modified as it may overlap too much with the yet-to-be-written Introduction.}

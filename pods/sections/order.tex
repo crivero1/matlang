@@ -1,3 +1,4 @@
+%!TEX root = /Users/fgeerts/Documents/MLforloops/pods/main.tex
 %
 %
 % \noindent{\bf Order.}
@@ -14,8 +15,10 @@ Interestingly, although the order is implicit in \langfor\, we can explicitly us
 \begin{itemize}
 	\item $\mathsf{succ}(u,v)$ such that $\mathsf{succ}(b_i^n,b_j^n)=1$ if $i\leq j$ and $\mathsf{succ}(b_i^n,b_j^n)=0$ otherwise. Similarly, we can define
 	$\mathsf{succ}^+(u,v)$ such that  $\mathsf{succ}^+(b_i^n,b_j^n)=1$ if $i < j$ and $\mathsf{succ}^+(b_i^n,b_j^n)=0$ otherwise;
-	\item $\mathsf{min}(u)$ such that  $\mathsf{min}(b_i^n)=1$ if $i=1$ and $\mathsf{min}(b_i^n)=0$ otherwise; and
-	\item $\mathsf{max}(u)$ such that  $\mathsf{max}(b_i^n)=1$ if $i=n$ and $\mathsf{min}(b_i^n)=0$ otherwise.	
+	\item $\mathsf{min}(u)$ such that  $\mathsf{min}(b_i^n)=1$ if $i=1$ and $\mathsf{min}(b_i^n)=0$ otherwise; 
+	\item $\mathsf{max}(u)$ such that  $\mathsf{max}(b_i^n)=1$ if $i=n$ and $\mathsf{min}(b_i^n)=0$ otherwise; and
+	\item $e_{\mathsf{min}}$ and $e_{\mathsf{max}}$ such that $\sem{e_{\mathsf{min}}}{\I}=b_1^n$ and 
+	$\sem{e_{\mathsf{max}}}{\I}=b_n^n$, respectively.
 	\end{itemize}
 The definitions of these expressions is not entirely trivial and are detailed in the appendix.
 We here only highlight that successor information on canonical vectors is made accessible by
@@ -25,9 +28,9 @@ using the following matrix:
 \[
 S_{\leq} = \begin{bmatrix}
     1 & 1 & \cdots &  1 \\
-    0 & \ddots & \ddots & \vdots \\
-    \hdotsfor{3} & 1 \\
-    0 & \cdots & \cdots & 1 
+    0 & 1 & \cdots & 1\\
+    \vdots & \vdots & \ddots & 1 \\
+    0 & 0 & \cdots & 1 
 \end{bmatrix}.
 \] 
 We observe that $S_{\leq}$ has the property that $b_i^T\cdot S_{\leq} \cdot b_j=1$, for two canonical vectors $b_i$ and $b_j$ of the same dimension, if and only if $i\leq j$. Otherwise, $b_i^T\cdot S_{\leq} \cdot b_j=0$. It should be clear that if we can compute $S_{\leq}$ using an expression $e_{\leq}$ in \langfor, then we can define
@@ -38,7 +41,7 @@ For $e_{\leq}$ we can take the following \langfor expression:
 $$
 e_{\leq}=\ffor{v}{X}{X + \left((X\cdot e_{\mathsf{max}}) + v \right)\cdot v^T + v\cdot e^T_{\mathsf{max}}},
 $$
-where $e_{\mathsf{max}}$ is as defined above. The intuition behind this expression is that by using the last canonical vector $b_n$, as returned by $e_{\mathsf{max}}$, we have access to the last column of $X$ (via the product $X\cdot e_{\mathsf{max}}$). We use this column such that after the $i$th iteration, this column contains the $i$the column of $S_{\leq}$. This is done by incrementing $X$ with $v\cdot e_{\mathsf{max}}$.
+where $e_{\mathsf{max}}$ is as defined above. The intuition behind this expression is that by using the last canonical vector $b_n$, as returned by $e_{\mathsf{max}}$, we have access to the last column of $X$ (via the product $X\cdot e_{\mathsf{max}}$). We use this column such that after the $i$th iteration, this column contains the $i$the column of $S_{\leq}$. This is done by incrementing $X$ with $v\cdot e_{\mathsf{max}}^T$.
 To construct $S_{\leq}$, in the $i$th iteration we further increment $X$ with 
 (i)~the current last column in $X$ (via $X\cdot e_{\mathsf{max}}\cdot v^T$) which holds
 the $(i-1)$th column of $S_{\leq}$; and (ii)~the current canonical vector (via $v\cdot v^T$). Hence, after iteration $i$, $X$ contains the first $i$ columns of $S_{\leq}$ and holds the $i$th column of $S_{\leq}$ in its last column. It is now readily verified that $X=S_{\leq}$ after the $n$th iteration.
