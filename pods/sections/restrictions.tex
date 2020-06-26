@@ -1,58 +1,133 @@
-The general language is quite expressive, so it makes sense to study its natural restrictions:
-\begin{itemize}
-\item Define $\sum_x, \quad \prod_x, \quad \prod_x^{\odot}$
-\item Show examples
-\item Prove separation
-\item Connect with logical quantifiers
-\item Connect with ARA
-\end{itemize}
+% !TeX spellcheck = en_US
 
-\subsection{Special Cases}
-\medskip
+We give here a nice overview of the section.
 
-\noindent{\bf Canonical summation.} Notice that when defining the identity matrix, we actually only update $X$ by adding some matrix to it. This restricted form of the $\texttt{for}$ loop will prove useful throughout the paper, and we will therefore introduce it a special operator. That is, we define:
+\newcommand{\hprod}{\circ}
+
+\subsection{Sumation matlang and relational algebra}
+
+When defining the identity matrix and several other expressions, we actually only update $X$ by adding some matrix to it. This restricted form of the $\texttt{for}$ loop proved to be useful throughout the paper, and we will therefore introduce it a special operator. That is, we define:
 $$\Sigma v. e := \ffor{v}{X}{X + e}.$$
+We define the subfragment of \langfor, called \langsum, to consist of the $\Sigma$ operator plus the ``core'' operators in \lang, namely, transposition, matrix multiplication and addition, scalar multiplication, and pointwise function applications.
 
-Apart from computing the identity matrix, the summation operator also allows for computing the trace of a matrix $A$ using the expression $tr(A) := \Sigma v. v^*\cdot A \cdot v$. Interestingly enough, this restricted version of \texttt{for} already allows us to capture the \lang\ operators that are not present in the syntax of \langfor. More precisely, we have:
+Apart from defining the identity matrix with \langsum, the sum quantifier also allows for computing the trace of a matrix $A$ using the expression $tr(A) := \Sigma v. v^*\cdot A \cdot v$. Interestingly enough, this restricted version of \texttt{for} already allows us to capture the \lang\ operators that are not present in the syntax of \langsum. More precisely, we have:
 \begin{itemize}
-%\item {\bf Multiplying a matrix by a scalar.} One of the fundamental operations is the ability to multiply a matrix by a scalar. While this operation is not explicitly present in \langfor, we can simulate it as follows. Let $f_c(x) := c\cdot x$. For an expression $e$ 
-%\item {\bf Function application.} Notice that in \lang, a function is applied pointwise to matrices of arbitrary size, while \langfor only allows functions that process matrices of size $1\times 1$. Using the summation operator we can lift this condition, and allow applying a function $f:\mathbb{C}^n \mapsto \mathbb{C}$ on expressions $e_1,\ldots ,e_n$ of arbitrary (but equal) type by writing 
-%$$\Sigma x_i \Sigma x_j. f(x_i^*\cdot e_1\cdot x_j, \ldots ,x_i^*\cdot e_n\cdot x_j) \cdot x_i\cdot x_j^*,$$
-%which simply reconstructs the matrix obtained by applying $f$ to every position of $e_1$ through $e_n$, by using the fact that for two canonical vectors $e_i^m$ and $e_j^n$, the product $e_i^m \cdot (e_j^n)^*$ defines a $m\times n$ matrix whose only non-zero entry is in the position $ij$. From now on we will abuse the notation and allow applying $f$ to an arbitrary matrix, and not only a $1\time 1$ matrix. PERHAPS USE THE SAME NOTATION AS MATLANG TO AVOID THIS THING ALTOGETHER?
-\item {\em One vector.} Using the function $f(x) := 1$, we can define $$\ones(e) := f(\Sigma v. e\cdot v).$$
-\item {\em Diagonal of a vector.} The operator $\ones(e)$ can be defined as:
-$$\diag(e) := \Sigma v. (v^*\cdot e) \cdot vv^*.$$
+\item {\em Function application.} Notice that in \lang, a function is applied pointwise to matrices of arbitrary size, while \langsum only allows functions that process matrices of size $1\times 1$. Using the summation operator we can lift this condition, and allow applying a function $f:\mathbb{\RR}^n \mapsto \mathbb{\RR}$ on expressions $e_1,\ldots ,e_n$ of arbitrary (but equal) type by writing 
+$$\Sigma x_i \Sigma x_j. f(x_i^T\cdot e_1\cdot x_j, \ldots ,x_i^T\cdot e_n\cdot x_j) \cdot x_i\cdot x_j^T,$$
+which simply reconstructs the matrix obtained by applying $f$ to every position of $e_1$ through $e_n$, by using the fact that for two canonical vectors $b_i^m$ and $b_j^n$, the product $b_i^m \cdot (b_j^n)^*$ defines a $m\times n$ matrix whose only non-zero entry is in the position $ij$.
+\item {\em One vector.} We can define $$\ones(e) := \Sigma v.\, v.$$ where $\ttype(v) = (\alpha, 1)$ and $\ttype(e) = (\alpha, \beta)$ for some $\beta$. 
+\item {\em Diagonal of a vector.} The operator $\diag(e)$ can be defined as:
+$$\diag(e) := \Sigma v. (v^T\cdot e) \cdot vv^T.$$
 \end{itemize}
-
-Using the observations above we obtain the following:
+Furthermore, one can easily check that the 4-clique expression of Example~\ref{ex:fourcliques} can be defined in \langsum. Therefore, we conclude the following result. 
 \begin{corollary}
-\lang\ is subsumed by \langfor.
+\lang\ is strictly subsumed by \langsum.
 \end{corollary}
 
-To show that the inclusion here is strict, we illustrate how one can detect whether a undirected graph has a four clique, which it is not definable in \lang~\cite{BrijderGBW19}. For this, we define an expression $f(u,v) := 1 - u^*\cdot v$. Notice that when $u$ and $v$ are interpreted by two canonical vector of the same dimension, we have that:
-\[
-  			f(u,v)=1-u^*v=\begin{cases}
-               0 \text{ if } u=v \\
-               1 \text{ if } u\neq v
-            \end{cases}
-		\]
+What operations over matrices can be defined with \langsum that is beyond \lang? In~\cite{brijder2019matrices}, it was shown that \lang was strictly included in the relational algebra of $K$-relations~\cite{GreenKT07}, called here the Annotated Relational Algebra (ARA).
+Therefore, a natural idea is to compare the expressive power of \langsum with ARA. For making this comparison clear, in the following we give the formal definition of ARA to then see how to connect both formalism.
 
-To distinguish four-cliques, we will need to determine whether we are dealing with four different nodes. For this, we will utilize the function $$g(u,v,w,r)=f(u,v)\cdot f(u,w)\cdot f(u,r)\cdot f(v,w)\cdot f(v,r)\cdot f(w,r),$$
-which, when evaluated over four canonical vectors of the same dimension, will give us 1 if and only if the four vectors are distinct. With this at hand, we can now define:		
-\begin{multline*}
-\texttt{4-clique}(A) := \ssum v_1.\ssum v_2. \ssum v_3. \ssum v_4.\\ (v_1^*Av_2)(v_1^*Av_3)(v_1^*Av_4)(v_2^*Av_3)(v_2^*Av_4)(v_3^*Av_4) \cdot
-\\g(v_1,v_2,v_3,v_4).
-\end{multline*}
+\newcommand{\ddom}{\mathbb{D}}
+\newcommand{\fdom}{\operatorname{dom}}
+\newcommand{\att}{\mathbb{A}}
+\newcommand{\tuples}{\mathbf{tuples}}
+\newcommand{\supp}{\operatorname{supp}}
+\newcommand{\cJ}{\mathcal{J}}
+\newcommand{\adom}{\mathbf{adom}}
 
-When $A$ is an adjacency matrix of an undirected graph $G$, then we have that $\texttt{4-clique}(A)$ is different from zero if and only if $G$ has a four-clique. Using this, and the fact that \lang\ is subsumed by First Order Logic with aggregates that uses only three variables \cite{matlang}, we immediately obtain the following:
+\newcommand{\ksum}{\oplus}
+\newcommand{\kprod}{\odot}
+\newcommand{\bigksum}{\bigoplus}
+\newcommand{\bigkprod}{\bigodot}
+\newcommand{\kzero}{\mymathbb{0}}
+\newcommand{\kone}{\mymathbb{1}}
 
-\begin{corollary}
-There is a  \langfor expression that is not expressible in \lang.
-\end{corollary}
+
+Let $\ddom$ be a data domain and $\att$ a set of attributes. A relation schema is a finite subset of $\att$. A database schema (or just schema) is a function $\cS$ on finite set of symbols $\fdom(\cS)$ such that $\cS(R)$ is a relation schema for each $R \in \fdom(\cS)$. By some abuse of notation, from now on we write $R$ to denote both the symbol $R$ and the relation schema $\cS(R)$.
+Furthermore, we write $R \in \cS$ to say that $R$ is a symbol (or relation schema) of $\cS$. 
+An $R$-tuple is a function $t: R \rightarrow \ddom$ and we denote by $\tuples(R)$ the set of all $R$-tuples. Given $X \subseteq R$, we denote by $t[X]$ the restriction of $t$ to the set $X$.
+A semiring $(K, \ksum, \kprod, \kzero, \kone)$ is an algebraic structure where $K$ is a non-empty set, $\ksum$ and $\kprod$ are binary operations over $K$, and $\kzero, \kone \in K$. Furthermore,  $\ksum$ and $\kprod$ are associative operations, $\kzero$ and $\kone$ are the identities of $\ksum$ and $\kprod$ respectively, $\ksum$ is a commutative operation, $\kprod$ distributes over $\ksum$, and $\kzero$ annihilates $K$ (i.e. $\kzero \kprod k = k \kprod \kzero = \kzero$). We further assume that all semirings in this paper are commutative, namely, $\kprod$ is also commutative. We use $\bigksum_X$ or $\bigkprod_X$ for the $\ksum$- or $\kprod$-operation over all elements in $X$, respectively. Typical examples of semirings are $\RR$ and $\mathbb{N}$ with sum and product. 
+
+Fix a semiring $(K, \ksum, \kprod, \kzero, \kone)$ and a schema $\cS$. A $K$-relation of $R \in S$ is a function $r: \tuples(R) \rightarrow K$ such that the support  $\supp(r) = \{t \in \tuples(R) \mid r(t) \neq \kzero\}$ of $r$ is finite. 
+A $K$-instance $\cJ$ of $\cS$ is a function that assigns relation symbols of $\cS$ to $K$-relations. Given $R \in \cS$, we denote by $\cJ[R]$ the $K$-relation associated to $R$. Recall that $\cJ[R]$ is a function and then $\cJ[R](t)$ is the value in $K$ assign to $t \in \tuples(R)$. For the sake of simplification, we will write $\cJ(t)$ instead of $\cJ[R](t)$ when $R$ is clear from the context. 
+Given a $K$-relation $r:\tuples(R) \rightarrow K$ we denote by $\adom(r)$ the active domain of $r$ defined as $\adom(r) = \{t(a) \mid t \in \supp(r) \wedge a \in R\}$.
+Then the active domain of an $K$-instance $\cJ$ of $\cS$ is defined as $\adom(\cJ) = \bigcup_{R \in \cS} \adom(\cJ[R])$.
+
+An ARA expression $\alpha$ over $\cS$ is given by the following syntax:
+$$
+\begin{array}{rcl}
+\alpha & := & R \ \mid \ \alpha \cup \alpha \ \mid \  \pi_X(\alpha) \ \mid \  \sigma_X(\alpha) \ \mid \ \rho_f(\alpha) \ \mid \ \alpha \bowtie \alpha
+\end{array}
+$$
+where $R \in \cS$, $X \subseteq \att$ is finite, and $f: X \rightarrow Y$ is a one to one mapping with $Y \subseteq \att$. As usual, one can extend the schema $\cS$ is to any ARA expressions over $\cS$ recursively as follows: $\cS(R) = R$, $\cS(\alpha \cup \alpha') = \cS(\alpha)$, $\cS(\pi_X(\alpha)) = X$, $\cS(\sigma_X(\alpha)) = \cS(\alpha)$, $\cS(\rho_f(\alpha)) = X$ where $f:X \rightarrow Y$, and $\cS(\alpha \bowtie \alpha') = \cS(\alpha) \cup \cS(\alpha')$ for every ARA expressions $\alpha$ and $\alpha'$.
+We further assume that any ARA expression $\alpha$ satisfies the following syntactic restrictions: $\cS(\alpha') = \cS(\alpha'')$ whenever $\alpha = \alpha' \cup \alpha''$, $X \subseteq \cS(\alpha')$ whenever $\alpha = \pi_X(\alpha')$ or $\alpha = \sigma_X(\alpha')$, and $Y = \cS(\alpha')$ whenever $\alpha = \rho_f(\alpha')$ with $f: X \rightarrow Y$.
+
+Given an ARA expression $\alpha$ and a $K$-instance $\cJ$ over $\cS$, we define the semantics $\ssem{\alpha}[\cJ]$ as a $K$-relation of $\cS(\alpha)$ as follows. For $X \subseteq \att$, let $\operatorname{Eq}_X(t) = \kone$ when $t(a) = t(b)$ for every $a, b \in X$, and $\operatorname{Eq}_X(t) = \kzero$ otherwise. For every tuple $t \in \cS(\alpha)$:
+$$
+\begin{array}{ll}
+\text{if $\alpha = R$, then} & \ssem{\alpha}[\cJ](t) = \cJ[R](t) \\
+\text{if $\alpha = \alpha' \cup \alpha''$, then} & \ssem{\alpha}[\cJ](t) = \ssem{\alpha'}[\cJ](t) \ksum \ssem{\alpha''}[\cJ](t)  \\
+\text{if $\alpha = \pi_X(\alpha')$, then} & \ssem{\alpha}[\cJ](t) = \bigodot_{t': t'[X] = t} \ssem{\alpha'}[\cJ](t') \\
+\text{if $\alpha = \sigma_X(\alpha')$, then} & \ssem{\alpha}[\cJ](t) = 
+\ssem{\alpha'}[\cJ](t) \kprod \operatorname{Eq}_X(t)  \\
+\text{if $\alpha = \rho_f(\alpha')$, then} & \ssem{\alpha}[\cJ](t) = 
+\ssem{\alpha'}[\cJ](t \circ f)  
+\\
+\text{if $\alpha = \alpha' \bowtie \alpha''$, then} & \ssem{\alpha}[\cJ](t) = \\
+& \hspace{1cm} \ssem{\alpha'}[\cJ](t[Y]) \kprod  \ssem{\alpha''}[\cJ](t[Z])
+\end{array}
+$$
+where $Y = \cS(\alpha')$ and $Z = \cS(\alpha'')$. It is important to note that the $\bigksum$-operation on the semantics of $\pi_X(\alpha')$ is well defined given that the support of $\ssem{\alpha'}[\cJ]$ is finite. 
+
+We are ready for comparing the expressive power of \langsum with ARA. First of all, we need to extend \langsum from real numbers to any semiring $(K, \ksum, \kprod, \kzero, \kone)$. Indeed, one can easily verify that the semantics of \lang, \langfor and \langsum can be translated from $\RR$ to $K$ by switching from matrices over $(\RR, +, \times, 0, 1)$ to matrices over $(K, \ksum, \kprod, \kzero, \kone)$.
+Formally, from now on we denote by $\text{\langsum}\![K]$ the instance of \langsum over matrices with entries over $K$. 
+\cristian{Define here matrices over any semiring.}
+
+Second, we need to show how to encode $K$-matrices as $K$-relations and vice-versa. For this we restrict to 
+
+
+
+
+In fact, one can easily check that, for every ARA expression $\alpha$, the active domain $\adom(\ssem{\alpha}[\cJ]) \subseteq \adom(\cJ)$. is always included in the active domain of $\cJ$.
+
+
+
+
+%To show that the inclusion here is strict, we illustrate how one can detect whether a undirected graph has a four clique, which it is not definable in \lang~\cite{BrijderGBW19}. For this, we define an expression $f(u,v) := 1 - u^*\cdot v$. Notice that when $u$ and $v$ are interpreted by two canonical vector of the same dimension, we have that:
+%\[
+%  			f(u,v)=1-u^*v=\begin{cases}
+%               0 \text{ if } u=v \\
+%               1 \text{ if } u\neq v
+%            \end{cases}
+%		\]
+%
+%To distinguish four-cliques, we will need to determine whether we are dealing with four different nodes. For this, we will utilize the function $$g(u,v,w,r)=f(u,v)\cdot f(u,w)\cdot f(u,r)\cdot f(v,w)\cdot f(v,r)\cdot f(w,r),$$
+%which, when evaluated over four canonical vectors of the same dimension, will give us 1 if and only if the four vectors are distinct. With this at hand, we can now define:		
+%\begin{multline*}
+%\texttt{4-clique}(A) := \ssum v_1.\ssum v_2. \ssum v_3. \ssum v_4.\\ (v_1^*Av_2)(v_1^*Av_3)(v_1^*Av_4)(v_2^*Av_3)(v_2^*Av_4)(v_3^*Av_4) \cdot
+%\\g(v_1,v_2,v_3,v_4).
+%\end{multline*}
+%
+%When $A$ is an adjacency matrix of an undirected graph $G$, then we have that $\texttt{4-clique}(A)$ is different from zero if and only if $G$ has a four-clique. Using this, and the fact that \lang\ is subsumed by First Order Logic with aggregates that uses only three variables \cite{matlang}, we immediately obtain the following:
+%
+%\begin{corollary}
+%There is a  \langfor expression that is not expressible in \lang.
+%\end{corollary}
 
 \medskip
 
-\noindent{\bf Product.} Analogously to the summation with respect to canonical vectors, we can define the product. More precisely, 
+\subsection{Comparison with ARA}
+
+We explain here the comparison with ARA.
+
+\subsection{Comparison with weighted logics}
+
+We explain here the comparison with ARA.
+
+
+\subsection{Matrix multiplication as a quantifier}
+
+Analogously to the summation with respect to canonical vectors, we can define the product. More precisely, 
 if $e$ is an \langfor expression (that possibly uses the variable $v$), we would like to define the result of evaluating $\sem{e}{\I[v := e_1]} \cdot \sem{e}{\I[v := e_2]}\cdots \cdot \sem{e}{\I[v := e_n]}$, where the product is evaluated from left to right. For this purpose, we define the following operator:
 $$\sprod v. e=\ffor {v}{X}{X\cdot e + min(v)\cdot e}.$$
 Here we use the factor $min(v)\cdot e$ to handle the case of the first canonical vector which starts with $X$ being equal to the null matrix. 
