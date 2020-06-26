@@ -87,7 +87,7 @@ $b_1^n = [1\ 0 \cdots 0]^T$, $b_2^n = [0\ 1\ 0 \cdots 0]^T$, etc. When $n$ is cl
 We next make the semantics precise and start by
 declaring the type of loop expressions.
 Given a schema $\Sch$, the type of a \langfor expression $e$, denoted $\ttype(e)$, is defined inductively as in \lang\, but with following extra rule:
-\begin{itemize}\setlength{\itemindent}{-2ex}
+\begin{itemize}
 \item $\ttype(\ffor{v}{X}{e}) := (\alpha,\beta)$, if $\ttype(e)=(\alpha,\beta)$,
 $\ttype(X) = \ttype(e)$, and $\ttype(v) = (\gamma,1)$.
 \end{itemize}
