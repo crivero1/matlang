@@ -2,22 +2,22 @@ To begin with, we can easily obtain the last canonical vector using the expressi
 The fundamental property of the iteration we use here is that the result variable is always initiated with the null matrix.
 To define an order relation for canonical vectors, notice that the following matrix:
 \[
-Z_{eq} = \begin{bmatrix}
+S_{\leq} = \begin{bmatrix}
     1 & 1 & \cdots &  1 \\
     0 & \ddots & \ddots & \vdots \\
     \hdotsfor{3} & 1 \\
-    0 & \cdots & \cdots & 1
-\end{bmatrix},
+    0 & \cdots & \cdots & 1 
+\end{bmatrix}.
 \]
-has the property that $b_i^T\cdot Z_{eq} \cdot b_j$, for two canonical vectors $b_i,b_j$ of the same dimension, is equal to one if and only $i\leq j$, and is zero otherwise. $Z_{eq}$ can easily de defined in \langfor as follows:
-$$Z_{\text{eq}}=\ffor{v}{X}{X + \left[ (Xv_{max}) + v \right]v^T + vv^T_{max}},$$
-where $v_{max}$ is as defined above. The intuition behind this expression is that using the last canonical vector $v_{max}$, we have access to the final column of $X$ (via the product $X\cdot v_{max}$), to which we add the current canonical vector $v$, thus constructing $Z_{eq}$ by filling it column by column.
+has the property that $b_i^T\cdot S_{\leq} \cdot b_j$, for two canonical vectors $b_i,b_j$ of the same dimension, is equal to one if and only $i\leq j$, and is zero otherwise. $S_{\leq}$ can easily de defined in \langfor as follows:
+$$S_{\leq}=\ffor{v}{X}{X + \left[ (X\cdot v_{max}) + v \right]v^T + v\cdot v^T_{max}},$$
+where $v_{max}$ is as defined above. The intuition behind this expression is that using the last canonical vector $v_{max}$, we have access to the final column of $X$ (via the product $X\cdot v_{max}$), to which we add the current canonical vector $v$, thus constructing $S_{\leq}$ by filling it column by column.
 
-By defining $$\mathsf{succ}(u,v) := u^T\cdot Z_{eq} \cdot v,$$
-we obtain an order relation that allows us to discern whether one canonical vector comes before the other in the order given by \texttt{for}. If we want a strict order, we can just use $Z_< := Z_{eq} - I$, this is, $\mathsf{ssucc}(u,v) := u^T\cdot Z_{<} \cdot v$.
+By defining $$\mathsf{succ}(u,v) := u^T\cdot S_{\leq} \cdot v,$$
+we obtain an order relation that allows us to discern whether one canonical vector comes before the other in the order given by \texttt{for}. If we want a strict order, we can just use $S_< := S_{\leq} - I$, this is, $$\mathsf{succ}^+(u,v) := u^T\cdot S_{<} \cdot v.$$
 Interestingly, we can also define the predecessor relation between canonical vectors. For this, we require the following matrix:
 \[
-P = \begin{bmatrix}
+S_{pred} = \begin{bmatrix}
     0 & 1 & \cdots &  0 \\
     0 & \ddots & \ddots & \vdots \\
     \hdotsfor{3} & 1 \\
@@ -26,14 +26,17 @@ P = \begin{bmatrix}
 \]
 Using this matrix, we have that for a canonical vector $b_i$:
 \[
-P\cdot b_i=\begin{cases}
+S_{pred}\cdot b_i=\begin{cases}
                b_{i-1}, \text{ if } i > 1 \\
               \mathbf{0}, \text{ if } i = 1
             \end{cases}
 \]
-where $\mathbf{0}$ is a vector of zeros of the same type as $b_i$. Notice also that $\ones(u)^T\cdot S \cdot u$ is equal to zero, for a canonical vector $u$, if and only if $u = b_1$ is the first canonical vector, and zero otherwise.
-Therefore the expression $\mathsf{min}(u)$ is defined as $$\mathsf{min}(u) := 1 - \ones(u)^T\cdot S \cdot u,$$ and, when evaluated over canonical vectors, will result in $1$ if and only if $u=b_1$ is the first canonical vector.
+where $\mathbf{0}$ is a vector of zeros of the same type as $b_i$. Notice also that $\ones(u)^T\cdot S_{pred} \cdot u$ is equal to zero, for a canonical vector $u$, if and only if $u = b_1$ is the first canonical vector, and zero otherwise.
+Therefore the expression $\mathsf{min}(u)$ is defined as $$\mathsf{min}(u) := 1 - \ones(u)^T\cdot S_{pred} \cdot u,$$ and, when evaluated over canonical vectors, will result in $1$ if and only if $u=b_1$ is the first canonical vector.
 To define the first canonical vector in the order given by \texttt{for}, we can then write:
-$$v_{min} := \ffor{v}{X}{\mathsf{min}(v)\cdot v},$$
+$$v_{min} := \ffor{v}{X}{\mathsf{min}(v)\times v},$$
 Finally, we show that $P$ can be defined using the following \langfor expression:
-$$P:= \texttt{for }v,X.\quad X + \left[ (1 - v^Tv_{max})vv_{max}^T - (Xv_{max}) v_{max}^T + (Xv_{max})v^T\right].$$
+$$S_{pred}:= \texttt{for }v,X.\quad X + \left[ (1 - \mathsf{max}(v))\times vv_{max}^T - (Xv_{max})\cdot v_{max}^T + (Xv_{max})\cdot v^T\right].$$
+
+Here, $X$ starts as 0 and thus in turn $X\cdot v_{max}$, so we initiate storing $b_1$ in the last column. Next, we add a matrix that has the stored vector $Xv_{max}$ (the previous canonical vector) in the column indicated by $v$ (the current canonical vector) and $v-Xv_{max}$ in the last column, to replace the vector stored.
+The last iteration does nothing (sums the zero matrix).

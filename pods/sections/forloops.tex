@@ -36,23 +36,23 @@
 %\end{tabular}
 
 
-To extend \lang\ we take inspiration from classical linear algebra algorithms, such as those described in \cite{num}. Many of these algorithms are based on \textit{for loops} and in which the termination conditions for the loops are determined by matrix dimensions. We have seen how shortest path can be computed using for loops in the Introduction. We next provide two more examples.
-
+To extend \lang\ with recursion, we take inspiration from classical linear algebra algorithms, such as those described in \cite{num}. Many of these algorithms are based on \textit{for loops} and in which the termination conditions for the loops are determined by matrix dimensions. We have seen how shortest path can be computed using for loops in the Introduction. We next provide two more examples.
+\floris{I am not sure about introducing these programs at this point. Does it help ``our story''?}
 \begin{example}consider the following program which takes
 an $n\times n$ matrix $A$ as input:
 \begin{tabbing}
 $4\mathsf{clique}:=0$\\
 \texttt{for}\=\,  $i,j,k,\ell\in[1..n]$. \\
-\> \texttt{if} \= $i\neq j$ \& $i\neq k$ \& $i\neq \ell$ \& $j\neq k$ \& $j\neq \ell$ \& $k\neq\ell$ \texttt{do}:\\
+\> \texttt{if} \= $i\neq j$ \& $i\neq k$ \& $i\neq \ell$ \& $j\neq k$ \& $j\neq \ell$ \& $k\neq\ell$ \texttt{then}:\\
 \> \> $4\mathsf{clique}:= 4\mathsf{clique} + A_{ij}\cdot A_{ik}\cdot A_{i\ell} \cdot A_{jk}\cdot A_{j\ell} \cdot A_{k\ell}$.  
 \end{tabbing}
 Clearly, when $A$ is the adjacency matrix of a graph $G$, $4\mathsf{clique}\neq 0$ if and only if $G$ contains a four-clique. \qed
 \end{example}
 We can also compute the transitive closure of a graph using for loops.
-\begin{example}
+\begin{example}\label{ex:programtc}
 Consider the following program, again with an $n\times n$ matrix $A$ as input:
 \begin{tabbing}
-B:=I\quad /* $I$ is the $n\times n$ identity matrix */\\\	
+$B:=I$\quad /* $I$ is the $n\times n$ identity matrix */\\\	
 \texttt{for}\=\,  $i\in[1..n]$.\\
 \> $B:=B\cdot (I+A)$\quad \\
 \textsf{TC}:=$f_{>0}(B)$,
@@ -60,7 +60,8 @@ B:=I\quad /* $I$ is the $n\times n$ identity matrix */\\\
 where $f_{>0}:\RR\to\RR$ is such that $f_{>0}(x):=1$ if $x>0$ and $f_{>0}(x):=0$ otherwise. It is readily verified that when $A$ is the adjacency matrix of a graph $G$, then \textsf{TC} is the adjacency matrix of the transitive closure of $G$. \qed
 \end{example}
 These two examples already show that for loops allow computing properties beyond what \lang\ can express.
-We see more advanced examples, such as Gaussian elimination and computing an inverse of a matrix, later in the paper. With this motivation in mind, we next extend \lang\ with for loops. We refer to this extension as \langfor. 
+We see more advanced examples, such as Gaussian elimination and computing an inverse of a matrix, later in the paper. 
+With this motivation in mind, we next extend \lang\ with for loops. We refer to this extension as \langfor. 
 
 %
 %
@@ -68,7 +69,7 @@ We see more advanced examples, such as Gaussian elimination and computing an inv
 %
 % As before, we assume a countably infinite set of matrix variables $\Mvar = \{V_1, V_2, \ldots\}$, and a set $\Fun$  of functions $f:\mathbb{C}^n \mapsto \mathbb{C}$. Additionally, for each $n\in \mathbb{N}$, we denote by $e_1^n,\ldots ,e_n^n$ the complete list of canonical vectors of dimension $n$; that is, $e_1^n = [1\ 0 \cdots 
 
-\subsection{Syntax and semantics} The syntax of \langfor is defined just as for \lang\, but with an extra rule in the grammar:
+\subsection{Syntax and semantics of \langfor} The syntax of \langfor is defined just as for \lang\, but with an extra rule in the grammar:
 \medskip
 
 \begin{tabular}{lcll}
@@ -77,15 +78,17 @@ We see more advanced examples, such as Gaussian elimination and computing an inv
 
 \medskip
 Intuitively, $X$ is a matrix variable which is iteratively updated according to the expression $e$. We simulate iterations of the form ``\texttt{for} $i\in [1..n]$'' by letting $v$ loop over the \textit{canonical vectors} of dimension $n$. That is,
-for each $n\in \mathbb{N}$, we denote by $b_1^n,\ldots ,b_n^n$ the complete list of canonical vectors of dimension $n$; that is, $b_1^n = [1\ 0 \cdots 0]^T$, $b_2^n = [0\ 1\ 0 \cdots 0]^T$, etc. When $n$ is clear from the context we simply write $b_1,b_2,\ldots$. In addition, $e$ may depend on $v$. We next make the semantics precise and start by
+for each $n\in \mathbb{N}$, we denote by $b_1^n,\ldots ,b_n^n$ the  canonical vectors of dimension $n$; that is, $b_1^n = [1\ 0 \cdots 0]^T$, $b_2^n = [0\ 1\ 0 \cdots 0]^T$, etc. When $n$ is clear from the context we simply write $b_1,b_2,\ldots$. In addition, the expression $e$ in the rule above may depend on $v$. 
+
+We next make the semantics precise and start by
 declaring the type of loop expressions.
 Given a schema $\Sch$, the type of a \langfor expression $e$, denoted $\ttype(e)$, is defined inductively as in \lang\, but with following extra rule:
 \begin{itemize}
-\item $\ttype(\ffor{v}{X}{e}) = \ttype(e)$, if $\ttype(X) = \ttype(e)$, and $\ttype(v) = (\gamma,1)$; and is undefined otherwise.
+\item $\ttype(\ffor{v}{X}{e}) := (\alpha,\beta)$, if $\ttype(e)=(\alpha,\beta)$,
+$\ttype(X) = \ttype(e)$, and $\ttype(v) = (\gamma,1)$.
 \end{itemize}
-
+We note that $\Sch$ now necessarily includes $v$ and $X$ as variables and assigns size symbols to them.
 %Similarly as when defining \lang\, here we start with a core set of matrix operations (i.e sum, product, and the transpose of a matrix). In addition to this, we allow applying functions, and  the $\ffor{v}{X}{e}$ construct, which allows looping over the canonical vectors of a specified dimension, and updating the context of the variable $X$ in each iteration. The latter operator is inspired by classical Linear Algebra algorithms \cite{num}, which commonly use loops whose termination conditions are determined by the matrix dimension, and will allow us to express many properties of interest.
-
 %A \langfor {\em schema} $\Sch$ is a pair $\Sch=(\Mnam,\size)$, where $\Mnam\subset \Mvar$ is a finite set of matrix variables, and $\size: \Mvar \mapsto \DD\times \DD$ is a function that maps each matrix variable to a pair of {\em size symbols}. Given a schema $\Sch$, the type of a \langfor expression, denoted $\ttype(e)$, is defined inductively as follows:
 %\begin{itemize}
 %\item $\ttype(V) = \size(V)$, for a matrix variable $V$,
@@ -97,20 +100,21 @@ Given a schema $\Sch$, the type of a \langfor expression $e$, denoted $\ttype(e)
 %\item $\ttype(\ffor{v}{X}{e}) = \ttype(e)$, if $\ttype(X) = \ttype(e)$, and $\ttype(v) = (\gamma,1)$; and is undefined otherwise.
 %\end{itemize}
 %\cristian{Is this the same than in the previous section? Is there any difference?}
-
 % To extend \lang\, we add $\ffor{v}{X}{e}$ construct, which allows looping over the canonical vectors of a specified dimension, and updating the context of the variable $X$ in each iteration. The latter operator is i
 %
 % A \langfor {\em schema} $\Sch$ is a pair $\Sch=(\Mnam,\size)$, where $\Mnam\subset \Mvar$ is a finite set of matrix variables, and $\size: \Mvar \mapsto \DD\times \DD$ is a function that maps each matrix variable to a pair of {\em size symbols}. 
-We remark that in the expression $\ffor{v}{X}{e}$, we require that $\ttype(X) = \ttype(e)$ as this expression updates the content of the variable $X$ in each iteration using the result of $e$. We further restrict the type of 
+We also remark that in the definition of the type of $\ffor{v}{X}{e}$, we require that $\ttype(X) = \ttype(e)$ as this expression updates the content of the variable $X$ in each iteration using the result of $e$. We further restrict the type of 
 $v$ to be of a vector type, i.e., $\ttype(v)=(\gamma,1)$, since $v$ will be instantiated with canonical vectors.
 % As we will see below, evaluating $e$ will depend on a canonical vector stored in $v$, and the current content of $X$. %Another difference from \lang\ is that we allow function application only on scalars (more precisely, on $1\times 1$ matrices).
 %
-A \langfor\ expression $e$ is well-typed over a schema $\Sch$ if its type is defined. For well-typed expressions we can define the evaluation, just as for \lang. To define the semantics of $\ffor{v}{X}{e}$ over an instance $\I$, we need the following notation. Let $\I$ be an instance and $V\in \Mnam$. Then $\I[V := A]$ denotes an instance that coincides with $\I$, apart from the fact that the value of the matrix variable $V$ is the matrix $A$. Assume that
+A \langfor\ expression $e$ is well-typed over a schema $\Sch$ if its type is defined. For well-typed expressions we can define the evaluation, just as for \lang. 
+
+To define the semantics of $\ffor{v}{X}{e}$ over an instance $\I$, we need the following notation. Let $\I$ be an instance and $V\in \Mnam$. Then $\I[V := A]$ denotes an instance that coincides with $\I$, apart from the fact that the value of the matrix variable $V$ is the matrix $A$. Assume that
 $\ttype(v)= (\gamma,1)$, and $\ttype(e) = (\alpha,\beta)$ and $n := \dom(\gamma)$. Then, $\sem{\ffor{v}{X}{e}}{\I}$ is defined iteratively, as follows:
 \begin{itemize}
-\item Let $A_0 = \mathbf{0}$, be the zero matrix of size $\dom(\alpha)\times \dom(\beta)$.
-\item For $i=1,\ldots n$, compute $A_i = \sem{e}{\I[v := b^{n}_i, X:= A_{i-1}]}$.
-\item Finally, set $\sem{\ffor{v}{X}{e}}{\I} = A_{n}$.
+\item Let $A_0 := \mathbf{0}$ be the zero matrix of size $\dom(\alpha)\times \dom(\beta)$.
+\item For $i=1,\ldots n$, compute $A_i:= \sem{e}{\I[v := b^{n}_i, X:= A_{i-1}]}$.
+\item Finally, set $\sem{\ffor{v}{X}{e}}{\I}:= A_{n}$.
 \end{itemize}
 
 %%
@@ -148,7 +152,7 @@ $\ttype(v)= (\gamma,1)$, and $\ttype(e) = (\alpha,\beta)$ and $n := \dom(\gamma)
 For a better understanding how \langfor  works, we provide some simple examples.
 % next present a series of properties that the language can express and introduce some operators that will be commonly used throughout the paper.
 % , and show how the proposed language captures original \lang.
-\begin{example}
+\begin{example}\label{ex:forml-identity}
 We first show how one can construct the identity matrix of a certain dimension. For this, it suffices to use the expression $$e_{\mathsf{Id}}:=\ffor{v}{X}{X + v\cdot v^T}.$$ For this expression to be well-typed, $v$ has to be a vector variable of type $\alpha\times 1$ and $X$ a matrix variable of type $(\alpha,\alpha)$. When evaluated over some instance $\I$, this loop starts by initializing $X$ as the zero matrix of dimension $n\times n$, where $n=\dom(\alpha)$, and then adds to $X$ the matrix $b_1^n\cdot (b_1^n)^T$ in the first iteration, the matrix $b_2^n\cdot (b_2^n)^T$ in the second iteration, and so on, until finally $b_n^n\cdot (b_n^n)^T$ is added. Hence, $X$ equals the identity matrix of dimension $n\times n$ in the end.\qed
 \end{example}
 As another example, recall the $\diag$ operator from \lang.	This operator is redundant in \langfor\ as shown in the following example.
@@ -160,16 +164,21 @@ $b_i^T\cdot\sem{e}{\I}=\sem{e}{\I}_{i}$ is put on position $i$ on the diagonal, 
 % $b_i^T\cdot \sem{e}{\I}\times (b_i\cdot b_i^T)$ is added. In other words, on the $i$th element of the diagonal, represented by $b_i\cdot b_i^T$, the value $b_i^T\cdot\sem{e}{\I}=\sem{e}{\I}_{i}$ is added. 
 That is, the expression $e_{\mathsf{diag}}$ evaluates to $\sem{\diag(e)}{\I}$.\qed
 \end{example}
-It is also readily verified that the one-vector operator in \lang\ becomes redundant in \langfor. Furthermore, general function applications can be simulated in \langfor\ by just assuming function applications $f(e_1,\ldots,e_k)$ for $f\in\Fun_k$ where $\ttype(e_i)=(1,1)$ for all $i\in[k]$, as is illustrated next.
-\begin{example}Consider the \langfor\ expression 
-\begin{multline*}
-e=\texttt{for }v,X.\, X + \\ 
-\texttt{for }w,Y.\, Y + v\cdot f(v^T\cdot e_1\cdot w, \ldots, v^T\cdot e_k\cdot w)\cdot w^T. 
-\end{multline*}
-In the expression above, we basically loop over all positions in $\sem{e_i}{\I}$, one by one, and apply the function $f$ on those positions.  One can see that $\sem{e}{\I}=\sem{f(e_1,\ldots,e_k)}{\I}$ for $e_i$'s of arbitrary type, but that $f$ is only
-applied on expressions of type $(1,1)$, such as $v^T\cdot e_i\cdot w$. \qed
-\end{example}
+It is also readily verified that the one-vector operator in \lang\ becomes redundant in \langfor. 
+
+\floris{I commented out the part related to function applications, i.e., that function applications on scalars is sufficient. It is interesting but may be too much at this point? }
+% Furthermore, general function applications can be simulated in \langfor\ by just assuming function applications $f(e_1,\ldots,e_k)$ for $f\in\Fun_k$ where $\ttype(e_i)=(1,1)$ for all $i\in[k]$, as is illustrated next.
+% As before, we write \langfor$(\Fun)$ when \langfor\ expressions require certain function applications in some set $\Fun$.
 %
+% \begin{example}Consider the \langfor$(f)$ expression
+% \begin{multline*}
+% e=\texttt{for }v,X.\, X + \\
+% \texttt{for }w,Y.\, Y + v\cdot f(v^T\cdot e_1\cdot w, \ldots, v^T\cdot e_k\cdot w)\cdot w^T.
+% \end{multline*}
+% In the expression above, we basically loop over all positions in $\sem{e_i}{\I}$, one by one, and apply the function $f$ on those positions.  One can see that $\sem{e}{\I}=\sem{f(e_1,\ldots,e_k)}{\I}$ for $e_i$'s of arbitrary type, but that $f$ is only
+% applied on expressions of type $(1,1)$, such as $v^T\cdot e_i\cdot w$. \qed
+% \end{example}
+% %
 %
 % \smallskip
 % \noindent
@@ -195,25 +204,25 @@ applied on expressions of type $(1,1)$, such as $v^T\cdot e_i\cdot w$. \qed
 % \item $\sem{\text{apply}[f](e_1,\ldots ,e_n)}{\I}$ is a $1\times 1$ matrix whose only entry has the value $f(\sem{e_1}{\I},\ldots ,\sem{e_n}{\I})$.
 % \end{itemize}
 
-These examples illustrate that we can limit \langfor to consist of the following ``core'' operators: transposition, matrix multiplication and pointwise function application $f(e_1,\ldots,e_k)$ for $f\in\Fun_k$ where each $e_i$
-has type $(1,1)$. 
+These examples illustrate that we can limit \langfor to consist of the following ``core'' operators: transposition, matrix multiplication and addition, scalar multiplication, and pointwise function applications.
+%  $f(e_1,\ldots,e_k)$ for $f\in\Fun_k$ where each $e_i$
+% has type $(1,1)$.
 
-We also observe that the $4\textsf{clique}$ program mentioned at the beginning of this section can 
-be expressed in \langfor.
+As final example, we show that we can express $4\textsf{clique}$ program mentioned at the beginning of this section.
 \begin{example}
-Consider the expression
+To test for $4$-cliques it suffices to consider the expression
 \begin{tabbing}
 \texttt{for }\=$u,X_1.\, X_1 + $\\
 \> \texttt{for }\=$v,X_2.\, X_2 +$ \\
 \>\>\texttt{for }\=$w,X_3.\, X_3 +$ \\
 \>\>\>\texttt{for }\=$x,X_4.\, X_4 +$ \\
-\>\>\>\>$u^T\cdot M\cdot v \cdot u^T\cdot M\cdot w\cdot u^T\cdot M\cdot x \cdot $\\
-\>\>\>\>$v^T\cdot M\cdot w \cdot v^T\cdot M\cdot x\cdot w^T\cdot M\cdot x \cdot g(u,v,w,x)$\\
+\>\>\>\>$u^T\cdot V\cdot v \cdot u^T\cdot V\cdot w\cdot u^T\cdot V\cdot x \cdot $\\
+\>\>\>\>$v^T\cdot V\cdot w \cdot v^T\cdot V\cdot x\cdot w^T\cdot V\cdot x \cdot g(u,v,w,x)$\\
 \end{tabbing}
 with $g(u,v,w,x)=f(u,v)\cdot f(u,w)\cdot f(u,x)\cdot f(v,w)\cdot f(v,x)\cdot f(w,x)$ and
 $f(u,v)=1-u^T\cdot v$. Note that $f(b_i^n,b_j^n)=1$ if $i\neq j$ and $f(b_i^n,b_j^n)=0$ otherwise.
 Hence, $g(b_i^n,b_j^n,b_k^n,b_\ell^n)=1$ if and only if all $i,j,k,l$ are pairwise different.
-When evaluating the expression on an instance $\I$ such that $M$ is assigned to the adjacency 
+When evaluating the expression on an instance $\I$ such that $V$ is assigned to the adjacency 
 matrix of a graph, the expression above evaluates to a non-zero value if and only if the graph
 contains a four-clique.\qed
 \end{example}
@@ -245,15 +254,14 @@ When evaluating this expression on an instance $\I$, $A_0$ is initial set to the
 we have $A_1=\sem{e}{\I[v:=b_1^n,X:=\sem{e_0}{\I}]}$, and for consecutive iterations (when only the part related to $1-\mmin{v}$ applies) $A_i$ is updated as before. Clearly, the result of this evaluation is equal to
 $\sem{\initf{e_0}{v}{X}{e}}{\I}$. 
 
-As illustration, we consider the transitive closure program from the beginning of this section.
+As illustration, we consider the transitive closure program from the beginning of this section. As for \lang, we write \langfor$(\Fun)$ for some set $\Fun$ of functions when these are required for the task at hand.
 \begin{example}
- We can
-express this in \langfor. Indeed, consider the expression 
+ We can express transitive closure in \langfor$(f_>)$. Indeed, consider the expression 
 $$
-f_{>0}\left(\initf{e_{\mathsf{Id}}}{v}{X}{X\cdot (e_{\mathsf{Id}}+M)}\right),
+f_{>0}\left(\initf{e_{\mathsf{Id}}}{v}{X}{X\cdot (e_{\mathsf{Id}}+V)}\right),
 $$
-where $e_{\mathsf{Id}}$ is the \langfor\ expression constructing the identity matrix $I$, as explained earlier.
-Observe that we start the loop using an initialisation by $I$. Hence, when evaluated on an instance $\I$ such that $M$ is an adjacency matrix $A$ of a graph, the expression above simply computes $(I+A)^n$, followed by the pointwise function application $f_{>0}$. In other words, it returns the adjacency matrix of the transitive closure of $G$.\qed
+where $e_{\mathsf{Id}}$ is the \langfor\ expression constructing the identity matrix $I$ as described in Example~\ref{ex:forml-identity}.
+Observe that we start the loop using an initialisation by $I$. Hence, when evaluated on an instance $\I$ such that $V$ is an adjacency matrix $A$ of a graph, the expression above simply computes $(I+A)^n$, followed by the pointwise function application $f_{>0}$. In other words, it returns the adjacency matrix of the transitive closure of graph.\qed
 \end{example}
 % \smallskip
 % \noindent
