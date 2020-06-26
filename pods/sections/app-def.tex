@@ -11,7 +11,7 @@ To reference $l$ independent vectors in every iteration and update them in diffe
 &\ffor{v}{X_1,\ldots, X_l}{\left( e_1(X_1,v), e_2(X_2,v), \ldots, e_l(X_l,v) \right)} :=\\
 &\hspace{4em}\ffor{v}{X}{e_1(X\cdot v_{min}^T,v)\cdot v_{min}^T + e_2(X\cdot v_{min+1}^T,v)\cdot v_{min+1}^T + \ldots + e_l(X\cdot v_{max}^T,v)\cdot v_{max}^T}
 \end{align*}
-Note that for the latter operator to be semantically correct $X_i,e_i$ for $ i=1,\ldots,l$ have to be of type $\alpha\times 1$ as $v$, and $X$ has to be of type $\alpha\times\gamma$ as the expression inside.
+Note that for the latter operator to be semantically correct both $X_i,e_i$ for $ i=1,\ldots,l$ have to be of type $\alpha\times 1$ as $v$, and $X$ has to be of type $\alpha\times\gamma$ as the expression inside.
 The combinations of both previous operators is defined as
 \begin{align*}
 &\ffor{v_1,\ldots, v_k}{X_1,\ldots, X_l}{\left( e_1(X_1,v_1,\ldots, v_k), e_2(X_2,v_1,\ldots, v_k), \ldots, e_l(X_l,v_1,\ldots, v_k) \right)} :=\\
