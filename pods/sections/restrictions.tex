@@ -24,8 +24,8 @@ Furthermore, one can easily check that the 4-clique expression of Example~\ref{e
 \lang\ is strictly subsumed by \langsum.
 \end{corollary}
 
-What operations over matrices can be defined with \langsum that is beyond \lang? In~\cite{brijder2019matrices}, it was shown that \lang was strictly included in the relational algebra of $K$-relations~\cite{GreenKT07}, called here the Annotated Relational Algebra (ARA).
-Therefore, a natural idea is to compare the expressive power of \langsum with ARA. For making this comparison clear, in the following we give the formal definition of ARA to then see how to connect both formalism.
+What operations over matrices can be defined with \langsum that is beyond \lang? In~\cite{brijder2019matrices}, it was shown that \lang\ was strictly included in the relational algebra of $K$-relations~\cite{GreenKT07}, called here Annotated Relational Algebra (ARA).
+Then a natural idea is to compare the expressive power of \langsum with ARA. For making this comparison clear, in the following we give the formal definition of ARA to then see how to connect both formalism.
 
 \newcommand{\ddom}{\mathbb{D}}
 \newcommand{\fdom}{\operatorname{dom}}
@@ -33,6 +33,7 @@ Therefore, a natural idea is to compare the expressive power of \langsum with AR
 \newcommand{\tuples}{\mathbf{tuples}}
 \newcommand{\supp}{\operatorname{supp}}
 \newcommand{\cJ}{\mathcal{J}}
+\newcommand{\cR}{\mathcal{R}}
 \newcommand{\adom}{\mathbf{adom}}
 
 \newcommand{\ksum}{\oplus}
@@ -42,53 +43,76 @@ Therefore, a natural idea is to compare the expressive power of \langsum with AR
 \newcommand{\kzero}{\mymathbb{0}}
 \newcommand{\kone}{\mymathbb{1}}
 
+\newcommand{\row}{\mathsf{row}}
+\newcommand{\rows}{\mathsf{rows}}
+\newcommand{\col}{\mathsf{col}}
+\newcommand{\cols}{\mathsf{cols}}
 
-Let $\ddom$ be a data domain and $\att$ a set of attributes. A relation schema is a finite subset of $\att$. A database schema (or just schema) is a function $\cS$ on finite set of symbols $\fdom(\cS)$ such that $\cS(R)$ is a relation schema for each $R \in \fdom(\cS)$. By some abuse of notation, from now on we write $R$ to denote both the symbol $R$ and the relation schema $\cS(R)$.
-Furthermore, we write $R \in \cS$ to say that $R$ is a symbol (or relation schema) of $\cS$. 
-An $R$-tuple is a function $t: R \rightarrow \ddom$ and we denote by $\tuples(R)$ the set of all $R$-tuples. Given $X \subseteq R$, we denote by $t[X]$ the restriction of $t$ to the set $X$.
-A semiring $(K, \ksum, \kprod, \kzero, \kone)$ is an algebraic structure where $K$ is a non-empty set, $\ksum$ and $\kprod$ are binary operations over $K$, and $\kzero, \kone \in K$. Furthermore,  $\ksum$ and $\kprod$ are associative operations, $\kzero$ and $\kone$ are the identities of $\ksum$ and $\kprod$ respectively, $\ksum$ is a commutative operation, $\kprod$ distributes over $\ksum$, and $\kzero$ annihilates $K$ (i.e. $\kzero \kprod k = k \kprod \kzero = \kzero$). We further assume that all semirings in this paper are commutative, namely, $\kprod$ is also commutative. We use $\bigksum_X$ or $\bigkprod_X$ for the $\ksum$- or $\kprod$-operation over all elements in $X$, respectively. Typical examples of semirings are $\RR$ and $\mathbb{N}$ with sum and product. 
 
-Fix a semiring $(K, \ksum, \kprod, \kzero, \kone)$ and a schema $\cS$. A $K$-relation of $R \in S$ is a function $r: \tuples(R) \rightarrow K$ such that the support  $\supp(r) = \{t \in \tuples(R) \mid r(t) \neq \kzero\}$ of $r$ is finite. 
-A $K$-instance $\cJ$ of $\cS$ is a function that assigns relation symbols of $\cS$ to $K$-relations. Given $R \in \cS$, we denote by $\cJ[R]$ the $K$-relation associated to $R$. Recall that $\cJ[R]$ is a function and then $\cJ[R](t)$ is the value in $K$ assign to $t \in \tuples(R)$. For the sake of simplification, we will write $\cJ(t)$ instead of $\cJ[R](t)$ when $R$ is clear from the context. 
+Let $\ddom$ be a data domain and $\att$ a set of attributes. A relational signature is a finite subset of $\att$. A relational schema (or just schema) is a function $\cR$ on finite set of symbols $\fdom(\cR)$ such that $\cR(R)$ is a relation schema for each $R \in \fdom(\cR)$. To simplify the notation, from now on we write $R$ to denote both the symbol $R$ and the relation schema $\cR(R)$.
+Furthermore, we write $R \in \cR$ to say that $R$ is a symbol of $\cR$. 
+For $R \in \cR$, an $R$-tuple is a function $t: R \rightarrow \ddom$. We denote by $\tuples(R)$ the set of all $R$-tuples. Given $X \subseteq R$, we denote by $t[X]$ the restriction of $t$ to the set $X$.
+
+A semiring $(K, \ksum, \kprod, \kzero, \kone)$ is an algebraic structure where $K$ is a non-empty set, $\ksum$ and $\kprod$ are binary operations over $K$, and $\kzero, \kone \in K$. Furthermore,  $\ksum$ and $\kprod$ are associative operations, $\kzero$ and $\kone$ are the identities of $\ksum$ and $\kprod$ respectively, $\ksum$ is a commutative operation, $\kprod$ distributes over $\ksum$, and $\kzero$ annihilates $K$ (i.e. $\kzero \kprod k = k \kprod \kzero = \kzero$). As usual, we assume that all semirings in this paper are commutative, namely, $\kprod$ is also commutative. We use $\bigksum_X$ or $\bigkprod_X$ for the $\ksum$- or $\kprod$-operation over all elements in $X$, respectively. Typical examples of semirings are $\RR$ and $\mathbb{N}$ with sum and product. 
+
+Fix a semiring $(K, \ksum, \kprod, \kzero, \kone)$ and a schema $\cR$. A $K$-relation of $R \in S$ is a function $r: \tuples(R) \rightarrow K$ such that the support  $\supp(r) = \{t \in \tuples(R) \mid r(t) \neq \kzero\}$ of $r$ is finite. 
+A $K$-instance $\cJ$ of $\cR$ is a function that assigns relation symbols of $\cR$ to $K$-relations. Given $R \in \cR$, we denote by $R^\cJ$ the $K$-relation associated to $R$. Recall that $R^\cJ$ is a function and then $R^\cJ(t)$ is the value in $K$ assign to $t \in \tuples(R)$. 
 Given a $K$-relation $r:\tuples(R) \rightarrow K$ we denote by $\adom(r)$ the active domain of $r$ defined as $\adom(r) = \{t(a) \mid t \in \supp(r) \wedge a \in R\}$.
-Then the active domain of an $K$-instance $\cJ$ of $\cS$ is defined as $\adom(\cJ) = \bigcup_{R \in \cS} \adom(\cJ[R])$.
+Then the active domain of an $K$-instance $\cJ$ of $\cR$ is defined as $\adom(\cJ) = \bigcup_{R \in \cR} \adom(R^\cJ)$.
 
-An ARA expression $\alpha$ over $\cS$ is given by the following syntax:
+An ARA expression $\alpha$ over $\cR$ is given by the following syntax:
 $$
 \begin{array}{rcl}
 \alpha & := & R \ \mid \ \alpha \cup \alpha \ \mid \  \pi_X(\alpha) \ \mid \  \sigma_X(\alpha) \ \mid \ \rho_f(\alpha) \ \mid \ \alpha \bowtie \alpha
 \end{array}
 $$
-where $R \in \cS$, $X \subseteq \att$ is finite, and $f: X \rightarrow Y$ is a one to one mapping with $Y \subseteq \att$. As usual, one can extend the schema $\cS$ is to any ARA expressions over $\cS$ recursively as follows: $\cS(R) = R$, $\cS(\alpha \cup \alpha') = \cS(\alpha)$, $\cS(\pi_X(\alpha)) = X$, $\cS(\sigma_X(\alpha)) = \cS(\alpha)$, $\cS(\rho_f(\alpha)) = X$ where $f:X \rightarrow Y$, and $\cS(\alpha \bowtie \alpha') = \cS(\alpha) \cup \cS(\alpha')$ for every ARA expressions $\alpha$ and $\alpha'$.
-We further assume that any ARA expression $\alpha$ satisfies the following syntactic restrictions: $\cS(\alpha') = \cS(\alpha'')$ whenever $\alpha = \alpha' \cup \alpha''$, $X \subseteq \cS(\alpha')$ whenever $\alpha = \pi_X(\alpha')$ or $\alpha = \sigma_X(\alpha')$, and $Y = \cS(\alpha')$ whenever $\alpha = \rho_f(\alpha')$ with $f: X \rightarrow Y$.
+where $R \in \cR$, $X \subseteq \att$ is finite, and $f: X \rightarrow Y$ is a one to one mapping with $Y \subseteq \att$. One can extend the schema $\cR$ to any ARA expressions over $\cR$ recursively as follows: $\cR(R) = R$, $\cR(\alpha \cup \alpha') = \cR(\alpha)$, $\cR(\pi_X(\alpha)) = X$, $\cR(\sigma_X(\alpha)) = \cR(\alpha)$, $\cR(\rho_f(\alpha)) = X$ where $f:X \rightarrow Y$, and $\cR(\alpha \bowtie \alpha') = \cR(\alpha) \cup \cR(\alpha')$ for every ARA expressions $\alpha$ and $\alpha'$.
+We further assume that any ARA expression $\alpha$ satisfies the following syntactic restrictions: $\cR(\alpha') = \cR(\alpha'')$ whenever $\alpha = \alpha' \cup \alpha''$, $X \subseteq \cR(\alpha')$ whenever $\alpha = \pi_X(\alpha')$ or $\alpha = \sigma_X(\alpha')$, and $Y = \cR(\alpha')$ whenever $\alpha = \rho_f(\alpha')$ with $f: X \rightarrow Y$.
 
-Given an ARA expression $\alpha$ and a $K$-instance $\cJ$ over $\cS$, we define the semantics $\ssem{\alpha}[\cJ]$ as a $K$-relation of $\cS(\alpha)$ as follows. For $X \subseteq \att$, let $\operatorname{Eq}_X(t) = \kone$ when $t(a) = t(b)$ for every $a, b \in X$, and $\operatorname{Eq}_X(t) = \kzero$ otherwise. For every tuple $t \in \cS(\alpha)$:
+Given an ARA expression $\alpha$ and a $K$-instance $\cJ$ over $\cR$, we define the semantics $\ssem{\alpha}{\cJ}$ as a $K$-relation of $\cR(\alpha)$ as follows. For $X \subseteq \att$, let $\operatorname{Eq}_X(t) = \kone$ when $t(a) = t(b)$ for every $a, b \in X$, and $\operatorname{Eq}_X(t) = \kzero$ otherwise. For every tuple $t \in \cR(\alpha)$:
 $$
 \begin{array}{ll}
-\text{if $\alpha = R$, then} & \ssem{\alpha}[\cJ](t) = \cJ[R](t) \\
-\text{if $\alpha = \alpha' \cup \alpha''$, then} & \ssem{\alpha}[\cJ](t) = \ssem{\alpha'}[\cJ](t) \ksum \ssem{\alpha''}[\cJ](t)  \\
-\text{if $\alpha = \pi_X(\alpha')$, then} & \ssem{\alpha}[\cJ](t) = \bigodot_{t': t'[X] = t} \ssem{\alpha'}[\cJ](t') \\
-\text{if $\alpha = \sigma_X(\alpha')$, then} & \ssem{\alpha}[\cJ](t) = 
-\ssem{\alpha'}[\cJ](t) \kprod \operatorname{Eq}_X(t)  \\
-\text{if $\alpha = \rho_f(\alpha')$, then} & \ssem{\alpha}[\cJ](t) = 
-\ssem{\alpha'}[\cJ](t \circ f)  
+\text{if $\alpha = R$, then} & \ssem{\alpha}{\cJ}(t) = \cJ[R](t) \\
+\text{if $\alpha = \alpha' \cup \alpha''$, then} & \ssem{\alpha}{\cJ}(t) = \ssem{\alpha'}{\cJ}(t) \ksum \ssem{\alpha''}{\cJ}(t)  \\
+\text{if $\alpha = \pi_X(\alpha')$, then} & \ssem{\alpha}{\cJ}(t) = \bigodot_{t': t'[X] = t} \ssem{\alpha'}{\cJ}(t') \\
+\text{if $\alpha = \sigma_X(\alpha')$, then} & \ssem{\alpha}{\cJ}(t) = 
+\ssem{\alpha'}{\cJ}(t) \kprod \operatorname{Eq}_X(t)  \\
+\text{if $\alpha = \rho_f(\alpha')$, then} & \ssem{\alpha}{\cJ}(t) = 
+\ssem{\alpha'}{\cJ}(t \circ f)  
 \\
-\text{if $\alpha = \alpha' \bowtie \alpha''$, then} & \ssem{\alpha}[\cJ](t) = \\
-& \hspace{1cm} \ssem{\alpha'}[\cJ](t[Y]) \kprod  \ssem{\alpha''}[\cJ](t[Z])
+\text{if $\alpha = \alpha' \bowtie \alpha''$, then} & \ssem{\alpha}{\cJ}(t) =  \ssem{\alpha'}{\cJ}(t[Y]) \kprod  \ssem{\alpha''}{\cJ}(t[Z])
 \end{array}
 $$
-where $Y = \cS(\alpha')$ and $Z = \cS(\alpha'')$. It is important to note that the $\bigksum$-operation on the semantics of $\pi_X(\alpha')$ is well defined given that the support of $\ssem{\alpha'}[\cJ]$ is finite. 
+where $Y = \cR(\alpha')$ and $Z = \cR(\alpha'')$. It is important to note that the $\bigksum$-operation on the semantics of $\pi_X(\alpha')$ is well defined given that the support of $\ssem{\alpha'}{\cJ}$ is finite. 
 
 We are ready for comparing the expressive power of \langsum with ARA. First of all, we need to extend \langsum from real numbers to any semiring $(K, \ksum, \kprod, \kzero, \kone)$. Indeed, one can easily verify that the semantics of \lang, \langfor and \langsum can be translated from $\RR$ to $K$ by switching from matrices over $(\RR, +, \times, 0, 1)$ to matrices over $(K, \ksum, \kprod, \kzero, \kone)$.
-Formally, from now on we denote by $\text{\langsum}\![K]$ the instance of \langsum over matrices with entries over $K$. 
-\cristian{Define here matrices over any semiring.}
+From now on we denote by  $\mtr{K}$ the set of all $K$-matrices. Similar than for \lang\ over $\RR$, given a \lang\ schema $\cS$ a $K$-instance $\I$ over $\Sch$ is a pair $\I = (\dom,\conc)$, where $\dom : \DD \mapsto \NN$ assigns a value to each size symbol, and $\conc : \Mnam \mapsto \mtr{K}$ assigns a concrete $K$-matrix to each matrix variable. The semantics of \lang, \langfor, and \langsum is extended straightforward from $(\RR, +, \times, 0, 1)$ to $(K, \ksum, \kprod, \kzero, \kone)$ by interpreting $+$ with $\ksum$ and $\times$ with $\kprod$. 
 
-Second, we need to show how to encode $K$-matrices as $K$-relations and vice-versa. For this we restrict to 
+The next step for comparing \langsum with ARA is to represent $K$-matrices as $K$-relations and viceversa. For this, we have to restrict our comparison to ARA over binary relations. Given that linear algebra works over vector and matrices, it is reasonable to restrict to unary or binary relations as input. Note that, although expressions in ARA will be restricted to unary or binary, the intermediate results of ARA expressions over these relations can be of arbitrary size. Thus, from now on for our discussion we will talk about binary ARA, namely, all relational schemas $\cR$ are restricted to unary or binary relations. 
 
+Recall that $\Sch=(\Mnam,\size)$ is a \lang\ schema, where $\Mnam\subset \Mvar$ is a finite set of matrix variables, and $\size: \Mvar \mapsto \DD\times \DD$ is a function that maps each matrix variable to a pair of size symbols. On the relational side
+we have for each size symbol $\alpha\in\DD\setminus\{1\}$, attributes $\row_\alpha$ and $\col_\alpha$ in $\att$. For each $V\in\Mnam$ we denote
+by $V_R$ its corresponding relation name. Then, given $\Sch$, we define the relational schema $\text{Rel}(\Sch)$ such that $\fdom(\text{Rel}(\Sch)) = \{V_R \mid V \in \Mnam\}$ and for each $V_R$,
+\[
+\text{Rel}(\Sch)(V_R) = \begin{cases}
+\lbrace\row_\alpha,\col_\beta \rbrace & \text{ if $ \size(V)=(\alpha,\beta)$} \\
+\lbrace\row_\alpha \rbrace & \text{ if $ \size(V)=(\alpha,1)$} \\
+\lbrace\col_\beta \rbrace  &
+\text{ if $ \size(V)=(1,\beta)$} \\
+\lbrace\rbrace & \text{ if $\size(V)=(1,1)$}.
+\end{cases}
+\]
+Consider a matrix instance $\I = (\dom,\conc)$ over $\Sch$.
+Let $V\in\Mnam$ with $\size(V)=(\alpha,\beta)$ and let $\conc(V)$ be its corresponding $K$-matrix of dimension $\dom(\alpha)\times \dom(\beta)$.
+Define the (relational) data domain $\ddom = \mathbb{N}$ and the $K$-instance $\text{Rel}(\I)$ to consist of $K$-relations for each $V_R\in \text{Rel}(\Sch)$ defined as follows:
+$V_R^{\text{Rel}(\I)}: \tuples(V_R) \to K$ such that
+$V_R^{\text{Rel}(\I)}(t):=\conc(V)_{ij}$ whenever $t(\row_\alpha) = i \leq \dom(\alpha)$ and $t(\col_\beta) = j \leq \dom(\beta)$, and $\kzero$ otherwise. In other words, we interpret a matrix $\conc(V)$ as a $K$-relation where an $(i, j)$-entry with value $\conc(V)_{ij} = k$ is mapped to a tuple $(i, j)$ whose value is $k$. Note here that the $\adom(V_R^{\text{Rel}(\I)})$ is $\dom(\alpha)\times \dom(\beta)$ and all tuples outside this is mapped to $\kzero$. 
 
-
-
-In fact, one can easily check that, for every ARA expression $\alpha$, the active domain $\adom(\ssem{\alpha}[\cJ]) \subseteq \adom(\cJ)$. is always included in the active domain of $\cJ$.
+With this translation from \lang matrices to binary $K$-relations, one can notice that ARA lack from the expressive power to represent every \lang expression. Indeed, from ARA one cannot express the active domain of a $K$-relation, namely, an unary operator $\kone$ such that, given an ARA expression $\alpha$, $\ssem{\kone(\alpha)}{\cJ}(a) = \kone$ if, and only if, $a \in \adom(\ssem{\alpha}{\cJ})$. In \lang, this operator is naturally define by the $\ones$-operator, however, this cannot be translated in ARA.
+\begin{lemma}
+	There does not exist any formula $\alpha$ in ARA, such that for every \ldots.
+\end{lemma}
+\cristian{THIS IS UNDER CONSTRUCTION.}
 
 
 
