@@ -11,19 +11,19 @@ The factorization results in $U=T_{n}\cdots T_kPT_{k-1}\cdots T_1A$. We now expl
 
 Now, for $T_{l}=I-c_lb_l^T$ with $l\leq k-1$ we have that $b_l^TP=b_l$ because $b_l$ has zeroes in positions $i$ and $j$. Note that $P^2=I$, thus $PT_lP=P^2-Pc_lb_l^TP=I-\widehat{c}_lb_l^T=\widehat{T}_l.$ Where $\widehat{c}_l=Pc_l$. Now $$T_{n}\cdots T_kPT_{k-1}\cdots T_1=T_{n}\cdots T_kPT_{k-1}P^2T_{k-2}P^2\cdots P^2 T_1P^2=T_{n}\cdots T_k(PT_{k-1}P)(PT_{k-2}P)(P\cdots P)(PT_1P)P=T_{n}\cdots T_k\widehat{T}_{k-1}\cdots \widehat{T}_1P$$ and $L^{-1} = T_{n}\cdots T_k\widehat{T}_{k-1}\cdots \widehat{T}_1$.
 
-The goal is to compute $P$ within the iteration. The output of the PALU algorithm is $L^{-1}P$, this is, we aim to construct an expression $e_{L^{-1}P}(V)$ such that $U=e_{L^{-1}P}(A)\cdot A$. We also redefine $e_U(V)=e_{L^{-1}P}(A)\cdot A$.
+The goal is to compute $P$ within the iteration. The output of the PALU algorithm is $L^{-1}P$, this is, we aim to construct an expression $e_{L^{-1}P}(V)$ such that $U=e_{L^{-1}P}(A)\cdot A$. We also define $e_{\mathsf{gauss}}(V)=e_{L^{-1}P}(A)\cdot A$. We name it like that since it emulates the actual gaussian elimination algorithm.
 
 Let $\mathsf{minnz}(\cdot)$ be the operator that receives an $n$ dimensional vector $a$ and outputs a canonical vector $b_k$ such that $a_k$ is the first non zero entry of $a$, or $\mathbf{0}$ if such nonzero value doesn't exist. 
 
-We prove that we can compute $\mathsf{minnz}$ if and only if we can compute $e_{L^{-1}P}$ and $e_{U}$.
+We prove that we can compute $\mathsf{minnz}$ if and only if we can compute $e_{L^{-1}P}$.
 
 First, let $A$ be a matrix. If we have $\mathsf{minnz}$ we can define $\nneq{a}{v} = \mathsf{minnz}(a) + (1 - \ones(a)^T\cdot \mathsf{minnz}(a))\times v$. This operator works the same as $\mathsf{minnz}$ but returns $v$ if no nonzero value is found.
 Then we compute $$e_{P_v}(A,v) := e_{\mathsf{Id}} - \left[ v - \nneq{ \ccoleq{A}{v} }{v} \right]\left[ v - \nneq{ \ccoleq{A}{v} }{v} \right]^T.$$ Here $\ccoleq{\cdot}{\cdot}$ is the same as $\ccol{\cdot}{\cdot}$ but uses $S_{\leq}$ instead of $S_{<}$. $e_{P_v}(A,v)$ computes the necessary permutation matrix of $A$ for the column indicated by $v$.
 
 Thus $$e_{L^{-1}P}(A):=\initf{e_{\mathsf{Id}}}{v}{X}{\red{e_{P_v}(XA,v)\cdot X\cdot A}{v}\cdot e_{P_v}(XA,v)\cdot X}$$
-And $e_U(A)=e_{L^{-1}P}(A)\cdot A$.
+And $e_{\mathsf{gauss}}(A)=e_{L^{-1}P}(A)\cdot A$.
 
-Now we show that if we have can do the PALU factorization, we can compute $\mathsf{minnz}$. Let $a$ be an $n$ dimensional vector such that there exists $k:1\leq k\leq n$ where $a_i=0$ for all $i<k$, this is, $k$ is the index of the first non zero entry of $a$ (it must exist, otherwise there is nothing to be proved and we return $\mathbf{0}$). Let $\lbrace d_1, \ldots, d_n\rbrace$ be an $n$ dimensional basis. Then, without loss of generality, $a$ is a linear combination of $d_1, \ldots, d_l$, with $l \leq n$. Now, let $A = \left[ a\hspace{1em} d_2 \hspace{1em} \cdots \hspace{1em}  d_n \right].$ Note that $A$ is PALU factorizable since $\lbrace a, d_2, \ldots, d_n\rbrace$ is a linearly independent set of $\mathbb{R}^n$. Furthermore, if we run the PALU algorithm the factorization results in
+Now we show that if we have can do the PALU factorization (compute $e_{L^{-1}P}$), we can compute $\mathsf{minnz}$. Let $a$ be an $n$ dimensional vector such that there exists $k:1\leq k\leq n$ where $a_i=0$ for all $i<k$, this is, $k$ is the index of the first non zero entry of $a$ (it must exist, otherwise there is nothing to be proved and we return $\mathbf{0}$). Let $\lbrace d_1, \ldots, d_n\rbrace$ be an $n$ dimensional basis. Then, without loss of generality, $a$ is a linear combination of $d_1, \ldots, d_l$, with $l \leq n$. Now, let $A = \left[ a\hspace{1em} d_2 \hspace{1em} \cdots \hspace{1em}  d_n \right].$ Note that $A$ is PALU factorizable since $\lbrace a, d_2, \ldots, d_n\rbrace$ is a linearly independent set of $\mathbb{R}^n$. Furthermore, if we run the PALU algorithm the factorization results in
 
 \[
 U=(L^{-1}P)A = \begin{bmatrix}
@@ -33,15 +33,17 @@ U=(L^{-1}P)A = \begin{bmatrix}
 \end{bmatrix}.
 \]
 
-So, if we have the PALU function such that $e_{L^{-1}P}(A)=(L^{-1}P)$ and $e_U(A)=e_{L^{-1}P}(A)\cdot A$, we can compute $\mathsf{minnz}$ in the following way:
+So, if we have the PALU function such that $e_{L^{-1}P}(A)=L^{-1}P$ and $e_{\mathsf{gauss}}(A)=e_{L^{-1}P}(A)\cdot A$, we can compute $\mathsf{minnz}$ in the following way:
 \begin{align*}
     e_{\mathsf{minnz}}(a)=&\ffor{v}{X}{X+\left( \mathsf{succ}(v,X)\cdot\dfrac{a^Tv}{v_{min}^T\left[ e_{U}(A)\right]v_{min}} \right)\times (v-v_{max}) \\
     &\hspace{5em} + min(v)\times\left( v_{max} + \dfrac{a^Tv}{v_{min}^T\left[ e_{U}(A)\right]v_{min}}\times (v-v_{max})\right) \\
     &\hspace{5em} - \left( max(v)\cdot\left( 1-\ones(v)^TX \right)\right)\times v_{max} }
 \end{align*}
+\thomas{I actually don't know if I should add the last substraction, since we run $e_{\mathsf{minnz}}(a)$ only when $a\neq\mathbf{0}$, or we would end up dividing by zero.}
 In the expression above, for initialization we use $min(v)$ as usual and we add $v_{max}$ to set $X=v_{max}$ so $\mathsf{succ}(v,X)=1$ until something changes. If $a_1\neq 0$ then we add $v-v_{max}$ and thus set $X=b_1$ and $\mathsf{succ}(v,X)=0$ since then, so $\mathsf{minnz}(a)=b_1$, as expected. If no nonzero value is found, we remove $v_{max}$ of $X$ to return $0$, as expected.
 Next, $a^Tv$ extracts an entry of $a$, which will be zero until $v=b_k$, and we normalize it with $a_k$ obtained from $v_{min}^T\left[ e_{L^{-1}P}(A)\cdot A\right]v_{min}$, so we add $v$ only in this case and $X=b_k$ is set. From then on $\mathsf{succ}(v,X)$ will always be zero and we will end up with $\mathsf{minnz}(a)=b_k$ as expected. 
 Note that the expression depends on the normalization of $a_k$, and would not be possible if we didn't have $a_k$ from the PALU algorithm.
+\thomas{The following feels like cheating. Feels like I'm kind of using $f_{>0}$ not directly. Maybe it is better if we just state that if we have $f_{>0}$ we can do $e_{L^{-1}P}$ and thus $e_{\mathsf{gauss}}(A)=e_{L^{-1}P}(A)\cdot A$.}
 So we define
 \[
 \mathsf{minnz}(a)=\begin{cases}
@@ -49,13 +51,12 @@ So we define
                e_{\mathsf{minnz}}(a), \text{ if not}
             \end{cases}
 \]
-
-Thus we can compute $\mathsf{minnz}$ if and only if we can compute $e_{L^{-1}P}$ and $e_{U}$.
+Thus we can compute $\mathsf{minnz}$ if and only if we can compute $e_{L^{-1}P}$.
 
 If we have $f_{>0}$ we can define $$\mathsf{minnz}(a)=\ffor{v}{X}\left( 1-\ones(v)^TX \right) \times f_{>0}(v^Ta)\times v.$$
 Here, we sum $v$ only when the corresponding entry is nonzero and there is not a vector stored in $X$.
-So, for any matrix, if we have $f_{>0}$, we can compute its gaussian elimitation by redifining $e_{U}(V)$ as
+So, for any matrix, if we have $f_{>0}$, we can compute its gaussian elimitation by defining
 $$
-e_{U}(V) :=  e_{L^{-1}P}(V) \cdot V.
+e_{\mathsf{gauss}}(V) :=  e_{L^{-1}P}(V) \cdot V.
 $$
-Note that the matrix that performs the gaussian elimination is $e_{L^{-1}P}(V)$. We will explicit say when we use this form of $e_U(V)$, since it dependes on $f_{>0}$.
+Note that the matrix that performs the gaussian elimination is $e_{L^{-1}P}(V)$, and it dependes on $f_{>0}$.

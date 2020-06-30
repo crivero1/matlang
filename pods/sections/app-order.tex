@@ -40,3 +40,5 @@ $$S_{pred}:= \texttt{for }v,X.\quad X + \left[ (1 - \mathsf{max}(v))\times vv_{m
 
 Here, $X$ starts as 0 and thus in turn $X\cdot v_{max}$, so we initiate storing $b_1$ in the last column. Next, we add a matrix that has the stored vector $Xv_{max}$ (the previous canonical vector) in the column indicated by $v$ (the current canonical vector) and $v-Xv_{max}$ in the last column, to replace the vector stored.
 The last iteration does nothing (sums the zero matrix).
+
+Define $\mathsf{next}(v)$ such that $\mathsf{next}(b_i)=b_{i+1}$ when $i<n$ and $\mathsf{next}(b_n)=\mathbf{0}$.
