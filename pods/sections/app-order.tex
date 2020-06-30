@@ -15,9 +15,9 @@ where $v_{max}$ is as defined above. The intuition behind this expression is tha
 
 By defining $$\mathsf{succ}(u,v) := u^T\cdot S_{\leq} \cdot v,$$
 we obtain an order relation that allows us to discern whether one canonical vector comes before the other in the order given by \texttt{for}. If we want a strict order, we can just use $S_< := S_{\leq} - I$, this is, $$\mathsf{succ}^+(u,v) := u^T\cdot S_{<} \cdot v.$$
-Interestingly, we can also define the predecessor relation between canonical vectors. For this, we require the following matrix:
+Interestingly, we can also define the \textit{previous} relation between canonical vectors. For this, we require the following matrices:
 \[
-S_{pred} = \begin{bmatrix}
+\mathsf{Prev} = \begin{bmatrix}
     0 & 1 & \cdots &  0 \\
     0 & \ddots & \ddots & \vdots \\
     \hdotsfor{3} & 1 \\
@@ -26,19 +26,27 @@ S_{pred} = \begin{bmatrix}
 \]
 Using this matrix, we have that for a canonical vector $b_i$:
 \[
-S_{pred}\cdot b_i=\begin{cases}
+\mathsf{Prev}\cdot b_i=\begin{cases}
                b_{i-1}, \text{ if } i > 1 \\
               \mathbf{0}, \text{ if } i = 1
             \end{cases}
 \]
-where $\mathbf{0}$ is a vector of zeros of the same type as $b_i$. Notice also that $\ones(u)^T\cdot S_{pred} \cdot u$ is equal to zero, for a canonical vector $u$, if and only if $u = b_1$ is the first canonical vector, and zero otherwise.
-Therefore the expression $\mathsf{min}(u)$ is defined as $$\mathsf{min}(u) := 1 - \ones(u)^T\cdot S_{pred} \cdot u,$$ and, when evaluated over canonical vectors, will result in $1$ if and only if $u=b_1$ is the first canonical vector.
+where $\mathbf{0}$ is a vector of zeros of the same type as $b_i$. Notice also that $\ones(u)^T\cdot \mathsf{Prev} \cdot u$ is equal to zero, for a canonical vector $u$, if and only if $u = b_1$ is the first canonical vector, and zero otherwise.
+Therefore the expression $\mathsf{min}(u)$ is defined as $$\mathsf{min}(u) := 1 - \ones(u)^T\cdot \mathsf{Prev} \cdot u,$$ and, when evaluated over canonical vectors, will result in $1$ if and only if $u=b_1$ is the first canonical vector.
 To define the first canonical vector in the order given by \texttt{for}, we can then write:
 $$v_{min} := \ffor{v}{X}{\mathsf{min}(v)\times v},$$
 Finally, we show that $P$ can be defined using the following \langfor expression:
-$$S_{pred}:= \texttt{for }v,X.\quad X + \left[ (1 - \mathsf{max}(v))\times vv_{max}^T - (Xv_{max})\cdot v_{max}^T + (Xv_{max})\cdot v^T\right].$$
+$$e_{\mathsf{Prev}}:= \texttt{for }v,X.\quad X + \left[ (1 - \mathsf{max}(v))\times vv_{max}^T - (Xv_{max})\cdot v_{max}^T + (Xv_{max})\cdot v^T\right].$$
 
 Here, $X$ starts as 0 and thus in turn $X\cdot v_{max}$, so we initiate storing $b_1$ in the last column. Next, we add a matrix that has the stored vector $Xv_{max}$ (the previous canonical vector) in the column indicated by $v$ (the current canonical vector) and $v-Xv_{max}$ in the last column, to replace the vector stored.
 The last iteration does nothing (sums the zero matrix).
 
-Define $\mathsf{next}(v)$ such that $\mathsf{next}(b_i)=b_{i+1}$ when $i<n$ and $\mathsf{next}(b_n)=\mathbf{0}$.
+To get the \textit{next} relation we simply do $e_{\mathsf{Next}} = e_{\mathsf{Prev}}^T$. We have that for a canonical vector $b_i$:
+\[
+\mathsf{Next}\cdot b_i=\begin{cases}
+               b_{i+1}, \text{ if } i < n \\
+              \mathbf{0}, \text{ if } i = n
+            \end{cases}
+\]
+
+Finally, define $\mathsf{prev}(v):=\mathsf{Prev}\cdot v$ and $\mathsf{next}(v):=\mathsf{Next}\cdot v$.
