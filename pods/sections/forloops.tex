@@ -37,7 +37,7 @@
 %\end{tabular}
 
 
-To extend \lang\ with recursion, we take inspiration from classical linear algebra algorithms, such as those described in \cite{num}. Many of these algorithms are based on \textit{for loops} and in which the termination conditions for the loops are determined by matrix dimensions. We have seen how shortest path can be computed using for loops in the Introduction. We next provide two more examples.
+To extend \lang\ with recursion, we take inspiration from classical linear algebra algorithms, such as those described in \cite{num}. Many of these algorithms are based on \textit{for loops} in which the termination condition for each loop is determined by the matrix dimension. We have seen how shortest path can be computed using for loops in the Introduction. We next provide two more examples.
 \floris{I am not sure about introducing these programs at this point. Does it help ``our story''?}
 \begin{example}consider the following program which takes
 an $n\times n$ matrix $A$ as input:
@@ -108,7 +108,7 @@ We note that $\Sch$ now necessarily includes $v$ and $X$ as variables and assign
 %
 % A \langfor {\em schema} $\Sch$ is a pair $\Sch=(\Mnam,\size)$, where $\Mnam\subset \Mvar$ is a finite set of matrix variables, and $\size: \Mvar \mapsto \DD\times \DD$ is a function that maps each matrix variable to a pair of {\em size symbols}. 
 We also remark that in the definition of the type of $\ffor{v}{X}{e}$, we require that $\ttype(X) = \ttype(e)$ as this expression updates the content of the variable $X$ in each iteration using the result of $e$. We further restrict the type of 
-$v$ to be of a vector type, i.e., $\ttype(v)=(\gamma,1)$, since $v$ will be instantiated with canonical vectors.
+$v$ to be a vector, i.e., $\ttype(v)=(\gamma,1)$, since $v$ will be instantiated with canonical vectors.
 % As we will see below, evaluating $e$ will depend on a canonical vector stored in $v$, and the current content of $X$. %Another difference from \lang\ is that we allow function application only on scalars (more precisely, on $1\times 1$ matrices).
 %
 A \langfor\ expression $e$ is well-typed over a schema $\Sch$ if its type is defined. 
@@ -233,7 +233,7 @@ These examples illustrate that we can limit \langfor to consist of the following
 %  $f(e_1,\ldots,e_k)$ for $f\in\Fun_k$ where each $e_i$
 % has type $(1,1)$.
 
-As final example, we show that we can express the $4\textsf{clique}$ program mentioned at the beginning of this section.
+As a final example, we show that we can express the $4\textsf{clique}$ program mentioned at the beginning of this section.
 \begin{example}\label{ex:fourcliques}
 To test for $4$-cliques it suffices to consider the expression
 \begin{tabbing}
@@ -259,6 +259,13 @@ contains a four-clique.\qed
 % % 		\]
 %
 % To distinguish four-cliques, we will need to determine whether we are dealing with four different nodes. For this, we will utilize the function $$g(u,v,w,r)=f(u,v)\cdot f(u,w)\cdot f(u,r)\cdot f(v,w)\cdot f(v,r)\cdot f(w,r),$$
+
+As mentioned previously, given \lang\ can not express 4-cliques \cite{BrijderGBW19}, we easily obtain the following.
+
+\begin{proposition}
+\label{cor-ml-fml}
+$\lang$ is properly subsumed by $\langfor.$
+\end{proposition} 
 
 \subsection{Loop Initialization} As the reader may have observed, in the semantics of \texttt{for} loops we 
 always initialise $A_0$ to the zero matrix $\mathbf{0}$ (of appropriate dimensions). It is often convenient
