@@ -17,34 +17,53 @@ We take as answer to this question inspiration from complexity theory, where it 
 The main contribution of this paper is, yes we can. We propose an extension of \lang, referred to by as \langfor, for which can identify a sub-fragment that is equivalent to arithmetic circuits of polynomial degree. Here, intuitively, the sub-fragment consists of \langfor-expression that can be compiled into a polynomial degree circuit. As a consequence, \langfor\ inherits all expressiveness properties of circuits, and thus can compute the determinant of matrix, perform matrix inversion, can compute the characteristic polynomial of a matrix, and is able to solve linear systems of equations.
 
 The key difference in the design of \langfor, compared to the two previous approaches, is that we introduce a limited form of recursion. As our choice of recursion mechanism, we take inspiration from textbooks on linear algebra algorithms \cite{}, i.e., we introduce \texttt{for} loops to \lang. Indeed, most algorithm are based on \texttt{for} loops that iterate over the indices of matrices involved. We illustrate how \langfor\ works by an example.
+%
+%
+% \floris{This is example is getting too complicated! Any suggestions?}
+% % %
+% \begin{example}
+% Consider a linear system of equations $L\cdot x=a$ with $L$ a matrix of dimensions $n\times n$, $a$ a vector of dimension $n\times 1$, and $x$ a vector of variables of dimensions $n\times 1$. Furthermore, assume that $L$ is a non-singular lower triangular matrix, i.e., all entries above the diagonal are zero and all entries on the diagonal are non-zero. To solve the system for $x$, it suffices to apply forward substitution, i.e.,
+% $$	x_1:= a_1, \quad
+% x_i:= \frac{1}{L_{ii}}\left(a_i -\sum_{j=1}^{i-1}L_{ij}a_j\right) \quad i\in[2,n]$$
+% To view this procedure as a query in \langfor we proceed as follows.
+% We use a matrix variable $M$ to store $L$ and a vector variable $V$ to store $a$.
+% Furthermore, we reserve two special vector variables $v$ and $w$ which will range over
+% the canonical vectors of the same dimension as $L$ and $a$. More specifically, they range
+% over $b_1=(1,0,\ldots,0)$, $b_2=(0,1,0,\ldots,0)$,\ldots, $b_n=(0,\ldots,0,1)$ \textit{in this order}. We further have a special variable $X$ to hold intermediate results. In this example,
+% $X$ will hold the solution $x$ for the system of equations at the end of the evaluation. We also
+% require a second variable $Y$ which will hold $\sum_{j=1}^{i-1}L_{ij}a_j$ for a given $i$. Finally,
+% we also allow the use the division function $f_/(x,y)=x/y$.
+%
+% We need to more operators in this example:
+% the operator $\mathsf{min}(v)$ such that $\mathsf{min}(v):=1$ if $v=b_1$ and $\mathsf{min}(v):=0$ otherwise, and the $\mathsf{pred}^+(v,w)$ such that $\mathsf{pred}^+(b_j,b_i)=1$
+%  if $j<i$ and $\mathsf{pred}^+(b_j,b_i)=0$ otherwise. These identify the first canonical vector and a strict predecessor relation on canonical vectors, respectively, We show later in the paper that these can be expressed in \langfor. Given these, we consider the following \langfor\ expressions:
+% \begin{tabbing}
+% $e_1(M,V,v)$\=:=\texttt{for}$\,w,Y\,.\, Y + \mathsf{pred}^+(w,v) (v^T\cdot M\cdot w)(w^T\cdot V)\times v$\\
+% $e(M,V)$\=:=\texttt{for}$\,v,X\,.\, X + (\mathsf{min}(v)(v^T\cdot V)\times v) +(1-\mathsf{min}(v))e_1(M,V,v)$
+% \end{tabbing}
+% \end{example}
+% % %
 
 
-\floris{This is example is getting too complicated! Any suggestions?}
-% %
-\begin{example}
-Consider a linear system of equations $L\cdot x=a$ with $L$ a matrix of dimensions $n\times n$, $a$ a vector of dimension $n\times 1$, and $x$ a vector of variables of dimensions $n\times 1$. Furthermore, assume that $L$ is a non-singular lower triangular matrix, i.e., all entries above the diagonal are zero and all entries on the diagonal are non-zero. To solve the system for $x$, it suffices to apply forward substitution, i.e.,
-$$	x_1:= a_1, \quad
-x_i:= \frac{1}{L_{ii}}\left(a_i -\sum_{j=1}^{i-1}L_{ij}a_j\right) \quad i\in[2,n]$$
-To view this procedure as a query in \langfor we proceed as follows.
-We use a matrix variable $M$ to store $L$ and a vector variable $V$ to store $a$.
-Furthermore, we reserve two special vector variables $v$ and $w$ which will range over
-the canonical vectors of the same dimension as $L$ and $a$. More specifically, they range
-over $b_1=(1,0,\ldots,0)$, $b_2=(0,1,0,\ldots,0)$,\ldots, $b_n=(0,\ldots,0,1)$ \textit{in this order}. We further have a special variable $X$ to hold intermediate results. In this example,
-$X$ will hold the solution $x$ for the system of equations at the end of the evaluation. We also
-require a second variable $Y$ which will hold $\sum_{j=1}^{i-1}L_{ij}a_j$ for a given $i$. Finally,
-we also allow the use the division function $f_/(x,y)=x/y$.
+\medskip
+\noindent
+\textbf{Related work.} 
 
-We need to more operators in this example: 
-the operator $\mathsf{min}(v)$ such that $\mathsf{min}(v):=1$ if $v=b_1$ and $\mathsf{min}(v):=0$ otherwise, and the $\mathsf{pred}^+(v,w)$ such that $\mathsf{pred}^+(b_j,b_i)=1$
- if $j<i$ and $\mathsf{pred}^+(b_j,b_i)=0$ otherwise. These identify the first canonical vector and a strict predecessor relation on canonical vectors, respectively, We show later in the paper that these can be expressed in \langfor. Given these, we consider the following \langfor\ expressions:
-\begin{tabbing}
-$e_1(M,V,v)$\=:=\texttt{for}$\,w,Y\,.\, Y + \mathsf{pred}^+(w,v) (v^T\cdot M\cdot w)(w^T\cdot V)\times v$\\
-$e(M,V)$\=:=\texttt{for}$\,v,X\,.\, X + (\mathsf{min}(v)(v^T\cdot V)\times v) +(1-\mathsf{min}(v))e_1(M,V,v)$
-\end{tabbing}
-\end{example}
-% %
+\begin{itemize}
+\item MATLANG, LARA, SIMQL.
 
-In another line of work~\cite{}, matrices are encoded as relational tables and an extensions of SQL is proposed to carry out matrix manipulations. In particular, \cite{} extends SQL with a limited form of recursion -- alike dynamic programming - such that linear algebra-based procedures for learning feed-forward neural networks can be declaratively specified. To our knowledge, the precise expressive power of the resulting language has not been characterized. For example, it is unclear whether matrix inversion can be expressed.
+\item K-Relations, ARA, FAQ.
+
+\item Weighted Logics, ...
+
+\item Logics for linear algebra: Grohe (bounded lfp), Dawar (), Pakusa, Holm.
+
+\item Algoritmic side: for loop optimization AGM style.
+\end{itemize}
+
+
+\subsection{old stuff}
+% In another line of work~\cite{}, matrices are encoded as relational tables and an extensions of SQL is proposed to carry out matrix manipulations. In particular, \cite{} extends SQL with a limited form of recursion -- alike dynamic programming - such that linear algebra-based procedures for learning feed-forward neural networks can be declaratively specified. To our knowledge, the precise expressive power of the resulting language has not been characterized. For example, it is unclear whether matrix inversion can be expressed.
 %
 % Based on these works, a natural question arises: how to add a natural form of recursion to linear algebra-based query languages? Inspecting any linear algebra textbook, one sees that most linear algebra procedures heavily rely on the use of for-loops in which iterations happen over the dimensions of the matrices involved. We thus propose to extend \lang\ with limited recursion in the form of for-loops, resulting the language \langfor. To define this recursion in a natural way, we simulate a loop of the form \texttt{for i=1,...n do} by leveraging canonical vectors. In other words, we use the canonical vectors $b_1=(1,0,\ldots)$, $b_2=(0,1,\ldots)$, \ldots, to access specific rows and columns, and iterate over these vectors. As an almost direct consequence, the expressive power of \langfor goes well beyond \lang. It can check for cliques of any given size, compute the transitive closure of a graph, and as we will show, compute important linear algebra operators such as LU-decomposition, determinant, matrix inverse, among other things.
 %
