@@ -191,7 +191,8 @@ thus $\sem{e_{\mathsf{diag}}}{\I}=\sem{\diag(e)}{\I}$.\qed%
 
 % It is also readily verified that the one-vector operator in \lang\ becomes redundant in \langfor.
 
-\floris{I commented out the part related to function applications, i.e., that function applications on scalars is sufficient. It is interesting but may be too much at this point? }
+%\floris{I commented out the part related to function applications, i.e., that function applications on scalars is sufficient. It is interesting but may be too much at this point? }
+
 % Furthermore, general function applications can be simulated in \langfor\ by just assuming function applications $f(e_1,\ldots,e_k)$ for $f\in\Fun_k$ where $\ttype(e_i)=(1,1)$ for all $i\in[k]$, as is illustrated next.
 % As before, we write \langfor$(\Fun)$ when \langfor\ expressions require certain function applications in some set $\Fun$.
 %
@@ -264,8 +265,21 @@ As mentioned previously, given \lang\ can not express 4-cliques \cite{BrijderGBW
 
 \begin{proposition}
 \label{cor-ml-fml}
-$\lang$ is properly subsumed by $\langfor.$
+For any collection of functions $\Fun$, 
+$\lang(\Fun)$ is properly subsumed by $\langfor(\Fun).$
 \end{proposition} 
+
+\domagoj{This is used to simulate circuits, so I put in into a lemma. Perhaps just move to the appendix before that particular proof.}
+
+Another interesting consequence of allowing for loops in \lang\ is that the pointwise product and sum can be defined without direct access to these operators. Namely, the following result tells us that we can always assume to have access to the product and the sum.
+%This will be of crucial importance when comparing \langfor\ to arithmetic circuits in Section \ref{sec:circuits} and to annotated relations in Section \ref{sec:restrict}. Formally, we have:
+
+\begin{lemma}
+\label{lm-prod-sum}
+Let $f_\odot^k:\RR^k\mapsto \RR$ and $f_\oplus^k:\RR^k\mapsto \RR$ be the product and the sum function with $k$ attributes, respectively. Then it holds that $\langfor(\emptyset) \equiv \langfor(\{f_\odot^k,f_\oplus^k \ | \ k\in \mathbf{N}\})$.
+\end{lemma}
+
+%In what follows, we will sometimes abuse the notation and write $\langfor$ both when we are talking about $\langfor(\emptyset)$, and when referring to the language in general. On the other hand, when stating formal results, we will always make the set of functions explicit, and will use $\langfor$ to denote $\langfor(\emptyset)$.
 
 \subsection{Loop Initialization} As the reader may have observed, in the semantics of \texttt{for} loops we 
 always initialise $A_0$ to the zero matrix $\mathbf{0}$ (of appropriate dimensions). It is often convenient
@@ -287,6 +301,7 @@ we have $A_1=\sem{e}{\I[v:=b_1^n,X:=\sem{e_0}{\I}]}$, and for consecutive iterat
 $\sem{\initf{e_0}{v}{X}{e}}{\I}$. 
 
 As an illustration, we consider the transitive closure program from the beginning of this section. Similarly as for \lang, we write \langfor$(\Fun)$ for some set $\Fun$ of functions when these are required for the task at hand.
+%As an illustration, we consider the transitive closure program from the beginning of this section. Similarly as for \lang, we write \langfor$(\Fun)$ for some set $\Fun$ of functions when these are required for the task at hand. Analogously, we write $\langfor$ to denote $\langfor(\emptyset)$, but we might abuse the notation and write $\langfor$ to refer to the language in general.
 \begin{example}
  We can express transitive closure in \langfor$(f_>)$. Indeed, consider the expression 
 $$

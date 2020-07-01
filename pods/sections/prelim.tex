@@ -3,7 +3,7 @@ We start by recalling the matrix query language \lang, introduced in \cite{matla
 \smallskip
 \noindent
 \textbf{Syntax.}\,  Let $\Mvar = \{V_1, V_2, \ldots\}$ be a countably infinite set of \textit{matrix variables} and $\Fun=\bigcup_{k>1}\Fun_k$ with
-$\Fun_k$ a set of \textit{functions} of the  form $f:\RR^k \to \RR$, where $\RR$ denotes the set of real numbers. The syntax of \lang\ expressions is defined by the following grammar\footnote{The original syntax also permits the operator $\llet$, which replaces every occurrence of $V$ in $e_2$ with the value of $e_1$. Since this is just syntactic sugar, we omit this operator. We also explicitly include matrix addition and scalar multiplication, although these can be simulated by pointwise function applications. Finally, we use transposition instead of conjugate transposition since we work with matrices over $\RR$.}:
+$\Fun_k$ a set of \textit{functions} of the  form $f:\RR^k \to \RR$, where $\RR$ denotes the set of real numbers. The syntax of $\lang$ expressions is defined by the following grammar\footnote{The original syntax also permits the operator $\llet$, which replaces every occurrence of $V$ in $e_2$ with the value of $e_1$. Since this is just syntactic sugar, we omit this operator. We also explicitly include matrix addition and scalar multiplication, although these can be simulated by pointwise function applications. Finally, we use transposition instead of conjugate transposition since we work with matrices over $\RR$.}:
 
 
 \begin{tabular}{lcll}
@@ -18,11 +18,14 @@ $e$ & $::=$ & $V\in \Mvar$ & (matrix variable)\\
 \end{tabular}
 \vspace{1ex}
 
-$\lang$ is parametrized by a collection of functions $\Fun$ but in the remainder of the paper we only make this dependence explicit, and write
-\lang$(\Fun)$, for some set $\Fun$ of functions, when these functions are crucial
-for some results to hold. 
-When we simply write \lang, we mean that any function can be used (including not using any function at all).
-%When we simply write \lang, we mean that the only functions used are binary multiplication and addition.
+%Note that \lang\ is parametrized by a collection of allowed pointwise functions $\Fun$, and we make this explicit in order to make precise which flavour of \lang\ we are working with. When we simply write \lang, we are assuming that the set of allowed functions is empty. %; i.e. $\lang = \lang(\emptyset)$.
+
+$\lang$ is parametrized by a collection of functions $\Fun$ but in the remainder of the paper we only make this dependence explicit, and write \lang$(\Fun)$, for some set $\Fun$ of functions, when these functions are crucial for some results to hold. When we simply write \lang, we mean that any function can be used (including not using any function at all).
+
+%$\lang$ is parametrized by a collection of functions $\Fun$, and to make this explicit, we will write \lang$(\Fun)$. When stating formal results, we will use $\lang$ to denote $\lang(\emptyset)$. Sometimes we abuse the notation and write $\lang$ in order to talk about general language (using any family of functions), however, in formal claims this will always denote the language with no extra functions.
+
+%but in the remainder of the paper we only make this dependence explicit, and write \lang$(\Fun)$, for some set $\Fun$ of functions, when these functions are crucial for some results to hold. When we simply write \lang, we mean that any function can be used (including not using any function at all).
+%When we simply write \lang, we mean that the set of functions $\Fun$ is empty.
 %\domagoj{Double check the last part with the rest.}
 
 

@@ -7,7 +7,7 @@ actually is. We will (partially) answer this in the next section by connecting \
 arithmetic circuits of polynomial degree. Through this connection, one can move back and forth between \langfor and arithmetic circuits, and as a consequence, anything computable by such a circuit can be
 computed by \langfor as well. When it comes to specific linear algebra algorithms, the detour via circuits
 can often be avoided. Indeed, in this section we illustrate that \langfor is able to
-compute, in a natural way, the so-called LU decomposition of matrices. As a consequence, we show that \langfor is expressive enough to compute matrix inversion and the determinant. We recall that matrix inversion and determinant need to be explicitly added as separate operators in \lang~\cite{matlang,matlang-journal} and that the LARA language is unlikely to compute the inverse of a matrix under complexity-theoretic assumptions~\cite{BarceloH0S20}.
+compute, in a natural way, the so-called LU decomposition of matrices. As a consequence, we show that \langfor is expressive enough to compute matrix inversion and the determinant. We recall that matrix inversion and determinant need to be explicitly added as separate operators in \lang~\cite{matlang,matlang-journal} and that the LARA language is unlikely to compute the inverse of a matrix under usual complexity-theoretic assumptions~\cite{BarceloH0S20}.
 % In fact, many of the algorithms presented in \cite{num} translate naturally in \langfor.
 
 \subsection{LU decomposition}
@@ -24,7 +24,7 @@ as follows. Consider the first column $[A_{11},\ldots,A_{n1}]^T$ of $A$ and  def
 $c_1 := [0, \alpha_{21},\ldots, \alpha_{n1}]^T$ 
 with $\alpha_{j1} := -\frac{A_{j1}}{A_{11}}$. Let $T_1:=I+ c_1\cdot e_1^T$ and consider
 $T_1\cdot A$. We note that the first column of $T_1\cdot A$ is now equal to $[A_{11},0,\ldots,0]^T$. That is,
-all of its entries below the diagonal are zero. One then iteratively performs a similar computation, using a matrix $T_i:=I+c_i\cdot e_i^T$, where $c_i$ now depends on the $i$th column in $T_{i-1}\cdot\cdots\cdot T_1\cdot A$. As a consequence, $T_i\cdot T_{i-1}\cdots \cdot T_1\cdot A$ is upper triangular
+all of its entries below the diagonal are zero. Additionally, the $j$th row of $T_1\cdot A$ is obtained by multiplying the first row of $A$ by $\alpha_{21}$ and adding it to the second row of $A$, as required. One then iteratively performs a similar computation, using a matrix $T_i:=I+c_i\cdot e_i^T$, where $c_i$ now depends on the $i$th column in $T_{i-1}\cdot\cdots\cdot T_1\cdot A$. As a consequence, $T_i\cdot T_{i-1}\cdots \cdot T_1\cdot A$ is upper triangular
 in its first $i$ columns. At the end of this process, $T_n\cdot\cdots\cdot T_1\cdot A=U$ where $U$ is the desired upper triangular matrix.
 Furthermore, it is easily verified that each $T_i$ is invertible and by defining $L:=T_1^{-1}\cdot\cdots\cdot T_n^{-1}$ one obtains a lower triangular matrix satisfying $A=L\cdot U$. Of course, the above procedure is only successful when the denominators used in the definition of the vectors $c_i$ are non-zero. When this is the case we call a matrix $A$ \textit{LU-factorizable}. 
 
@@ -84,7 +84,7 @@ We remark that the proposition holds when division is added as a function in $\F
 in \langfor. When row pivoting is needed, we can also obtain a permutation matrix
 $P$ such that $P\cdot A=L\cdot U$ holds by means of an expression in \langfor, provided
 that we additionally allow the function $f_{>0}$, as defined in Example~\ref{ex:programtc}. This function allows for computing the following
-operation: Given a vector $v$, return $\mathsf{minnz}(v)=b_j$ where $j$ is the first entry in $v$ that holds a non-zero value, or returns $\mathsf{minnz}(v)=\mathbf{0}$ if no such non-zero value exists. In fact, the ability to express
+operation: Given a vector $v$, return $\mathsf{minnz}(v)=b_j$, the $j$th canonical vector, where $j$ is the first entry in $v$ that holds a non-zero value, or returns $\mathsf{minnz}(v)=\mathbf{0}$ if no such non-zero value exists. In fact, the ability to express
 $\mathsf{minnz}(\cdot)$ is intrinsically tied to the expressibility of LU decompositions with pivoting:
 
 %
@@ -104,7 +104,7 @@ $\mathsf{minnz}(\cdot)$ is intrinsically tied to the expressibility of LU decomp
 
  \begin{proposition}\label{prop:palu}
 There exist expressions $e_{L^{-1}P}(M)$ and $e_U(M)$ in \langfor$(\Fun)$  such that for
-$L^{-1}\cdot P=\sem{e_P}{\I}$ and $U=\sem{e_U}{\I}$, $L^{-1}\cdot P\cdot A=U$ holds
+$L^{-1}\cdot P=\sem{e_{L^{-1}P}}{\I}$ and $U=\sem{e_U}{\I}$, $L^{-1}\cdot P\cdot A=U$ holds
 if and only if $\Fun$ includes division $f_/$ and \langfor$(\Fun)$ can express the function $\mathsf{minnz}(\cdot)$.\qed
  %
  % such that by interpreting $X$ with a matrix $A$ will result in the matrix $U$ from the $PALU$ factorization of $A$ whenever $A$ is $PALU$ factorizable if and only if there exists a \langfor expression $e'(X)$ such that by interpreting $X$ with a vector $A$ outputs a canonical vector $e_k$ where $A_k$ is the first non zero entry of $A$.
@@ -133,7 +133,7 @@ Furthermore, when $A$ is LU-factorizable, $A$ is invertible if and only if $\mat
 in that case, $A^{-1}=U^{-1}\cdot L^{-1}$. We recall that $L^{-1}=T_n\cdot\cdots\cdot T_1$ and we argued already that this can be
 computed in \langfor$(f_/)$. Due to $U$ being an upper triangular matrix with non-zero elements on its diagonal, it
 is now readily verified that $U=(I-D^{-1}_U\cdot U')^{-1}\cdot D_U^{-1}$ with $D_U$ the diagonal matrix consisting of the diagonal entries of $U$ and $U'=U-D_U$. We remark that $D_U^{-1}$ can simply be obtained by inverting the (non-zero) elements on the diagonal by means of $f_/$. Furthermore, we observe that $(I-D^{-1}_U\cdot U')^{-1}=\sum_{i=0}^{n}(-D_U^{-1}U')^i$ which is something we can compute in \langfor as well. As a consequence:
-\begin{proposition}\label{prop:inverse}
+\begin{proposition}\label{prop:inverse1}
 There is a \langfor$(f_/)$ expression $e_{\mathsf{inv}}(V)$ such that 
 $\sem{e_{\mathsf{inv}}}{\I}=A^{-1}$ when $\I$ assigns $V$
 to $A$ and $A$ is invertible and LU-factorizable.
@@ -173,7 +173,7 @@ S_3\\
 S_n\\
 \end{matrix}\right),
 $$
-with $S_i=\mathsf{tr}(A^i)$. We show, in the appendix, that we can construct all ingredients of this system of equations in \langfor. By observing that the matrix in this system is a lower triangular matrix with non-zero elements on its diagonal, we have that this matrix is LU-factorizable. Proposition~\ref{prop:inverse} then implies that we can compute the inverse of this matrix in 
+with $S_i=\mathsf{tr}(A^i)$. We show, in the appendix, that we can construct all ingredients of this system of equations in \langfor. By observing that the matrix in this system is a lower triangular matrix with non-zero elements on its diagonal, we have that this matrix is LU-factorizable. Proposition~\ref{prop:inverse1} then implies that we can compute the inverse of this matrix in 
 \langfor$(f_/)$ and hence, we can solve the above system. That is, we can compute the vector $(c_1,\ldots,c_n)^T$ in \langfor. It now remains to construct $A^{-1}$,
 as described above, in terms of the coefficients of $p_A(x)$ and powers of $A$. All this can be done
 in \langfor. We can similarly extract the determinant of $A$ from $c_n$. We may thus conclude:
