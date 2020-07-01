@@ -1,0 +1,34 @@
+Here we present the proof of proposition 7.3.
+Let $\cR$ be binary relational schema. For each $R\in \cR$ we associate a matrix variable 
+$V_R$ such that, if $R$ is a binary relational signature, then $V_R$ represents a (square) matrix, 
+if $R$ is unary, then $V_R$ represents a vector and if $|R|=0$ then $V_R$ represents a constant. Formally, 
+fix a symbol $\alpha \in \DD \setminus \{1\}$. Let $\text{Mat}(\cR)$ denote the \lang \ schema
+$(\Mnam,\size)$ such that $\Mnam = \{ V_R \mid R \in \cR\}$ and $\size(V_R) = (\alpha, \alpha)$ 
+whenever $|R| = 2$, $\size(V_R) = (\alpha, 1)$ whenever $|R|=1$ and $\size(V_R) = (1, 1)$ whenever $|R|=0$. 
+Let $\cJ$ be the $K$-instance of $\cR$ and suppose that $\adom(\cJ) = \{d_1, \ldots, d_n\}$ is 
+the active domain (with arbitrary order) of $\cJ$. 
+Define the matrix instance $\text{Mat}(\cJ) = (\dom,\conc)$ such 
+that $\dom(\alpha) = n$, $\conc(V_R)_{i,j} = R^{\cJ}((d_i, d_j))$ whenever $|R|=2$, $\conc(V_R)_{i,1} = R^{\cJ}((d_i))$ 
+whenever $|R|=1$, and $\conc(V_R)_{1,1} = R^{\cJ}((1))$ whenever $|R|=1$. 
+Note that we consider the active domain of the whole $K$-instance.
+The proof is by induction.
+
+\begin{itemize}
+  \item If $\alpha = R$ then $\Psi (\alpha):=V_R$. Note that if $|R|=2$ then 
+    $\sem{\Psi(\alpha)}{\text{Mat}(\cJ)}_{i,j}=\conc(V_R)_{i,j} = R^{\cJ}((d_i, d_j))=\ssem{\alpha}{\cJ}((d_i, d_j))$. If $|R|=1$ then 
+    $\sem{\Psi(\alpha)}{\text{Mat}(\cJ)}_{i,j}=\conc(V_R)_{i,1} = R^{\cJ}((d_i))=\ssem{\alpha}{\cJ}((d_i))$. if $|R|=0$ then 
+    $\sem{\Psi(\alpha)}{\text{Mat}(\cJ)}_{i,j}=\conc(V_R)_{1,1} = R^{\cJ}((1))=\ssem{\alpha}{\cJ}((1))$.
+  \item If $\alpha=\alpha_1\cup\alpha_2$ then $\Psi(\alpha):=\Psi(\alpha_1)+\Psi(\alpha_2)$.
+  \item If $\alpha = \pi_{Y}(\alpha_1)$ for $Y\subseteq R(\alpha_1)$. Let $\cV = \lbrace V_A:A\in R(\alpha_1)\setminus Y \rbrace$. 
+    Then
+    $$
+    \Psi(\alpha) = \sum_{V\in\cV} \Psi(\alpha_1) = \ssum V_{A_1}. \ssum \cdots \ssum V_{A_{l}}. \Psi(\alpha_1).
+    $$
+  \item If $\alpha = \sigma_Y(\alpha_1)$ with $Y\subseteq R(\alpha_1)$ then 
+    $\Psi(\alpha):=f_{\kprod}\left( \Psi(\alpha_1), V_{\mathsf{Eq}_Y} \right)$.
+  \item If $\alpha = \rho_{X\leftarrow Y}(\alpha_1)$ then $\Psi (\alpha):= \Psi (\alpha_1)\left[ V_A\rightarrow V_B, A\in X, B\in Y \right]$.
+  \item If $\alpha = \alpha_1\Join \alpha_2$, where $R(\alpha)=R(\alpha_1)=R(\alpha_2)$ then 
+    $\Psi (\alpha):=f_{\kprod}\left( \Psi (\alpha_1), \Psi (\alpha_2) \right)$
+\end{itemize}
+
+Note that for function application we only allow $\kprod$.
