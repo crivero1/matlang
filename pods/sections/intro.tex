@@ -4,10 +4,91 @@
 %Matrix operations are at the very core of most Machine Learning algorithms deployed these days. Due to this, there is an increasing need to define languages allowing us to reason about matrix manipulation and more generally, about linear algebra. Several such proposals have been put forward by the database community, mostly focusing on how matrices are manipulated statically. On the other hand, many linear algebra operations require some sort of iteration or recursion. Examples of these are computing the Gaussian elimination, the inverse of a matrix, or its transitive closure.
 %
 %By observing that the recursion required in these algorithms amounts to repeating 
-\floris{some ramblings below... }
-Linear algebra algorithms have become one of the key components in data analytical workflows. As such, there is growing interest in the database community to integrate linear algebra functionality in relational database management systems \cite{}. More specifically, from a query language perspective several proposals have recently been proposed that attempt to unify relational algebra and linear algebra. For example, LARA~\cite{} is a minimalistic language in which a number of atomic operations on so-called associative tables are proposed. Since such tables generalise relational tables, matrices and tensors, the aimed unification of linear and relational algebra is obtained. A key operator in LARA is the extension operator, which is parametrized by (user-defined) functions. Hence, the capabilities of LARA are inherently linked to the allowed functions. Fragments of LARA are known to be expressive complete to first-order logic with aggregation~\cite{}. Furthermore, under complexity-theoretic assumptions, LARA can not compute the inverse of a matrix.\cite{}. This is primarily due to the absence of a recursion mechanism in LARA. In another line of work~\cite{}, matrices are encoded as relational tabels and and extensions of SQL are proposed to carry out matrix manipulations. In particular, \cite{} extends SQL with a limited form of recursion -- alike dynamic programming - such that linear algebra-based algorithms such as .. and xx can be simulated. To our knowledge, the expressive power of this recursive extension of SQL is not know. Yet another proposal, on which we will built on, is \lang, a pure matrix query language. It consists of a number of atomic linear algebra operators (transpose, matrix multiplication, ...) but it is limited in expressive power. Indeed, it is known to be subsumed in first-order logic with aggregates (just as LARA) but it is already include in the three-variable fragment thereof. This again implies that matrix inversion or any other recursive linear algebra algorithm is beyond the capabilities of \lang.
+Linear algebra-based algorithms have become a key component in data analytical workflows. As such, there is growing interest in the database community to integrate linear algebra functionality in relational database management systems \cite{}. In particular, from a query language perspective, several proposals have recently been put forward to unify relational algebra and linear algebra. One such a proposal is LARA~\cite{}, a minimalistic language in which a number of atomic operations on so-called associative tables are proposed. Since such tables generalize relational tables, matrices and tensors, the aimed unification of linear and relational algebra is obtained. A key operator in LARA is the extension operator, which is parametrized by (user-defined) functions. Hence, the capabilities of LARA are inherently tied to the allowed functions. Fragments of LARA are known to be expressive complete to first-order logic with aggregation~\cite{}. Furthermore, under complexity-theoretic assumptions, LARA can not compute the inverse of a matrix.\cite{}. This is primarily due to the absence of a recursion mechanism in LARA. 
 
-What we aim for in this paper is to extend \lang with a natural notion of recursion. By inspecting any textbook on linear algebra algorithms a natural candidate pops up: for loops.
+
+Another proposal, on which we will built on, is \lang, a pure matrix query language \cite{}. It consists of a number of atomic linear algebra operators, such as matrix transposition, multiplication and addition, and multiplication of a matrix by a scalar, just to name a few. Also here there are close connections to first-order logic with aggregates. In fact, \lang\ is subsumed in the three-variable fragment of that logic, resulting in the inability of \lang\ to check for four-cliques in adjacency matrices and to compute the inverse of a matrix. Furthermore, \lang\ was recently shown to be equivalent to a restricted version of the annotated relational algebra (ARA) \cite{}. The latter is alike the relational algebra on $K$-relations \cite{}, with $K$ a semiring, and  where input and output relations are restricted to be binary (to make a crisp connection to matrices) and at most three distinct attributes can be used. The benefit of comparing with ARA is that aggregation (summation/product) is naturally built in its semantics due to the use of semirings.
+
+When faced with complex linear algebra procedures, however, LARA requires the introduction of new user-defined functions to be used in the extension function, and similarly, \lang\ requires the addition of new atomic linear algebra operations. This begs the question which and how many  functions or operators need to be added such that these languages can accommodate for 
+linear algebra procedures commonly used in practice. In other words, what is the yardstick with which to compare the expressive power of such languages? 
+
+To answer this question we take inspiration from complexity theory, where it is often said that ``efficient'' arithmetic circuits are sufficient to capture most of linear algebra \cite{}. An arithmetic circuit is like a boolean circuit but instead of representing a boolean function, it represents a polynomial in real variables. As such, an efficient arithmetic circuit can be regarded as one that corresponds to a polynomial of bounded degree, i.e., a degree bounded by a polynomial in the number of variables. Such circuits thus seem well-suited as a yardstick for comparing  linear-algebra based query languages. It leads to the question whether a linear algebra query language can be defined that matches (polynomial degree) arithmetic circuits in expressive power.
+
+The main contribution of this paper is that, yes, we can. We propose an extension of \lang, referred to by as \langfor, for which can identify a sub-fragment that is equivalent to arithmetic circuits of polynomial degree. Here, intuitively, the sub-fragment consists of \langfor-expression that can be compiled into a polynomial degree circuit. As a consequence, \langfor\ inherits all expressiveness properties of circuits, and thus can compute the determinant of matrix, perform matrix inversion, can compute the characteristic polynomial of a matrix, and is able to solve linear systems of equations, among other things.
+
+The key difference in the design of \langfor, compared to LARA and \lang, is that instead of adding specific functions or operators, we introduce a limited form of recursion. As our choice of recursion mechanism, we take inspiration from textbooks on linear algebra algorithms \cite{}. More specifically, most linear algebra algorithms are based on \texttt{for} loops that iterate over the indices of matrices involved. As such, we introduce \texttt{for} loops to \lang, resulting in \langfor.
+
+
+\floris{some example/intuition}
+
+The contributions made in this paper can be summarized, as follows:
+\begin{itemize}
+	\item We introduce \langfor, an extension of \lang\ with limited recursion and illustrate that this language can easily express  many linear algebra algorithms;
+	\item We identify a sub-fragment of \langfor which is equally expressive a arithmetic circuits of polynomial degree;
+	\item When restricting \langfor to expressions that only perform additive updates during recursion, we show that this precisely correspond to ARA.
+	\item When only pointwise multiplicative updates are performed during recursion, we obtain an equivalence with weighted logics.
+	\item Finally, when ....
+\end{itemize}
+
+\medskip
+\noindent
+\textbf{Paper outline.}
+
+
+%
+% \floris{This is example is getting too complicated! Any suggestions?}
+% % %
+% \begin{example}
+% Consider a linear system of equations $L\cdot x=a$ with $L$ a matrix of dimensions $n\times n$, $a$ a vector of dimension $n\times 1$, and $x$ a vector of variables of dimensions $n\times 1$. Furthermore, assume that $L$ is a non-singular lower triangular matrix, i.e., all entries above the diagonal are zero and all entries on the diagonal are non-zero. To solve the system for $x$, it suffices to apply forward substitution, i.e.,
+% $$	x_1:= a_1, \quad
+% x_i:= \frac{1}{L_{ii}}\left(a_i -\sum_{j=1}^{i-1}L_{ij}a_j\right) \quad i\in[2,n]$$
+% To view this procedure as a query in \langfor we proceed as follows.
+% We use a matrix variable $M$ to store $L$ and a vector variable $V$ to store $a$.
+% Furthermore, we reserve two special vector variables $v$ and $w$ which will range over
+% the canonical vectors of the same dimension as $L$ and $a$. More specifically, they range
+% over $b_1=(1,0,\ldots,0)$, $b_2=(0,1,0,\ldots,0)$,\ldots, $b_n=(0,\ldots,0,1)$ \textit{in this order}. We further have a special variable $X$ to hold intermediate results. In this example,
+% $X$ will hold the solution $x$ for the system of equations at the end of the evaluation. We also
+% require a second variable $Y$ which will hold $\sum_{j=1}^{i-1}L_{ij}a_j$ for a given $i$. Finally,
+% we also allow the use the division function $f_/(x,y)=x/y$.
+%
+% We need to more operators in this example:
+% the operator $\mathsf{min}(v)$ such that $\mathsf{min}(v):=1$ if $v=b_1$ and $\mathsf{min}(v):=0$ otherwise, and the $\mathsf{pred}^+(v,w)$ such that $\mathsf{pred}^+(b_j,b_i)=1$
+%  if $j<i$ and $\mathsf{pred}^+(b_j,b_i)=0$ otherwise. These identify the first canonical vector and a strict predecessor relation on canonical vectors, respectively, We show later in the paper that these can be expressed in \langfor. Given these, we consider the following \langfor\ expressions:
+% \begin{tabbing}
+% $e_1(M,V,v)$\=:=\texttt{for}$\,w,Y\,.\, Y + \mathsf{pred}^+(w,v) (v^T\cdot M\cdot w)(w^T\cdot V)\times v$\\
+% $e(M,V)$\=:=\texttt{for}$\,v,X\,.\, X + (\mathsf{min}(v)(v^T\cdot V)\times v) +(1-\mathsf{min}(v))e_1(M,V,v)$
+% \end{tabbing}
+% \end{example}
+% % %
+
+
+\medskip
+\noindent
+\textbf{Related work.} 
+
+\begin{itemize}
+\item MATLANG, LARA, SIMQL.
+
+\item K-Relations, ARA, FAQ.
+
+\item Weighted Logics, ...
+
+\item Logics for linear algebra: Grohe (bounded lfp), Dawar (), Pakusa, Holm.
+
+\item Algoritmic side: for loop optimization AGM style.
+\end{itemize}
+
+
+\subsection{old stuff}
+% In another line of work~\cite{}, matrices are encoded as relational tables and an extensions of SQL is proposed to carry out matrix manipulations. In particular, \cite{} extends SQL with a limited form of recursion -- alike dynamic programming - such that linear algebra-based procedures for learning feed-forward neural networks can be declaratively specified. To our knowledge, the precise expressive power of the resulting language has not been characterized. For example, it is unclear whether matrix inversion can be expressed.
+%
+% Based on these works, a natural question arises: how to add a natural form of recursion to linear algebra-based query languages? Inspecting any linear algebra textbook, one sees that most linear algebra procedures heavily rely on the use of for-loops in which iterations happen over the dimensions of the matrices involved. We thus propose to extend \lang\ with limited recursion in the form of for-loops, resulting the language \langfor. To define this recursion in a natural way, we simulate a loop of the form \texttt{for i=1,...n do} by leveraging canonical vectors. In other words, we use the canonical vectors $b_1=(1,0,\ldots)$, $b_2=(0,1,\ldots)$, \ldots, to access specific rows and columns, and iterate over these vectors. As an almost direct consequence, the expressive power of \langfor goes well beyond \lang. It can check for cliques of any given size, compute the transitive closure of a graph, and as we will show, compute important linear algebra operators such as LU-decomposition, determinant, matrix inverse, among other things.
+%
+% More generally, we show that \langfor\ is closely related to arithmetic circuits and we show that anything computable by an arithmetic circuit of polynomial degree can be computed in \langfor, and vice versa, provided that \langfor expressions can be compiled, in a uniform way into arithmetic circuits. Since these circuits are often said to ``capture'' linear algebra, we see our results as as a justification for our language.
+%
+% Furthermore, the introduction of recursion to \lang has some interesting consequences. First of all, when consecutive iterations can only perform updates in an additive way, we show that \langfor and the annotated relation algebra are equivalent. Secondly, when iterations update in a multiplicative manner,
+% \langfor is equivalent to weighted logics.
+%
 
 
 \begin{itemize}
