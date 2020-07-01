@@ -54,9 +54,8 @@ then the expression evaluates to $e_1(\I [V\leftarrow e_{k}^{\dom(\gamma)}])_{ij
 Hence, by projecting in attributes $\lbrace \row_\alpha, \col_\beta\rbrace$ we range over all $k$ and sum up all $K$-values for each entry.
 \end{itemize}
 
-Note that for function application we only allow $\kprod$.
-
-\thomas{I feel like I'm missing something because I don't mention the relations $R_\alpha^{\text{Rel}(\I)}(t)$. Or they exist just for the active domain in ARA and to ensure everything works fine? (like encoding the zero matrix) Should I say something more about this?}
+Here, we only allow $\kprod$ function application. 
+Note that we can access the zero values of matrices because the indexes are in the active domain of $\text{Rel}(\I)$ due to the existence of $R_\alpha^{\text{Rel}(\I)}(t)$, for each $\alpha \in \DD$.
 
 % Consider a matrix instance $\I = (\dom,\conc)$ over a schema $\Sch$.
 % Let $V\in\Mnam$ with $\size(V)=(\alpha,\beta)$ and let $\conc(V)$ be its corresponding matrix of dimension $\dom(\alpha)\times \dom(\beta)$.

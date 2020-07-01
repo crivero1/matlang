@@ -1,0 +1,54 @@
+% !TeX spellcheck = en_US
+% !TEX root = ../main.tex
+
+Similar than for matrix sum and \langsum, we can use other operations to update $X$ in the for-loop. A natural choise is to consider product of matrices instead of sum. In contrast to matrix sum, we can choose to use matrix product or pointwise matrix product, also called Hadamard product in linear algebra. We postpone the discussion of matrix product as a quantifier to the next subsection, in order to explain here the connection of sum and Hadamard product to weighted logics.
+
+\newcommand{\hadprod}{\circ} 
+\newcommand{\qhadprod}{\Pi^{\hadprod}} 
+
+Fix a semiring $(K, \ksum, \kprod, \kzero, \kone)$ and a \lang\ schema  $\Sch=(\Mnam,\size)$. The Hadamard product over $K$-matrices can be defined as the pointwise application of $\kprod$ between two matrices of the same size, namely, we define the expression $e \hadprod e' := \kprod (e, e')$ where $e, e'$ are expressions with respect to $\cS$ and $\ttype(e) = \ttype(e')$. Then the semantics of $e \hadprod e'$ is the pointwise application of $\kprod$, namely, $\sem{e \hadprod e'}{\I}_{ij} = \sem{e}{\I} \kprod \sem{e'}{\I}_{ij}$ for every instance $\I$. With the Hadamard product we can easily define the pointwise-product quantifier $\qhadprod v$ similar than for the sum quantifier as follows:
+$$
+\qhadprod v. \  e := \ffor{v}{X\!=\!\kone}{X \circ e}.
+$$
+where $\kone$ is a matrix of size $\ttype(X)$ with all entries equal to the $\kone$-element of $K$ (i.e. we need to initialize $X$ accordingly with the $\kprod$-operator).
+We define the subfragment of \langfor, called \langprod, to consist of \langsum \ plus the $\qhadprod$ operator.
+
+\cristian{Should we give an example here of how to use this operator?}
+
+The inclusion of this new operator adds expressive power to \langsum. For example,  $\sem{\qhadprod v. 2}{\cI} = 2^n$ where $n$ is the dimension of $n$, however, all expressions defined by \langsum grows at most polynomial in the values of $\cI$ and $n$.  Therefore, by the result of the previous section \langprod defined functions that goes beyond the expressive power of ARA. To measure the expressive power of \langprod, we use weighted logics~\cite{DrosteG05} (WL) as a yardstick. Weighted logics extends monadic second order logic from the boolean semiring to any semiring $K$. Furthermore, it has been used extensively to characterize the expressive power of weighted automata in terms of logic~\cite{droste2009handbook}. We use here the first-order subfragment of weighted logics to suit our purpose and, moreover, we extend its semantics over weighted structure (similar than in~\cite{GradelV17}).
+
+\newcommand{\cA}{\mathcal{A}}
+\newcommand{\bbX}{\mathbb{X}}
+\newcommand{\arity}{\operatorname{arity}}
+
+A relational vocabulary $\Gamma$ is a finite collection of relation symbols $R_1, \ldots, R_l$ such that each $R_i$ has an associated arity, denoted by $\arity(R_i)$.
+A $K$-weighted structure over $\Gamma$ is a pair $\cA = (A, \{R_i^\cA\})$ such that $A$ is a non-empty finite set (i.e. the domain) and, for each $R_i \in \Gamma$ and $k = \arity(R_i)$, $R_i^\cA: A^k \rightarrow K$ is a function that associates to each tuple in $A^k$ a weight in $K$. 
+
+Let $\bbX$ be a set of (first-order) variables. A $K$-weighted logic (WL) expression $\varphi$ over $\Gamma$ is defined by the following syntax:
+$$
+\begin{array}{rcl}
+\varphi & := & x = y \ \mid \ R_i(\bar{x}) \ \mid \ \varphi \ksum \varphi \ \mid \ \varphi \kprod \varphi \ \mid \ \Sigma x. \varphi \ \mid \ \Pi x. \varphi
+\end{array}
+$$ 
+where $x, y \in \bbX$, $R_i \in \Gamma$, and $\bar{x}$ is a sequence of variables in $\bbX$ whose length is $\arity(R_i)$. An assignment $\sigma$ over weighted structure $\cA = (A, \{R_i^\cA\})$ is a function $\sigma: X \rightarrow A$. We write $\sigma(\bar{x})$ to denote the result of applying $\sigma$ to each variable in the sequence $\bar{x}$ of variables in $\bbX$. Given $x \in \bbX$ and $a \in A$, we denote by $\sigma[x \mapsto a]$ a new assignment such that, for every $y \in \bbX$, $\sigma[x \mapsto a](y) = a$ whenever $x = y$ and $\sigma[x \mapsto a](y) = \sigma(y)$, otherwise. Then, given a weighted structure $\cA = (A, \{R_i^\cA\})$ and an assignment $\sigma$, we define the semantics $\sem{\varphi}{\cA, \sigma}$ of WL expression $\varphi$ as follows:
+$$
+\begin{array}{ll}
+\text{if $\varphi := x = y$, then} & \ssem{\varphi}{\cA}(\sigma) = 
+\left\{
+\begin{array}{ll}
+\kone & \text{if $\sigma(x) = \sigma(y)$} \\
+\kzero & \text{otherwise}
+\end{array}
+\right. \\
+\text{if $\varphi := R_i(\bar{x})$, then} & \ssem{\varphi}{\cA}(\sigma) = R_i^\cA(\sigma(\bar{x})) \\
+\text{if $\varphi := \varphi \ksum \varphi'$, then} & \ssem{\varphi}{\cA}(\sigma) = \ssem{\varphi}{\cA}(\sigma) \ksum \ssem{\varphi'}{\cA}(\sigma)  \\
+\text{if $\varphi := \varphi \kprod \varphi'$, then} & \ssem{\varphi}{\cA}(\sigma) = \ssem{\varphi}{\cA}(\sigma) \kprod \ssem{\varphi'}{\cA}(\sigma)  \\
+\text{if $\varphi := \Sigma x. \varphi'$, then} & \ssem{\varphi}{\cA}(\sigma) =  \bigksum_{a \in A} \ssem{\varphi}{\cA}(\sigma[x \mapsto a]) \\
+\text{if $\varphi := \Pi x. \varphi'$, then} & \ssem{\varphi}{\cA}(\sigma) =  \bigkprod_{a \in A} \ssem{\varphi}{\cA}(\sigma[x \mapsto a])
+\end{array}
+$$
+\cristian{Should we show an example here?}
+
+For comparing the expressive power of \langprod with WL, we have to show how to encode \lang instances with weighted relations and viceversa. For this, we need to take two assumptions to put both formalisms at the same level: (1) we restrict WL to relation symbols of arity at most two and (2) we restrict \langprod to square matrices. The first assumption follows the same reasons than for comparing \langsum with ARA, and the second assumption is for simplyfing the presentation of WL. More specific, we could have consider a variant of WL with several domains
+
+\cristian{Work in progress.}

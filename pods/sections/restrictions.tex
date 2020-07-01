@@ -95,7 +95,7 @@ $$
 \begin{array}{ll}
 \text{if $\alpha = R$, then} & \ssem{\alpha}{\cJ}(t) = R^\cJ(t) \\
 \text{if $\alpha = \alpha' \cup \alpha''$, then} & \ssem{\alpha}{\cJ}(t) = \ssem{\alpha'}{\cJ}(t) \ksum \ssem{\alpha''}{\cJ}(t)  \\
-\text{if $\alpha = \pi_X(\alpha')$, then} & \ssem{\alpha}{\cJ}(t) = \bigodot_{t': t'[X] = t} \ssem{\alpha'}{\cJ}(t') \\
+\text{if $\alpha = \pi_X(\alpha')$, then} & \ssem{\alpha}{\cJ}(t) = \bigksum_{t': t'[X] = t} \ssem{\alpha'}{\cJ}(t') \\
 \text{if $\alpha = \sigma_X(\alpha')$, then} & \ssem{\alpha}{\cJ}(t) = 
 \ssem{\alpha'}{\cJ}(t) \kprod \operatorname{Eq}_X(t)  \\
 \text{if $\alpha = \rho_f(\alpha')$, then} & \ssem{\alpha}{\cJ}(t) = 
@@ -165,7 +165,7 @@ Given the previous two propositions we derive the following conclusion which is 
 
 \subsection{Comparison with weighted logics}
 
-We explain here the comparison with ARA.
+\input{./sections/wl}
 
 
 \subsection{Matrix multiplication as a quantifier}
