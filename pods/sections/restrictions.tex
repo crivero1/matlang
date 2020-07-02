@@ -1,7 +1,5 @@
 % !TeX spellcheck = en_US
 
-\newcommand{\hprod}{\circ}
-
 \subsection{Sumation matlang and relational algebra}
 
 When defining the identity matrix and several other expressions, we actually only update $X$ by adding some matrix to it. This restricted form of the $\texttt{for}$ loop proved to be useful throughout the paper, and we will therefore introduce it a special operator. That is, we define:
@@ -50,29 +48,6 @@ Furthermore, one can easily check that the 4-clique expression of Example~\ref{e
 
 What operations over matrices can be defined with \langsum that is beyond \lang? In~\cite{brijder2019matrices}, it was shown that \lang\ was strictly included in the relational algebra of $K$-relations~\cite{GreenKT07}, called Annotated Relational Algebra (ARA) in~\cite{brijder2019matrices}.
 Then a natural idea is to compare the expressive power of \langsum with ARA. For making this comparison clear, in the following we give the formal definition of ARA~\cite{GreenKT07} to then see how to connect both formalism.
-
-\newcommand{\ddom}{\mathbb{D}}
-\newcommand{\fdom}{\operatorname{dom}}
-\newcommand{\att}{\mathbb{A}}
-\newcommand{\tuples}{\mathbf{tuples}}
-\newcommand{\supp}{\operatorname{supp}}
-\newcommand{\cJ}{\mathcal{J}}
-\newcommand{\cR}{\mathcal{R}}
-\newcommand{\adom}{\mathbf{adom}}
-
-\newcommand{\ksum}{\oplus}
-\newcommand{\kprod}{\odot}
-\newcommand{\bigksum}{\bigoplus}
-\newcommand{\bigkprod}{\bigodot}
-\newcommand{\kzero}{\mymathbb{0}}
-\newcommand{\kone}{\mymathbb{1}}
-
-\newcommand{\row}{\mathsf{row}}
-\newcommand{\rows}{\mathsf{rows}}
-\newcommand{\col}{\mathsf{col}}
-\newcommand{\cols}{\mathsf{cols}}
-\newcommand{\arae}{Q}
-
 
 Let $\ddom$ be a data domain and $\att$ a set of attributes. A relational signature is a finite subset of $\att$. A relational schema is a function $\cR$ on finite set of symbols $\fdom(\cR)$ such that $\cR(R)$ is a relation signature for each $R \in \fdom(\cR)$. To simplify the notation, from now on we write $R$ to denote both the symbol $R$ and the relational signature $\cR(R)$.
 Furthermore, we write $R \in \cR$ to say that $R$ is a symbol of $\cR$. 

@@ -14,9 +14,6 @@ Clearly, the inclusion of this new operator extends the expressive power to \lan
 
 To measure the expressive power of \langprod, we use weighted logics~\cite{DrosteG05} (WL) as a yardstick. Weighted logics extends monadic second order logic from the boolean semiring to any semiring $K$. Furthermore, it has been used extensively to characterize the expressive power of weighted automata in terms of logic~\cite{droste2009handbook}. We use here the first-order subfragment of weighted logics to suit our purpose and, moreover, we extend its semantics over weighted structure (similar than in~\cite{GradelV17}).
 
-\newcommand{\cA}{\mathcal{A}}
-\newcommand{\arity}{\operatorname{arity}}
-
 A relational vocabulary $\Gamma$ is a finite collection of relation symbols such that each $R \in \Gamma$ has an associated arity, denoted by $\arity(R)$.
 A $K$-weighted structure over $\Gamma$ (or just structure) is a pair $\cA = (A, \{R^\cA\}_{R \in \Gamma})$ such that $A$ is a non-empty finite set (i.e. the domain) and, for each $R \in \Gamma$, $R^\cA: A^{\arity(R)} \rightarrow K$ is a function that associates to each tuple in $A^{\arity(R)}$ a weight in $K$.
 
