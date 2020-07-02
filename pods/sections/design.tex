@@ -1,0 +1,84 @@
+\noindent\textbf{Loop Initialization.} As the reader may have observed, in the semantics of \texttt{for} loops we 
+always initialise $A_0$ to the zero matrix $\mathbf{0}$ (of appropriate dimensions). It is often convenient
+to start the iteration given some concrete matrix  originating from the result of evaluation a \langfor\ expression $e_0$. To make this explicit, we write $\initf{e_0}{v}{X}{e}$ and its semantics is defined as above
+with the difference that $A_0:=\sem{e_0}{\I}$. We observe, however, that $\initf{e_0}{v}{X}{e}$ can already
+be expressed in \langfor. In other words, we do not loose generality by assuming an initialisation of $A_0$ by $\mathbf{0}$.
+The key insight is that in \langfor\ we can check during evaluation whether or not
+the current canonical vector $b_i^n$ is equal to the $b_1^n$. This is not entirely trivial to see and is due to fact that \texttt{for} loops iterate over the canonical vectors in a fixed order. We discuss this more in the next subsection, when we talk about the order. In particular, we can define a \langfor expression $\mmin$, which when evaluated on an instance, returns $1$ if its input vector is $b_1^n$, and returns $0$ otherwise. Given $\mmin$, consider now the
+\langfor\ expression
+ $$\ffor{v}{X}{\mmin{v}\cdot e(v,X/e_0) + (1-\mmin{v})\cdot e(v,X)},$$
+ where we explicitly list $v$ and $X$ as matrix variables on which $e$ potentially depends on, and where
+ $e(v,X/e_0)$ denotes the expression obtained by replacing every occurrence of $X$ in $e$ with $e_0$.
+%
+%  As mentioned previously, all of the iterations in \texttt{for} loops start by initializing $A_0$ to the null matrix. We have already seen that this property is useful for defining the extremal points of our ordering, however, sometimes we would like to start the iteration using some concrete matrix $B$. Using the operator $\mmin$, we can actually achieve this as follows. First, let $\ffor{v}{X}{e(v,X)}$ be the \texttt{for} loop that begins iterating from the null matrix. Here we write $e(v,X)$ to denote the variables that $e$ potentially (but not necessarily) uses. To start the iteration from $B$ it now suffices to use the following loop:
+% $$\ffor{v}{X}{\mmin{v}\cdot e(v,X/B) + (1-\mmin{v})\cdot e(v,X)} \quad (\dag),$$
+% where $e(v,X/B)$ denotes the expression obtained by replacing every occurrence of $X$ in $e$ with $B$.
+When evaluating this expression on an instance $\I$, $A_0$ is initial set to the zero matrix, in the first iteration (when  $v=b_1^n$ and thus $\mmin{v}=1$)
+we have $A_1=\sem{e}{\I[v:=b_1^n,X:=\sem{e_0}{\I}]}$, and for consecutive iterations (when only the part related to $1-\mmin{v}$ applies) $A_i$ is updated as before. Clearly, the result of this evaluation is equal to
+$\sem{\initf{e_0}{v}{X}{e}}{\I}$. 
+
+As an illustration, we consider the transitive closure program from the beginning of this section. Similarly as for \lang, we write $\langforf{\Fun}$ for some set $\Fun$ of functions when these are required for the task at hand.
+%As an illustration, we consider the transitive closure program from the beginning of this section. Similarly as for \lang, we write \langfor$(\Fun)$ for some set $\Fun$ of functions when these are required for the task at hand. Analogously, we write $\langfor$ to denote $\langfor(\emptyset)$, but we might abuse the notation and write $\langfor$ to refer to the language in general.
+\begin{example}
+ In $\langforf{f_>}$ we can express transitive closure with the following expression
+$$
+f_{>0}\left(\initf{e_{\mathsf{Id}}}{v}{X}{X\cdot (e_{\mathsf{Id}}+V)}\right),
+$$
+where $e_{\mathsf{Id}}$ is a \langfor\ expression constructing the identity matrix $I$. The expression $e_{\mathsf{Id}}$
+is just like the expression $e_{\mathsf{diag}}$ in Example~\ref{ex:diag}, but now only puts value $1$ on the diagonal.
+ Observe that we start the loop using an initialisation by $I$. Hence, when evaluated on an instance $\I$ such that $V$ is an adjacency matrix $A$ of a graph, the expression above simply computes $(I+A)^n$, followed by the pointwise function application $f_{>0}$. In other words, it returns the adjacency matrix of the transitive closure of graph.\qed
+\end{example}
+
+\noindent\textbf{Order.} With the introduction of \texttt{for} loops we not only extend \lang\ with bounded recursion, we also introduce order information. Indeed, the semantics of the \texttt{for} operator assumes that the canonical vectors $b_1,b_2,\ldots$
+are accessed in this order. It implies, among other things, that \langfor\ expressions are not permutation-invariant.
+We can, for example, return the bottom right-most entry in a matrix. Indeed, consider the expression $e_{\mathsf{max}} := \ffor{v}{X}{v}$ which, for it to be well-typed, requires both $v$ and $X$ to be of type $(\alpha,1)$. Then, $\sem{e_{\mathsf{max}}}{\I}=b_n^n$, for $n=\dom(\alpha)$, simply because initially, $X=\mathbf{0}$, but $X$ will be overwritten by $b_1^n,b_2^n,\ldots,b_n^n$, in this order. Hence, at the end of the evaluation $b_n^n$ is returned.
+To extract the bottom right-most entry from a matrix, we now simply use $e_{\mathsf{max}}^T\cdot V\cdot e_{\mathsf{max}}$.
+
+
+%
+% assumes that canonical vectors come in some particular order.
+
+Interestingly, although the order is implicit in \langfor, we can explicitly use this order in \langfor expressions. More precisely, one can the define the following order predicates in \langfor\!:
+\begin{itemize}
+	\item $\mathsf{succ}(u,v)$ such that $\mathsf{succ}(b_i^n,b_j^n)=1$ if $i\leq j$ and $0$ otherwise. Similarly, we can define
+	$\mathsf{succ}^+(u,v)$ such that  $\mathsf{succ}^+(b_i^n,b_j^n)=1$ if $i < j$ and $0$ otherwise;
+	\item $\mathsf{min}(u)$ such that  $\mathsf{min}(b_i^n)=1$ if $i=1$ and $\mathsf{min}(b_i^n)=0$ otherwise; 
+	\item $\mathsf{max}(u)$ such that  $\mathsf{max}(b_i^n)=1$ if $i=n$ and $\mathsf{min}(b_i^n)=0$ otherwise; and
+	\item $e_{\mathsf{min}}$ and $e_{\mathsf{max}}$ such that $\sem{e_{\mathsf{min}}}{\I}=b_1^n$ and 
+	$\sem{e_{\mathsf{max}}}{\I}=b_n^n$, respectively.
+\end{itemize}
+The definitions of these expressions is not entirely trivial and are detailed in the appendix.
+We here only highlight that successor information on canonical vectors is made accessible by
+using the following matrix:
+%
+% To define an order relation for canonical vectors, notice that the following matrix:
+\[
+S_{\leq} = \begin{bmatrix}
+1 & 1 & \cdots &  1 \\
+0 & 1 & \cdots & 1\\
+\vdots & \vdots & \ddots & 1 \\
+0 & 0 & \cdots & 1 
+\end{bmatrix}.
+\] 
+We observe that $S_{\leq}$ has the property that $b_i^T\cdot S_{\leq} \cdot b_j=1$, for two canonical vectors $b_i$ and $b_j$ of the same dimension, if and only if $i\leq j$. Otherwise, $b_i^T\cdot S_{\leq} \cdot b_j=0$. It should be clear that if we can compute $S_{\leq}$ using an expression $e_{\leq}$ in \langfor, then we can define
+$
+\mathsf{succ}(v,w):=v^T\cdot e_{\leq} \cdot w.
+$
+For $e_{\leq}$ we can take the following \langfor expression:
+$$
+e_{\leq}=\ffor{v}{X}{X + \left((X\cdot e_{\mathsf{max}}) + v \right)\cdot v^T + v\cdot e^T_{\mathsf{max}}},
+$$
+where $e_{\mathsf{max}}$ is as defined above. The intuition behind this expression is that by using the last canonical vector $b_n$, as returned by $e_{\mathsf{max}}$, we have access to the last column of $X$ (via the product $X\cdot e_{\mathsf{max}}$). We use this column such that after the $i$-th iteration, this column contains the $i$-th column of $S_{\leq}$. This is done by incrementing $X$ with $v\cdot e_{\mathsf{max}}^T$.
+To construct $S_{\leq}$, in the $i$-th iteration we further increment $X$ with 
+(i)~the current last column in $X$ (via $X\cdot e_{\mathsf{max}}\cdot v^T$) which holds
+the $(i-1)$-th column of $S_{\leq}$; and (ii)~the current canonical vector (via $v\cdot v^T$). Hence, after iteration $i$, $X$ contains the first $i$ columns of $S_{\leq}$ and holds the $i$th column of $S_{\leq}$ in its last column. It is now readily verified that $X=S_{\leq}$ after the $n$th iteration.
+
+\floris{I commented out the details about the order predicates. Let's put this in the appendix.
+	I wonder what else we can say here. Clearly, the order is crucial for all our results later on.
+	We could comment on order-invariant \langfor expressions (probably undecidable)? Any suggestions?
+}
+
+\domagoj{Not sure I would add more results here. Perhaps moving Section 3.2 here makes sense?}
+
+Having order information available results in \langfor to be quite expressive. We heavily rely on order information in the next sections to compute the inverse of matrices and more generally to simulate low complexity Turing machines and arithmetic circuits.
+
