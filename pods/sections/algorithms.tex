@@ -1,5 +1,5 @@
 %!TEX root = ../main.tex
-As already mentioned, our main motivation to introduce \texttt{for} loops is to be able
+One of our main motivations to introduce \texttt{for} loops is to be able
 to express classical linear algebra algorithms in a natural way. We have seen that \langfor is
 quite expressive as it can check for cliques, compute the transitive closure, and can even
 leverage a successor relation on canonical vectors. The big question is how expressive \langfor
@@ -7,14 +7,17 @@ actually is. We will (partially) answer this in the next section by connecting \
 arithmetic circuits of polynomial degree. Through this connection, one can move back and forth between \langfor and arithmetic circuits, and as a consequence, anything computable by such a circuit can be
 computed by \langfor as well. When it comes to specific linear algebra algorithms, the detour via circuits
 can often be avoided. Indeed, in this section we illustrate that \langfor is able to
-compute, in a natural way, the so-called LU decomposition of matrices. As a consequence, we show that \langfor is expressive enough to compute matrix inversion and the determinant. We recall that matrix inversion and determinant need to be explicitly added as separate operators in \lang~\cite{matlang,matlang-journal} and that the LARA language is unlikely to compute the inverse of a matrix under usual complexity-theoretic assumptions~\cite{BarceloH0S20}.
+compute LU decompositions of matrices. These decompositions form the basis of many other algorithms, such as solving linear systems of equations. We further show that \langfor is expressive enough to compute matrix inversion and the determinant. We recall that matrix inversion and determinant need to be explicitly added as separate operators in \lang~\cite{matlang,matlang-journal} and that the LARA language is unlikely to compute the inverse of a matrix under usual complexity-theoretic assumptions~\cite{BarceloH0S20}.
 % In fact, many of the algorithms presented in \cite{num} translate naturally in \langfor.
 
 \subsection{LU decomposition}
 %
 %
 % The real power of \langfor comes from the fact that \texttt{for} loops allow us to express many classical linear algebra algorithms. Here we illustrate this by showing how to compute the
-A lower-upper (LU) decomposition factors a matrix $A$ as the product of a lower triangular matrix $L$ and upper triangular matrix $U$. This decomposition, and more generally LU decomposition with pivoting,  underlies many linear algebra algorithms such as solving linear systems of equations, computing the inverse of a matrix and computing the determinant of a matrix, just to name a few. We next show that \langfor can compute these decompositions.
+A lower-upper (LU) decomposition factors a matrix $A$ as the product of a lower triangular matrix $L$ and upper triangular matrix $U$.  This decomposition, and more generally LU decomposition with pivoting,  underlies many linear algebra algorithms and 
+% such as solving linear systems of equations. Indeed, if  we consider a system $A\cdot x=b$, then an LU-decomposition allows to rephrase this as $L\cdot y=b$ and $U\cdot x=y$. Due to the triangular shape of $L$ and $U$ such systems can be easily solved by forward and backward substitution.
+ % computing the inverse of a matrix and computing the determinant of a matrix, just to name a few. 
+we next show that \langfor can compute these decompositions.
 
 \smallskip
 \noindent
@@ -83,9 +86,10 @@ where $\conc(V)=A$ and $A$ is LU-factorizable.\qed
 We remark that the proposition holds when division is added as a function in $\Fun$
 in \langfor. When row pivoting is needed, we can also obtain a permutation matrix
 $P$ such that $P\cdot A=L\cdot U$ holds by means of an expression in \langfor, provided
-that we additionally allow the function $f_{>0}$, as defined in Example~\ref{ex:programtc}. This function allows for computing the following
-operation: Given a vector $v$, return $\mathsf{minnz}(v)=b_j$, the $j$th canonical vector, where $j$ is the first entry in $v$ that holds a non-zero value, or returns $\mathsf{minnz}(v)=\mathbf{0}$ if no such non-zero value exists. In fact, the ability to express
-$\mathsf{minnz}(\cdot)$ is intrinsically tied to the expressibility of LU decompositions with pivoting:
+that we additionally allow the function $f_{>0}$, as defined in Example~\ref{ex:programtc}. 
+% This function allows for computing the following
+% operation: Given a vector $v$, return $\mathsf{minnz}(v)=b_j$, the $j$th canonical vector, where $j$ is the first entry in $v$ that holds a non-zero value, or returns $\mathsf{minnz}(v)=\mathbf{0}$ if no such non-zero value exists. In fact, the ability to express
+% $\mathsf{minnz}(\cdot)$ is intrinsically tied to the expressibility of LU decompositions with pivoting:
 
 %
 % which computes the $U$ from the $LU$ factorization of $A$, whenever $A$ can be $LU$ factorized without row interchange. Notice that the latter assumption is crucial, since it will ensure that the element of $A$ in position $ii$ is different from zero after each \texttt{reduce} step. As explained previously, the inner \texttt{for} loop in fact computes the product of matrices $T_{n}\cdots T_1$, which in fact amounts to the matrix $L^{-1}$ from the $LU$ factorization of $A$. Given that each $T_i$ is easily invertible, we can also recover $L$.
@@ -103,54 +107,61 @@ $\mathsf{minnz}(\cdot)$ is intrinsically tied to the expressibility of LU decomp
  % needs row interchange to be $LU$ factorizable (this is, $PA$ is $LU$ factorizable) we say that $A$ is $PALU$ factorizable, where the factorization is $PA=LU$. To accomplish this, we need something extra.
 
  \begin{proposition}\label{prop:palu}
-There exist expressions $e_{L^{-1}P}(M)$ and $e_U(M)$ in $\langforf{\Fun}$  such that for
-$L^{-1}\cdot P=\sem{e_{L^{-1}P}}{\I}$ and $U=\sem{e_U}{\I}$, $L^{-1}\cdot P\cdot A=U$ holds
-if and only if $\Fun$ includes division $f_/$ and $\langforf{\Fun}$ can express the function $\mathsf{minnz}(\cdot)$.\qed
+There exist expressions $e_{L^{-1}P}(M)$ and $e_U(M)$ in $\langforf{f_/,f_{>0}}$  such that
+$L^{-1}\cdot P=\sem{e_{L^{-1}P}}{\I}$ and $U=\sem{e_U}{\I}$, satisfy $L^{-1}\cdot P\cdot A=U$.\qed
+%  holds
+% if and only if $\Fun$ includes division $f_/$ and $\langforf{\Fun}$ can express the function $\mathsf{minnz}(\cdot)$.\qed
  %
  % such that by interpreting $X$ with a matrix $A$ will result in the matrix $U$ from the $PALU$ factorization of $A$ whenever $A$ is $PALU$ factorizable if and only if there exists a \langfor expression $e'(X)$ such that by interpreting $X$ with a vector $A$ outputs a canonical vector $e_k$ where $A_k$ is the first non zero entry of $A$.
 \end{proposition}
-As mentioned above, $\langforf{f_/,f_>0}$ suffices to compute LU decomposition with pivoting for arbitrary matrices.
+% As mentioned above, $\langforf{f_/,f_>0}$ suffices to compute LU decomposition with pivoting for arbitrary matrices.
 Intuitively, by allowing $f_{>0}$ we introduce a limited form of \texttt{if-then-else} in \langfor, which is needed
 to continue reducing columns only when the right pivot has been found.
 
+
 \subsection{Determinant and inverse}
 Other key linear algebra operations include the computation of the determinant and
-the inverse of a matrix (if the matrix is invertible). When the input matrix
-$A$ is LU-factorizable, then it is known that $\mathsf{det}(A)=\mathsf{det}(U)$.
-Based on Proposition~\ref{prop:gauss}
-and by recalling that the determinant of an upper triangular matrix is the product
-of its diagonal entries, one can readily verify that there exists a $\langforf{f_/}$
-expression $e_{\mathsf{det}}(V)$ such that $\sem{e_{\mathsf{det}}}{\I}=\mathsf{det}(A)$
-when $\I$ assigns $A$ to $V$ and $A$ is LU-factorizable. Using a similar, but slightly
-more complex argument, we can infer from Proposition~\ref{prop:palu} the following.
- \begin{proposition}\label{prop:determinant}
-There is a $\langforf{f_/,f_{>0}}$ expression $e_{\mathsf{det}}(V)$ such 
-that $\sem{e_{\mathsf{det}}}{\I}=\mathsf{det}(A)$ when $\I$ assigns $V$
-to $A$.\qed
-\end{proposition}
+the inverse of a matrix (if the matrix is invertible). As a consequence of the expressibility
+in $\langforf{f_/,f_{>0}}$ of LU-decompositions with pivoting, it can be shown that the determinant
+and inverse can be expressed as well. 
 
-Furthermore, when $A$ is LU-factorizable, $A$ is invertible if and only if $\mathsf{det}(U)\neq 0$. More specifically,
-in that case, $A^{-1}=U^{-1}\cdot L^{-1}$. We recall that $L^{-1}=T_n\cdot\cdots\cdot T_1$ and we argued already that this can be
-computed in $\langforf{f_/}$. Due to $U$ being an upper triangular matrix with non-zero elements on its diagonal, it
-is now readily verified that $U=(I-D^{-1}_U\cdot U')^{-1}\cdot D_U^{-1}$ with $D_U$ the diagonal matrix consisting of the diagonal entries of $U$ and $U'=U-D_U$. We remark that $D_U^{-1}$ can simply be obtained by inverting the (non-zero) elements on the diagonal by means of $f_/$. Furthermore, we observe that $(I-D^{-1}_U\cdot U')^{-1}=\sum_{i=0}^{n}(-D_U^{-1}U')^i$ which is something we can compute in \langfor as well. As a consequence:
-\begin{proposition}\label{prop:inverse1}
-There is a $\langforf{f_/}$ expression $e_{\mathsf{inv}}(V)$ such that 
-$\sem{e_{\mathsf{inv}}}{\I}=A^{-1}$ when $\I$ assigns $V$
-to $A$ and $A$ is invertible and LU-factorizable.
-\qed
- % that by interpreting $X$ with a matrix $A$ will result in the matrix $A^{-1}$ whenever $A$ is $LU$ factorizable.
-\end{proposition}
-We can again generalize this result, by including $f_{>0}$ in the language, to arbitrary
-matrices and by using that any matrix is LU-factorizable with pivoting. However, the results
+%
+% When the input matrix
+% $A$ is LU-factorizable, then it is known that $\mathsf{det}(A)=\mathsf{det}(U)$.
+% Based on Proposition~\ref{prop:gauss}
+% and by recalling that the determinant of an upper triangular matrix is the product
+% of its diagonal entries, one can readily verify that there exists a $\langforf{f_/}$
+% expression $e_{\mathsf{det}}(V)$ such that $\sem{e_{\mathsf{det}}}{\I}=\mathsf{det}(A)$
+% when $\I$ assigns $A$ to $V$ and $A$ is LU-factorizable. Using a similar, but slightly
+% more complex argument, we can infer from Proposition~\ref{prop:palu} the following.
+%  \begin{proposition}\label{prop:determinant}
+% There is a $\langforf{f_/,f_{>0}}$ expression $e_{\mathsf{det}}(V)$ such
+% that $\sem{e_{\mathsf{det}}}{\I}=\mathsf{det}(A)$ when $\I$ assigns $V$
+% to $A$.\qed
+% \end{proposition}
+%
+% Furthermore, when $A$ is LU-factorizable, $A$ is invertible if and only if $\mathsf{det}(U)\neq 0$. More specifically,
+% in that case, $A^{-1}=U^{-1}\cdot L^{-1}$. We recall that $L^{-1}=T_n\cdot\cdots\cdot T_1$ and we argued already that this can be
+% computed in $\langforf{f_/}$. Due to $U$ being an upper triangular matrix with non-zero elements on its diagonal, it
+% is now readily verified that $U=(I-D^{-1}_U\cdot U')^{-1}\cdot D_U^{-1}$ with $D_U$ the diagonal matrix consisting of the diagonal entries of $U$ and $U'=U-D_U$. We remark that $D_U^{-1}$ can simply be obtained by inverting the (non-zero) elements on the diagonal by means of $f_/$. Furthermore, we observe that $(I-D^{-1}_U\cdot U')^{-1}=\sum_{i=0}^{n}(-D_U^{-1}U')^i$ which is something we can compute in \langfor as well. As a consequence:
+% \begin{proposition}\label{prop:inverse1}
+% There is a $\langforf{f_/}$ expression $e_{\mathsf{inv}}(V)$ such that
+% $\sem{e_{\mathsf{inv}}}{\I}=A^{-1}$ when $\I$ assigns $V$
+% to $A$ and $A$ is invertible and LU-factorizable.
+% \qed
+%  % that by interpreting $X$ with a matrix $A$ will result in the matrix $A^{-1}$ whenever $A$ is $LU$ factorizable.
+% \end{proposition}
+% We can again generalize this result, by including $f_{>0}$ in the language, to arbitrary
+% matrices and by using that any matrix is LU-factorizable with pivoting. 
+However, the results
 in the next section (connecting \langfor with arithmetic circuits) imply that the determinant
-and inverse of a matrix can already be defined in $\langforf{f_/}$. So instead of using LU decomposition with pivoting to treat the general matrix case, we provide an alternative solution
-for computing the inverse.
+and inverse of a matrix can already be defined in $\langforf{f_/}$. So instead of using LU decomposition with pivoting for matrix inversion and computing the determinant, we provide an alternative solution.
 
-More specifically, we rely on Csanky's algorithm for computing the inverse of a matrix~\cite{Csanky76}. In a nutshell, Csanky's algorithm relies on the characteristic
+More specifically, we rely on Csanky's algorithm for computing the inverse of a matrix~\cite{Csanky76}. This algorithm uses the characteristic
 polynomial $p_A(x)=\mathsf{det}(xI-A)$ of a matrix. When expanded as a polynomial
 $p_A(x)=\sum_{i=0}^{n} c_i x^i$ and it is known that $A^{-1}=\frac{-1}{\phantom{-1}c_n}\sum_{i=0}^{n-1}c_i A^{n-1-i}$
 if $c_n\neq 0$. Furthermore, $c_0=1$, $c_n=(-1)^n\mathsf{det}(A)$ and the coefficients $c_i$ of $p_A(x)$
-are known to satisfy the following system of equations:
+are known to satisfy the system of equations $S\cdot c=s$ given by:
 $$
 \left(\begin{matrix}
 1 & 0 & 0 & \cdots & 0 & 0\\
@@ -173,10 +184,13 @@ S_3\\
 S_n\\
 \end{matrix}\right),
 $$
-with $S_i=\mathsf{tr}(A^i)$. We show, in the appendix, that we can construct all ingredients of this system of equations in \langfor. By observing that the matrix in this system is a lower triangular matrix with non-zero elements on its diagonal, we have that this matrix is LU-factorizable. Proposition~\ref{prop:inverse1} then implies that we can compute the inverse of this matrix in 
-$\langforf{f_/}$ and hence, we can solve the above system. That is, we can compute the vector $(c_1,\ldots,c_n)^T$ in \langfor. It now remains to construct $A^{-1}$,
-as described above, in terms of the coefficients of $p_A(x)$ and powers of $A$. All this can be done
-in \langfor. We can similarly extract the determinant of $A$ from $c_n$. We may thus conclude:
+with $S_i=\mathsf{tr}(A^i)$. We show, in the appendix, that we can construct all ingredients of this system of equations in $\langforf{f_/}$. By observing that the matrix $S$ is a lower triangular matrix with non-zero elements on its diagonal, we can write it in the form $D_S+(S-D_{S})=D_S\cdot(I+D_S^{-1}\cdot (S-D_S))$ with $D_S$ the diagonal matrix consisting of the diagonal entries of $S$.
+Hence $S^{-1}=(I+D_{S}^{-1}\cdot(S-D_{S}))^{-1}\cdot D_S^{-1}$. 
+We remark $D_S^{-1}$ can simply be obtained by inverting the (non-zero) elements on the diagonal by means of $f_/$ in $\langforf{f_/}$. Furthermore, we observe that $(I+D_S^{-1}(S-D_S))^{-1}=\sum_{i=0}^{n}(D_S^{-1}(S-D_S))^i$ which is something
+we can compute in $\langforf{f_/}$ as well. Hence, we can invert $S$ and obtain the vector $(c_1,\ldots,c_n)^T$ as $S^{-1}\cdot s$. To compute $A^{-1}$ it now suffices to compute
+$\frac{-1}{\phantom{-1}c_n}\sum_{i=0}^{n-1}c_i A^{n-1-i}$. To find the determinant,
+we compute $(-1)^nc_n$. All this can be done in $\langforf{f_/}$.
+We may thus conclude:
 \begin{proposition}\label{prop:inverse}
 There are $\langforf{f_/}$ expressions $e_{\mathsf{det}}(V)$ and $e_{\mathsf{inv}}(V)$ such that
 $\sem{e_{\mathsf{det}}}{\I}=\mathsf{det}(A)$, and  
@@ -185,7 +199,7 @@ to $A$ and $A$ is invertible.
 \qed
  % that by interpreting $X$ with a matrix $A$ will result in the matrix $A^{-1}$ whenever $A$ is $LU$ factorizable.
 \end{proposition}
-
+% This shows the $\langfor$ substantially increases in expressive power
 %
 
 % We next highlight two important consequence of the previous results. First,
