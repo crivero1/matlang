@@ -1,6 +1,11 @@
+%!TEX root = /Users/fgeerts/Documents/MLforloops/pods/main.tex
 % !TeX spellcheck = en_US
+We conclude the paper by zooming in on some special fragments of \langfor and in which matrices can take values from an arbitrary (commutative) semiring $K$.
+In particular, we first consider \langsum, in which iterations can only perform
+additive updates, and show that it is equivalent in expressive to the (positive)
+relational algebra on $K$-relations. This extends the result in~\cite{} connecting \lang with a restricted fragment of that algebra, to the full algebra. We then extend \langsum such that also updates involving pointwise-multiplication (Hadamard product) are allowed. The resulting fragment, \langprod, is shown to be equivalent in expressive power to weighted logics. Finally, we consider the fragment in which updates involving sum and matrix multiplication, and possibly order information, is allowed. From the results in Section~\ref{}, we infer that this fragment suffices to compute matrix inversion. An overview of the fragments and their relationships are depicted in Figure~\ref{}.
 
-\subsection{Sumation matlang and relational algebra}
+\subsection{Summation matlang and relational algebra}
 
 When defining the identity matrix and several other expressions, we actually only update $X$ by adding some matrix to it. This restricted form of the $\texttt{for}$ loop proved to be useful throughout the paper, and we will therefore introduce it a special operator. That is, we define:
 $$\Sigma v. e := \ffor{v}{X}{X + e}.$$
