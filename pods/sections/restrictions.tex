@@ -1,9 +1,8 @@
 %!TEX root = /Users/fgeerts/Documents/MLforloops/pods/main.tex
 % !TeX spellcheck = en_US
-We conclude the paper by zooming in on some special fragments of \langfor and in which matrices can take values from an arbitrary (commutative) semiring $K$.
-In particular, we first consider \langsum, in which iterations can only perform
+We conclude the paper by zooming in on some special fragments of \langfor and in which matrices can take values from an arbitrary (commutative) semiring $K$. In particular, we first consider \langsum, in which iterations can only perform
 additive updates, and show that it is equivalent in expressive to the (positive)
-relational algebra on $K$-relations. This extends the result in~\cite{} connecting \lang with a restricted fragment of that algebra, to the full algebra. We then extend \langsum such that also updates involving pointwise-multiplication (Hadamard product) are allowed. The resulting fragment, \langprod, is shown to be equivalent in expressive power to weighted logics. Finally, we consider the fragment in which updates involving sum and matrix multiplication, and possibly order information, is allowed. From the results in Section~\ref{}, we infer that this fragment suffices to compute matrix inversion. An overview of the fragments and their relationships are depicted in Figure~\ref{}.
+relational algebra on $K$-relations. We then extend \langsum such that also updates involving pointwise-multiplication (Hadamard product) are allowed. The resulting fragment, \langprod, is shown to be equivalent in expressive power to weighted logics. Finally, we consider the fragment in which updates involving sum and matrix multiplication, and possibly order information, is allowed. From the results in Section~\ref{sec:queries}, we infer that the latter fragment suffices to compute matrix inversion. An overview of the fragments and their relationships are depicted in Figure~\ref{}.
 
 \subsection{Summation matlang and relational algebra}
 When defining $4$-cliques and in several other expressions we have seen so far, we actually only update $X$ by adding some matrix to it. This restricted form of the $\texttt{for}$ loop proved useful throughout the paper, and we will therefore introduce it as a special operator. That is, we define:
@@ -172,34 +171,47 @@ independent of the order in which the canonical vectors are considered. This is 
 As a consequence, \langsum cannot express the order predicates mentioned in Section~\ref{sec:formatlang}.
 
 
+
 \subsection{Hadamard product and weighted logics}\label{subsec:langprod}
 
 \input{./sections/wl}
 
 
 \subsection{Matrix multiplication as a quantifier}\label{subsec:langlinear}
-
-Analogously to the summation and Hadamard product with respect to canonical vectors, we can use the usual product of matrices. Formally, for an expression $e$ define:
+In a similar way, we can consider a fragment in which sum and the usual product of matrices can be used
+in \texttt{for} loops. Formally, for an expression $e$ we define the operator:
 $$
 \sprod v.\,  e=\ffor {v}{X = I}{X\cdot e}.
 $$
-where $I$ is the identity matrix. 
-Using the product operator we can express multiple interesting properties. To begin with, we can compute the product of diagonal elements of a matrix: 
-$$
-dp(A) := \sprod v. v^*\cdot A \cdot v.$$
-Another property of interest is computing the transitive closure of a graph adjacency matrix $A$. It is well known the transitive closure of this matrix, denoted $tc(A)$ equals to the matrix consisting of non-zero entries of $(I + A)^n$, where $n$ is the dimension of $A$. Using the product operator we can define:
-$$tc(A) := f_{>0}(\sprod v. (I + A)),$$
-where $f_{>0}(x) := 1$ if $x>0$, and $f_{>0}(x) = 0$ otherwise, is used to make the result a zero-one matrix. Notice that the expression for $tc(A)$ ignores the canonical vectors, and simply multiplies the previous result with $(I + A)$, thus computing the desired value.
+where $I$ is the identity matrix. It is readily verified that  $\sprod v$ can expressed in terms of $\qhadprod v$.
+Furthermore, by contrast to the Hadamard product, matrix multiplication is a non-commutative operator. As a consequence, one can formulate expressions that are not invariant under the order in which the canonical vectors
+are processed.
 
-Using the combination of canonical sum and product, we can also define more general operators over matrices, such as the power sum operator, which, given a square matrix $A$, computes $I + A + A^2 + \cdots + A^n$. This operator, denoted by $ps(A)$ can be defined as:
-$$ps(A) := \ssum v.\sprod w. \left( (w^* S_{<} v)\cdot (A-I) + I\right),$$
-where $S_{<}$ is the (strict) order matrix defined in Section~\ref{sec:order}. The outer loop here defines which power we compute. That is, when $v$ is the $i$th canonical vector, we compute $A^i$. Computing $A^i$ is achieved via the inner product loop, which uses $w^*S_{<}v$ to determine whether $w$ comes before $v$ in the ordering of canonical vectors. When this is the case we multiply the current result by $A$, and when $w$ is greater than $v$, we use $I$ not to affect the already computed result.
-
-Note that $\sprod v$ can define the quantifier $\qhadprod v$ and, further, it increases the expressive power of \langprod~.
 \begin{proposition}
-	Every expression in \langprod can be defined in \langsum extended with $\sprod v$ quantifier. Moreover, there exists an expression that uses the $\sprod v$ quantifier that cannot be defined in \langprod.
+	Every expression in \langprod can be defined in \langsum extended with $\sprod v$. Moreover, there exists an expression that uses the $\sprod v$ quantifier that cannot be defined in \langprod.
 \end{proposition}
 
-It is interesting that the $\sprod v$ give the power of transitive closure to \langsum in a natural way and without defining it explicitly. We leave the study of this operator and, in particular, to understand its expressibility for future work. 
-
+What is interesting is that \langsum extended with $\sprod v$ suffices to compute the transitive closure,
+as shown in Example~\ref{}, provided that we allow for the $f_{>0}$ function.
+%
+% Using the product operator we can express multiple interesting properties. To begin with, we can compute the product of diagonal elements of a matrix:
+% $$
+% dp(A) := \sprod v. v^*\cdot A \cdot v.$$
+% Another property of interest is computing the transitive closure of a graph adjacency matrix $A$. It is well known the transitive closure of this matrix, denoted $tc(A)$ equals to the matrix consisting of non-zero entries of $(I + A)^n$, where $n$ is the dimension of $A$. Using the product operator we can define:
+% $$tc(A) := f_{>0}(\sprod v. (I + A)),$$
+% where $f_{>0}(x) := 1$ if $x>0$, and $f_{>0}(x) = 0$ otherwise, is used to make the result a zero-one matrix. Notice that the expression for $tc(A)$ ignores the canonical vectors, and simply multiplies the previous result with $(I + A)$, thus computing the desired value.
+%
+% Using the combination of canonical sum and product, we can also define more general operators over matrices, such as the power sum operator, which, given a square matrix $A$, computes $I + A + A^2 + \cdots + A^n$. This operator, denoted by $ps(A)$ can be defined as:
+% $$ps(A) := \ssum v.\sprod w. \left( (w^* S_{<} v)\cdot (A-I) + I\right),$$
+Furthermore, if we extend this fragment with access to the matrix $S_{<}$, defining the (strict) order on canonical vectors, then Csanky's matrix inversion algorithm becomes expressible (if $f_/$ is allowed).
+ We leave the study of this fragment and, in particular, the relationship to full \langfor, for future work. 
+%
+% %
+% % matrix defined in Section~\ref{sec:order}. The outer loop here defines which power we compute. That is, when $v$ is the $i$th canonical vector, we compute $A^i$. Computing $A^i$ is achieved via the inner product loop, which uses $w^*S_{<}v$ to determine whether $w$ comes before $v$ in the ordering of canonical vectors. When this is the case we multiply the current result by $A$, and when $w$ is greater than $v$, we use $I$ not to affect the already computed result.
+% %
+% % Note that $\sprod v$ can define the quantifier $\qhadprod v$ and, further, it increases the expressive power of \langprod~.
+% %
+%
+% It is interesting that the $\sprod v$ give the power of transitive closure to \langsum in a natural way and without defining it explicitly.
+%
 
