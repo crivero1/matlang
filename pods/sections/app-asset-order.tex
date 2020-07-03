@@ -2,8 +2,38 @@ Assume we can only perform the restricted versions of $\ffor{v}{X}{e}$, this is,
 $\ssum$ and $\sprod$ defined in section \ref{sec:restrict}. Note that these operators also iterate over canonical vectors
 in certain order. Since they are operations that \textit{aggregate} information, it doesn't seem
 possible to access this order explicitly and compare canonical vectors, like in the full version of $\langfor$.
-\thomas{Leave the former as an open question?}
-Let's see what we can do if this order is \textit{supplied}. Assume we have $e_{\mathsf{Prev}}$ 
+Let's see what we can do if this order is \textit{supplied}. 
+The goal of this is to have a restriction in the recursion property of $\ffor{v}{X}{e}$, this is, 
+in the iteration we don't allow access to the current result.
+We say that an expression does not use the recursion property of $\langfor$ if it uses
+only $\ssum$, $\sprod$ and has access to order.
+An example of this are the expressions $e_{\mathbf{det}}(M)$ and $e_{\mathbf{inv}}(M)$ defined 
+in section \ref{app:inverse}.
+
+First, assume we have $e_{S_{<}}$ (and thus $e_{S_{\leq}}$) such that the following holds:
+
+$$
+b_i^T\cdot S_{<} \cdot b_j=\begin{cases}
+               1, \text{ if } i < j.\\
+              \mathbf{0}, \text{ if not.}
+            \end{cases}
+$$
+As a consequence we
+can compute $\mathsf{succ}$ and $\mathsf{succ}^+$. We can define
+\begin{align*}
+  e_{\mathsf{min}}&:=\ssum v. \left[ \sprod w. \mathsf{succ}(w,v)\right] \times v. \\
+  e_{\mathsf{max}}&:=\ssum v. \left[ \sprod w. \left( 1-\mathsf{succ}(w,v) \right) \right] \times v.
+\end{align*}
+Note that, if we have $f_{>0}$ we can define
+$$
+e_{\mathsf{Pred}}:= e_{S_{<}}- f_{>0}(e_{S_{<}}^2)
+$$
+Also $e_{\mathsf{Next}}:=e_{\mathsf{Pred}}^T$.
+We can now define $\mathsf{prev}(v)$ and $\mathsf{next}(v)$ as in the previous section. 
+The same goes with $e_{\mathsf{getPrevMatrix}}(V)$, 
+$e_{\mathsf{getNextMatrix}}(V)$, $e_{\mathsf{min}+i}$ and $e_{\mathsf{max}+i}$.
+
+On the other hand, supose we have $e_{\mathsf{Prev}}$
 (and thus $e_{\mathsf{Next}}$) such that the following holds:
 
 $$
@@ -16,29 +46,16 @@ b_i^T\cdot \mathsf{Prev} \cdot b_j=\begin{cases}
               \mathbf{0}, \text{ if not.}
             \end{cases}.
 $$
-We can now define $\mathsf{prev}(v)$ and $\mathsf{next}(v)$ as in the previous section. 
-The same goes with $e_{\mathsf{getPrevMatrix}}(V)$, 
-$e_{\mathsf{getNextMatrix}}(V)$, $e_{\mathsf{min}+i}$ and $e_{\mathsf{max}+i}$.
-
-Note that we can define
+We can also define $\mathsf{prev}(v)$ and $\mathsf{next}(v)$.
+Note that we can compute
 $$
 e_{S_{\leq}}:=\ssum v. \left( v\cdot v^T + \ssum w. v\cdot\mathsf{next}(v)^T \right)
 $$
 Here, $(e_{S_{\leq}})_{ij}=1$ if and only if $b_i$ comes 
 before according to $\mathsf{Pred}$ and $\mathsf{Next}$, or is equal to $b_j$. As a consequence we
-can compute $\mathsf{succ}$ and $\mathsf{succ}^+$. Then
-\begin{align*}
-  e_{\mathsf{min}}&:=\ssum v. \left[ \sprod w. \mathsf{succ}(w,v)\right] \times v. \\
-  e_{\mathsf{max}}&:=\ssum v. \left[ \sprod w. \left( 1-\mathsf{succ}(w,v) \right) \right] \times v.
-\end{align*}
+can compute $\mathsf{succ}$ and $\mathsf{succ}^+$.
 
-The goal of this is to have a restriction in the recursion property of $\ffor{v}{X}{e}$, this is, 
-in the iteration we don't allow access to the current result.
-
-We say that an expression does not use the recursion property of $\langfor$ if it uses
-only $\ssum$, $\sprod$ and the expression $e_{\mathsf{Prev}}$.
-An example of this are the expressions $e_{\mathbf{det}}(M)$ and $e_{\mathbf{inv}}(M)$ defined 
-in section \ref{app:inverse}.
+We can now compute everything as we have $S_{\leq}$ and thus $S_{<}$.
 
 % $$
 % b_i^T\cdot \mathsf{Prev} \cdot b_j=\begin{cases}
