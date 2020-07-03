@@ -1,78 +1,9 @@
 %!TEX root = ../main.tex
 % !TeX spellcheck = en_US
 
-%Probably the longest section.
 
 
-%\begin{itemize}
-%\item Define the syntax and the semantics of for loop language. 
-%\item Examples:
-%\begin{itemize}
-%\item Simple queries (cover \lang\)
-%\item Elementary operations
-%\item How to define order (the $Z$ matrix, $v_{max}$,...)
-%\item Standard Linear Algebra algorithms:
-%\begin{itemize}
-%\item Gaussian elimination
-%\item Inverse
-%\item Determinant
-%\item $LU$
-%\item $\cdots$
-%\end{itemize}
-%\end{itemize}
-%\end{itemize}
-
-% While \lang\ serves as a solid basis for expressing linear algebra properties, it is still somewhat lacking when defining more advanced linear algebra operators such as Gaussian eliminations, or computing an inverse of a matrix. To alleviate these issues, we propose an extended version of \lang, called \langfor which allows us to express such properties.
-%
-%As before, we assume a countably infinite set of matrix variables $\Mvar = \{V_1, V_2, \ldots\}$, and a set $\Fun$  of functions $f:\mathbb{C}^n \mapsto \mathbb{C}$. Additionally, for each $n\in \mathbb{N}$, we denote by $e_1^n,\ldots ,e_n^n$ the complete list of canonical vectors of dimension $n$; that is, $e_1^n = [1\ 0 \cdots 0]^*$, $e_2^n = [0\ 1\ 0 \cdots 0]^*$, etc. When $n$ is clear from the context we will simply write $e_1,e_2$, etc. The syntax of \langfor is defined as follows:
-
-
-%\medskip
-
-%\begin{tabular}{lcll}
-%$e$ & $::=$ & $V\in \Mvar$ & (matrix variable)\\
- %& $|$ & $e^*$ & (conjugate transpose)\\ 
- %& $|$ & $e_1 \cdot e_2$ & (matrix multiplication)\\   
- %& $|$ & $e_1 + e_2$ & (matrix addition)\\    
- %& $|$ & $f(e_1,\ldots ,e_n)$ & (application of $f\in \Fun$)\\
- %& $|$ & $\ffor{v}{X}{e}$ & (canonical for loop, with $v, X \in \Mvar$). 
-%\end{tabular}
-
-
-To extend \lang\ with recursion, we take inspiration from classical linear algebra algorithms, such as those described in \cite{num}. Many of these algorithms are based on \textit{for loops} in which the termination condition for each loop is determined by the matrix dimension. We have seen how shortest path can be computed using for loops in the Introduction. We next provide two more examples.
-\floris{I am not sure about introducing these programs at this point. Does it help ``our story''?}
-\begin{example}consider the following program which takes
-an $n\times n$ matrix $A$ as input:
-\begin{tabbing}
-$4\mathsf{clique}:=0$\\
-\texttt{for}\=\,  $i,j,k,\ell\in[1..n]$. \\
-\> \texttt{if} \= $i\neq j$ \& $i\neq k$ \& $i\neq \ell$ \& $j\neq k$ \& $j\neq \ell$ \& $k\neq\ell$ \texttt{then}:\\
-\> \> $4\mathsf{clique}:= 4\mathsf{clique} + A_{ij}\cdot A_{ik}\cdot A_{i\ell} \cdot A_{jk}\cdot A_{j\ell} \cdot A_{k\ell}$.  
-\end{tabbing}
-Clearly, when $A$ is the adjacency matrix of a graph $G$, $4\mathsf{clique}\neq 0$ if and only if $G$ contains a four-clique. \qed
-\end{example}
-We can also compute the transitive closure of a graph using for loops.
-\begin{example}\label{ex:programtc}
-Consider the following program, again with an $n\times n$ matrix $A$ as input:
-\begin{tabbing}
-$B:=I$\quad /* $I$ is the $n\times n$ identity matrix */\\\	
-\texttt{for}\=\,  $i\in[1..n]$.\\
-\> $B:=B\cdot (I+A)$\quad \\
-\textsf{TC}:=$f_{>0}(B)$,
-\end{tabbing}
-where $f_{>0}:\RR\to\RR$ is such that $f_{>0}(x):=1$ if $x>0$ and $f_{>0}(x):=0$ otherwise. It is readily verified that when $A$ is the adjacency matrix of a graph $G$, then \textsf{TC} is the adjacency matrix of the transitive closure of $G$. \qed
-\end{example}
-These two examples already show that for loops allow computing properties beyond what \lang\ can express.
-We see more advanced examples, such as Gaussian elimination and computing an inverse of a matrix, later in the paper. 
-With this motivation in mind, we next extend \lang\ with for loops. We refer to this extension as \langfor. 
-
-\cristian{I would put this kind of examples in the intro.}
-
-%
-%
-%  which commonly use loops whose termination conditions are determined by the matrix dimension, and will allow us to express many properties of interest.
-%
-% As before, we assume a countably infinite set of matrix variables $\Mvar = \{V_1, V_2, \ldots\}$, and a set $\Fun$  of functions $f:\mathbb{C}^n \mapsto \mathbb{C}$. Additionally, for each $n\in \mathbb{N}$, we denote by $e_1^n,\ldots ,e_n^n$ the complete list of canonical vectors of dimension $n$; that is, $e_1^n = [1\ 0 \cdots 
+To extend \lang\ with recursion, we take inspiration from classical linear algebra algorithms, such as those described in \cite{num}. Many of these algorithms are based on \textit{for loops} in which the termination condition for each loop is determined by the matrix dimension. We have seen how the transitive closure of a matrix can be computed using for loops in the Introduction. Here we add this ability to \lang, and show that the resulting language, called $\langfor,$ can compute properties outside of the scope of \lang. We see more advanced examples, such as Gaussian elimination and computing an inverse of a matrix, later in the paper. 
 
 \subsection{Syntax and semantics of \langfor} The syntax of \langfor is defined just as for \lang\, but with an extra rule in the grammar:
 \medskip
@@ -243,7 +174,19 @@ $$
 %  $f(e_1,\ldots,e_k)$ for $f\in\Fun_k$ where each $e_i$
 % has type $(1,1)$.
 
-As a final example, we show that we can express the $4\textsf{clique}$ program mentioned at the beginning of this section.
+%As a final example, we show how the Floyd-Warshall algorithm for computing the transitive closure of a matrix given in the Introduction can be defined using \langfor.
+%\begin{example}\label{ex:floyd}
+%The following expression in $\langf{f_>}$ computes the transitive closure of a $n\times n$ matrix $A$.
+%\begin{tabbing}
+%\texttt{for }\=$e_k,X_1.\, X_1 + $\\
+%\> \texttt{for }\=$e_i,X_2.\, X_2 +$ \\
+%\>\>\texttt{for }\=$e_j,X_3.\, X_3 +$ \\
+%\>\>\>$(e_i^T\cdot A\cdot e_k \cdot e_k^T\cdot A\cdot e_j)\times e_i\cdot e_j^T$
+%\end{tabbing}
+%\end{example}
+
+
+As a final example, we show that we can compute whether a graph contains a $4-\textsf{clique}$ using \langfor.
 \begin{example}\label{ex:fourcliques}
 To test for $4$-cliques it suffices to consider the expression
 \begin{tabbing}
@@ -278,17 +221,23 @@ For any collection of functions $\Fun$,
 $\langf{\Fun}$ is properly subsumed by $\langforf{\Fun}$.
 \end{proposition} 
 
-\domagoj{This is used to simulate circuits, so I put in into a lemma. Perhaps just move to the appendix before that particular proof.}
 
-Another interesting consequence of allowing for loops in \lang\ is that the pointwise product and sum can be defined without direct access to these operators. Namely, the following result tells us that we can always assume to have access to the product and the sum.
-%This will be of crucial importance when comparing \langfor\ to arithmetic circuits in Section \ref{sec:circuits} and to annotated relations in Section \ref{sec:restrict}. Formally, we have:
 
-\begin{lemma}
-\label{lm-prod-sum}
-Let $f_\odot^k:\RR^k\mapsto \RR$ and $f_\oplus^k:\RR^k\mapsto \RR$ be the product and the sum function with $k$ attributes, respectively. Then it holds that $\langforf{\emptyset} \equiv \langforf{\{f_\odot^k,f_\oplus^k \ | \ k\in \mathbf{N}\}}$.
-\end{lemma}
-\cristian{This result is very ugly, why we want this? The interesting result is that you only need the function between constants to define the point-wise application of functions.}
 
+
+
+
+%\domagoj{This is used to simulate circuits, so I put in into a lemma. Perhaps just move to the appendix before that particular proof.}
+%
+%Another interesting consequence of allowing for loops in \lang\ is that the pointwise product and sum can be defined without direct access to these operators. Namely, the following result tells us that we can always assume to have access to the product and the sum.
+%%This will be of crucial importance when comparing \langfor\ to arithmetic circuits in Section \ref{sec:circuits} and to annotated relations in Section \ref{sec:restrict}. Formally, we have:
+%
+%\begin{lemma}
+%\label{lm-prod-sum}
+%Let $f_\odot^k:\RR^k\mapsto \RR$ and $f_\oplus^k:\RR^k\mapsto \RR$ be the product and the sum function with $k$ attributes, respectively. Then it holds that $\langforf{\emptyset} \equiv \langforf{\{f_\odot^k,f_\oplus^k \ | \ k\in \mathbf{N}\}}$.
+%\end{lemma}
+%\cristian{This result is very ugly, why we want this? The interesting result is that you only need the function between constants to define the point-wise application of functions.}
+%
 %In what follows, we will sometimes abuse the notation and write $\langfor$ both when we are talking about $\langfor(\emptyset)$, and when referring to the language in general. On the other hand, when stating formal results, we will always make the set of functions explicit, and will use $\langfor$ to denote $\langfor(\emptyset)$.
 
 \subsection{Design decisions behind \langfor}
