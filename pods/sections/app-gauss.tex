@@ -1,4 +1,14 @@
-Here we prove proposition \ref{prop:gauss}. We define
+\newtheorem*{ALU}{Proposition~\ref{prop:gauss}}
+
+Recall proposition \ref{prop:gauss}:
+
+\begin{ALU}
+  There exists $\langforf{f_/}$ expressions $e_L(V)$ and $e_U(V)$ such that
+  $\sem{e_L}{\I}=L$ and $\sem{e_U}{\I}=U$ form an LU-decomposition of $A$,
+  where $\conc(V)=A$ and $A$ is LU-factorizable.
+\end{ALU}
+
+\textit{Proof}. Let $A$ be a LU-factorizable matrix. We define
 $$
 e_{L^{-1}}(V) :=  \initf{e_{\mathsf{Id}}}{y}{X}{\red{X\cdot V}{y}\cdot X}.
 $$
@@ -13,8 +23,7 @@ Such that $T_nT_{n-1}\cdots T_1A=U$. Note that because of the definition of $\cc
 So we have
 $$
 e_{\mathsf{U}}(V) :=  e_{L^{-1}}(V) \cdot V.
-$$ 
-
+$$
 Since
 \begin{align*}
   L^{-1}&=(I-c_1b_1^T)\cdots (I-c_{n-1}b_{n-1}^T) \\
@@ -25,8 +34,8 @@ and
   L&=(I+c_1b_1^T)\cdots (I+c_{n-1}b_{n-1}^T) \\
   &=I+c_1b_1^T+\cdots + c_{n-1}b_{n-1}^T
 \end{align*}
-
 we can get $L$ from $L^{-1}$ just by multiplying every entry below the diagonal by $-1$, or we can do $L=-1\times L^{-1} + 2I$, which is the same since $L$ and $L^{-1}$ are lower triangular. So we define
 $$
-e_{L}(V) :=  -1\times e_{L^{-1}}(V) + 2\times e_{\mathsf{Id}}
+e_{L}(V) :=  [-1]\times e_{L^{-1}}(V) + [2]\times e_{\mathsf{Id}}
 $$
+\qed

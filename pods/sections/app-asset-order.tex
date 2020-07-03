@@ -1,0 +1,102 @@
+Assume we can only perform the restricted versions of $\ffor{v}{X}{e}$, this is, we can only do 
+$\ssum$ and $\sprod$ defined in section \ref{sec:restrict}. Note that these operators also iterate over canonical vectors
+in certain order. Since they are operations that \textit{aggregate} information, it doesn't seem
+possible to access this order explicitly and compare canonical vectors, like in the full version of $\langfor$.
+\thomas{Leave the former as an open question?}
+Let's see what we can do if this order is \textit{supplied}. Assume we have $e_{\mathsf{Prev}}$ 
+(and thus $e_{\mathsf{Next}}$) such that the following holds:
+
+$$
+b_i^T\cdot \mathsf{Prev} \cdot b_j=\begin{cases}
+               1, \text{ if } i = j-1.\\
+              \mathbf{0}, \text{ if not.}
+            \end{cases},
+\hspace{2em}b_i^T\cdot \mathsf{Next} \cdot b_j=\begin{cases}
+               1, \text{ if } i=j+1.\\
+              \mathbf{0}, \text{ if not.}
+            \end{cases}.
+$$
+We can now define $\mathsf{prev}(v)$ and $\mathsf{next}(v)$ as in the previous section. 
+The same goes with $e_{\mathsf{getPrevMatrix}}(V)$, 
+$e_{\mathsf{getNextMatrix}}(V)$, $e_{\mathsf{min}+i}$ and $e_{\mathsf{max}+i}$.
+
+Note that we can define
+$$
+e_{S_{\leq}}:=\ssum v. \left( v\cdot v^T + \ssum w. v\cdot\mathsf{next}(v)^T \right)
+$$
+Here, $(e_{S_{\leq}})_{ij}=1$ if and only if $b_i$ comes 
+before according to $\mathsf{Pred}$ and $\mathsf{Next}$, or is equal to $b_j$. As a consequence we
+can compute $\mathsf{succ}$ and $\mathsf{succ}^+$. Then
+\begin{align*}
+  e_{\mathsf{min}}&:=\ssum v. \left[ \sprod w. \mathsf{succ}(w,v)\right] \times v. \\
+  e_{\mathsf{max}}&:=\ssum v. \left[ \sprod w. \left( 1-\mathsf{succ}(w,v) \right) \right] \times v.
+\end{align*}
+
+The goal of this is to have a restriction in the recursion property of $\ffor{v}{X}{e}$, this is, 
+in the iteration we don't allow access to the current result.
+
+We say that an expression does not use the recursion property of $\langfor$ if it uses
+only $\ssum$, $\sprod$ and the expression $e_{\mathsf{Prev}}$.
+An example of this are the expressions $e_{\mathbf{det}}(M)$ and $e_{\mathbf{inv}}(M)$ defined 
+in section \ref{app:inverse}.
+
+% $$
+% b_i^T\cdot \mathsf{Prev} \cdot b_j=\begin{cases}
+%                1, \text{ if } b_i \text{ comes immediately before } b_j.\\
+%               \mathbf{0}, \text{ if not.}
+%             \end{cases},
+% \hspace{2em}b_i^T\cdot \mathsf{Next} \cdot b_j=\begin{cases}
+%                1, \text{ if } b_i \text{ comes immediately after } b_j.\\
+%               \mathbf{0}, \text{ if not.}
+%             \end{cases}.
+% $$
+
+
+% The expression in this section are intended to be used over canonical vectors.
+% To have access to order, we need a matrix $S_{\leq}$ such that the following holds for 
+% canonical vectors $b_i$ and $b_j$:
+% $$
+% b_i^T\cdot S_{\leq} \cdot b_j=\begin{cases}
+%                1, \text{ if } b_i \text{ comes before } b_j\\
+%               \mathbf{0}, \text{ if not.}
+%             \end{cases}
+% $$
+% Note that $S_{\leq}$ encodes \textit{total} order. 
+
+% Using this matrix 
+
+
+% We would also like to have access to 
+% \textit{local} information, this is, know if a canonical vector comes immediately before another. 
+% Let's call this matrix $\mathsf{Prev}$. 
+% The following must hold:
+% $$
+% b_i^T\cdot \mathsf{Prev} \cdot b_j=\begin{cases}
+%                1, \text{ if } b_i \text{ comes immediately before } b_j\\
+%               \mathbf{0}, \text{ if not.}
+%             \end{cases}
+% $$
+
+% Using this matrix, we have that for a canonical vector $b_i$:
+% \[
+% \mathsf{Prev}\cdot b_i=\begin{cases}
+%                b_{i-1}, \text{ if } i > 1 \\
+%               \mathbf{0}, \text{ if } i = 1
+%             \end{cases}
+% \]
+
+% Note that $\mathsf{Prev}$ can be defined using the following \langfor expression:
+% $$
+% e_{\mathsf{Prev}}:= \texttt{for }v,X.\quad X + \left[ (1 - \mathsf{max}(v))\times ve_{\mathsf{max}}^T - (Xe_{\mathsf{max}})\cdot e_{\mathsf{max}}^T + (Xe_{\mathsf{max}})\cdot v^T\right].
+% $$
+
+% Here, $X$ starts as 0 and thus in turn $X\cdot e_{\mathsf{max}}$, so we initiate storing $b_1$ in the last column. Next, we add a matrix that has the stored vector $Xe_{\mathsf{max}}$ (the previous canonical vector) in the column indicated by $v$ (the current canonical vector) and $v-Xe_{\mathsf{max}}$ in the last column, to replace the vector stored.
+% The last iteration does nothing (sums the zero matrix).
+
+% To get the \textit{next} relation we simply do $e_{\mathsf{Next}} = e_{\mathsf{Prev}}^T$. We have that for a canonical vector $b_i$:
+% \[
+% \mathsf{Next}\cdot b_i=\begin{cases}
+%                b_{i+1}, \text{ if } i < n \\
+%               \mathbf{0}, \text{ if } i = n
+%             \end{cases}
+% \]
