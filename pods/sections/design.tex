@@ -73,12 +73,8 @@ To construct $S_{\leq}$, in the $i$-th iteration we further increment $X$ with
 (i)~the current last column in $X$ (via $X\cdot e_{\mathsf{max}}\cdot v^T$) which holds
 the $(i-1)$-th column of $S_{\leq}$; and (ii)~the current canonical vector (via $v\cdot v^T$). Hence, after iteration $i$, $X$ contains the first $i$ columns of $S_{\leq}$ and holds the $i$th column of $S_{\leq}$ in its last column. It is now readily verified that $X=S_{\leq}$ after the $n$th iteration.
 
-\floris{I commented out the details about the order predicates. Let's put this in the appendix.
-	I wonder what else we can say here. Clearly, the order is crucial for all our results later on.
-	We could comment on order-invariant \langfor expressions (probably undecidable)? Any suggestions?
-}
+%\floris{I commented out the details about the order predicates. Let's put this in the appendix.	I wonder what else we can say here. Clearly, the order is crucial for all our results later on.	We could comment on order-invariant \langfor expressions (probably undecidable)? Any suggestions? }
 
-\domagoj{Not sure I would add more results here. Perhaps moving Section 3.2 here makes sense?}
 
 Having order information available results in \langfor to be quite expressive. We heavily rely on order information in the next sections to compute the inverse of matrices and more generally to simulate low complexity Turing machines and arithmetic circuits.
 

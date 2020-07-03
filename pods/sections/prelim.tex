@@ -24,9 +24,9 @@ $e$ & $::=$ & $V\in \Mvar$ & (matrix variable)\\
 %Note that \lang\ is parametrized by a collection of allowed pointwise functions $\Fun$, and we make this explicit in order to make precise which flavour of \lang\ we are working with. When we simply write \lang, we are assuming that the set of allowed functions is empty. %; i.e. $\lang = \lang(\emptyset)$.
 
 $\lang$ is parametrized by a collection of functions $\Fun$ but in the remainder of the paper we only make this dependence explicit, and write $\langf{\Fun}$, for some set $\Fun$ of functions, when these functions are crucial for some results to hold. When we simply write \lang, we mean that any function can be used (including not using any function at all).
-\cristian{I changed the notation from $\lang(\Fun)$ to square brackets $\langf{\Fun}$. I put a macro for this.}
+%\cristian{I changed the notation from $\lang(\Fun)$ to square brackets $\langf{\Fun}$. I put a macro for this.}
 
-\cristian{I will put this the other way, ``when we simply write \lang, we mean that NO function can be used, only sum and product''. Usually when we analyze the expressiveness of the languages we are talking without functions.}
+%\cristian{I will put this the other way, ``when we simply write \lang, we mean that NO function can be used, only sum and product''. Usually when we analyze the expressiveness of the languages we are talking without functions.}
 
 %$\lang$ is parametrized by a collection of functions $\Fun$, and to make this explicit, we will write \lang$(\Fun)$. When stating formal results, we will use $\lang$ to denote $\lang(\emptyset)$. Sometimes we abuse the notation and write $\lang$ in order to talk about general language (using any family of functions), however, in formal claims this will always denote the language with no extra functions.
 
@@ -80,18 +80,19 @@ A (\lang) \textit{instance} $\I$ over a schema $\Sch$ is a pair $\I = (\dom,\con
 \end{itemize}
 This concludes the description and semantics of \lang. We next provide some simple example.
 
-\begin{example}Consider the \lang$(f_\odot)$ expression with $f_\odot:\RR^2\to\RR:(x,y)\mapsto x\cdot y$:
+\begin{example}Consider the \langf{$f_\odot$} expression with $f_\odot:\RR^2\to\RR:(x,y)\mapsto x\cdot y$:
 $$\mathsf{cwalk}:= (\ones(V))^T\cdot f_{\odot}\bigl(V\cdot V, \diag(\ones(V)\bigr)\cdot\ones(V).$$
 Let $\Sch$  consist of $\Mnam:=\{V\}$ and $\size(V):=(\alpha,\alpha)$ such that
 matrices assigned to $V$ by instances $\I$ over $\Sch$ are square matrices.
 It is readily verified that $\mathsf{cwalk}$ is well-typed and more specifically, $\ttype(\mathsf{cwalk})=(1,1)$, i.e., it returns an element of $\RR$ on any  instance $\I$. Let $\I$ be such that $\dom(\alpha)=n$ and  $\conc(V)$ is an adjacency matrix $A$ of an undirected graph $G$ consisting of $n$ vertices. Then, it is readily verified that $\sem{\mathsf{cwalk}}{\I}$ returns the number of paths of length two in $G$ which start in and end at the same vertex.\qed
 \end{example}
-Although \lang\ forms a solid basis for a matrix query language, it is limited in expressive power. Indeed, \lang\ is subsumed by first order logic with aggregates that uses only three variables \cite{matlang}. As consequence, no \lang\ expression exists that can compute the transitive closure of a graph (represented by its adjacency matrix) or can compute the inverse of a matrix. Furthermore, no \lang\ expression exists which detects four-cliques in a graph \cite{matlang}.
-Also, $\lang$ is not expressive enough to perform classical linear algebra algorithms such as LU-decomposition (Gaussian elimination).
- Rather than extending \lang\ with specific linear algebra operators, such as matrix inversion, we next introduce a limited form of recursion in \lang.
-As we will see shortly, this extension allows us to express many linear algebra algorithms, including matrix inversion and LU-decomposition.
-\floris{The paragraph above needs to be modified as it may overlap too much with the yet-to-be-written Introduction.}
+%Although \lang\ forms a solid basis for a matrix query language, it is limited in expressive power. Indeed, \lang\ is subsumed by first order logic with aggregates that uses only three variables \cite{matlang}. As consequence, no \lang\ expression exists that can compute the transitive closure of a graph (represented by its adjacency matrix) or can compute the inverse of a matrix. Furthermore, no \lang\ expression exists which detects four-cliques in a graph \cite{matlang}.
+%Also, $\lang$ is not expressive enough to perform classical linear algebra algorithms such as LU-decomposition (Gaussian elimination).
+% Rather than extending \lang\ with specific linear algebra operators, such as matrix inversion, we next introduce a limited form of recursion in \lang.
+%As we will see shortly, this extension allows us to express many linear algebra algorithms, including matrix inversion and LU-decomposition.
+%\floris{The paragraph above needs to be modified as it may overlap too much with the yet-to-be-written Introduction.}
 
+Although \lang\ forms a solid basis for a matrix query language, it is limited in expressive power. Indeed, \lang\ is subsumed by first order logic with aggregates that uses only three variables \cite{matlang}. As consequence, no \lang\ expression exists that can compute the transitive closure of a graph (represented by its adjacency matrix) or can compute the inverse of a matrix. Rather than extending \lang\ with specific linear algebra operators, such as matrix inversion, we next introduce a limited form of recursion in \lang.
 %FIRST TRY
 
 %
