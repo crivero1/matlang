@@ -1,0 +1,70 @@
+\newtheorem*{WL}{Proposition~\ref{prop:wl}}
+
+We prove proposition \ref{prop:wl}:
+
+\begin{WL}
+  Weighted logics over $\Gamma$ and \langprod over $\Sch$ have the same expressive power. More specifically,
+  \begin{itemize}
+  	\item for each \langprod expression $e$ over $\Sch$ such that $\Sch(e)=(1,1)$, there exists a WL-formula $\Phi(e)$ over $\text{WL}(\Sch)$ such that for every instance $\I$ of~$\Sch$, 
+  	$
+  	\sem{e}{\I} = \ssem{\Phi(e)}{\text{WL}(\I)}
+  	$.
+  	\item for each WL-formula $\varphi$ over $\Gamma$ without free variables, there exists a \langprod expression $\Psi(\varphi)$ such that for any structure $\cA$ over~$\text{Mat}(\Gamma)$,
+  	$
+  	\ssem{\varphi}{\cA}=\sem{\Psi(\varphi)}{\text{Mat}(\cA)}
+  	$.
+  \end{itemize}	
+\end{WL}
+
+\textit{Proof}. The proof is by induction in both directions. 
+First, let $\Sch=(\Mnam,\size)$ be a schema of square matrices, that is, there exists an $\alpha$ such 
+that $\size(V) \in \{1, \alpha\} \times \{1,\alpha\}$ for every $V \in \Mnam$.
+Define the relational vocabulary $\text{WL}(\Sch) = \{R_V \mid V \in \Mnam\}$ such that $\arity(R_V) = 2$ 
+if $\size(V) = (\alpha, \alpha)$, $\arity(R_V) = 1$ if $\size(V) \in \{(\alpha,1), (1,\alpha)\}$, and 
+$\arity(R_V) = 0$ otherwise.
+Then given a matrix instance $\I = (\dom,\conc)$ over $\Sch$ define the structure 
+$\text{WL}(\I) = (\{1, \ldots, n\}, \{R_V^{\I}\} )$ such that $\dom(\alpha) = n$ and 
+$R_V^{\I}(i, j) = \conc(V)_{i,j}$ if $\size(V) = (\alpha, \alpha)$, $R_V^{\I}(i) = \conc(V)_{i}$ 
+if $\size(V) \in \{(\alpha,1), (1,\alpha)\}$, and $R_V^{\I} = \conc(V)$ if $\size(V) = (1,1)$.
+
+Let $e$ be a $\langprod$ expression.
+\begin{itemize}
+  \item If $e:=V$ then $\Phi(e):=R_V^{\cI}$.
+  \item if $e:= e_1^T$ when $\Sch(e)\in \{(\alpha,1), (1,\alpha)\}$ then $\Phi(e):=\Phi(e_1)$. If $\Sch(e)=\alpha\times\alpha$ then
+  $$
+  \Phi(e)(i,j):=\Phi(e_1)(\sigma\left[ i\mapsto \sigma(j), j\mapsto \sigma(i) \right]).
+  $$
+  \item If $e=e_1+e_2$ then $\Phi(e)=\Phi(e_1)\ksum \Phi(e_2)$.
+  \item If $e=e_1\circ e_2$ then $\Phi(e)=\Phi(e_1)\kprod \Phi(e_2)$.
+  \item If $e=e_1\cdot e_2$ then 
+  $$
+  \Phi(e)(i,j):=\ssum k. \Phi(e_1)(i,k)\kprod\Phi(e_2)(k,j). 
+  $$
+  \item If $e=\ssum v. e_1$ then $\Phi(e):=\ssum x.\ssum y.\Phi(e_1)\left[ R_v^\cI\gets x=y \right]$.
+  \item If $e=\qhadprod v. e_1$ then $\Phi(e):=\sprod x.\ssum y.\Phi(e_1)\left[ R_v^\cI\gets x=y \right]$.
+\end{itemize}
+Note that in the last two translations we sum a lot of zeroes.
+
+We now encode weighted structures into matrices and vectors. Let $\Gamma$ be a relational vocabulary 
+where $\arity(R) \leq 2$. 
+Define $\text{Mat}(\Gamma) = (\Mnam_\Gamma,\size_\Gamma)$ such 
+that $\Mnam_\Gamma = \{ V_{R} \mid R \in \Gamma\}$ and $\size_\Gamma(V_{R})$ is equal to 
+$(\alpha, \alpha), (\alpha, 1)$, or $(1,1)$ if $\arity(R)=2$, $\arity(R)=1$, or $\arity(R)=0$, 
+respectively, for some $\alpha \in \DD$. Similarly, let $\cA = (A, \{R^{\cA}\}_{R \in \Gamma})$ 
+be a structure with $A = \{a_1, \ldots, a_n\}$, ordered arbitrarily.
+Then we define the matrix instance $\text{Mat}(\cA) = (\dom,\conc)$ such that $\dom(\alpha) = n$, 
+$\conc(V_{R})_{i,j} = R^{\cA}(a_i, a_j)$ if $\arity(R)=2$, $\conc(V_{R})_{i,1} = R^{\cA}(a_i)$ if $\arity(R)=1$, 
+and $\conc(V_{R})_{1,1} = R^{\cA}$ otherwise.
+
+Let $\varphi$ be a formula over $\Gamma$.
+\begin{itemize}
+  \item If $\varphi:=x=y$ then $\Psi(\varphi):= \ssum v.v\cdot v^T$.
+  \item If $\varphi:=R$ then $\Psi(\varphi):=V_R$.
+  \item If $\varphi = \varphi_1 \ksum \varphi_2$ then $\Psi(\varphi):=\Psi(\varphi_1) + \Psi(\varphi_2)$.
+  \item If $\varphi = \varphi_1 \kprod \varphi_2$ then $\Psi(\varphi):=\Psi(\varphi_1) \circ \Psi(\varphi_2)$.
+  \item If $\varphi = \ssum x. \varphi_1$ then $\Psi(\varphi):=\ssum v.\Psi(\varphi_1)$.
+  \item If $\varphi = \qhadprod x. \varphi_1$ then $\Psi(\varphi):=\qhadprod v.\Psi(\varphi_1)$.
+\end{itemize}
+
+The last two translations hold easily due to the fact that there are no free variables.
+\qed
