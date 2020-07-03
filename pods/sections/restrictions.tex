@@ -6,29 +6,33 @@ additive updates, and show that it is equivalent in expressive to the (positive)
 relational algebra on $K$-relations. This extends the result in~\cite{} connecting \lang with a restricted fragment of that algebra, to the full algebra. We then extend \langsum such that also updates involving pointwise-multiplication (Hadamard product) are allowed. The resulting fragment, \langprod, is shown to be equivalent in expressive power to weighted logics. Finally, we consider the fragment in which updates involving sum and matrix multiplication, and possibly order information, is allowed. From the results in Section~\ref{}, we infer that this fragment suffices to compute matrix inversion. An overview of the fragments and their relationships are depicted in Figure~\ref{}.
 
 \subsection{Summation matlang and relational algebra}
-
-When defining the identity matrix and several other expressions, we actually only update $X$ by adding some matrix to it. This restricted form of the $\texttt{for}$ loop proved to be useful throughout the paper, and we will therefore introduce it a special operator. That is, we define:
+When defining $4$-cliques and several other expressions described so far, we actually only update $X$ by adding some matrix to it. This restricted form of the $\texttt{for}$ loop proved useful throughout the paper, and we will therefore introduce it as a special operator. That is, we define:
 $$\Sigma v. e := \ffor{v}{X}{X + e}.$$
 We define the subfragment of \langfor, called \langsum, to consist of the $\Sigma$ operator plus the ``core'' operators in \lang, namely, transposition, matrix multiplication and addition, scalar multiplication, and pointwise function applications.
 
-Apart from defining the identity matrix with \langsum, the sum quantifier also allows for computing the trace of a matrix $A$ using the expression $tr(A) := \Sigma v. v^*\cdot A \cdot v$. Interestingly enough, this restricted version of \texttt{for} already allows us to capture the \lang\ operators that are not present in the syntax of \langsum. More precisely, we have:
-\smallskip
+Interestingly enough, this restricted version of \texttt{for} already allows us to capture the \lang\ operators that are not present in the syntax of \langsum. More precisely, we see from Examples~\ref{} and~\ref{} that the one-vector and $\diag$ operator are expressible in \langsum. Combined with the observation that the $4$-clique
+expression of Example~\ref{ex:fourcliques} is in \langsum, the following result is immediate.
+%
+%
+% Apart from defining the identity matrix with \langsum, the sum quantifier also allows for computing the trace of a matrix $A$ using the expression $tr(A) := \Sigma v. v^*\cdot A \cdot v$. Interestingly enough, this restricted version of \texttt{for} already allows us to capture the \lang\ operators that are not present in the syntax of \langsum. More precisely, we have:
+% \smallskip
+%
+% \noindent {\em Function application.} Notice that in \lang, a function is applied pointwise to matrices of arbitrary size, while \langsum only allows functions that process matrices of size $1\times 1$. Using the summation operator we can lift this condition, and allow applying a function $f:\mathbb{\RR}^n \mapsto \mathbb{\RR}$ on expressions $e_1,\ldots ,e_n$ of arbitrary (but equal) type by writing
+% $$\Sigma x_i \Sigma x_j. f(x_i^T\cdot e_1\cdot x_j, \ldots ,x_i^T\cdot e_n\cdot x_j) \cdot x_i\cdot x_j^T,$$
+% which simply reconstructs the matrix obtained by applying $f$ to every position of $e_1$ through $e_n$, by using the fact that for two canonical vectors $b_i^m$ and $b_j^n$, the product $b_i^m \cdot (b_j^n)^*$ defines a $m\times n$ matrix whose only non-zero entry is in the position $ij$.
+% \smallskip
+%
+% \noindent {\em One vector.} We can define $\ones(e) := \Sigma v.\, v.$ where $\ttype(v) = (\alpha, 1)$ and $\ttype(e) = (\alpha, \beta)$ for some $\beta$.
+% \smallskip
+%
+% \noindent {\em Diagonal of a vector.} The operator $\diag(e)$ can be defined as:
+% $$\diag(e) := \Sigma v. (v^T\cdot e) \cdot vv^T.$$
 
-\noindent {\em Function application.} Notice that in \lang, a function is applied pointwise to matrices of arbitrary size, while \langsum only allows functions that process matrices of size $1\times 1$. Using the summation operator we can lift this condition, and allow applying a function $f:\mathbb{\RR}^n \mapsto \mathbb{\RR}$ on expressions $e_1,\ldots ,e_n$ of arbitrary (but equal) type by writing 
-$$\Sigma x_i \Sigma x_j. f(x_i^T\cdot e_1\cdot x_j, \ldots ,x_i^T\cdot e_n\cdot x_j) \cdot x_i\cdot x_j^T,$$
-which simply reconstructs the matrix obtained by applying $f$ to every position of $e_1$ through $e_n$, by using the fact that for two canonical vectors $b_i^m$ and $b_j^n$, the product $b_i^m \cdot (b_j^n)^*$ defines a $m\times n$ matrix whose only non-zero entry is in the position $ij$.
-\smallskip
-
-\noindent {\em One vector.} We can define $\ones(e) := \Sigma v.\, v.$ where $\ttype(v) = (\alpha, 1)$ and $\ttype(e) = (\alpha, \beta)$ for some $\beta$. 
-\smallskip
-
-\noindent {\em Diagonal of a vector.} The operator $\diag(e)$ can be defined as:
-$$\diag(e) := \Sigma v. (v^T\cdot e) \cdot vv^T.$$
-
-Furthermore, one can easily check that the 4-clique expression of Example~\ref{ex:fourcliques} can be defined in \langsum. Therefore, we conclude the following result. 
+% Furthermore, one can easily check that the 4-clique expression of Example~\ref{ex:fourcliques} can be defined in \langsum. Therefore, we conclude the following result.
 \begin{corollary}
 \lang\ is strictly subsumed by \langsum.
 \end{corollary}
+
 
 %To show that the inclusion here is strict, we illustrate how one can detect whether a undirected graph has a four clique, which it is not definable in \lang~\cite{BrijderGBW19}. For this, we define an expression $f(u,v) := 1 - u^*\cdot v$. Notice that when $u$ and $v$ are interpreted by two canonical vector of the same dimension, we have that:
 %\[
@@ -51,8 +55,15 @@ Furthermore, one can easily check that the 4-clique expression of Example~\ref{e
 %There is a  \langfor expression that is not expressible in \lang.
 %\end{corollary}
 
-What operations over matrices can be defined with \langsum that is beyond \lang? In~\cite{brijder2019matrices}, it was shown that \lang\ was strictly included in the relational algebra of $K$-relations~\cite{GreenKT07}, called Annotated Relational Algebra (ARA) in~\cite{brijder2019matrices}.
-Then a natural idea is to compare the expressive power of \langsum with ARA. For making this comparison clear, in the following we give the formal definition of ARA~\cite{GreenKT07} to then see how to connect both formalism.
+What operations over matrices can be defined with \langsum that is beyond \lang? In~\cite{brijder2019matrices}, it was shown that \lang\ is strictly included in the (positive) relational algebra on $K$-relations, denoted by $\mathsf{RA}_{K}^+$~\cite{GreenKT07}.\footnote{The algebra used in~\cite{brijder2019matrices} differs slightly from the one given in~\cite{GreenKT07}. In this paper we work with the original algebra $\mathsf{RA}_{K}^+$ as defined in~\cite{GreenKT07}.} 
+%
+%  (called the Annotated Relational Algebra (ARA) in~\cite{brijder2019matrices}).
+% There are subtle difference between ARA and the relational algebr
+%
+It thus seems natural to compare the expressive power of \langsum with $\mathsf{RA}_{K}^+$. 
+In fact, the main result in this section is that \langsum\ and $\mathsf{RA}_{K}^+$ 
+are equally expressive over binary schemas. 
+To make this equivalence precise, we next give the formal definition of $\mathsf{RA}_{K}^+$~\cite{GreenKT07} to then show how to connect both formalism.
 
 Let $\ddom$ be a data domain and $\att$ a set of attributes. A relational signature is a finite subset of $\att$. A relational schema is a function $\cR$ on finite set of symbols $\fdom(\cR)$ such that $\cR(R)$ is a relation signature for each $R \in \fdom(\cR)$. To simplify the notation, from now on we write $R$ to denote both the symbol $R$ and the relational signature $\cR(R)$.
 Furthermore, we write $R \in \cR$ to say that $R$ is a symbol of $\cR$. 
@@ -61,11 +72,11 @@ For $R \in \cR$, an $R$-tuple is a function $t: R \rightarrow \ddom$. We denote 
 A semiring $(K, \ksum, \kprod, \kzero, \kone)$ is an algebraic structure where $K$ is a non-empty set, $\ksum$ and $\kprod$ are binary operations over $K$, and $\kzero, \kone \in K$. Furthermore,  $\ksum$ and $\kprod$ are associative operations, $\kzero$ and $\kone$ are the identities of $\ksum$ and $\kprod$ respectively, $\ksum$ is a commutative operation, $\kprod$ distributes over $\ksum$, and $\kzero$ annihilates $K$ (i.e. $\kzero \kprod k = k \kprod \kzero = \kzero$). As usual, we assume that all semirings in this paper are commutative, namely, $\kprod$ is also commutative. We use $\bigksum_X$ or $\bigkprod_X$ for the $\ksum$- or $\kprod$-operation over all elements in $X$, respectively. Typical examples of semirings are the reals $(\RR, +, \times, 0,1)$, the natural numbers $(\RR, +, \times, 0,1)$, and the boolean semiring $(\{0,1\}, \vee, \wedge, 0, 1)$. 
 
 Fix a semiring $(K, \ksum, \kprod, \kzero, \kone)$ and a relational schema $\cR$. A $K$-relation of $R \in \cR$ is a function $r: \tuples(R) \rightarrow K$ such that the support  $\supp(r) = \{t \in \tuples(R) \mid r(t) \neq \kzero\}$ is finite. 
-A $K$-instance $\cJ$ of $\cR$ is a function that assigns relational signatures of $\cR$ to $K$-relations. Given $R \in \cR$, we denote by $R^\cJ$ the $K$-relation associated to $R$. Recall that $R^\cJ$ is a function and then $R^\cJ(t)$ is the value in $K$ assign to $t$. 
+A $K$-instance $\cJ$ of $\cR$ is a function that assigns relational signatures of $\cR$ to $K$-relations. Given $R \in \cR$, we denote by $R^\cJ$ the $K$-relation associated to $R$. Recall that $R^\cJ$ is a function and hence  $R^\cJ(t)$ is the value in $K$ assigned to $t$. 
 Given a $K$-relation $r$ we denote by $\adom(r)$ the active domain of $r$ defined as $\adom(r) = \{t(a) \mid t \in \supp(r) \wedge a \in R\}$.
 Then the active domain of an $K$-instance $\cJ$ of $\cR$ is defined as $\adom(\cJ) = \bigcup_{R \in \cR} \adom(R^\cJ)$. 
 
-An ARA expression $\arae$ over $\cR$ is given by the following syntax:
+An $\mathsf{RA}_{K}^+$  expression $\arae$ over $\cR$ is given by the following syntax:
 $$
 \begin{array}{rcl}
 \arae & := & R \ \mid \ \arae \cup \arae \ \mid \  \pi_X(\arae) \ \mid \  \sigma_X(\arae) \ \mid \ \rho_f(\arae) \ \mid \ \arae \bowtie \arae
@@ -74,7 +85,7 @@ $$
 where $R \in \cR$, $X \subseteq \att$ is finite, and $f: X \rightarrow Y$ is a one to one mapping with $Y \subseteq \att$. One can extend the schema $\cR$ to any expression over $\cR$ recursively as follows: $\cR(R) = R$, $\cR(\arae \cup \arae') = \cR(\arae)$, $\cR(\pi_X(\arae)) = X$, $\cR(\sigma_X(\arae)) = \cR(\arae)$, $\cR(\rho_f(\arae)) = X$ where $f:X \rightarrow Y$, and $\cR(\arae \bowtie \arae') = \cR(\arae) \cup \cR(\arae')$ for every expressions $\arae$ and $\arae'$.
 We further assume that any expression $\arae$ satisfies the following syntactic restrictions: $\cR(\arae') = \cR(\arae'')$ whenever $\arae = \arae' \cup \arae''$, $X \subseteq \cR(\arae')$ whenever $\arae = \pi_X(\arae')$ or $\arae = \sigma_X(\arae')$, and $Y = \cR(\arae')$ whenever $\arae = \rho_f(\arae')$ with $f: X \rightarrow Y$.
 
-Given an ARA expression $\arae$ and a $K$-instance $\cJ$ of $\cR$, we define the semantics $\ssem{\arae}{\cJ}$ as a $K$-relation of $\cR(\arae)$ as follows. For $X \subseteq \att$, let $\operatorname{Eq}_X(t) = \kone$ when $t(a) = t(b)$ for every $a, b \in X$, and $\operatorname{Eq}_X(t) = \kzero$ otherwise. For every tuple $t \in \cR(\arae)$:
+Given an $\mathsf{RA}_{K}^+$ expression $\arae$ and a $K$-instance $\cJ$ of $\cR$, we define the semantics $\ssem{\arae}{\cJ}$ as a $K$-relation of $\cR(\arae)$ as follows. For $X \subseteq \att$, let $\operatorname{Eq}_X(t) = \kone$ when $t(a) = t(b)$ for every $a, b \in X$, and $\operatorname{Eq}_X(t) = \kzero$ otherwise. For every tuple $t \in \cR(\arae)$:
 $$
 \begin{array}{ll}
 \text{if $\arae = R$, then} & \ssem{\arae}{\cJ}(t) = R^\cJ(t) \\
@@ -85,15 +96,17 @@ $$
 \text{if $\arae = \rho_f(\arae')$, then} & \ssem{\arae}{\cJ}(t) = 
 \ssem{\arae'}{\cJ}(t \circ f)  
 \\
-\text{if $\arae = \arae_1 \bowtie \arae_2$, then} & \ssem{\arae}{\cJ}(t) =  \ssem{\arae_1}{\cJ}(t[Y]) \kprod  \ssem{\arae_2}{\cJ}(t[Z])
+\text{if $\arae = \arae_1 \bowtie \arae_2$, then} & \ssem{\arae}{\cJ}(t) =  \ssem{\arae_1}{\cJ}(t[Y]) \kprod  \ssem{\arae_2}{\cJ}(t[Z]),
 \end{array}
 $$
 where $Y = \cR(\arae_1)$ and $Z = \cR(\arae_2)$. It is important to note that the $\bigksum$-operation on the semantics of $\pi_X(\arae')$ is well defined given that the support of $\ssem{\arae'}{\cJ}$ is always finite. 
 
-We are ready for comparing \langsum with ARA. First of all, we need to extend \langsum from $\RR$ to any semiring. Indeed, one can easily verify that the semantics of \lang, \langfor and \langsum can be translated from $\RR$ to $K$ by switching from matrices over $(\RR, +, \times, 0, 1)$ to matrices over $(K, \ksum, \kprod, \kzero, \kone)$.
-From now on we denote by  $\mtr{K}$ the set of all $K$-matrices. Similar than for \lang\ over $\RR$, given a \lang\ schema $\Sch$ a $K$-instance $\I$ over $\Sch$ is a pair $\I = (\dom,\conc)$, where $\dom : \DD \mapsto \NN$ assigns a value to each size symbol, and $\conc : \Mnam \mapsto \mtr{K}$ assigns a concrete $K$-matrix to each matrix variable. Then it is straightforward to extend the semantics of \lang, \langfor, and \langsum from $(\RR, +, \times, 0, 1)$ to $(K, \ksum, \kprod, \kzero, \kone)$ by switching $+$ with $\ksum$ and $\times$ with $\kprod$. 
+We are ready for comparing \langsum with $\mathsf{RA}_{K}^+$ . First of all, we need to extend \langsum from $\RR$ to any semiring. Let $\mtr{K}$ denote the set of all $K$-matrices. 
+% Indeed, one can easily verify that the semantics of \lang, \langfor and \langsum can be translated from $\RR$ to $K$ by switching from matrices over $(\RR, +, \times, 0, 1)$ to matrices over $(K, \ksum, \kprod, \kzero, \kone)$.
+% From now on we
+Similarly as for \lang\ over $\RR$, given a \lang\ schema $\Sch$, a $K$-instance $\I$ over $\Sch$ is a pair $\I = (\dom,\conc)$, where $\dom : \DD \mapsto \NN$ assigns a value to each size symbol, and $\conc : \Mnam \mapsto \mtr{K}$ assigns a concrete $K$-matrix to each matrix variable. Then it is straightforward to extend the semantics of \lang, \langfor, and \langsum from $(\RR, +, \times, 0, 1)$ to $(K, \ksum, \kprod, \kzero, \kone)$ by switching $+$ with $\ksum$ and $\times$ with $\kprod$. 
 
-The next step for comparing \langsum with ARA is to represent $K$-matrices as $K$-relations.
+The next step for comparing \langsum with $\mathsf{RA}_{K}^+$  is to represent $K$-matrices as $K$-relations.
 Let $\Sch=(\Mnam,\size)$ be a \lang\ schema. On the relational side
 we have for each size symbol $\alpha\in\DD\setminus\{1\}$, attributes $\alpha$, $\row_\alpha$, and $\col_\alpha$ in $\att$. Furthermore, for each $V\in\Mnam$ and $\alpha \in \DD$ we denote
 by $R_V$ and $R_\alpha$ its corresponding relation name, respectively. Then, given $\Sch$ we define the relational schema $\text{Rel}(\Sch)$ such that $\fdom(\text{Rel}(\Sch)) =  \{R_\alpha \mid \alpha\in\DD\} \cup \{R_V \mid V \in \Mnam\}$ where $\text{Rel}(\Sch)(R_\alpha) = \{\alpha\}$ and:
@@ -108,12 +121,16 @@ by $R_V$ and $R_\alpha$ its corresponding relation name, respectively. Then, giv
 \]
 Consider now a matrix instance $\I = (\dom,\conc)$ over $\Sch$.
 Let $V\in\Mnam$ with $\size(V)=(\alpha,\beta)$ and let $\conc(V)$ be its corresponding $K$-matrix of dimension $\dom(\alpha)\times \dom(\beta)$.
-To encode $\I$ as a $K$-instance in ARA, we use as data domain $\ddom = \mathbb{N} \setminus \{0\}$. Then we construct the $K$-instance $\text{Rel}(\I)$ such that for each $V\in\Mnam$ we define 
-$R_V^{\text{Rel}(\I)}(t):=\conc(V)_{ij}$ whenever $t(\row_\alpha) = i \leq \dom(\alpha)$ and $t(\col_\beta) = j \leq \dom(\beta)$, and $\kzero$ otherwise. Furthermore, for each $\alpha \in \DD$ we define $R_\alpha^{\text{Rel}(\I)}(t):=\kone$ whenever $t(\alpha) \leq \dom(\alpha)$, and $\kzero$ otherwise. In other words, $R_\alpha$ and $R_\beta$ encodes the active domain of a matrix variable $V$ with $\size(V)=(\alpha,\beta)$. Given that the ARA framework of \cite{GreenKT07} represents the ``absence'' of a tuple in the relation with $\kzero$, we need to find a way to encode all entries of a matrix in ARA. For instance, we need to be able to encode a $\kzero$-matrix of dimension $(\alpha,\beta)$ in~ARA.
-
-We are ready to state the first connection between \langsum and ARA by using the previous encoding.
+To encode $\I$ as a $K$-instance in $\mathsf{RA}_{K}^+$, we use as data domain $\ddom = \mathbb{N} \setminus \{0\}$. Then we construct the $K$-instance $\text{Rel}(\I)$ such that for each $V\in\Mnam$ we define 
+$R_V^{\text{Rel}(\I)}(t):=\conc(V)_{ij}$ whenever $t(\row_\alpha) = i \leq \dom(\alpha)$ and $t(\col_\beta) = j \leq \dom(\beta)$, and $\kzero$ otherwise. Furthermore, for each $\alpha \in \DD$ we define $R_\alpha^{\text{Rel}(\I)}(t):=\kone$ whenever $t(\alpha) \leq \dom(\alpha)$, and $\kzero$ otherwise. In other words, $R_\alpha$ and $R_\beta$ encodes the active domain of a matrix variable $V$ with $\size(V)=(\alpha,\beta)$. Given that the $\mathsf{RA}_{K}^+$ framework of \cite{GreenKT07} represents the ``absence'' of a tuple in the relation with $\kzero$, we need to separately encode the indexes in a matrix.
+This is where $R_\alpha^{\text{Rel}(\I)}$ is used for.
+%
+% to be able to
+%
+% find a way to encode all entries of a matrix in ARA. For instance, we need to be able to encode a $\kzero$-matrix of dimension $(\alpha,\beta)$ in~$\mathsf{RA}_{K}^+$.
+We are now ready to state the first connection between \langsum and $\mathsf{RA}_{K}^+$  by using the previous encoding. The proof of the proposition below is by induction on the structure of expressions in \langsum.
 \begin{proposition}
-	For each \langsum expression $e$ over schema $\Sch$ such that $\Sch(e)=(\alpha,\beta)$ with $\alpha\neq 1\neq\beta$, there exists an ARA expression $\Phi(e)$ over relational schema $\text{Rel}(\Sch)$ such that $\text{Rel}(\Sch)(\Phi(e))=\{\row_\alpha,\row_\beta\}$ and 
+	For each \langsum expression $e$ over schema $\Sch$ such that $\Sch(e)=(\alpha,\beta)$ with $\alpha\neq 1\neq\beta$, there exists an $\mathsf{RA}_{K}^+$  expression $\Phi(e)$ over relational schema $\text{Rel}(\Sch)$ such that $\text{Rel}(\Sch)(\Phi(e))=\{\row_\alpha,\row_\beta\}$ and 
 	such that for any instance $\I$ over~$\Sch$,
 	$$
 	\sem{e}{\I}_{i,j}=\ssem{\Phi(e)}{\text{Rel}(\I)}(t)
@@ -122,29 +139,35 @@ We are ready to state the first connection between \langsum and ARA by using the
 	$\text{Rel}(\Sch)(\Phi(e))=\{\mathrm{col}_\alpha\}$, or
 	$\text{Rel}(\Sch)(\Phi(e))=\{\}$, respectively.
 \end{proposition}
-To translate ARA into \langsum, we must restrict our comparison to ARA over $K$-relations with at most two attributes. Given that linear algebra works over vector and matrices, it is reasonable to restrict to unary or binary relations as input. Note that this is only a restriction to the input relations and not to intermediate relations, namely, expressions can create relation signatures of arbitrary size from the binary input relations. Thus, from now we say that a relational schema $\cR$ is binary if $|R| \leq 2$ for every $R \in \cR$. We also make the assumption that there is an (arbitrary) order, denoted by $<$, on the attributes in $\att$. 
+To translate $\mathsf{RA}_{K}^+$  into \langsum, we must restrict our comparison to $\mathsf{RA}_{K}^+$  over $K$-relations with at most two attributes. Given that linear algebra works over vector and matrices, it is reasonable to restrict to unary or binary relations as input. Note that this is only a restriction on the input relations and not to intermediate relations, namely, expressions can create relation signatures of arbitrary size from the binary input relations. 
+Thus, from now we say that a relational schema $\cR$ is binary if $|R| \leq 2$ for every $R \in \cR$. We also make the assumption that there is an (arbitrary) order, denoted by $<$, on the attributes in $\att$. 
 This is to identify which attributes correspond to rows and columns when moving to matrices. 
-Then, given that relations will be  either unary or binary and there is an order in the attributes, we write $t = (v)$ or $t = (u,v)$ to denote a tuple over a unary or binary relation $R$, respectively, where $u$ and $v$ is the value of the first and second attribute with respect to $<$.
+Then, given that relations will be  either unary or binary and there is an order on the attributes, we write $t = (v)$ or $t = (u,v)$ to denote a tuple over a unary or binary relation $R$, respectively, where $u$ and $v$ is the value of the first and second attribute with respect to $<$.
 
 Consider a binary relational schema $\cR$. With each $R\in \cR$ we associate a matrix variable $V_R$ such that, if $R$ is a binary relational signature, then $V_R$ represents a (square) matrix, and, if not (i.e. $R$ is unary), then $V_R$ represents a vector. Formally, fix a symbol $\alpha \in \DD \setminus \{1\}$. Let $\text{Mat}(\cR)$ denote the \lang \ schema
 $(\Mnam_\cR,\size_\cR)$ such that $\Mnam_\cR = \{ V_R \mid R \in \cR\}$ and $\size_\cR(V_R) = (\alpha, \alpha)$ whenever $|R| = 2$, and $\size_\cR(V_R) = (\alpha, 1)$ whenever $|R|=1$. 
-Take now a $K$-instance $\cJ$ of $\cR$ and suppose that $\adom(\cJ) = \{d_1, \ldots, d_n\}$ is the active domain of $\cJ$ (i.e. the order over $\adom(\cJ)$ is arbitrary). Then we define the matrix instance $\text{Mat}(\cJ) = (\dom_\cJ,\conc_\cJ)$ such that $\dom_\cJ(\alpha) = n$, $\conc_\cJ(V_R)_{i,j} = R^{\cJ}((d_i, d_j))$ whenever $|R|=2$, and $\conc_\cJ(V_R)_{i} = R^{\cJ}((d_i))$ whenever $|R|=1$. 
+Take now a $K$-instance $\cJ$ of $\cR$ and suppose that $\adom(\cJ) = \{d_1, \ldots, d_n\}$ is the active domain of $\cJ$ (the order over $\adom(\cJ)$ is arbitrary). Then we define the matrix instance $\text{Mat}(\cJ) = (\dom_\cJ,\conc_\cJ)$ such that $\dom_\cJ(\alpha) = n$, $\conc_\cJ(V_R)_{i,j} = R^{\cJ}((d_i, d_j))$ whenever $|R|=2$, and $\conc_\cJ(V_R)_{i} = R^{\cJ}((d_i))$ whenever $|R|=1$. 
 Note that, although each $K$-relation can have different active domain, we encode them as square matrices by considering the active domain of the $K$-instance.
 
 \begin{proposition}
-	Let $\cR$ be a binary relational schema. For each ARA expression $\arae$ over $\cR$  such that $|\cR(\arae)| = 2$, there exists a \langsum  expression $\Psi(\arae)$ over \lang \ schema $\text{Mat}(\cR)$ such that for any $K$-instance $\cJ$ with $\adom(\cJ) = \{d_1, \ldots, d_n\}$ over $\cR$,
+	Let $\cR$ be a binary relational schema. For each $\mathsf{RA}_{K}^+$  expression $\arae$ over $\cR$  such that $|\cR(\arae)| = 2$, there exists a \langsum  expression $\Psi(\arae)$ over \lang \ schema $\text{Mat}(\cR)$ such that for any $K$-instance $\cJ$ with $\adom(\cJ) = \{d_1, \ldots, d_n\}$ over $\cR$,
 	$$
 	\ssem{\arae}{\cJ}((d_i, d_j))=\sem{\Psi(\arae)}{\text{Mat}(\cJ)}_{i,j}.
 	$$
 	Similarly for when $|\cR(\arae)| = 1$, or $|\cR(\arae)| = 0$ respectively.
 \end{proposition} 
 
-It is important to remark that the $\arae$ of the previous result can have intermediate expressions that are not necessary binary given that the proposition only restricts that the input relation and the schema of $\arae$ must have arity at most two. 
+It is important to remark the expression $\arae$ of the previous result can have intermediate expressions that are not necessary binary given that the proposition only restricts that the input relation and the schema of $\arae$ must have arity at most two. We remark that \lang\ was shown to correspond to $\mathsf{RA}_{K}^+$ where intermediate expressions are at most ternary~\cite{brijder2019matrices}, and this underlies the inability of \lang\ to check for $4$-cliques. Another interpretation of the previous result is that each occurrence of the
+$\Sigma$ operator in a \langsum\ expression introduces a new attribute. For example, in the $4$-clique expression,
+four $\Sigma$ operators are needed.
 
 Given the previous two propositions we derive the following conclusion which is the first characterization of relational algebra with a (sub)-fragment of linear algebra.
 \begin{corollary}
-	\langsum and ARA over binary relational schemas are equally expressive. 
+	\langsum and $\mathsf{RA}_{K}^+$  over binary relational schemas are equally expressive. 
 \end{corollary}
+
+As a direct consequence, we have that $\langsum$ cannot compute matrix inversion. Indeed, using similar arguments as
+in~\cite{matlang,matlang-journal}, by embedding $\mathsf{RA}_{K}^+$  in logic with aggregates and by leveraging locality, one can show that \langsum cannot compute the transitive closure of an adjacency matrix. By contrast, the transitive closure can be expressed by means of matrix inversion~\cite{matlang,matlang-journal}.
 
 
 \subsection{Hadamard product and weighted logics}
