@@ -17,17 +17,31 @@ When evaluating this expression on an instance $\I$, $A_0$ is initial set to the
 we have $A_1=\sem{e}{\I[v:=b_1^n,X:=\sem{e_0}{\I}]}$, and for consecutive iterations (when only the part related to $1-\mmin{v}$ applies) $A_i$ is updated as before. Clearly, the result of this evaluation is equal to
 $\sem{\initf{e_0}{v}{X}{e}}{\I}$. 
 
-As an illustration, we consider the transitive closure program from the beginning of this section. Similarly as for \lang, we write $\langforf{\Fun}$ for some set $\Fun$ of functions when these are required for the task at hand.
-%As an illustration, we consider the transitive closure program from the beginning of this section. Similarly as for \lang, we write \langfor$(\Fun)$ for some set $\Fun$ of functions when these are required for the task at hand. Analogously, we write $\langfor$ to denote $\langfor(\emptyset)$, but we might abuse the notation and write $\langfor$ to refer to the language in general.
-\begin{example}
- In $\langforf{f_>}$ we can express transitive closure with the following expression
-$$
-f_{>0}\left(\initf{e_{\mathsf{Id}}}{v}{X}{X\cdot (e_{\mathsf{Id}}+V)}\right),
-$$
-where $e_{\mathsf{Id}}$ is a \langfor\ expression constructing the identity matrix $I$. The expression $e_{\mathsf{Id}}$
-is just like the expression $e_{\mathsf{diag}}$ in Example~\ref{ex:diag}, but now only puts value $1$ on the diagonal.
- Observe that we start the loop using an initialisation by $I$. Hence, when evaluated on an instance $\I$ such that $V$ is an adjacency matrix $A$ of a graph, the expression above simply computes $(I+A)^n$, followed by the pointwise function application $f_{>0}$. In other words, it returns the adjacency matrix of the transitive closure of graph.\qed
+%As an illustration, we consider the transitive closure program from the beginning of this section. Similarly as for \lang, we write $\langforf{\Fun}$ for some set $\Fun$ of functions when these are required for the task at hand.
+%%As an illustration, we consider the transitive closure program from the beginning of this section. Similarly as for \lang, we write \langfor$(\Fun)$ for some set $\Fun$ of functions when these are required for the task at hand. Analogously, we write $\langfor$ to denote $\langfor(\emptyset)$, but we might abuse the notation and write $\langfor$ to refer to the language in general.
+%\begin{example}
+% In $\langforf{f_>}$ we can express transitive closure with the following expression
+%$$
+%f_{>0}\left(\initf{e_{\mathsf{Id}}}{v}{X}{X\cdot (e_{\mathsf{Id}}+V)}\right),
+%$$
+%where $e_{\mathsf{Id}}$ is a \langfor\ expression constructing the identity matrix $I$. The expression $e_{\mathsf{Id}}$
+%is just like the expression $e_{\mathsf{diag}}$ in Example~\ref{ex:diag}, but now only puts value $1$ on the diagonal.
+% Observe that we start the loop using an initialisation by $I$. Hence, when evaluated on an instance $\I$ such that $V$ is an adjacency matrix $A$ of a graph, the expression above simply computes $(I+A)^n$, followed by the pointwise function application $f_{>0}$. In other words, it returns the adjacency matrix of the transitive closure of graph.\qed
+%\end{example}
+
+As an illustration, we consider the Floyd-Warshall algorithm for computing the transitive closure of a matrix given in the Introduction. Similarly as for \lang, we write $\langforf{\Fun}$ for some set $\Fun$ of functions when these are required for the task at hand.
+
+\begin{example}\label{ex:floyd}
+The following expression in $\langf{f_>}$ computes the transitive closure of a $n\times n$ matrix $A$.
+\begin{tabbing}
+\texttt{for }\=$e_k,X_1 = A.\, X_1 + $\\
+\> \texttt{for }\=$e_i,X_2.\, X_2 +$ \\
+\>\>\texttt{for }\=$e_j,X_3.\, X_3 +$ \\
+\>\>\>$(e_i^T\cdot A\cdot e_k \cdot e_k^T\cdot A\cdot e_j)\times e_i\cdot e_j^T$
+\end{tabbing}
+Bla \qed
 \end{example}
+
 
 \noindent\textbf{Order.} With the introduction of \texttt{for} loops we not only extend \lang\ with bounded recursion, we also introduce order information. Indeed, the semantics of the \texttt{for} operator assumes that the canonical vectors $b_1,b_2,\ldots$
 are accessed in this order. It implies, among other things, that \langfor\ expressions are not permutation-invariant.

@@ -174,15 +174,19 @@ $$
 %  $f(e_1,\ldots,e_k)$ for $f\in\Fun_k$ where each $e_i$
 % has type $(1,1)$.
 
-As a final example, we show how the Floyd-Warshall algorithm for computing the transitive closure of a matrix given in the Introduction can be defined using \langfor.
-\begin{example}\label{ex:floyd}
-Working on it.
-\end{example}
+%As a final example, we show how the Floyd-Warshall algorithm for computing the transitive closure of a matrix given in the Introduction can be defined using \langfor.
+%\begin{example}\label{ex:floyd}
+%The following expression in $\langf{f_>}$ computes the transitive closure of a $n\times n$ matrix $A$.
+%\begin{tabbing}
+%\texttt{for }\=$e_k,X_1.\, X_1 + $\\
+%\> \texttt{for }\=$e_i,X_2.\, X_2 +$ \\
+%\>\>\texttt{for }\=$e_j,X_3.\, X_3 +$ \\
+%\>\>\>$(e_i^T\cdot A\cdot e_k \cdot e_k^T\cdot A\cdot e_j)\times e_i\cdot e_j^T$
+%\end{tabbing}
+%\end{example}
 
 
-\domagoj{Swap this with Floyd-Warshall, Remove Example 3.6 (TC), and push 4cliques to a comment about the separating example from $\lang$.}
-
-As another example, we show that we can compute whether a graph contains a $4\textsf{clique}$ using \langfor.
+As a final example, we show that we can compute whether a graph contains a $4-\textsf{clique}$ using \langfor.
 \begin{example}\label{ex:fourcliques}
 To test for $4$-cliques it suffices to consider the expression
 \begin{tabbing}
