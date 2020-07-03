@@ -1,5 +1,19 @@
+\newtheorem*{SUMTOARA}{Proposition~\ref{prop:sum_to_ara}}
+
 We prove proposition 7.2.
-We start from a matrix schema $\Sch=(\Mnam,\size)$, where $\Mnam\subset \Mvar$ is a finite set of matrix variables, 
+
+\begin{SUMTOARA}
+  For each \langsum expression $e$ over schema $\Sch$ such that $\Sch(e)=(\alpha,\beta)$ with $\alpha\neq 1\neq\beta$, there exists an ARA expression $\Phi(e)$ over relational schema $\text{Rel}(\Sch)$ such that $\text{Rel}(\Sch)(\Phi(e))=\{\row_\alpha,\row_\beta\}$ and 
+	such that for any instance $\I$ over~$\Sch$,
+	$$
+	\sem{e}{\I}_{i,j}=\ssem{\Phi(e)}{\text{Rel}(\I)}(t)
+	$$
+	for tuple $t(\mathrm{row}_\alpha)=i$ and $t(\mathrm{col}_\beta)=j$. Similarly for when $e$ has schema $\Sch(e)=(\alpha,1)$, $\Sch(e)=(1,\beta)$ or $\Sch(e)=(1,1)$, then $\Phi(e)$ has schema $\text{Rel}(\Sch)(\Phi(e))=\{\mathrm{row}_\alpha\}$,
+	$\text{Rel}(\Sch)(\Phi(e))=\{\mathrm{col}_\alpha\}$, or
+	$\text{Rel}(\Sch)(\Phi(e))=\{\}$, respectively.
+\end{SUMTOARA}
+
+\textit{Proof}. We start from a matrix schema $\Sch=(\Mnam,\size)$, where $\Mnam\subset \Mvar$ is a finite set of matrix variables, 
 and $\size: \Mvar \mapsto \DD\times \DD$ is a function that maps each matrix variable to a pair of size symbols. 
 On the relational side we have for each size symbol $\alpha\in\DD\setminus\{1\}$, attributes $\alpha$, $\row_\alpha$, 
 and $\col_\alpha$ in $\att$. For each $V\in\Mnam$ and $\alpha \in \DD$ we denote
@@ -22,7 +36,7 @@ $R_V^{\text{Rel}(\I)}(t):=\conc(V)_{ij}$ whenever $t(\row_\alpha) = i \leq \dom(
 Also, for each $\alpha \in \DD$ we define $R_\alpha^{\text{Rel}(\I)}(t):=\kone$ whenever $t(\alpha) \leq \dom(\alpha)$, and $\kzero$ otherwise.
 If $\size(V)=(\alpha,1)$ then $R_V^{\text{Rel}(\I)}(t):=\conc(V)_{i1}$ whenever $t(\row_\alpha) = i \leq \dom(\alpha)$ and $\kzero$ otherwise.
 Similarly, if $\size(V)=(1,\beta)$ then $R_V^{\text{Rel}(\I)}(t):=\conc(V)_{1j}$ whenever $t(\col_\beta) = j \leq \dom(\beta)$ and $\kzero$ otherwise.
-If $\size(V)=(1,1)$ then $R_V^{\text{Rel}(\I)}(t):=\conc(V)_{11}$ only when $t() = 1$ and $\kzero$ otherwise.
+If $\size(V)=(1,1)$ then $R_V^{\text{Rel}(\I)}(t):=\conc(V)_{11}$ only when $t(1) = \kone$ and $\kzero$ otherwise.
 
 The proof is by induction. Let $e$ be a \langsum expression such that $\Sch (e)=(\alpha, \beta)$.
 \begin{itemize}
@@ -45,17 +59,31 @@ The proof is by induction. Let $e$ be a \langsum expression such that $\Sch (e)=
   \item If $e=e_1\cdot e_2$ with $\Sch (e_1)=(\alpha, \gamma)$ and $\Sch (e_2)=(\gamma, \beta)$, we have two cases. If $\gamma = 1$ then $\Phi (e):=\Phi (e_1)\Join \Phi (e_2)$.
 If $\gamma\neq 1$ then
 $$
-\Phi (e) := \pi_{\text{Rel}(\Sch)(R_V)}\left( \sigma_{\lbrace \col_\gamma, \row_\gamma \rbrace} \left( \Phi (e_1)\Join \Phi (e_2) \right) \right)
+\Phi (e) := \pi_{\lbrace \row_{\alpha},\row_{\beta} \rbrace}\left( \sigma_{\lbrace \col_\gamma, \row_\gamma \rbrace} \left( \Phi (e_1)\Join \Phi (e_2) \right) \right)
 $$
 
-  \item If $e=\ssum V. e_1$ where $\Sch(e_1)=(\alpha,\beta)$ and $\Sch(V)=(\gamma,1)$. Then we can just do $\pi_{\text{Rel}(\Sch)(R_V)}\left( \Phi (e_1) \right)$.
-Note that when the $\row_\gamma$ attribute in $\Phi (e_1)$ is instantiated with with tuple $t$ such that $t(\row_\alpha)=i$, $t(\col_\beta)=j$ and $t(\row_\gamma)=k$,
-then the expression evaluates to $e_1(\I [V\leftarrow e_{k}^{\dom(\gamma)}])_{ij}$. 
-Hence, by projecting in attributes $\lbrace \row_\alpha, \col_\beta\rbrace$ we range over all $k$ and sum up all $K$-values for each entry.
+%   \item If $e=\ssum V. e_1$ where $\Sch(e_1)=(\alpha,\beta)$ and $\Sch(V)=(\gamma,1)$. Then we can just do $\pi_{\text{Rel}(\Sch)(R_V)}\left( \Phi (e_1) \right)$.
+% Note that when the $\row_\gamma$ attribute in $\Phi (e_1)$ is instantiated with with tuple $t$ such that $t(\row_\alpha)=i$, $t(\col_\beta)=j$ and $t(\row_\gamma)=k$,
+% then the expression evaluates to $e_1(\I [V\leftarrow e_{k}^{\dom(\gamma)}])_{ij}$. 
+% Hence, by projecting in attributes $\lbrace \row_\alpha, \col_\beta\rbrace$ we range over all $k$ and sum up all $K$-values for each entry.
+  \item If $e=\ssum V. e_1$ where $\Sch(e_1)=(\alpha,\beta)$ and $\Sch(V)=(\gamma,1)$. Then we do 
+  $$
+  \pi_{\lbrace \row_{\alpha}, \col_{\beta} \rbrace}\left( \Phi (e_1)\left[ R_{V}\leftarrow R_{\mathsf{Id}}^{\gamma} \right] \right).
+  $$
+  Here $R_{\mathsf{Id}}^{\gamma}$ is the binary relation encoding the identity of size $\gamma\times\gamma$ and
+  is defined as 
+  $$
+  R_{\mathsf{Id}}^{\gamma}:= \sigma_{\lbrace \row_{\gamma},\col_{\gamma} \rbrace }\left( \rho_{\gamma\rightarrow\row_\gamma}\left( R_\gamma^{\text{Rel}(\I)} \right) \Join \rho_{\gamma\rightarrow\col_\gamma}\left( R_\gamma^{\text{Rel}(\I)} \right)\right)
+  $$
+  Note that when $\Phi (e_1)\left[ R_{V}\leftarrow R_{\mathsf{Id}}^{\gamma} \right]$ is instantiated with with tuple $t$ such that $t(\row_\alpha)=i$, $t(\col_\beta)=j$, 
+  $t(\row_\gamma)=k$ and $t(\col_\gamma)=k$ (other values of are zero),
+  then the expression evaluates to $e_1(\I [V\leftarrow e_{k}^{\dom(\gamma)}])_{ij}$. 
+  Hence, by projecting in attributes $\lbrace \row_\alpha, \col_\beta\rbrace$ we range over all $k$ and sum up all $K$-values for each entry.
 \end{itemize}
 
 Here, we only allow $\kprod$ function application. 
 Note that we can access the zero values of matrices because the indexes are in the active domain of $\text{Rel}(\I)$ due to the existence of $R_\alpha^{\text{Rel}(\I)}(t)$, for each $\alpha \in \DD$.
+\qed
 
 % Consider a matrix instance $\I = (\dom,\conc)$ over a schema $\Sch$.
 % Let $V\in\Mnam$ with $\size(V)=(\alpha,\beta)$ and let $\conc(V)$ be its corresponding matrix of dimension $\dom(\alpha)\times \dom(\beta)$.
