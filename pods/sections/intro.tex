@@ -1,7 +1,7 @@
 %!TEX root = /Users/fgeerts/Documents/MLforloops/pods/main.tex
-Linear algebra-based algorithms have become a key component in data analytical workflows. As such, there is a growing interest in the database community to integrate linear algebra functionalities into relational database management systems \cite{Jermaine/17/LAonRA,2019Boehm,LARA_Berlin_2016,JankovLYCZJG19,Khamis0NOS18}. In particular, from a query language perspective, several proposals have recently been put forward to unify relational algebra and linear algebra. Two notable examples of this are: \lara~\cite{HutchisonHS17}, a minimalistic language in which a number of atomic operations on so-called associative tables are proposed, and \lang, a query language for manipulating matrices \cite{matlang,matlang-journal}.
+Linear algebra-based algorithms have become a key component in data analytical workflows. As such, there is a growing interest in the database community to integrate linear algebra functionalities into relational database management systems \cite{Jermaine/17/LAonRA,2019Boehm,LARA_Berlin_2016,JankovLYCZJG19,Khamis0NOS18}. In particular, from a query language perspective, several proposals have recently been put forward to unify relational algebra and linear algebra. Two notable examples of this are: \lara~\cite{HutchisonHS17}, a minimalistic language in which a number of atomic operations on so-called associative tables are proposed, and \lang, a query language for manipulating matrices \cite{matlang-journal}.
 
-Both \lara and \lang have been studied by the database theory community, showing interesting connections to relational algebra and logic. For example, fragments of \lara are known to capture first-order logic with aggregation~\cite{BarceloH0S20}, and \lang has been recently shown to be equivalent to a restricted version of the (positive) relational algebra on $K$-relations, \rak~\cite{brijder2019matrices}, where $K$ denotes a semiring. On the other hand, there are some standard constructions in linear algebra that are out of reach for these languages. For instance, it was shown that under standard complexity-theoretic assumptions, \lara can not compute the inverse of a matrix or its determinant~\cite{BarceloH0S20}, and operations such as the transitive closure of a matrix are known to be inexpressible in \lang~\cite{matlang,matlang-journal}. Given that these are fundamental constructs in linear algebra, one might wonder how to extend \lara or \lang in order to allow expressing such properties.
+Both \lara and \lang have been studied by the database theory community, showing interesting connections to relational algebra and logic. For example, fragments of \lara are known to capture first-order logic with aggregation~\cite{BarceloH0S20}, and \lang has been recently shown to be equivalent to a restricted version of the (positive) relational algebra on $K$-relations, \rak~\cite{brijder2019matrices}, where $K$ denotes a semiring. On the other hand, there are some standard constructions in linear algebra that are out of reach for these languages. For instance, it was shown that under standard complexity-theoretic assumptions, \lara can not compute the inverse of a matrix or its determinant~\cite{BarceloH0S20}, and operations such as the transitive closure of a matrix are known to be inexpressible in \lang~\cite{matlang-journal}. Given that these are fundamental constructs in linear algebra, one might wonder how to extend \lara or \lang in order to allow expressing such properties.
 
 One approach would be to add these constructions explicitly to the language. Indeed, this was done for \lang and \lara by design allows user-defined functions. In this paper we take another approach, and analyze what are the atomic operations needed to define standard linear algebra algorithms. Inspecting any linear algebra textbook, one sees that most linear algebra procedures heavily rely on the use of for-loops in which iterations happen over the dimensions of the matrices involved. To illustrate this, let us consider the example of computing the transitive closure of a graph. This is usually done using  the Floyd-Warshall algorithm~\cite{cormen}, which takes as its input the $n\times n$ adjacency matrix $A$ representing our graph, and operates according to the following pseudo-code:
 \vspace{-1ex}
@@ -18,20 +18,24 @@ When examining standard linear algebra algorithms such as Gaussian elimination, 
 
 Of course, a natural question to ask now is whether this really results in a language suitable for linear algebra? We argue that the correct way to approach this question is to compare our language to arithmetic circuits, which have been shown to capture the vast majority of existing matrix algorithms, from basic ones such as computing the determinant \cite{} and the inverse \cite{}, to complex procedures such as fast Fourier transformation \cite{}, and Strassen's algorithm \cite{}, and can therefore be considered to capture most of linear algebra. In the main technical result of this paper, we show that \langfor indeed computes the same class of functions over matrices as the ones computed by arithmetic circuit families of bounded degree.  As a consequence, \langfor inherits all expressiveness properties of circuits, and thus can simulate any linear algebra algorithm definable by circuits.
 
-Having established that \langfor indeed provides a good basis for a linear algebra language, we move to a more fine-grained analysis of the expressiveness of its different fragments. For this, we aim to provide a connection with logical formalisms, similarly as was done by linking \lara and \lang to first order logic with aggregates~\cite{BarceloH0S20,matlang-journal}. As we show, capturing different logics correspond to restricting how matrix variables are updated in each iteration of the for-loops allowed in \langfor. For instance, if we only allow to add some temporary result to a variable in each iteration (instead of rewriting it completely like in any programming language), we obtain a language, called \langsum, which is equivalent to \rak, directly extending an analogous result shown for \lang, mentioned earlier~\cite{brijder2019matrices}. We then study updating matrix variables based on another standard linear algebra operator, the Hadamard product, resulting in a fragment called \langprod, which we show to be equivalent to weighted logics~\cite{DrosteG05}. Finally, we consider updating the variables based on the standard matrix product, and link this fragment of our language to the ones discussed previously.  
+Having established that \langfor indeed provides a good basis for a linear algebra language, we move to a more fine-grained analysis of the expressiveness of its different fragments. For this, we aim to provide a connection with logical formalisms, similarly as was done by linking \lara and \lang to first order logic with aggregates~\cite{BarceloH0S20,matlang-journal}. As we show, capturing different logics correspond to restricting how matrix variables are updated in each iteration of the for-loops allowed in \langfor. For instance, if we only allow to add some temporary result to a variable in each iteration (instead of rewriting it completely like in any programming language), we obtain a language, called \langsum, which is equivalent to \rak, directly extending an analogous result shown for \lang, mentioned earlier~\cite{brijder2019matrices}. We then study updating matrix variables based on another standard linear algebra operator, the Hadamard product, resulting in a fragment called \langprod, which we show to be equivalent to weighted logics~\cite{DrosteG05}. Finally, we consider updating the variables based on the standard matrix product, and link this fragment of our language to the ones discussed 
+previously.  
 
-
-\medskip
+\smallskip
 \noindent
-\textbf{Contribution and outline.} Our main contributions can be summarized as follows.
+\textbf{Contribution and outline.} 
+% Our main contributions can be summarized as follows.
 \begin{itemize}[leftmargin=0.5cm]
-	\item We show how \texttt{for} loops can be added to \lang in a natural way. We recall \lang in Section~\ref{} and define \langfor in Section~\ref{}.
-	\item We illustrate in Section~\ref{} that \langfor is able to compute linear algebra algorithms in a natural way. More specifically, we provide expressions in \langfor for LU decomposition (used to solve linear systems of equations), the determinant and matrix inversion.
-	\item More generally, we make the connection to arithmetic circuits in Section~\ref{}. We show that every  uniform arithmetic circuits of polynomial degree correspond to a \langfor expression, and vice versa, when a \langfor expression has polynomial degree, then there is an equivalent uniform family of arithmetic circuits.
-	\item  Finally, we show in Section~\ref{} that two natural fragment of \langfor, \langsum, and \langprod, are equivalent to the annotated relational algebra and weighted logics on binary relations, respectively.
-	\item We conclude in Section \ref{}.
+	\item After we recall \lang in Section~\ref{sec:matlang}, we show in Section~\ref{sec:formatlang}
+	how for-loops can be added to \lang in a natural way. We also observe in that section that
+	\langfor strictly extends \lang. In addition, we note that our use of canonical vectors to define for-loops results in the availability of an order relation.
+	
+	\item In Section~\ref{sec:queries} we show that \langfor can compute important linear algebra algorithms in a natural way. We provide expressions in \langfor for LU decomposition (used to solve linear systems of equations), the determinant and matrix inversion.
+	\item More generally, in Section~\ref{sec:circuits} we report our main technical contribution.
+	 We show that every  uniform arithmetic circuits of polynomial degree correspond to a \langfor expression, and vice versa, when a \langfor expression has polynomial degree, then there is an equivalent uniform family of arithmetic circuits. As a consequence, \langfor inherits all expressiveness properties of such circuits.
+	\item  Finally, in Section~\ref{sec:restrict} we generalize the semantics of \langfor to matrices with values in a semiring $K$, and show that two natural fragment of \langfor, \langsum, and \langprod, are equivalent to the (positive) relational algebra and weighted logics on binary $K$-relations, respectively. We also briefly comment a minimal fragment of \langfor that is able to compute matrix inversion.
 \end{itemize}
-
+Due to space limitations, most proofs are referred to the appendix.
 %
 % \floris{This is example is getting too complicated! Any suggestions?}
 % % %
@@ -59,46 +63,14 @@ Having established that \langfor indeed provides a good basis for a linear algeb
 % % %
 
 
-\medskip
+\smallskip
 \noindent
 \textbf{Related work.} 
- MATLANG, \lara, SIMQL.
-K-Relations, ARA, FAQ.
- Weighted Logics, ...
-
-Providing database support for matrices and multidimensional arrays has been 
-a long-standing research topic~\cite{SurveyArrays}. Furthermore, programming
-languages to manipulate matrices trace back to the \textsf{APL} language~\cite{APL}.
-We already described the \textsf{LARA} language~\cite{} and related expressiveness
-results reported in~\cite{}. \lang\ was proposed in~\cite{} connections with
-fixed variable fragments of first-order logic with counting were established in~\cite{}.
-The correspondence with \textsf{ARA} was reported in~\cite{} and relies on the semantics
-of the relational algebra on $K$-relations as given in~\cite{}. 
-Extensions to \textsf{SQL}
-to deal with linear algebra were proposed in~\cite{}. Closer to our work is the extension
-of \textsf{SQL} with dynamic-programming like recursion~\cite{}.
-
-
-Logics for linear algebra: Grohe (bounded lfp), Dawar (), Pakusa, Holm.
-
-In the logic community, we mentioned the works on rank logics~\cite{} and logics extended
-with all possible linear operations~\cite{}. The use of fixed-point logics
-with counting and its ability to compute linear algebra operators can be regarded as another
-means of bringing recursion into the picture. In particular, many linear algebra operators
-were shown to be expressible in this logic using only logarithmic fixed point iterations~\cite{}
-By using a relational encoding of real/complex numbers, connections to standard complexity classes
-such as NC are made in this context.
-
-Tensor formulas and circuits.
-
-We also mention the work on tensor formulas and tensor circuits and their connection
-to Valliant's complexity classes VP and VNP~\cite{}. 
-\floris{We need to carefully check these works!}
-
-Finally, from the algorithmic point of view, for loop programs were considered and using
-an generalization of the AGM bound, automatic derivation of commmunication optimal algorithms.
-
-
+We already mentioned \lara~\cite{HutchisonHS17} and \lang~\cite{matlang,matlang-journal}
+whose expressive power was further analyzed in~\cite{BarceloH0S20,brijder2019matrices,Geerts19,Geerts20}.
+Extensions of \texttt{SQL} for matrix manipulations are reported in~\cite{Jermaine/17/LAonRA}. Most relevant
+is~\cite{JankovLYCZJG19} in which a recursion mechanism is added to \texttt{SQL} which resembles for-loops.
+The expressive power of this extension is unknown, however. Classical logics with aggregation~\cite{Hella:2001} and fixed-point logics with counting~\cite{GroheP17} can also be used for linear algebra. More generally, for the descriptive complexity of linear algebra we refer to~\cite{dghl_rank,holm_phd}. Most of these works require to encode real numbers inside relations, whereas we treat real numbers as atomic values. We refer to relevant papers related to arithmetic circuits and logical formalisms on semiring-annotated relations in the corresponding sections later in the paper.
 
 
 % \subsection{old stuff}
