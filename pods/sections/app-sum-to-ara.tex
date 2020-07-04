@@ -3,7 +3,7 @@
 We prove proposition \ref{prop:sum_to_ara}.
 
 \begin{SUMTOARA}
-  For each \langsum expression $e$ over schema $\Sch$ such that $\Sch(e)=(\alpha,\beta)$ with $\alpha\neq 1\neq\beta$, there exists an ARA expression $\Phi(e)$ over relational schema $\text{Rel}(\Sch)$ such that $\text{Rel}(\Sch)(\Phi(e))=\{\row_\alpha,\row_\beta\}$ and 
+  For each \langsum expression $e$ over schema $\Sch$ such that $\Sch(e)=(\alpha,\beta)$ with $\alpha\neq 1\neq\beta$, there exists an $\mathsf{RA}_{K}^+$  expression $\Phi(e)$ over relational schema $\text{Rel}(\Sch)$ such that $\text{Rel}(\Sch)(\Phi(e))=\{\row_\alpha,\row_\beta\}$ and 
 	such that for any instance $\I$ over~$\Sch$,
 	$$
 	\sem{e}{\I}_{i,j}=\ssem{\Phi(e)}{\text{Rel}(\I)}(t)
