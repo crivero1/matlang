@@ -29,17 +29,21 @@ $\sem{\initf{e_0}{v}{X}{e}}{\I}$.
 % Observe that we start the loop using an initialisation by $I$. Hence, when evaluated on an instance $\I$ such that $V$ is an adjacency matrix $A$ of a graph, the expression above simply computes $(I+A)^n$, followed by the pointwise function application $f_{>0}$. In other words, it returns the adjacency matrix of the transitive closure of graph.\qed
 %\end{example}
 
-As an illustration, we consider the Floyd-Warshall algorithm for computing the transitive closure of a matrix given in the Introduction. Similarly as for \lang, we write $\langforf{\Fun}$ for some set $\Fun$ of functions when these are required for the task at hand.
+%As an illustration, we consider the Floyd-Warshall algorithm for computing the transitive closure of a matrix given in the Introduction. Similarly as for \lang, we write $\langforf{\Fun}$ for some set $\Fun$ of functions when these are required for the task at hand.
+
+As an illustration, we consider the Floyd-Warshall algorithm given in the Introduction. 
 
 \begin{example}\label{ex:floyd}
-The following expression in $\langf{f_>}$ computes the transitive closure of a $n\times n$ matrix $A$.
+Consider the following expression:
 \begin{tabbing}
-\texttt{for }\=$e_k,X_1 = A.\, X_1 + $\\
+$e_{FW} := $ \texttt{for }\=$e_k,X_1 = A.\, X_1 + $\\
 \> \texttt{for }\=$e_i,X_2.\, X_2 +$ \\
 \>\>\texttt{for }\=$e_j,X_3.\, X_3 +$ \\
 \>\>\>$(e_i^T\cdot X_1\cdot e_k \cdot e_k^T\cdot X_1\cdot e_j)\times e_i\cdot e_j^T$
 \end{tabbing}
-Bla \qed
+The expression $e_{FW}$ simulates the Floyd-Warshall algorithm by updating the matrix $A$, which is stored in the variable $X_1$. The inner sub-expression here constructs an $n\times n$ matrix that contains one in the position $(i,j)$ if and only if one can reach the vertex $j$ from $i$ by going through $k$, and zero elsewhere. If an instance $\I$ assigns to $A$ the adjacency matrix of a graph, then $\sem{e_{FW}}{\I}$ contains the shortest distance between a vertex $i$ and the vertex $j$.
+% The transitive closure in then obtained using the $\langf{f_>}$ expression $f_>(e_{FW})$, where $f_{>0}:\RR\to\RR$ is such that $f_{>0}(x):=1$ if $x>0$ and $f_{>0}(x):=0$ otherwise.  
+\qed
 \end{example}
 
 

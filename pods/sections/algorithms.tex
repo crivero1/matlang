@@ -86,7 +86,8 @@ where $\conc(V)=A$ and $A$ is LU-factorizable.\qed
 We remark that the proposition holds when division is added as a function in $\Fun$
 in \langfor. When row pivoting is needed, we can also obtain a permutation matrix
 $P$ such that $P\cdot A=L\cdot U$ holds by means of an expression in \langfor, provided
-that we additionally allow the function $f_{>0}$, as defined in Example~\ref{ex:programtc}. 
+that we additionally allow the function $f_{>0}$, %as defined in Example~\ref{ex:floyd}. 
+where $f_{>0}:\RR\to\RR$ is such that $f_{>0}(x):=1$ if $x>0$ and $f_{>0}(x):=0$ otherwise.
 % This function allows for computing the following
 % operation: Given a vector $v$, return $\mathsf{minnz}(v)=b_j$, the $j$th canonical vector, where $j$ is the first entry in $v$ that holds a non-zero value, or returns $\mathsf{minnz}(v)=\mathbf{0}$ if no such non-zero value exists. In fact, the ability to express
 % $\mathsf{minnz}(\cdot)$ is intrinsically tied to the expressibility of LU decompositions with pivoting:
