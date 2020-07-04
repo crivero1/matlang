@@ -81,7 +81,7 @@
 %% The "title" command has an optional parameter,
 %% allowing the author to define a "short title" to be used in page headers.
 %\title{LOLA: A query language for Linear Algebra with LOops}
-\title{Expressive power of Linear Algebra query languages}
+\title{Expressive power of linear algebra query languages}
 %%
 %% The "author" command and its associated commands are used to define
 %% the authors and their affiliations.
@@ -96,7 +96,7 @@
 %  \state{Ohio}
 %  \postcode{43017-6221}
 }
-\email{floris.geerts@uantwerpen.be}
+\email{floris.geerts@uantwerp.be}
 
 
 \author{Thomas Mu\~noz}
@@ -138,7 +138,10 @@
 %% The abstract is a short summary of the work to be presented in the
 %% article.
 \begin{abstract}
-Majority of Linear Algebra algorithms require some sort of  iteration or recursion. Examples of these include computing the Gaussian elimination of a matrix, its inverse, or its transitive closure. The key characteristic of such algorithms is that they allow looping for a number of steps that is bounded by the matrix dimension. In this paper we extend the matrix manipulation language MATLANG with this type of recursion, and show that it can define the majority of classical Linear Algebra algorithms. We then study the expressive power of this language, and show that it corresponds to arithmetic circuit families, which are typically said to capture linear algebra. Furthermore, we analyse several sub-fragments of our language, and show how they can capture the expressive power of annotated relations and weighted logics.
+Linear algebra algorithms often require some sort of iteration or recursion as is illustrated by standard algorithms for Gaussian elimination, matrix inversion, and transitive closure. A key characteristic shared by these 
+algorithms is that they allow looping for a number of steps that is bounded by the matrix dimension. 
+In this paper we extend the matrix query language \lang with this type of recursion, and show that this suffices to express  classical linear algebra algorithms. We study the expressive power of this language and show that it naturally corresponds to arithmetic circuit families, which are often said to capture linear algebra. Furthermore, we analyze several sub-fragments of our language, and show that their expressive power is closely tied to logical formalisms on semiring-annotated relations.
+% how they can capture the expressive power of annotated relations and weighted logics.
 \end{abstract}
 
 %%
@@ -189,7 +192,7 @@ Majority of Linear Algebra algorithms require some sort of  iteration or recursi
 
 
 
-\section{MATLANG}
+\section{MATLANG}\label{sec:matlang}
 \input{./sections/prelim.tex}
 
 \section{Extending MATLANG with for loops}\label{sec:formatlang}
@@ -216,7 +219,7 @@ Majority of Linear Algebra algorithms require some sort of  iteration or recursi
 %\input{./sections/applications.tex}
 
 
-\section{Conclusions}
+\section{Conclusions}\label{sec:conclude}
 \input{./sections/concl.tex}
 
 %%

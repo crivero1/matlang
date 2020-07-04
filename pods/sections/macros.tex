@@ -26,7 +26,7 @@
 \usetikzlibrary{trees}
 \usetikzlibrary{tikzmark}
 \usetikzlibrary{matrix, positioning}
-
+\usepackage{xspace}
 % Other packages
 \usepackage[overload]{empheq}
 \usepackage{mathtools}
@@ -209,12 +209,14 @@
 
 \newcommand{\type}{\texttt{type}}
 
-\newcommand{\lang}{\texttt{MATLANG}}
+\newcommand{\rak}{\texttt{RA}$_K^+$\xspace}
+\newcommand{\lara}{\texttt{LARA}\xspace}
+\newcommand{\lang}{\texttt{MATLANG}\xspace}
 \newcommand{\langf}[1]{\texttt{MATLANG}[#1]}
-\newcommand{\langfor}{\texttt{for}\text{-}\texttt{MATLANG} }
-\newcommand{\langforf}[1]{\texttt{for}\text{-}\texttt{MATLANG}[#1]}
-\newcommand{\langsum}{\texttt{sum}-\texttt{MATLANG} }
-\newcommand{\langprod}{\texttt{arithmetic}-\texttt{MATLANG} }
+\newcommand{\langfor}{\texttt{for}\text{-}\texttt{MATLANG}\xspace}
+\newcommand{\langforf}[1]{\texttt{for}\text{-}\texttt{MATLANG}[#1]\xspace}
+\newcommand{\langsum}{\texttt{sum}-\texttt{MATLANG}\xspace}
+\newcommand{\langprod}{\texttt{arithmetic}-\texttt{MATLANG}\xspace}
 
 \newcommand{\ffor}[3]{\texttt{for}\, #1,#2 \texttt{.}\, #3}
 
