@@ -1,60 +1,52 @@
+%!TEX root = /Users/fgeerts/Documents/MLforloops/pods/main.tex
 \newtheorem*{PALU}{Proposition~\ref{prop:palu}}
-
-Recall proposition \ref{prop:palu}:
+We next consider LU-decomposition with pivoting. We recall proposition \ref{prop:palu}:
 
 \begin{PALU}
   There exist expressions $e_{L^{-1}P}(M)$ and $e_U(M)$ in $\langforf{f_/,f_{>0}}$  such that
   $L^{-1}\cdot P=\sem{e_{L^{-1}P}}{\I}$ and $U=\sem{e_U}{\I}$, satisfy $L^{-1}\cdot P\cdot A=U$.
 \end{PALU}
+\begin{proof}
+We assume that $f_{/}$ and $f_{>0}$ are in $\mathcal{F}$. Let $A$ be an arbitrary matrix.
+% Recall that $A$ is said to be LU factorizable if there exists matrices
+% $T_1,\ldots, T_{n}$ where $T_i=I+c_ib_i$ for $1\leq i < n$ and $T_n=I$ such that $T_{n}\cdots T_1A=U$ holds,
+% where $U$ is an upper triangular matrix. Define $A_k=T_{k-1}A_{k-1}$ for $1< k\leq n+1$ and $A_1=A$. Keep in
+% mind that $A_k$ is $A$ with its columns reduced up to index $k-1$ (so $A_{n+1}=U$).
+%
+% If $A$ needs no row interchange we compute
+% $$
+% L^{-1}=\initf{I}{v}{X}{\red{X\cdot A}{v}\cdot X},
+% $$
+% where in step $v=b_k$ we do $T_k=\red{X\cdot A}{v}$.
+% It is worth noting that because of the definition of $\ccol{\cdot}{\cdot}$ inside $\red{\cdot}{\cdot}$,
+% we always get $T_n=I$.
+By contrast to when $A$ is LU-factorizable, during LU-decomposition process we may need row interchange (pivoting) in each step of the iteration. Let us assume that row interchange is needed immediately before 
+step $k$, $1\leq k\leq n$. In other words, we now aim to reduce the $k$-th column of $A_k=T_{k-1}\cdots T_1\cdot A$, 
+or $A_k=A$ if $k=1$, but now $A_k$ has a zero pivot, i.e., $(A_{k})_{kk}=0$. 
+Let $P$ be the matrix that denotes the necessary row interchange. If we know
+$P$, then 
+% We aim to reduce the $k$-th column of $PA_{k}$ since $A_{k}$ has a zero pivot.
+to compute $T_k$ we need to perform $\red{P\cdot X\cdot A}{v}$ in this iteration,
+where $\red(\cdot)$ is the expression in \langfor reducing a column, as explained in the main body of the paper.
+Furthermore, we need to apply the permutation $P$ to the current result, resulting in the 
+expression $\initf{I}{v}{X}{\red{P\cdot X\cdot A}{v}\cdot P\cdot X}$. We now remark that
+$P$ is a permutation matrix of the  form $P = I - u\cdot u^T$ and denotes row interchange (if multiplied by left) 
+of rows $i$ and $j$ if $u=(b_{i}-b_{j})$. Note that we are performing a row interchange for column $k$ and thus $i=k$ and $j>k-1$. If no interchange is needed, $i=j=k$ and $P=I$.
+Also note that when $k=n$ no interchange takes place. Furthermore, if no suitable $b_j$ can
+be found, this implies that no interchange is required as well and we can move to next column.
+%  since we are using $P$ before
+% reducing the $k$-th column so we are interchanging rows of index strictly greater than $k-1$
 
-\textit{Proof}. We assume $f_{/}$ is in $\mathcal{F}$. Recall that $A$ is said to be LU factorizable if there exists matrices 
-$T_1,\ldots, T_{n}$ where $T_i=I+c_ib_i$ for $1\leq i < n$ and $T_n=I$ such that $T_{n}\cdots T_1A=U$ holds, 
-where $U$ is an upper triangular matrix. Define $A_k=T_{k-1}A_{k-1}$ for $1< k\leq n+1$ and $A_1=A$. Keep in 
-mind that $A_k$ is $A$ with its columns reduced up to index $k-1$ (so $A_{n+1}=U$). 
-
-If $A$ needs no row interchange we compute
+To find the vector $u$ in $P$, we can, for example, find the first entry $j$ in column $k$ of $A_k$ that holds a non-zero value. We can find the first entry in a vector $a$ that holds a non-zero value by using the function $f_{>0}$. Indeed, consider the following expression:
 $$
-L^{-1}=\initf{I}{v}{X}{\red{X\cdot A}{v}\cdot X},
+\nneq{a}{u}:=\ffor{v}{X}{\left( 1-e_{\ones}(v)^T\cdot X \right) \times f_{>0}(v^T\cdot a)\times v + \mathsf{max}(v)\times\left( 1-e_{\ones}(v)^T\cdot X \right)\times \left( 1 - f_{>0}(v^T\cdot a) \right) \times u}
 $$
-where in step $v=b_k$ we do $T_k=\red{X\cdot A}{v}$. 
-It is worth noting that because of the definition of $\ccol{\cdot}{\cdot}$ inside $\red{\cdot}{\cdot}$, 
-we always get $T_n=I$.
+Here, $\nneq{a}{u}$ receives two $n$ dimensional vectors $a$ and $u$ and outputs a 
+canonical vector $b_j$ such that $a_j$ is the first non zero entry of $a$, or $u$ if such nonzero value does not exist in $a$. The above expression simply checks in each iteration
+whether $X$ already holds a canonical vector. If so, then $X$ is not updated. Otherwise,
+$X$ is replaced by the current canonical vector $b_j$ if and only if $b_j^T\cdot a$ is non-zero. Furthermore, when the final canonical vector is considered and $X$ does not hold
+a canonical vector yet and the $b_n^T\cdot a$ is zero, the vector $u$ is returned.
 
-Now, let's assume that during the LU factorization process we need row interchange immediately before 
-step $k$, $1\leq k\leq n$, so we now aim to reduce the $k$-th column of $A_k=T_{k-1}\cdots T_1A$, 
-or $A_k=A$ if $k=1$, but now $A_k$ has a zero pivot. 
-Let $P$ be the matrix that denotes the necessary row interchange. 
-We aim to reduce the $k$-th column of $PA_{k}$ since $A_{k}$ has a zero pivot. 
-So to compute $T_k$ we do $\red{P\cdot X\cdot A}{v}$ in the iteration. 
-Furthermore, we need to apply the permutation $P$ to the current result, 
-so the expression ends as $\initf{I}{v}{X}{\red{P\cdot X\cdot A}{v}\cdot P\cdot X}$.
-The factorization results in $U=T_{n}\cdots T_kPT_{k-1}\cdots T_1A$. 
-We now explain why $T_{n}\cdots T_kPT_{k-1}\cdots T_1 = L^{-1}P.$ 
-
-The permutation matrix $P$ has the form $P = I - uu^T$ and denotes row interchange (if multiplied by left) 
-of rows $i$ and $j$ if $u=(b_{i}-b_{j})$. Note that in this case $i,j>k-1$ since we are using $P$ before 
-reducing the $k$-th column so we are interchanging rows of index strictly greater than $k-1$ (if $k=n$ there 
-is one row to interchange so nothing happens).
-
-Now, for $T_{l}=I-c_lb_l^T$ with $l\leq k-1$ we have that $b_l^TP=b_l$ because $b_l$ has zeroes in positions 
-$i$ and $j$. Note that $P^2=I$, thus $PT_lP=P^2-Pc_lb_l^TP=I-\widehat{c}_lb_l^T=\widehat{T}_l.$ Where 
-$\widehat{c}_l=Pc_l$. Now
-$$
-T_{n}\cdots T_kPT_{k-1}\cdots T_1=T_{n}\cdots T_kPT_{k-1}P^2T_{k-2}P^2\cdots P^2 T_1P^2=T_{n}\cdots T_k(PT_{k-1}P)(PT_{k-2}P)(P\cdots P)(PT_1P)P=T_{n}\cdots T_k\widehat{T}_{k-1}\cdots \widehat{T}_1P
-$$
-and $L^{-1} = T_{n}\cdots T_k\widehat{T}_{k-1}\cdots \widehat{T}_1$.
-
-The goal is to compute $P$ within the iteration. The output of the PALU algorithm is $L^{-1}P$, this is, 
-we aim to construct an expression $e_{L^{-1}P}(V)$ such that $U=e_{L^{-1}P}(A)\cdot A$. We also define 
-$e_{\mathsf{U}}(V)=e_{L^{-1}P}(A)\cdot A$.
-
-If we have $f_{>0}$ we can define 
-$$
-\nneq{a}{u}:=\ffor{v}{X}{\left( 1-e_{\ones}(v)^TX \right) \times f_{>0}(v^Ta)\times v + \mathsf{max}(v)\times\left( 1-e_{\ones}(v)^TX \right)\times \left( 1 - f_{>0}(v^Ta) \right) \times u}
-$$
-Here, $\nneq{a}{u}$ is an operator that receives an $n$ dimensional vector $a$ and outputs a 
-canonical vector $b_k$ such that $a_k$ is the first non zero entry of $a$, or $u$ if such nonzero 
-value doesn't exist. Obviously, $u$ has to be an $n$ dimensional vector too.
 Then we compute 
 $$
 e_{P_u}(A,u) := e_{\mathsf{Id}} - \left[ u - \nneq{ \ccoleq{A}{u} }{u} \right]\left[ u - \nneq{ \ccoleq{A}{u} }{u} \right]^T.
@@ -72,7 +64,24 @@ $$
 e_{L^{-1}P}(M):=\initf{e_{\mathsf{Id}}}{v}{X}{\red{e_{P_v}(XM,v)\cdot X\cdot M}{v}\cdot e_{P_v}(XM,v)\cdot X}
 $$
 and $e_{\mathsf{U}}(M):=e_{L^{-1}P}(M)\cdot M$ are the stated expressions.
-\qed
+
+When evaluated,
+results in $U=T_{n}\cdots T_kPT_{k-1}\cdots T_1A$. 
+We now explain why $T_{n}\cdots T_kPT_{k-1}\cdots T_1 = L^{-1}P.$ 
+
+Now, for $T_{l}=I-c_lb_l^T$ with $l\leq k-1$ we have that $b_l^TP=b_l$ because $b_l$ has zeroes in positions 
+$i$ and $j$. Note that $P^2=I$, thus $PT_lP=P^2-Pc_lb_l^TP=I-\widehat{c}_lb_l^T=\widehat{T}_l.$ Where 
+$\widehat{c}_l=Pc_l$. Now
+$$
+T_{n}\cdots T_kPT_{k-1}\cdots T_1=T_{n}\cdots T_kPT_{k-1}P^2T_{k-2}P^2\cdots P^2 T_1P^2=T_{n}\cdots T_k(PT_{k-1}P)(PT_{k-2}P)(P\cdots P)(PT_1P)P=T_{n}\cdots T_k\widehat{T}_{k-1}\cdots \widehat{T}_1P
+$$
+and $L^{-1} = T_{n}\cdots T_k\widehat{T}_{k-1}\cdots \widehat{T}_1$.
+
+The goal is to compute $P$ within the iteration. The output of the PALU algorithm is $L^{-1}P$, this is, 
+we aim to construct an expression $e_{L^{-1}P}(V)$ such that $U=e_{L^{-1}P}(A)\cdot A$. We also define 
+$e_{\mathsf{U}}(V)=e_{L^{-1}P}(A)\cdot A$.
+
+\end{proof}
 
 % Now we show that if we have can do the PALU factorization (compute $e_{L^{-1}P}$), we can compute 
 % $\mathsf{minnz}$. Let $a$ be an $n$ dimensional vector such that there exists $k:1\leq k\leq n$ 
