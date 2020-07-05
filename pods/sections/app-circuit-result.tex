@@ -1,3 +1,16 @@
+\newtheorem*{CIRCUITTOML}{Theorem~\ref{th-circuits-ml}}
+
+We prove theorem \ref{th-circuits-ml}:
+\begin{CIRCUITTOML}
+  For any uniform arithmetic circuit family $\{\Phi_n\mid n=1,2,\ldots\}$ of logarithmic depth there is a \langfor schema $\Sch$ and an expression $e_\Phi$ using a matrix variable $v$, with $\ttype(v)=(\alpha,1)$ and $\ttype(e) = (1,1)$, such that for any input $a_1,\ldots ,a_n$ to the circuit $\Phi_n$:
+  \begin{itemize}
+  \item If $\I = (\dom,\conc)$ is a \lang\ instance such that $\dom(\alpha) = n$ and $\conc(v) = [a_1 \ldots a_n]^T$
+  \item Then $\sem{e}{\I} = \Phi_n(a_1,\ldots ,a_n)$.
+  \end{itemize}
+\end{CIRCUITTOML}
+
+\begin{proof}
+
 Let $f(A)$ be a function over a $n\times 1$ vector $A$ such that $f$ can be computed by a $L-$uniform arithmetic circuit of log-depth. Each gate of the circuit that encodes $f$ has an $\texttt{id}\in\lbrace 0,1 \rbrace^n$. From now on, when we write $g$ for a gate of the circuit, we mean the $\texttt{id}$ encoding $g$.
 Let $n^k$ be a polynomial such that the number of wires $W(n)\leq n^k$ for $n$ big enough. Further, we assume that $2W(n)\leq n^k$. We need this because the for-matlang simulation of the circuit is in a depth first search way, so $2W(n)$ wires will be traversed.
 Then we have that:
@@ -430,14 +443,4 @@ Finally, we need to take care of all $n<n_0$, where $(\star)$ does not necessari
 
 Then we define: $$f(A)=\ssum_{i=0}^{n_0-1}(e_{\mathsf{min}+\mathsf{i}}\cdot e_{\mathsf{max}}^T)\times \text{EVAL}[i,A] + \left( (\mathsf{Next}^{n_0}\cdot e_{\mathsf{min}})^T\cdot e_{\ones} (e_{\mathsf{min}}) \right)\times \text{EVAL}[A].$$ Above, $(e_{\mathsf{min}+\mathsf{i}}\cdot e_{\mathsf{max}}^T)$ checks if the dimension is equal to $i$, and $(\mathsf{Next}^{n_0}\cdot e_{\mathsf{min}})^T\cdot e_{\ones} (e_{\mathsf{min}})$ checks if the dimension is greater or equal than $n_0$.
 
-
-
-
-
-
-
-
-
-
-
-
+\end{proof}
