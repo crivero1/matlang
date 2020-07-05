@@ -337,10 +337,10 @@ To set the initial state (algorithm \ref{alg:eval_code} line 2) we define the $\
 For the initialize step, we define the $\langfor$ expressions: INIT${\_}$PLUS (algorithm \ref{alg:init_code}, lines 2, 3, 4), INIT${\_}$PROD (algorithm \ref{alg:init_code}, lines 5, 6, 7), CONST (algorithm \ref{alg:init_code}, lines 8, 9) and INPUT (algorithm \ref{alg:init_code}, lines 10, 11):
 
 \begin{align*}
-	\text{INIT{\_}PLUS} &:= \isplus{G^T\cdot G_{top}}\odot \left[ G + (\mathsf{Next}\cdot G_{top}) \cdot \getfirst{G^T\cdot G_{top}}^T  + \mathsf{Next}\cdot G_{top}\cdot e_{G_{top}}^T +V\cdot e_{V}^T + \mathsf{Next}\cdot V_{top}\cdot e_{V_{top}}^T \right] \\
-	\text{INIT{\_}PROD} &:= \isprod{G^T\cdot G_{top}}\odot \left[ G + (\mathsf{Next}\cdot G_{top}) \cdot \getfirst{G^T\cdot G_{top}}^T + \mathsf{Next}\cdot G_{top}\cdot e_{G_{top}}^T +(V + \mathsf{Next}\cdot v_{top})\cdot e_{V}^T + \mathsf{Next}\cdot V_{top}\cdot e_{V_{top}}^T \right] \\
-	\text{CONST} &:= \isone{G^T\cdot G_{top}}\odot \left[ G + (V + \mathsf{Next}\cdot V_{top})\cdot e_{V}^T + \mathsf{Next}\cdot V_{top}\cdot e_{V_{top}}^T \right] \\
-	\text{INPUT} &:= \isinput{G^T\cdot G_{top}}\odot \left[ G + \left(V + \left( A^T \cdot \mathsf{Next}\cdot V_{top} \cdot \getinput{G^T\cdot G_{top}}^T \right)\right)\cdot e_{V}^T + \mathsf{Next}\cdot V_{top}\cdot e_{V_{top}}^T \right]
+	\text{INIT{\_}PLUS} &:= \isplus{G^T\cdot G_{top}}\times \left[ G + (\mathsf{Next}\cdot G_{top}) \cdot \getfirst{G^T\cdot G_{top}}^T  + \mathsf{Next}\cdot G_{top}\cdot e_{G_{top}}^T +V\cdot e_{V}^T + \mathsf{Next}\cdot V_{top}\cdot e_{V_{top}}^T \right] \\
+	\text{INIT{\_}PROD} &:= \isprod{G^T\cdot G_{top}}\times \left[ G + (\mathsf{Next}\cdot G_{top}) \cdot \getfirst{G^T\cdot G_{top}}^T + \mathsf{Next}\cdot G_{top}\cdot e_{G_{top}}^T +(V + \mathsf{Next}\cdot v_{top})\cdot e_{V}^T + \mathsf{Next}\cdot V_{top}\cdot e_{V_{top}}^T \right] \\
+	\text{CONST} &:= \isone{G^T\cdot G_{top}}\times \left[ G + (V + \mathsf{Next}\cdot V_{top})\cdot e_{V}^T + \mathsf{Next}\cdot V_{top}\cdot e_{V_{top}}^T \right] \\
+	\text{INPUT} &:= \isinput{G^T\cdot G_{top}}\times \left[ G + \left(V + \left( A^T \cdot \mathsf{Next}\cdot V_{top} \cdot \getinput{G^T\cdot G_{top}}^T \right)\right)\cdot e_{V}^T + \mathsf{Next}\cdot V_{top}\cdot e_{V_{top}}^T \right]
 \end{align*} 
 
 Here, $G^T\cdot G_{top}$ is to get the current id in the top of the stack. In INIT${\_}$PLUS we get the current stack $G$, we add $\mathsf{Next}\cdot G_{top} \cdot \getfirst{G^T\cdot G_{top}}^T$ which is an $n\times n$ matrix with the first child of $G^T\cdot G_{top}$ in the next row. Then $\mathsf{Next}\cdot G_{top}\cdot e_{G_{top}}^T$ adds $\mathsf{Next}\cdot G_{top}$ to the $n-1$ column to mark the gate we added as the top. Next, we do the same with the values by adding $V\cdot e_{V} + \mathsf{Next}\cdot V_{top}\cdot e_{V_{top}}^T$.
@@ -406,10 +406,10 @@ We define the expressions: AGG${\_}$PLUS (algorithm \ref{alg:agg_code}, lines 4,
 
 \begin{align*}
 	\text{POP} &:= \Iden{\mathsf{Prev}\cdot G_{top}}\cdot G + \mathsf{Prev}\cdot V_{top}\cdot e_{V_{top}}^T  \\
-	\text{AGG{\_}PLUS} &:= \isplus{G^T \cdot \left( P \cdot G_{top}\right)} \odot \left[ \left( \Iden{\mathsf{Prev}\cdot V_{top}} \cdot V + \left( V^T \cdot V_{top} \right)\left( \mathsf{Prev}\cdot V_{top} \right)\right) \cdot e_{V}^T \right] \\
-	\text{AGG{\_}PROD} &:= \isprod{G^T \cdot \left( P \cdot G_{top}\right)} \odot \left[ \left( \pondIden{\mathsf{Prev}\cdot V_{top}}{V^T \cdot V_{top}} \cdot \Iden{\mathsf{Prev}\cdot V_{top}} \cdot V \right) \cdot e_{V}^T \right] \\
-	\text{IS{\_}NOT{\_}LAST} &:= \isnotlast{G^T \cdot \left( P \cdot G_{top}\right)}{G^T \cdot G_{top}} \odot \left[  G_{top} \cdot \nextgate{G^T \cdot \left( \mathsf{Prev}\cdot G_{top} \right) }{G^T \cdot G_{top}}^T + G_{top}\cdot e_{G_{top}}^T \right] \\
-	\text{IS{\_}LAST} &:= \left( 1 - \isnotlast{G^T \cdot \left( P \cdot G_{top}\right)}{G^T \cdot G_{top}} \right)\odot \left[ \left( \mathsf{Prev}\cdot G_{top} \right) \cdot e_{G_{top}}^T \right]
+	\text{AGG{\_}PLUS} &:= \isplus{G^T \cdot \left( P \cdot G_{top}\right)} \times \left[ \left( \Iden{\mathsf{Prev}\cdot V_{top}} \cdot V + \left( V^T \cdot V_{top} \right)\left( \mathsf{Prev}\cdot V_{top} \right)\right) \cdot e_{V}^T \right] \\
+	\text{AGG{\_}PROD} &:= \isprod{G^T \cdot \left( P \cdot G_{top}\right)} \times \left[ \left( \pondIden{\mathsf{Prev}\cdot V_{top}}{V^T \cdot V_{top}} \cdot \Iden{\mathsf{Prev}\cdot V_{top}} \cdot V \right) \cdot e_{V}^T \right] \\
+	\text{IS{\_}NOT{\_}LAST} &:= \isnotlast{G^T \cdot \left( P \cdot G_{top}\right)}{G^T \cdot G_{top}} \times \left[  G_{top} \cdot \nextgate{G^T \cdot \left( \mathsf{Prev}\cdot G_{top} \right) }{G^T \cdot G_{top}}^T + G_{top}\cdot e_{G_{top}}^T \right] \\
+	\text{IS{\_}LAST} &:= \left( 1 - \isnotlast{G^T \cdot \left( P \cdot G_{top}\right)}{G^T \cdot G_{top}} \right)\times \left[ \left( \mathsf{Prev}\cdot G_{top} \right) \cdot e_{G_{top}}^T \right]
 \end{align*}
 
 The $\langfor$ expression equivalent to algorithm \ref{alg:agg_code} is $$\text{AGG}:=\text{POP} + \text{AGG{\_}PLUS}+\text{AGG{\_}PROD}+\text{IS{\_}NOT{\_}LAST}+\text{IS{\_}LAST}.$$
@@ -419,8 +419,8 @@ The $Evaluate$ method (algorithm \ref{alg:eval_code}) is defined as follows:
 \begin{align*}
 	\text{EVAL}&[A]= \\
 	&e_{\mathsf{min}}^T \cdot \big\lbrace \ffor{X}{v_1, \ldots, v_k}: \\
-	&\left( \sprod_{i=1}^k \mathsf{min}(v_i)\right) \odot START + \\
-	&\left( 1- \sprod_{i=1}^k \mathsf{min}(v_i)\right) \odot \left( \left(1 - \mathsf{min}(G_{top})\cdot \mathsf{min}(V_{top}) \right) \odot \left[ \left( 1 - G_{top}^T\cdot V_{top} \right) \odot \text{INIT} + \left(  G_{top}^T\cdot V_{top} \right) \odot \text{AGG} \right] + \mathsf{min}(G_{top})\odot \mathsf{min}(V_{top})\odot X\right) \\ 
+	&\left( \sprod_{i=1}^k \mathsf{min}(v_i)\right) \times START + \\
+	&\left( 1- \sprod_{i=1}^k \mathsf{min}(v_i)\right) \times \left( \left(1 - \mathsf{min}(G_{top})\cdot \mathsf{min}(V_{top}) \right) \times \left[ \left( 1 - G_{top}^T\cdot V_{top} \right) \times \text{INIT} + \left(  G_{top}^T\cdot V_{top} \right) \times \text{AGG} \right] + \mathsf{min}(G_{top})\times \mathsf{min}(V_{top})\times X\right) \\ 
 	&\big\rbrace\cdot e_{V}
 \end{align*}
 
@@ -428,7 +428,7 @@ Note that the $ \texttt{for}$-expression does the evaluation. The final output i
 
 Finally, we need to take care of all $n<n_0$, where $(\star)$ does not necessarily hold. For any $i$, let: $$\text{Eval}[i,A]:= \text{ the } 1\times 1 \text{ matrix with the value of the polynomial } f(A) \text{ when } n=i.$$
 
-Then we define: $$f(A)=\ssum_{i=0}^{n_0-1}(e_{\mathsf{min}+\mathsf{i}}\cdot e_{\mathsf{max}}^T)\odot \text{EVAL}[i,A] + \left( (\mathsf{Next}^{n_0}\cdot e_{\mathsf{min}})^T\cdot e_{\ones} (e_{\mathsf{min}}) \right)\odot \text{EVAL}[A].$$ Above, $(e_{\mathsf{min}+\mathsf{i}}\cdot e_{\mathsf{max}}^T)$ checks if the dimension is equal to $i$, and $(\mathsf{Next}^{n_0}\cdot e_{\mathsf{min}})^T\cdot e_{\ones} (e_{\mathsf{min}})$ checks if the dimension is greater or equal than $n_0$.
+Then we define: $$f(A)=\ssum_{i=0}^{n_0-1}(e_{\mathsf{min}+\mathsf{i}}\cdot e_{\mathsf{max}}^T)\times \text{EVAL}[i,A] + \left( (\mathsf{Next}^{n_0}\cdot e_{\mathsf{min}})^T\cdot e_{\ones} (e_{\mathsf{min}}) \right)\times \text{EVAL}[A].$$ Above, $(e_{\mathsf{min}+\mathsf{i}}\cdot e_{\mathsf{max}}^T)$ checks if the dimension is equal to $i$, and $(\mathsf{Next}^{n_0}\cdot e_{\mathsf{min}})^T\cdot e_{\ones} (e_{\mathsf{min}})$ checks if the dimension is greater or equal than $n_0$.
 
 
 
