@@ -78,7 +78,9 @@ A (\lang) \textit{instance} $\I$ over a schema $\Sch$ is a pair $\I = (\dom,\con
 \item $\sem{a\times e}{\I} := a\times \sem{e}{\I}$; and
 \item $\sem{f(e_1,\ldots ,e_k)}{\I}$ is a matrix $A$ of the same size as $\sem{e_1}{\I}$, and where $A_{ij}$ has the value $f(\sem{e_1}{\I}_{ij},\ldots ,\sem{e_k}{\I}_{ij})$.
 \end{itemize}
-This concludes the description and semantics of \lang. 
+%This concludes the description and semantics of \lang. 
+Just as it is commonly done in \lang, we will sometimes abuse the notation and use $1\times 1$ matrices as scalars and vice versa. For an in-depth discussion on why this is permissible from an expressiveness point of view, see \cite{matlang-journal}. 
+
 %We next provide some simple example.
 
 %\begin{example}Consider the \langf{$f_\odot$} expression with $f_\odot:\RR^2\to\RR:(x,y)\mapsto x\cdot y$:
