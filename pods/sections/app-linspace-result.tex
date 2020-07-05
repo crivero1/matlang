@@ -1,4 +1,3 @@
-%!TEX root = /Users/fgeerts/Documents/MLforloops/pods/main.tex
 We start by showing a crucial ingredient for making the correspondence between \langfor
 and arithmetic circuits. More specifically, 
 we show that any polynomial time Turing machine, working within linear space and producing linear space output, can be simulated in \langfor. 
@@ -374,8 +373,7 @@ We are now finally ready to define $e_f^{\geq N}$ :
 e_f^{\geq N}:= \mathsf{for\,} v_1,\ldots,v_{k},Q_1,\ldots,Q_m,H_1,\ldots,H_\ell,W_1,\ldots,W_s, H_{W_1},\ldots,H_{W_s},O,H_O . \\
 (e_{Q_1},\ldots,e_{Q_m},e_{H_1},\ldots,e_{H_\ell},e_{W_1},\ldots,e_{W_s},e_{H_{W_1}},\ldots,e_{H_{W_s}},e_{O}, e_{H_O}).
 \end{multline*}
-
-Refer to section \ref{app:def} for the definition of this form of the for-loop. The expressions used are (we use $\star$ below to mark irrelevant information in the transitions):
+We refer to section \ref{app:def} for the definition of this form of the for-loop. The expressions used are (we use $\star$ below to mark irrelevant information in the transitions):
  \allowdisplaybreaks
 \begin{align*}
 	e_{Q_1}&:=\left(\prod_{j=1}^{k} \textsf{min}(v_i)\right)\cdot e_{\mathsf{min}}
@@ -402,14 +400,14 @@ Refer to section \ref{app:def} for the definition of this form of the for-loop. 
 The correctness of $e_f^{\geq N}$ should be clear from the construction (one can formally verify this by
 induction on the number of iterations). We next explain how the border cases $n<N$ can be dealt with.
 For each $n<N$ and every possible input words
-$w_1,\ldots,w_\ell$ of size $n$, we define a MATLANG expression which check whether
+$w_1,\ldots,w_\ell$ of size $n$, we define a \langfor expression which checks whether
 $\mathsf{mat}(R_i)=\mathsf{vec}(w_i)$ for each $i\in[\ell]$. This can be easily done since $n$ 
 can be regarded as a constant. For example, to check whether $\mathsf{mat}(R_i)=[0,1,1]^T$ we simply write
 $$
 (1- R_i^T\cdot e_{\mathsf{min}})\cdot (R_i^T\cdot e_{\mathsf{Next}}\cdot e_{\mathsf{min}})\cdot (1- R_i^T\cdot e_{\mathsf{Next}}\cdot e_{\mathsf{Next}}\cdot e_{\mathsf{min}})\cdot (1- e_{\ones}(R_i)^T\cdot e_{\mathsf{Next}}\cdot e_{\mathsf{Next}}\cdot e_{\mathsf{Next}}\cdot e_{\mathsf{min}})
 $$
-which will evaluate to $1$ if and only if $\mathsf{mat}(R_i)=[0,1,1]^T$. We note that the factor is in 
-place to check that the dimension $\mathsf{mat}(R_i)$ is three.
+which will evaluate to $1$ if and only if $\mathsf{mat}(R_i)=[0,1,1]^T$. We note that the final factor is in 
+place to check that the dimension of $\mathsf{mat}(R_i)$ is three.
   We denote by
 $e_{n,w}^i$ the expression which evaluates to $1$ if and only if $\mathsf{mat}(R_i)=\mathsf{vec}(w)$
 for $|w|=n$.
@@ -441,7 +439,7 @@ evaluate $f$ on inputs smaller than $N$.
 
 Our final expression $e_f$ is now given by
 $$
-e_f:=e_f^{<N} + \mathsf{dim\_is\_greater\_than_N}\cdot e_f^{\geq 0}
+e_f:=e_f^{<N} + \mathsf{dim\_is\_greater\_than_N}\cdot e_f^{\geq N}
 $$
 where $\mathsf{dim\_is\_greater\_than_N}$ is the expression
 $e_{\ones}(R_i)^T\cdot\underbrace{e_{\mathsf{Next}}\cdot\cdots\cdot e_{\mathsf{Next}}}_{\text{$N$ times}}$ 
