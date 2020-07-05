@@ -1,5 +1,5 @@
 \noindent\textbf{Loop Initialization.} As the reader may have observed, in the semantics of \texttt{for} loops we 
-always initialise $A_0$ to the zero matrix $\mathbf{0}$ (of appropriate dimensions). It is often convenient
+always initialise $A_0$ to the zero matrix~$\mathbf{0}$ (of appropriate dimensions). It is often convenient
 to start the iteration given some concrete matrix  originating from the result of evaluation a \langfor\ expression $e_0$. To make this explicit, we write $\initf{e_0}{v}{X}{e}$ and its semantics is defined as above
 with the difference that $A_0:=\sem{e_0}{\I}$. We observe, however, that $\initf{e_0}{v}{X}{e}$ can already
 be expressed in \langfor. In other words, we do not loose generality by assuming an initialisation of $A_0$ by $\mathbf{0}$.
@@ -36,13 +36,14 @@ As an illustration, we consider the Floyd-Warshall algorithm given in the Introd
 \begin{example}\label{ex:floyd}
 Consider the following expression:
 \begin{tabbing}
-$e_{FW} := $ \texttt{for }\=$e_k,X_1 = A.\, X_1 + $\\
-\> \texttt{for }\=$e_i,X_2.\, X_2 +$ \\
-\>\>\texttt{for }\=$e_j,X_3.\, X_3 +$ \\
+$e_{FW} := $ \texttt{for\,}\=$e_k,\, X_1\!=\!A.\ \ X_1 \ + $\\
+\> \texttt{for\,}\=$e_i, \, X_2.\ \ X_2 \ +$ \\
+\>\>\texttt{for\,}\=$e_j,\, X_3.\ \ X_3 \ +$ \\
 \>\>\>$(e_i^T\cdot X_1\cdot e_k \cdot e_k^T\cdot X_1\cdot e_j)\times e_i\cdot e_j^T$
 \end{tabbing}
 The expression $e_{FW}$ simulates the Floyd-Warshall algorithm by updating the matrix $A$, which is stored in the variable $X_1$. The inner sub-expression here constructs an $n\times n$ matrix that contains one in the position $(i,j)$ if and only if one can reach the vertex $j$ from $i$ by going through $k$, and zero elsewhere. If an instance $\I$ assigns to $A$ the adjacency matrix of a graph, then $\sem{e_{FW}}{\I}$ contains the shortest distance between a vertex $i$ and the vertex $j$.
 % The transitive closure in then obtained using the $\langf{f_>}$ expression $f_>(e_{FW})$, where $f_{>0}:\RR\to\RR$ is such that $f_{>0}(x):=1$ if $x>0$ and $f_{>0}(x):=0$ otherwise.  
+\cristian{The same with the problem of the shortest path mentioned in the intro.}
 \qed
 \end{example}
 
@@ -51,10 +52,6 @@ The expression $e_{FW}$ simulates the Floyd-Warshall algorithm by updating the m
 are accessed in this order. It implies, among other things, that \langfor\ expressions are not permutation-invariant.
 We can, for example, return the bottom right-most entry in a matrix. Indeed, consider the expression $e_{\mathsf{max}} := \ffor{v}{X}{v}$ which, for it to be well-typed, requires both $v$ and $X$ to be of type $(\alpha,1)$. Then, $\sem{e_{\mathsf{max}}}{\I}=b_n^n$, for $n=\dom(\alpha)$, simply because initially, $X=\mathbf{0}$, but $X$ will be overwritten by $b_1^n,b_2^n,\ldots,b_n^n$, in this order. Hence, at the end of the evaluation $b_n^n$ is returned.
 To extract the bottom right-most entry from a matrix, we now simply use $e_{\mathsf{max}}^T\cdot V\cdot e_{\mathsf{max}}$.
-
-
-%
-% assumes that canonical vectors come in some particular order.
 
 Interestingly, although the order is implicit in \langfor, we can explicitly use this order in \langfor expressions. More precisely, one can the define the following order predicates in \langfor\!:
 \begin{itemize}
@@ -68,8 +65,6 @@ Interestingly, although the order is implicit in \langfor, we can explicitly use
 The definitions of these expressions is not entirely trivial and are detailed in the appendix.
 We here only highlight that successor information on canonical vectors is made accessible by
 using the following matrix:
-%
-% To define an order relation for canonical vectors, notice that the following matrix:
 \[
 S_{\leq} = \begin{bmatrix}
 1 & 1 & \cdots &  1 \\
@@ -91,8 +86,46 @@ To construct $S_{\leq}$, in the $i$-th iteration we further increment $X$ with
 (i)~the current last column in $X$ (via $X\cdot e_{\mathsf{max}}\cdot v^T$) which holds
 the $(i-1)$-th column of $S_{\leq}$; and (ii)~the current canonical vector (via $v\cdot v^T$). Hence, after iteration $i$, $X$ contains the first $i$ columns of $S_{\leq}$ and holds the $i$th column of $S_{\leq}$ in its last column. It is now readily verified that $X=S_{\leq}$ after the $n$th iteration.
 
-%\floris{I commented out the details about the order predicates. Let's put this in the appendix.	I wonder what else we can say here. Clearly, the order is crucial for all our results later on.	We could comment on order-invariant \langfor expressions (probably undecidable)? Any suggestions? }
-
-
 Having order information available results in \langfor to be quite expressive. We heavily rely on order information in the next sections to compute the inverse of matrices and more generally to simulate low complexity Turing machines and arithmetic circuits.
 
+%%%% HERE PREVIOUS VERSION OF ORDER
+
+%\noindent\textbf{Order.} With the introduction of \texttt{for} loops we not only extend \lang\ with bounded recursion, we also introduce order information. Indeed, the semantics of the \texttt{for} operator assumes that the canonical vectors $b_1,b_2,\ldots$
+%are accessed in this order. It implies, among other things, that \langfor\ expressions are not permutation-invariant.
+%We can, for example, return the bottom right-most entry in a matrix. Indeed, consider the expression $e_{\mathsf{max}} := \ffor{v}{X}{v}$ which, for it to be well-typed, requires both $v$ and $X$ to be of type $(\alpha,1)$. Then, $\sem{e_{\mathsf{max}}}{\I}=b_n^n$, for $n=\dom(\alpha)$, simply because initially, $X=\mathbf{0}$, but $X$ will be overwritten by $b_1^n,b_2^n,\ldots,b_n^n$, in this order. Hence, at the end of the evaluation $b_n^n$ is returned.
+%To extract the bottom right-most entry from a matrix, we now simply use $e_{\mathsf{max}}^T\cdot V\cdot e_{\mathsf{max}}$.
+%
+%Interestingly, although the order is implicit in \langfor, we can explicitly use this order in \langfor expressions. More precisely, one can the define the following order predicates in \langfor\!:
+%\begin{itemize}
+%	\item $\mathsf{succ}(u,v)$ such that $\mathsf{succ}(b_i^n,b_j^n)=1$ if $i\leq j$ and $0$ otherwise. Similarly, we can define
+%	$\mathsf{succ}^+(u,v)$ such that  $\mathsf{succ}^+(b_i^n,b_j^n)=1$ if $i < j$ and $0$ otherwise;
+%	\item $\mathsf{min}(u)$ such that  $\mathsf{min}(b_i^n)=1$ if $i=1$ and $\mathsf{min}(b_i^n)=0$ otherwise; 
+%	\item $\mathsf{max}(u)$ such that  $\mathsf{max}(b_i^n)=1$ if $i=n$ and $\mathsf{min}(b_i^n)=0$ otherwise; and
+%	\item $e_{\mathsf{min}}$ and $e_{\mathsf{max}}$ such that $\sem{e_{\mathsf{min}}}{\I}=b_1^n$ and 
+%	$\sem{e_{\mathsf{max}}}{\I}=b_n^n$, respectively.
+%\end{itemize}
+%The definitions of these expressions is not entirely trivial and are detailed in the appendix.
+%We here only highlight that successor information on canonical vectors is made accessible by
+%using the following matrix:
+%\[
+%S_{\leq} = \begin{bmatrix}
+%1 & 1 & \cdots &  1 \\
+%0 & 1 & \cdots & 1\\
+%\vdots & \vdots & \ddots & 1 \\
+%0 & 0 & \cdots & 1 
+%\end{bmatrix}.
+%\] 
+%We observe that $S_{\leq}$ has the property that $b_i^T\cdot S_{\leq} \cdot b_j=1$, for two canonical vectors $b_i$ and $b_j$ of the same dimension, if and only if $i\leq j$. Otherwise, $b_i^T\cdot S_{\leq} \cdot b_j=0$. It should be clear that if we can compute $S_{\leq}$ using an expression $e_{\leq}$ in \langfor, then we can define
+%$
+%\mathsf{succ}(v,w):=v^T\cdot e_{\leq} \cdot w.
+%$
+%For $e_{\leq}$ we can take the following \langfor expression:
+%$$
+%e_{\leq}=\ffor{v}{X}{X + \left((X\cdot e_{\mathsf{max}}) + v \right)\cdot v^T + v\cdot e^T_{\mathsf{max}}},
+%$$
+%where $e_{\mathsf{max}}$ is as defined above. The intuition behind this expression is that by using the last canonical vector $b_n$, as returned by $e_{\mathsf{max}}$, we have access to the last column of $X$ (via the product $X\cdot e_{\mathsf{max}}$). We use this column such that after the $i$-th iteration, this column contains the $i$-th column of $S_{\leq}$. This is done by incrementing $X$ with $v\cdot e_{\mathsf{max}}^T$.
+%To construct $S_{\leq}$, in the $i$-th iteration we further increment $X$ with 
+%(i)~the current last column in $X$ (via $X\cdot e_{\mathsf{max}}\cdot v^T$) which holds
+%the $(i-1)$-th column of $S_{\leq}$; and (ii)~the current canonical vector (via $v\cdot v^T$). Hence, after iteration $i$, $X$ contains the first $i$ columns of $S_{\leq}$ and holds the $i$th column of $S_{\leq}$ in its last column. It is now readily verified that $X=S_{\leq}$ after the $n$th iteration.
+%
+%Having order information available results in \langfor to be quite expressive. We heavily rely on order information in the next sections to compute the inverse of matrices and more generally to simulate low complexity Turing machines and arithmetic circuits.

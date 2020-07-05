@@ -70,7 +70,7 @@ $A\in\mtr{\RR}$, $\dim(A)\in\NN^2$ denotes its dimensions.
 A (\lang) \textit{instance} $\I$ over a schema $\Sch$ is a pair $\I = (\dom,\conc)$, where $\dom : \DD \mapsto \NN$ assigns a value to each size symbol (and thus in turn  dimensions to each matrix variable), and $\conc : \Mnam \mapsto \mtr{\RR}$ assigns a concrete matrix to each matrix variable $V\in \Mnam$, such that $\dim(\conc(V)) = \dom(\alpha)\times \dom(\beta)$ if $\size(V) = (\alpha,\beta)$. That is, an instance tells us the dimensions of each matrix variable, and also the concrete matrices assigned to the variable names in $\Mnam$. We assume that $\dom(1) = 1$, for every instance $\I$. If $e$ is a well-typed expression according to $\Sch$, then we denote by $\sem{e}{\I}$ the matrix obtained by evaluating $e$ over $\I$, and define it as follows:
 \begin{itemize}
 \item $\sem{V}{\I} := \conc(V)$, for $V\in \Mnam$;
-\item $\sem{e^T}{\I} := \sem{e}{\I}^T$, where $A^T$ is the transpose of a matrix $A$;
+\item $\sem{e^T}{\I} := \sem{e}{\I}^T$, where $A^T$ is the transpose of matrix $A$;
 \item $\sem{\ones(e)}{\I}$ is a $n\times 1$ vector with $1$ as all of its entries, where $\dim(\sem{e}{\I})=(n,m)$;
 \item $\sem{\diag(e)}{\I}$ is a diagonal matrix with the vector $\sem{e}{\I}$ on its main diagonal, and zero in every other position;
 \item $\sem{e_1\cdot e_2}{\I} := \sem{e_1}{\I} \cdot \sem{e_2}{\I}$;
@@ -86,6 +86,7 @@ Let $\Sch$  consist of $\Mnam:=\{V\}$ and $\size(V):=(\alpha,\alpha)$ such that
 matrices assigned to $V$ by instances $\I$ over $\Sch$ are square matrices.
 It is readily verified that $\mathsf{cwalk}$ is well-typed and more specifically, $\ttype(\mathsf{cwalk})=(1,1)$, i.e., it returns an element of $\RR$ on any  instance $\I$. Let $\I$ be such that $\dom(\alpha)=n$ and  $\conc(V)$ is an adjacency matrix $A$ of an undirected graph $G$ consisting of $n$ vertices. Then, it is readily verified that $\sem{\mathsf{cwalk}}{\I}$ returns the number of paths of length two in $G$ which start in and end at the same vertex.\qed
 \end{example}
+\cristian{Do we need this example?}
 %Although \lang\ forms a solid basis for a matrix query language, it is limited in expressive power. Indeed, \lang\ is subsumed by first order logic with aggregates that uses only three variables \cite{matlang}. As consequence, no \lang\ expression exists that can compute the transitive closure of a graph (represented by its adjacency matrix) or can compute the inverse of a matrix. Furthermore, no \lang\ expression exists which detects four-cliques in a graph \cite{matlang}.
 %Also, $\lang$ is not expressive enough to perform classical linear algebra algorithms such as LU-decomposition (Gaussian elimination).
 % Rather than extending \lang\ with specific linear algebra operators, such as matrix inversion, we next introduce a limited form of recursion in \lang.
