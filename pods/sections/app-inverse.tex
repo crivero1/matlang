@@ -1,10 +1,6 @@
 \newtheorem*{INVERSE}{Proposition~\ref{prop:inverse}}
-
-Here we only use operators $\ssum$ and $\sprod$ defined in section \ref{sec:restrict}. 
-And also assume access to order, this is, we have an expression $e_{\mathsf{Prev}}$. This is enough to 
-compute everything related to order, as it was shown in \ref{app:asset_order}.
-
-Let's see why proposition \ref{prop:inverse} is true for upper and lower triangular matrices.
+We next turn our attention to computing the inverse and determinant of a matrix.
+To show Proposition \ref{prop:inverse} we first show that it holds when considering non-singular lower or upper triangular matrices.
 \begin{lemma}\label{prop:upperlowerinverse}
 There are $\langforf{f_/}$ expressions $e_{\mathsf{upperDiagInv}}(V)$ and $e_{\mathsf{lowerDiagInv}}(V)$
 such that $\sem{e_{\mathsf{upperDiagInv}}}{\I}=A^{-1}$ when $\I$ assigns $V$
@@ -21,18 +17,18 @@ to an invertible lower triangular matrix $A$.
 % e_{\mathsf{ALUdet}}(M):=  e_{\mathsf{diagProd}}\left( e_{\mathsf{U}}(M) \right)
 % $$
 % defines an expression that, when $M$ is interpreted by $A$ and $A$ is $LU$ factorizable, outputs the determinant of $A$. Note that $X$ has to be $1\times 1$, and starts as $[1]$.
-\textit{Proof}. Define
+\begin{proof} We start by considering the expression:
 $$
-e_{\mathsf{ps}}(M):= e_{\mathsf{Id}} + \ssum v.\sprod w. \left[ \mathsf{succ}(w,v)\times M + (1 - \mathsf{succ}(w,v))\times e_{\mathsf{Id}} \right].
+e_{\mathsf{ps}}(V):= e_{\mathsf{Id}} + \ssum v.\sprod w. \left[ \mathsf{succ}(w,v)\times V + (1 - \mathsf{succ}(w,v))\times e_{\mathsf{Id}} \right].
 $$
 Here, $e_{\mathsf{ps}}(A)$ results in $I+A+A^2+\cdots + A^n$ for any matrix $A$. In the expression, the outer loop defines which power we compute. 
 That is, when $v$ is the $i$th canonical vector, we compute $A^i$.
-Computing $A^i$ is achieved via the inner product loop, which uses $\mathsf{succ}^+(w,v)$ to 
+Computing $A^i$ is achieved via the inner product loop, which uses $\mathsf{succ}(w,v)$ to 
 determine whether $w$ comes before or is $v$ in the ordering of canonical vectors.
 When this is the case, we multiply the current result by $A$, and when $w$ is greater 
-than $v$, we use the identity not to affect the already computed result. We add the identity at the end.
+than $v$, we use the identity as not to affect the already computed result. We add the identity at the end.
 
-Now, let $A$ be a $n\times n$ matrix that is upper triangular and
+Now, let $A$ be an $n\times n$ matrix that is upper triangular and let $D_A$ be the matrix consisting of the diagonal elements of $A$, i.e.,
 \[
 D_A = \begin{bmatrix}
     a_{11} & \cdots & \cdots &  0 \\
@@ -41,56 +37,57 @@ D_A = \begin{bmatrix}
     \vdots & \cdots& \cdots & a_{nn}
 \end{bmatrix}.
 \]
-This is, $D_A$ is the diagonal matrix of $A$. We compute this as
+We can compute $D_A$ by the expression:
 $$
-e_{\mathsf{getDiag}}(M) := \ssum v. (v^TMv) \times vv^T.
+e_{\mathsf{getDiag}}(V) := \ssum v. (v^T\cdot V\cdot v) \times v\cdot v^T.
 $$
-so $e_{\mathsf{getDiag}}(A)=D_A$.
 Let $T=A-D_A$, then
 $$
 A^{-1}=\left[ D_A+T \right]^{-1}= \left[ D_A\left( I+D_A^{-1}T\right) \right]^{-1} = \left( I+D_A^{-1}T\right)^{-1}D_A^{-1}.
 $$
-Note that
+We now observe that $D_{A}^{-1}$ simply consists of the inverses of the elements on the diagonal. This can be expressed, as follows:
 $$
-D_A^{-1}=\ssum v. f_{/}(1,v^TD_Av)\times vv^T=\ssum v. f_{/}(1,v^TAv)\times vv^T.
+e_{\mathsf{diagInverse}}(V):=\ssum v. f_{/}(1,v^T\cdot V\cdot v)\times v\cdot v^T=\ssum v. f_{/}(1,v^T\cdot V\cdot v)\times v\cdot v^T,
 $$
 Where $f_{/}$ is the division function. In the last equality we take advantage of the fact that the diagonals of $A$ and $D_A$ are the same.
-We now focus on calculating $\left( I+D_A^{-1}T\right)^{-1}$. First, by construction, $D_A^{-1}T$ is strictly upper triangular and thus nilpotent, 
-such that $\left( D_A^{-1}T\right)^n=0$, where $n$ is the dimension of $A$.
-Recall the following algebraic identity and apply it to $x=D_A^{-1}T$. $$(1+x)\left( \sum_{i=0}^{m}(-x)^i \right)=1-(-x)^{m+1}$$
-Choosing $m=n-1$ we have
-$$
-\left(I+D_A^{-1}T \right)\left( \sum_{i=0}^{n-1}(-D_A^{-1}T)^i \right)=I- \left( -D_A^{-1}T\right)^n =I.
-$$
-So
-$$
-\left(I+D_A^{-1}T \right)^{-1}=\sum_{i=0}^{n-1}(-D_A^{-1}T)^i=\sum_{i=0}^{n}(-D_A^{-1}T)^i.
-$$
-In our language
-$$
-e_{\mathsf{ps}}([-1]\times D_A^{-1}T)=\sum_{i=0}^{n}(-D_A^{-1}T)^i=\left(I+D_A^{-1}T \right)^{-1}.
-$$
-We define
-$$
-e_{\mathsf{diagInverse}}(M):=\ssum v. f_{/}(1,v^TMv)\times vv^T.
-$$
-So
-$$
-A^{-1}= e_{\mathsf{ps}}\left([-1]\times \left[e_{\mathsf{diagInverse}}(A)(A-e_{\mathsf{getDiag}}(A))\right] \right)e_{\mathsf{diagInverse}}(A).
-$$
-Define
-$$
-e_{\mathsf{upperDiagInv}}(M):= e_{\mathsf{ps}}\left([-1]\times \left[e_{\mathsf{diagInverse}}(M)(M-e_{\mathsf{getDiag}}(M))\right] \right)e_{\mathsf{diagInverse}}(M).
-$$
-an expression that, when interpreting $M$ as $A$ and $A$ is upper triangular and invertible, outputs $A^{-1}$.
-If $A$ is an invertible lower triangular matrix, since $\left(A^{-1}\right)^T=\left(A^T\right)^{-1}$ we define
-$$
-e_{\mathsf{lowerDiagInv}}(M):= e_{\mathsf{upperDiagInv}}(M^T)^T.
-$$
-\qed
 
-Next, we prove proposition \ref{prop:inverse}.
+We now focus on the computation of $\left( I+D_A^{-1}\cdot T\right)^{-1}$. First, by construction, $D_A^{-1}\cdot T$ is strictly upper triangular and thus nilpotent, 
+such that $\left( D_A^{-1}\cdot T\right)^n=0$, where $n$ is the dimension of $A$.
+Recall the following algebraic identity 
+$$(1+x)\left( \sum_{i=0}^{m}(-x)^i \right)=1-(-x)^{m+1}.$$
+By choosing $m=n-1$ and applying it to $x=D_A^{-1}\cdot T$, we have
+$$
+\left(I+D_A^{-1}\cdot T \right)\left( \sum_{i=0}^{n-1}(-D_A^{-1}\cdot T)^i \right)=I- \left( -D_A^{-1}\cdot T\right)^n =I.
+$$
+Hence,
+$$
+\left(I+D_A^{-1}\cdot T \right)^{-1}=\sum_{i=0}^{n-1}(-D_A^{-1}\cdot T)^i=\sum_{i=0}^{n}(-D_A^{-1}\cdot T)^i.
+$$
+We now observe that
+$$
+e_{\mathsf{ps}}(-1\times D_A^{-1}\cdot T)=\sum_{i=0}^{n}(-D_A^{-1}\cdot T)^i=\left(I+D_A^{-1}\cdot T \right)^{-1},
+$$
+and thus 
+$$
+A^{-1}= e_{\mathsf{ps}}\left(-1\times \left[e_{\mathsf{diagInverse}}(A)(A-e_{\mathsf{getDiag}}(A))\right] \right)e_{\mathsf{diagInverse}}(A).
+$$
+Seeing this as an expression:
+$$
+e_{\mathsf{upperDiagInv}}(V):= e_{\mathsf{ps}}\left(-1\times \left[e_{\mathsf{diagInverse}}(V)(V-e_{\mathsf{getDiag}}(V))\right] \right)e_{\mathsf{diagInverse}}(V),
+$$
+we see that  when interpreting $V$ as an  upper triangular invertible matrix, 
+$e_{\mathsf{upperDiagInv}}(A)$ evaluates to $A^{-1}$.
 
+
+To deal with invertible lower triangular matrices $A$, we observe that  $\left(A^{-1}\right)^T=\left(A^T\right)^{-1}$ and $A^T$ is upper triangular.
+Hence, it suffices to define
+$$
+e_{\mathsf{lowerDiagInv}}(V):= e_{\mathsf{upperDiagInv}}(V^T)^T.
+$$
+This concludes the proof of the lemma.
+\end{proof}
+
+We are now ready to prove proposition \ref{prop:inverse}. We recall:
 \begin{INVERSE}
   There are $\langforf{f_/}$ expressions $e_{\mathsf{det}}(V)$ and $e_{\mathsf{inv}}(V)$ such that
   $\sem{e_{\mathsf{det}}}{\I}=\mathsf{det}(A)$, and  
@@ -98,9 +95,8 @@ Next, we prove proposition \ref{prop:inverse}.
   to $A$ and $A$ is invertible.
 \end{INVERSE}
 
-\textit{Proof}. Let $A$ be any $n \times n$ matrix.
-Let $p_A(x):=\mathsf{det}(xI-A)$ denote its characteristic polynomial.
-We write $p_A(x)=1 + \sum_{i=1}^n c_ix^i$. Let $S_i:=\frac{1}{i+1}\mathsf{tr}(A^i)$. 
+\begin{proof}
+Let $A$ be an $n \times n$ matrix. As mentioned in the main body of the paper, we will implement Csanky's algorithm. Let $p_A(x):=\mathsf{det}(xI-A)$ denote  characteristic polynomial of $A$.  We write $p_A(x)=1 + \sum_{i=1}^n c_ix^i$ and let  $S_i:=\frac{1}{i+1}\mathsf{tr}(A^i)$ with $\mathsf{tr}(\cdot)$ the trace operator which sums up the diagonal elements of a matrix.
 Then, the coefficients $c_1,\ldots,c_n$ are known to satisfy 
 $$
 \underbrace{\left(\begin{matrix}
@@ -131,44 +127,47 @@ $$
 with $c_0=1$. It is now easy to see that we can compute the $S_i's$ in $\langfor$. Indeed, for
 $i=1,\ldots,n$ we can consider
 $$
-e_{\mathsf{powTr}}(M,v):=\ssum w. w^T\cdot\left(e_{\mathsf{pow}}(M,v)\cdot M\right)\cdot w
+e_{\mathsf{powTr}}(V,v):=\ssum w. w^T\cdot\left(e_{\mathsf{pow}}(V,v)\cdot V\right)\cdot w
 $$
 with 
 $$
-e_{\mathsf{pow}}(M,v):= \sprod w. (\mathsf{succ}^+(w,v)\times M+(1-\mathsf{succ}^+(w,v))\times e_{\mathsf{Id}}).
+e_{\mathsf{pow}}(V,v):= \sprod w. (\mathsf{succ}(w,v)\times V+(1-\mathsf{succ}(w,v))\times e_{\mathsf{Id}}).
 $$
-Here we have that $e_{\mathsf{pow}}(A,b_j)=A^{j-1}$ and thus $e_{\mathsf{powTr}}(A,b_j)=\mathsf{tr}(A^j)$. Define 
+We have that $e_{\mathsf{pow}}(A,b_j)=A^{j}$ and thus $e_{\mathsf{powTr}}(A,b_j)=\mathsf{tr}(A^{j})$. Define:
 $$
-e_{S}(M,v):=f_{/}(1, 1 + \ssum w. \mathsf{succ}(w,v))\times e_{\mathsf{powTr}}(M,v).
+e_{S}(V,v):=f_{/}(1, 1 + \ssum w. \mathsf{succ}(w,v))\times e_{\mathsf{powTr}}(V,v).
 $$
 Here $e_{S}(A,b_i)=S_i$. Note that $i+1$ is computed summing up to the dimension indicated by $v$, and adding 1.
-We can now easily construct the vector $\bar b$ by means of the expression
+We can now easily construct the vector $\bar b$ used in the system of equations by means of the expression:
 $$
-e_{\bar b}(M):=\ssum w.e_{S}(M,w)\times w.
+e_{\bar b}(V):=\ssum w.e_{S}(V,w)\times w.
 $$
 We next construct the matrix $S$. We need to be able to \textit{shift} a vector $a$ in $k$ positions, i.e.,
 such that $(a_1,\ldots,a_n)\mapsto (0,\ldots,a_1,\ldots,a_{n-k})$. We use $e_{\mathsf{getNextMatrix}}$ 
-defined in section \ref{app:order}.
+defined in section \ref{app:order}, i.e., we define:
 $$
-e_{\mathsf{shift}}(U,V):=\ssum w.(w^T\cdot U)\times(e_{\mathsf{getNextMatrix}}(V)\cdot w)
+e_{\mathsf{shift}}(a,v):=\ssum w.(w^T\cdot a)\times(e_{\mathsf{getNextMatrix}}(v)\cdot w)
 $$
-performs the desired shift when $U$ is assigned a vector $a$ and $V$ is $b_k$. 
+performs the desired shift when $u$ is assigned a vector $a$ and $v$ is $b_k$. 
 The matrix $S$ is now obtained as follows:
 $$
-S(M):= e_{\mathsf{Id}} + \ssum v. e_{\mathsf{shift}}(e_{\bar b}(M), v)\cdot v^T
+S(V):= e_{\mathsf{Id}} + \ssum v. e_{\mathsf{shift}}(e_{\bar b}(V), v)\cdot v^T
 $$
-We now observe that $S$ is lower triangular with nonzero diagonal entries. So, $S$ is LU factorizable, invertible
-and $e_{\mathsf{lowerDiagInv}}(S)=S^{-1}$, thus
+We now observe that $S$ is lower triangular with nonzero diagonal entries. So,
+Lemma~\ref{prop:upperlowerinverse} tells us that we can invert it, i.e.,
+$e_{\mathsf{lowerDiagInv}}(S)=S^{-1}$. As a consequence,
 $$
-e_{\bar c}(M):=e_{\mathsf{lowerDiagInv}}(S(M))\cdot e_{\bar b}(M).
+e_{\bar c}(V):=e_{\mathsf{lowerDiagInv}}(S(V))\cdot e_{\bar b}(V).
 $$
-ouputs $\bar c$ when $M$ is interpreted as matrix $A$. Observe that we only use the division operator.
+outputs $\bar c$ when $V$ is interpreted as matrix $A$. Observe that we only use the division operator. We now have all coefficients of the characteristic polynomial of $A$.
+
+
 We can now define
 $$
-e_{\mathsf{det}}(M):=\left( \left(\left( \sprod w. (-1)\times e_{\ones}(M)\right)^T\cdot e_{\mathsf{max}}\right) \times e_{\bar c}(M) \right)^T\cdot e_{\mathsf{max}},
+e_{\mathsf{det}}(V):=\left( \left(\left( \sprod w. (-1)\times e_{\ones}(V)\right)^T\cdot e_{\mathsf{max}}\right) \times e_{\bar c}(V) \right)^T\cdot e_{\mathsf{max}},
 $$
-an expression that, when $M$ is interpreted as any matrix $A$, outputs $\mathsf{det}(A)$.
-Here, $(\sprod w. (-1)\times e_{\ones}(M))$ is the $n$ dimensional vector with $(-1)^n$ in all of its entries.
+an expression that, when $V$ is interpreted as any matrix $A$, outputs $\mathsf{det}(A)$.
+Here, $(\sprod w. (-1)\times e_{\ones}(V))$ is the $n$ dimensional vector with $(-1)^n$ in all of its entries.
 Since $c_n=(-1)^n\mathsf{det}(A)$, we extract $(-1)^n(-1)^n\mathsf{det}(A)=\mathsf{det}(A)$ with $e_{\mathsf{max}}$.
 
 For the inverse, we have that
@@ -185,18 +184,26 @@ $$
 $$
 where
 $$
-e_{\mathsf{invPow}}(M, v):= \sprod w. (1-\mathsf{max}(w)) \times \left[ (1 - \mathsf{succ}(w,v))\times M + \mathsf{succ}(w,v)\times e_{\mathsf{Id}} \right] + \mathsf{max}(w)\times e_{\mathsf{Id}}.
+e_{\mathsf{invPow}}(V, v):= \sprod w. (1-\mathsf{max}(w)) \times \left[ (1 - \mathsf{succ}(w,v))\times V + \mathsf{succ}(w,v)\times e_{\mathsf{Id}} \right] + \mathsf{max}(w)\times e_{\mathsf{Id}}.
 $$
 Here, $e_{\mathsf{invPow}}(A, b_i)=A^{n-1-i}$ and $e_{\mathsf{invPow}}(A, b_n)=I$.
 Note that we always multiply by $e_{\mathsf{Id}}$ in the last step.
-Define
+To conclude, we define:
 $$
-e_{\mathsf{inv}}(M):= f_{/}(1, e_{\bar c}(M)^T\cdot e_{\mathsf{max}})\times e_{\mathsf{pow}}(M, e_{\mathsf{max}}) + \left[ \ssum v. f_{/}\left( e_{\bar c}(A)^T\cdot v, e_{\bar c}(A)^T\cdot e_{\mathsf{max}} \right)\times e_{\mathsf{invPow}}(A, v) \right],
+e_{\mathsf{inv}}(V):= f_{/}(1, e_{\bar c}(V)^T\cdot e_{\mathsf{max}})\times e_{\mathsf{pow}}(V, e_{\mathsf{max}}) + \left[ \ssum v. f_{/}\left( e_{\bar c}(V)^T\cdot v, e_{\bar c}(V)^T\cdot e_{\mathsf{max}} \right)\times e_{\mathsf{invPow}}(V, v) \right],
 $$
-an expresion that, when $M$ is interpreted as any invertible matrix $A$, computes $A^{-1}$.
-\qed
+an expression that, when $V$ is interpreted as any invertible matrix $A$, computes $A^{-1}$.
+\end{proof}
+
+
+\floris{The following relates to B.2 and results in Section 6? We need a precise statement here since this has to be matched with what is written (or will be written in Section 6).}
+
+Here we only use operators $\ssum$ and $\sprod$ defined in section \ref{sec:restrict}. 
+And also assume access to order, this is, we have an expression $e_{\mathsf{Prev}}$. This is enough to 
+compute everything related to order, as it was shown in \ref{app:asset_order}.
 
 As stated at the beginning of this section, note that we only use $\ssum$, $\sprod$ and $e_{\mathsf{Pred}}$.
+
 
 % $$
 % \text{compute }L^{-1}\rightarrow\text{compute }U=L^{-1}A\rightarrow\text{compute }U^{-1}\rightarrow\text{compute }A^{-1}=U^{-1}L^{-1}
