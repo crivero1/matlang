@@ -34,17 +34,26 @@ Let $e$ be a $\langprod$ expression.
   $$
   \Phi(e)(i,j):=\Phi(e_1)(\sigma\left[ i\mapsto \sigma(j), j\mapsto \sigma(i) \right]).
   $$
+  \item If $e:=e_{\ones}(e')$ where $\Sch(e')=(\alpha, \beta)$ and $e_{\ones}(\cdot)$ is the $\mathsf{ones}$ operator 
+  then
+  \[
+\Phi(e)(i) := \begin{cases}
+1& \text{ if } i\leq\dom(\alpha)\ \\
+0 & \text{ in any other case.} 
+\end{cases}
+\]
   \item If $e=e_1+e_2$ then $\Phi(e)=\Phi(e_1)\ksum \Phi(e_2)$.
   \item If $e=e_1\circ e_2$ then $\Phi(e)=\Phi(e_1)\kprod \Phi(e_2)$.
-  \item If $e=e_1\cdot e_2$ then 
+  \item If $e=e_1\cdot e_2$ when $\Sch(e_1)=(\alpha, \alpha)= \Sch(e_2)$ then 
   $$
   \Phi(e)(i,j):=\ssum k. \Phi(e_1)(i,k)\kprod\Phi(e_2)(k,j). 
   $$
+  If $\Sch(e_1)=(\alpha, 1)$ and $\Sch(e_1)=(1, \alpha)$ then $\Phi(e)(i,j):=\Phi(e_1)(i)\kprod\Phi(e_2)(j)$.
   \item If $e=\ssum v. e_1$ then $\Phi(e):=\ssum x.\ssum y.\Phi(e_1)\left[ R_v^\cI\gets x=y \right]$.
   \item If $e=\qhadprod v. e_1$ then $\Phi(e):=\sprod x.\ssum y.\Phi(e_1)\left[ R_v^\cI\gets x=y \right]$.
 \end{itemize}
 Note that in the last two translations we sum a lot of zeroes. Here, we do not need to translate scalar multiplication
-because it can be simulated using $\circ$ (which is equivalent to $f_{\kprod}$, see section \ref{app:simp}).
+because it can be simulated using the $\mathsf{ones}$ operator and $\circ$ (which is equivalent to $f_{\kprod}$, see section \ref{app:simp}).
 
 We now encode weighted structures into matrices and vectors. Let $\Gamma$ be a relational vocabulary 
 where $\arity(R) \leq 2$. 
