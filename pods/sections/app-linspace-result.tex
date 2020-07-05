@@ -1,4 +1,8 @@
-We consider  deterministic Turing Machines  (TM) $T$ consisting of $\ell$ read-only input tapes, 
+Here we prove that any polinomial time Turing machine working within linear space and producing linear space
+output, can be simulated in \langfor. For this proof and section only, we will denote the canonical vectors as 
+$\mathbf{e}_1, \ldots, \mathbf{e}_n$, since $b$ will be used to represent a value on a position of a tape.
+
+We consider  deterministic Turing Machines (TM) $T$ consisting of $\ell$ read-only input tapes, 
 denoted by $R_1,\ldots,R_\ell$,
 a work tape, denoted by $W$, and a write-only output tape, denoted by $O$. The TM $T$ has a set $Q$ of $m$
 states, denoted by $q_0,\ldots,q_m$. We assume that $q_0$ is the initial state and $q_m$ is the accepting state.
@@ -108,7 +112,7 @@ marker $\lhd$ is present.
 
 To encode the states, we use the variables $Q_1,\ldots,Q_m$. We will ensure that when $T$ is in state 
 $q_i$ when
- $\mathsf{mat}(Q_i)=(1,0,\ldots,0)^t\in\mathbb{R}^n$, otherwise $\mathsf{mat}(Q_i)$ is the zero 
+ $\mathsf{mat}(Q_i)=[1,0,\ldots,0]^T\in\mathbb{R}^n$, otherwise $\mathsf{mat}(Q_i)$ is the zero 
  vector in $\mathbb{R}^n$.	
 
 Finally, the variables $v_1,\ldots,v_{k}$ represent $k$ canonical vectors  which are use to iterate 
@@ -129,56 +133,65 @@ is  an instance $I'$ of $\mathcal{S}'$ which
 coincides with $I$ on $\mathcal{S}$ and in which the auxiliary matrix variables are all instantiated with 
 zero vectors or matrices, depending on their size.
 
-\floris{The expressions below are used in other proofs as well, I just wanted to check how many auxiliary 
-variables are needed. We can extract the list below and place it somewhere else.}
-We next list the used subexpressions and explicitly denote the auxiliary matrix variables:
+Now, we specify the finite auxiliary variables involved in the \langfor expression. These arise
+when computing the following \langfor expressions defined in section \ref{app:order}:
+
+% \floris{The expressions below are used in other proofs as well, I just wanted to check how many auxiliary 
+% variables are needed. We can extract the list below and place it somewhere else.}
+% We next list the used subexpressions and explicitly denote the auxiliary matrix variables:
 \begin{itemize}
-	% \item $\mathsf{max}(z,Z)$, an expression over auxiliary variables $z$ and $Z$ with $\mathsf{size}(z)=\mathsf{size}(Z)=\alpha\times 1$. On input $I'$ with
+	% \item $ e_{\mathsf{max}}(z,Z)$, an expression over auxiliary variables $z$ and $Z$ with $\mathsf{size}(z)=\mathsf{size}(Z)=\alpha\times 1$. On input $I'$ with
 	% $\mathsf{mat}(z)=\mathsf{mat}(Z)$ the zero column vector of dimension $n+2$,
-	%  $\mathsf{max}(I)=\mathbf{e}_{n+2}$.
-	\item $\mathsf{pred}(z,Z,z',Z')$, and expression over auxiliary variables $z$, $z'$, $Z$ and $Z'$ with 
+	%  $ e_{\mathsf{max}}(I)=\mathbf{e}_{n+2}$.
+	\item $e_{\mathsf{Prev}}(z,Z,z',Z')$, and expression over auxiliary variables $z$, $z'$, $Z$ and $Z'$ with 
 	$\mathsf{size}(z)=\mathsf{size}(z')=\mathsf{size}(Z)=\alpha\times 1$ and 
 	$\mathsf{size}(Z')=\alpha\times\alpha$. On input $I'$ with 
 	$\mathsf{mat}(z)=\mathsf{mat}(z')=\mathsf{mat}(Z)$ the zero column vector of dimension $n$, 
 	and $\mathsf{mat}(Z')$ the zero $n\times n$ matrix,
-	$\mathsf{pred}(I')$ returns an $n\times n$ matrix such that 
-	$$\mathsf{pred}(I')\mathbf{e}_i:=\begin{cases} 
+	$e_{\mathsf{Prev}}(I')$ returns an $n\times n$ matrix such that 
+	$$e_{\mathsf{Prev}}(I')\mathbf{e}_i:=\begin{cases} 
 	\mathbf{e}_{i-1} & \text{if $i>1$}\\
 	\mathbf{0} & \text{if $i=1$}.
 	\end{cases}
 	$$
-	In other words, $\mathsf{pred}$ defines a predecessor relation among canonical vectors of dimension $n$.
-	\item $\mathsf{succ}(z,Z,z',Z')$, and expression over auxiliary variables $z$, $z'$, $Z$ and $Z'$ 
+	In other words, $e_{\mathsf{Prev}}$ defines a predecessor relation among canonical vectors of dimension $n$.
+	\item $e_{\mathsf{Next}}(z,Z,z',Z')$, and expression over auxiliary variables $z$, $z'$, $Z$ and $Z'$ 
 	with $\mathsf{size}(z)=\mathsf{size}(z')=\mathsf{size}(Z)=\alpha\times 1$ and 
 	$\mathsf{size}(Z')=\alpha\times\alpha$. On input $I'$ with 
 	$\mathsf{mat}(z)=\mathsf{mat}(z')=\mathsf{mat}(Z)$ the zero column 
 	vector of dimension $n$, and $\mathsf{mat}(Z')$ the zero $n\times n$ matrix,
-	$\mathsf{succ}(I')$ returns an $n\times n$ matrix such that 
-	$$\mathsf{succ}(I')\mathbf{e}_i:=\begin{cases} 
+	$e_{\mathsf{Next}}(I')$ returns an $n\times n$ matrix such that 
+	$$e_{\mathsf{Next}}(I')\mathbf{e}_i:=\begin{cases} 
 	\mathbf{e}_{i+1} & \text{if $i<n$}\\
 	\mathbf{0} & \text{if $i=n$}.
 	\end{cases}
 	$$
-	In other words, $\mathsf{succ}$ defines a successor relation among canonical vectors.
-	\item $\textsf{ismin}(v,z,Z,z',Z)$ with auxiliary variables $z$, $z'$, $Z$ and $Z'$ as before, 
+	In other words, $e_{\mathsf{Next}}$ defines a successor relation among canonical vectors.
+	\item $\textsf{min}(v,z,Z,z',Z)$ with auxiliary variables $z$, $z'$, $Z$ and $Z'$ as before, 
 	and $v$ is one of the (vector) variables in $\mathcal{M}$. For an $n\times 1$ vector $\mathbf{v}$, 
-	on input $I'[v\gets \mathbf{v}]$	$$\mathsf{ismin}(I'[v\gets\mathbf{v}]):=\begin{cases} 1 & \text{if $\mathbf{v}=\mathbf{e}_1$}\\
+	on input $I'[v\gets \mathbf{v}]$	$$\mathsf{min}(I'[v\gets\mathbf{v}]):=\begin{cases} 1 & \text{if $\mathbf{v}=\mathbf{e}_1$}\\
 		0 & \text{otherwise}.
 		\end{cases}$$
 
-	\item $\textsf{ismax}(v,z,Z,z',Z)$ with auxiliary variables $z$, $z'$, $Z$ and $Z'$ as before, and 
+	\item $\textsf{max}(v,z,Z,z',Z)$ with auxiliary variables $z$, $z'$, $Z$ and $Z'$ as before, and 
 	and $v$ is one of the (vector) variables in $\mathcal{M}$. For an $n\times 1$ vector $\mathbf{v}$, 
 	on input $I'[v\gets \mathbf{v}]$
 	
-	$$\mathsf{ismax}(I'[v\gets\mathbf{v}]):=\begin{cases} 1 & \text{if $\mathbf{v}=\mathbf{e}_{n}$}\\
+	$$\mathsf{max}(I'[v\gets\mathbf{v}]):=\begin{cases} 1 & \text{if $\mathbf{v}=\mathbf{e}_{n}$}\\
 		0 & \text{otherwise}.
 		\end{cases}$$
-	\item $\mathsf{min}(z,Z,z',Z',z'',Z'')$, an expressions with
+	\item $e_{\mathsf{min}}(z,Z,z',Z',z'',Z'')$, an expressions with
 	auxiliary variables $z$, $z'$, $z''$, $Z$, $Z'$ and $Z''$ with 
 	$\mathsf{size}(z)=\mathsf{size}(z')=\mathsf{size}(z'')=\mathsf{size}(Z)=\mathsf{size}(Z'')=\alpha\times 1$ 
 	and $\mathsf{size}(Z')=\alpha\times\alpha$. On input $I'$ with 
 	matrix variables instantiated with zero vectors (or matrix for $Z'$),
- 	 $\mathsf{min}(I')=\mathbf{e}_1$. 
+ 	 $e_{\mathsf{min}}(I')=\mathbf{e}_1$. 
+	\item $e_{\mathsf{max}}(z,Z,z',Z',z'',Z'')$, an expressions with
+	auxiliary variables $z$, $z'$, $z''$, $Z$, $Z'$ and $Z''$ with 
+	$\mathsf{size}(z)=\mathsf{size}(z')=\mathsf{size}(z'')=\mathsf{size}(Z)=\mathsf{size}(Z'')=\alpha\times 1$ 
+	and $\mathsf{size}(Z')=\alpha\times\alpha$. On input $I'$ with 
+	matrix variables instantiated with zero vectors (or matrix for $Z'$),
+ 	 $e_{\mathsf{max}}(I')=\mathbf{e}_n$. 
 	 		
 \end{itemize}
 We thus see that we only need $z,z',z'',Z,Z',Z''$ as auxiliary variables and these can be re-used 
@@ -190,15 +203,15 @@ Let us first define $e_f^{\geq N}$. Since we want to simulate $T$ we need to be 
 transitions of $T$ can be applied based on a current configuration. More precisely,
 suppose that we want to check whether $\delta(q_i,(a_1,\ldots,a_{\ell},b,c))$ is applicable, then we 
 need to check whether $T$ is in state $q_i$, we can do this by checking 
-$\mathsf{ismin}(Q_i)$, and whether the heads on the tapes read symbols $a_1,\ldots,a_{\ell},b,c$. We 
+$\mathsf{min}(Q_i)$, and whether the heads on the tapes read symbols $a_1,\ldots,a_{\ell},b,c$. We 
 check the latter by the following expressions.
 For the input tapes $R_i$ we define
 $$
 \mathsf{test\_inp}^i_b:=\begin{cases}
-(1-\mathsf{ismin}(1/2\cdot H_i))\cdot(1-\mathsf{ismax}(1/2\cdot H_i))\cdot(1- R_i^t\cdot H_i) & \text{if $b=0$}\\
-(1-\mathsf{ismin}(1/2\cdot H_i))\cdot(1-\mathsf{ismax}(1/2\cdot H_i))\cdot(R_i^t\cdot H_i) & \text{if $b=1$}\\
-\mathsf{ismin}(1/2\cdot H_i) & \text{if $b=\rhd$}\\
-\mathsf{ismax}(1/2\cdot H_i) & \text{if $b=\lhd$},\\
+(1-\mathsf{min}(1/2\cdot H_i))\cdot(1-\mathsf{max}(1/2\cdot H_i))\cdot(1- R_i^T\cdot H_i) & \text{if $b=0$}\\
+(1-\mathsf{min}(1/2\cdot H_i))\cdot(1-\mathsf{max}(1/2\cdot H_i))\cdot(R_i^T\cdot H_i) & \text{if $b=1$}\\
+\mathsf{min}(1/2\cdot H_i) & \text{if $b=\rhd$}\\
+\mathsf{max}(1/2\cdot H_i) & \text{if $b=\lhd$},\\
 \end{cases}
 $$
 which return $1$ if and only if either $b\in\{0,1\}$ is the value in $\mathsf{mat}(R_i)$ at the 
@@ -207,24 +220,24 @@ $(2,0,\ldots,0)\in\mathbb{R}^n$, or when $b=\lhd$ and $\mathsf{mat}(H_i)$ is the
 $(0,0,\ldots,2)\in\mathbb{R}^n$. Similarly, for the output tape we define
 $$
 \mathsf{test\_out}_b:=\begin{cases}
-(1-\mathsf{ismin}(1/2\cdot H_O))\cdot(1- O^t\cdot H_O) & \text{if $b=0$}\\
-(1-\mathsf{ismin}(1/2\cdot H_O))\cdot(O^t\cdot H_O) & \text{if $b=1$}\\
-\mathsf{ismin}(1/2\cdot H_O) & \text{if $b=\rhd$},\\
+(1-\mathsf{min}(1/2\cdot H_O))\cdot(1- O^T\cdot H_O) & \text{if $b=0$}\\
+(1-\mathsf{min}(1/2\cdot H_O))\cdot(O^T\cdot H_O) & \text{if $b=1$}\\
+\mathsf{min}(1/2\cdot H_O) & \text{if $b=\rhd$},\\
 \end{cases}
 $$
 and for the work tapes $W_1,\ldots,W_s$ we define
 $$
 \mathsf{test\_work}^i_b:=\begin{cases}
-(1-\mathsf{ismin}(1/2\cdot H_{W_i}))\cdot(1- W_i^t\cdot H_{W_i})) & \text{if $b=0$}\\
-(1-\mathsf{ismin}(1/2\cdot H_{W_i}))\cdot (W_i^t\cdot H_{W_i}) & \text{if $b=1$}\\
-\mathsf{ismin}(1/2\cdot H_{W_i}) & \text{if $b=\rhd$ and $i=1$}.\\
+(1-\mathsf{min}(1/2\cdot H_{W_i}))\cdot(1- W_i^T\cdot H_{W_i})) & \text{if $b=0$}\\
+(1-\mathsf{min}(1/2\cdot H_{W_i}))\cdot (W_i^T\cdot H_{W_i}) & \text{if $b=1$}\\
+\mathsf{min}(1/2\cdot H_{W_i}) & \text{if $b=\rhd$ and $i=1$}.\\
 \end{cases}
 $$
 We then combine all these expressions into a single expression for $q_i\in Q$, 
 $a_1,\ldots,a_\ell,b,c\in\Gamma$:
 $$
 \mathsf{isconf}_{q_i,a_1,\ldots,a_\ell,b,c}:=
-\mathsf{ismin}(Q_i)\cdot \left(\prod_{j=1}^{\ell} \mathsf{test\_inp}_{a_j}^j\right)
+\mathsf{min}(Q_i)\cdot \left(\prod_{j=1}^{\ell} \mathsf{test\_inp}_{a_j}^j\right)
 \cdot\left(\sum_{j=1}^s \mathsf{test}_b^j\right)\cdot \mathsf{test\_outp}_{c}.
 $$
 This expression will return $1$ if and only if the vectors representing the tapes, 
@@ -246,9 +259,9 @@ $\lhd$) differently. More specifically, for the input tapes $R_i$ and heads $H_i
 $$
 \mathsf{move\_inp}^i_{\mathsf{d}}:=
 \begin{cases}
-2\cdot \mathsf{ismin}(H_i)\cdot H_i + 1/2\cdot\mathsf{ismax}(1/2\cdot H_i)\cdot H_i  + (1-\mathsf{ismin}(H_i))(1-\mathsf{ismax}(1/2H_i))\cdot e_{\mathsf{pred}}\cdot H_i  
+2\cdot \mathsf{min}(H_i)\cdot H_i + 1/2\cdot\mathsf{max}(1/2\cdot H_i)\cdot H_i  + (1-\mathsf{min}(H_i))(1-\mathsf{max}(1/2H_i))\cdot e_{\mathsf{Prev}}\cdot H_i  
 & \text{if $\mathsf{d}=\leftarrow$}\\
-2\cdot \mathsf{ismax}(H_i)\cdot H_i + 1/2\cdot\mathsf{ismin}(1/2\cdot H_i)\cdot H_i  + (1-\mathsf{ismin}(1/2\cdot H_i))(1-\mathsf{ismax}(H_i))\cdot e_{\mathsf{succ}}\cdot H_i  
+2\cdot \mathsf{max}(H_i)\cdot H_i + 1/2\cdot\mathsf{min}(1/2\cdot H_i)\cdot H_i  + (1-\mathsf{min}(1/2\cdot H_i))(1-\mathsf{max}(H_i))\cdot e_{\mathsf{Next}}\cdot H_i  
  & \text{if $\mathsf{d}=\rightarrow$}\\
 H_i & \text{if $\mathsf{d}=\sqcup$}. 
 \end{cases}
@@ -263,7 +276,7 @@ moves to the left:
 $$
 \mathsf{move\_outp}_{\mathsf{d}}:=
 \begin{cases}
-1/2\cdot\mathsf{ismin}(1/2\cdot H_O)\cdot H_O  + (1-\mathsf{ismin}(1/2\cdot H_O))\cdot e_{\mathsf{succ}}\cdot H_O  
+1/2\cdot\mathsf{min}(1/2\cdot H_O)\cdot H_O  + (1-\mathsf{min}(1/2\cdot H_O))\cdot e_{\mathsf{Next}}\cdot H_O  
  & \text{if $\mathsf{d}=\rightarrow$}\\
 H_O & \text{if $\mathsf{d}=\sqcup$}. 
 \end{cases}
@@ -275,8 +288,8 @@ $W_i$ for $i\neq 1,s$ and define
 $$
 \mathsf{move\_work}^i_{\mathsf{d}}:=
 \begin{cases}
-	-\mathsf{ismin}(H_{W_i})\cdot H_{W_i} + (1-\mathsf{ismin}(H_{W_i}))\cdot e_{\mathsf{pred}}\cdot H_{W_i} + \mathsf{ismin}(H_{W_{i+1}})\cdot\mathsf{max} & \text{if $\mathsf{d}=\leftarrow$}\\
-		-\mathsf{ismax}(H_{W_i})\cdot H_{W_i} + (1-\mathsf{ismax}(H_{W_i}))\cdot e_{\mathsf{succ}}\cdot H_{W_i} + \mathsf{ismax}(H_{W_{i-1}})\cdot\mathsf{min} & \text{if $\mathsf{d}=\rightarrow$}\\
+	-\mathsf{min}(H_{W_i})\cdot H_{W_i} + (1-\mathsf{min}(H_{W_i}))\cdot e_{\mathsf{Prev}}\cdot H_{W_i} + \mathsf{min}(H_{W_{i+1}})\cdot e_{\mathsf{max}} & \text{if $\mathsf{d}=\leftarrow$}\\
+		-\mathsf{max}(H_{W_i})\cdot H_{W_i} + (1-\mathsf{max}(H_{W_i}))\cdot e_{\mathsf{Next}}\cdot H_{W_i} + \mathsf{max}(H_{W_{i-1}})\cdot e_{\mathsf{min}} & \text{if $\mathsf{d}=\rightarrow$}\\
 	H_{W_i} & \text{if $\mathsf{d}=\sqcup$}. 	
 \end{cases}
 $$
@@ -287,8 +300,8 @@ For $i=s$ we can ignore the parts in the previous expression that involve $W_{s+
 $$
 \mathsf{move\_work}^s_{\mathsf{d}}:=
 \begin{cases}
-	-\mathsf{ismin}(H_{W_s})\cdot H_{W_i} + (1-\mathsf{ismin}(H_{W_s}))\cdot e_{\mathsf{pred}}\cdot H_{W_s}  & \text{if $\mathsf{d}=\leftarrow$}\\
-		-\mathsf{ismax}(H_{W_s}) \cdot H_{W_s} + (1-\mathsf{ismax}(H_{W_s}))\cdot e_{\mathsf{succ}}\cdot H_{W_s} + \mathsf{ismax}(H_{W_{s-1}})\cdot \mathsf{min} & \text{if $\mathsf{d}=\rightarrow$}\\
+	-\mathsf{min}(H_{W_s})\cdot H_{W_i} + (1-\mathsf{min}(H_{W_s}))\cdot e_{\mathsf{Prev}}\cdot H_{W_s}  & \text{if $\mathsf{d}=\leftarrow$}\\
+		-\mathsf{max}(H_{W_s}) \cdot H_{W_s} + (1-\mathsf{max}(H_{W_s}))\cdot e_{\mathsf{Next}}\cdot H_{W_s} + \mathsf{max}(H_{W_{s-1}})\cdot e_{\mathsf{min}} & \text{if $\mathsf{d}=\rightarrow$}\\
 	H_{W_s} & \text{if $\mathsf{d}=\sqcup$}. 	
 \end{cases}
 $$
@@ -297,8 +310,8 @@ into account:
 $$
 \mathsf{move\_work}^1_{\mathsf{d}}:=
 \begin{cases}
-	2\cdot \mathsf{ismin}(H_{W_1})\cdot H_{W_i} + (1-\mathsf{ismin}(H_{W_1}))\cdot e_{\mathsf{pred}}\cdot H_{W_1} + \mathsf{ismin}(H_{W_{2}})\cdot\mathsf{max} & \text{if $\mathsf{d}=\leftarrow$}\\
-		1/2\cdot\mathsf{ismin}(1/2\cdot H_{W_1})\cdot H_{W_1} + (1-\mathsf{ismax}(1/2\cdot H_{W_1}))\cdot e_{\mathsf{succ}}\cdot H_{W_1}  & \text{if $\mathsf{d}=\rightarrow$}\\
+	2\cdot \mathsf{min}(H_{W_1})\cdot H_{W_i} + (1-\mathsf{min}(H_{W_1}))\cdot e_{\mathsf{Prev}}\cdot H_{W_1} + \mathsf{min}(H_{W_{2}})\cdot e_{\mathsf{max}} & \text{if $\mathsf{d}=\leftarrow$}\\
+		1/2\cdot\mathsf{min}(1/2\cdot H_{W_1})\cdot H_{W_1} + (1-\mathsf{max}(1/2\cdot H_{W_1}))\cdot e_{\mathsf{Next}}\cdot H_{W_1}  & \text{if $\mathsf{d}=\rightarrow$}\\
 	H_{W_1} & \text{if $\mathsf{d}=\sqcup$}. 	
 \end{cases}
 $$
@@ -306,25 +319,25 @@ A final ingredient for defining $e_f^{\geq N}$ are expressions which update the 
 To define these expression, we need the position and symbol to put on the tape. For the output tape we define
 $$
 \mathsf{write\_outp}_b:=\begin{cases}
-\mathsf{ismin}(1/2\cdot H_O)\cdot O & \text{if $b=\rhd$}\\
-(1-\mathsf{ismin}(1/2\cdot H_O))\cdot\left((1-O^t\cdot H_O)\cdot O + (O^t\cdot H_O)\cdot (O-H_O)\right) &\text{if $b=0$}\\
-(1-\mathsf{ismin}(1/2\cdot H_O))\cdot\left((1-O^t\cdot H_O)\cdot (O+H_O) + (O^t\cdot H_O)\cdot O\right) &\text{if $b=1$}\\
+\mathsf{min}(1/2\cdot H_O)\cdot O & \text{if $b=\rhd$}\\
+(1-\mathsf{min}(1/2\cdot H_O))\cdot\left((1-O^T\cdot H_O)\cdot O + (O^T\cdot H_O)\cdot (O-H_O)\right) &\text{if $b=0$}\\
+(1-\mathsf{min}(1/2\cdot H_O))\cdot\left((1-O^T\cdot H_O)\cdot (O+H_O) + (O^T\cdot H_O)\cdot O\right) &\text{if $b=1$}\\
 \end{cases}
 $$
 and similarly for the work tapes $i\neq 1$:
 $$
 \mathsf{write\_work}_b^i:=\begin{cases}
 W_i & \text{if $b=\rhd$}\\
-(1-W_i^t\cdot H_{W_i})\cdot W_i + (W_i^t\cdot H_{W_i})\cdot (W_i-H_{W_i}) &\text{if $b=0$}\\
-(1-W_i^t\cdot H_{W_i})\cdot (W_i+H_{W_i}) + (W_i^t\cdot H_{W_i})\cdot W_i &\text{if $b=1$},
+(1-W_i^T\cdot H_{W_i})\cdot W_i + (W_i^T\cdot H_{W_i})\cdot (W_i-H_{W_i}) &\text{if $b=0$}\\
+(1-W_i^T\cdot H_{W_i})\cdot (W_i+H_{W_i}) + (W_i^T\cdot H_{W_i})\cdot W_i &\text{if $b=1$},
 \end{cases}
 $$
 and for  $W_1$ we have to take care again of the begin marker:
 $$
 \mathsf{write\_work}_b^1:=\begin{cases}
-\mathsf{ismin}(1/2\cdot H_{W_1})\cdot W_1 & \text{if $b=\rhd$}\\
-(1-\mathsf{ismin}(1/2\cdot H_{W_1})\cdot\left((1-W_1^t\cdot H_{W_1})\cdot W_1 + (W_1^t\cdot H_{W_1})\cdot (W_1-H_{W_1})\right) &\text{if $b=0$}\\
-(1-\mathsf{ismin}(1/2\cdot H_{W_1})\cdot\left((1-W_1^t\cdot H_{W_1})\cdot (W_1+H_{W_1}) + (W_1^t\cdot H_{W_1})\cdot W_1\right) &\text{if $b=1$}.
+\mathsf{min}(1/2\cdot H_{W_1})\cdot W_1 & \text{if $b=\rhd$}\\
+(1-\mathsf{min}(1/2\cdot H_{W_1})\cdot\left((1-W_1^T\cdot H_{W_1})\cdot W_1 + (W_1^T\cdot H_{W_1})\cdot (W_1-H_{W_1})\right) &\text{if $b=0$}\\
+(1-\mathsf{min}(1/2\cdot H_{W_1})\cdot\left((1-W_1^T\cdot H_{W_1})\cdot (W_1+H_{W_1}) + (W_1^T\cdot H_{W_1})\cdot W_1\right) &\text{if $b=1$}.
 \end{cases}
 $$
 
@@ -332,9 +345,9 @@ $$
 
 
 % We additionally define, based on the previous expressions,
-% 			$$\mathsf{test}_b(v,z,Z,z',Z'):=\begin{cases} \mathsf{ismin}(v,z,Z,z,Z') & \text{if $b=\rhd$}\\
-%      \mathsf{ismax}(v,z,Z,z,Z') & \text{if $b=\lhd$}\\
-% 	 (1-\mathsf{ismin}(v,z,Z,z',Z'))(1-\mathsf{ismax}(v,z,Z,z',Z')) & \text{if $b=0$}.
+% 			$$\mathsf{test}_b(v,z,Z,z',Z'):=\begin{cases} \mathsf{min}(v,z,Z,z,Z') & \text{if $b=\rhd$}\\
+%      \mathsf{max}(v,z,Z,z,Z') & \text{if $b=\lhd$}\\
+% 	 (1-\mathsf{min}(v,z,Z,z',Z'))(1-\mathsf{max}(v,z,Z,z',Z')) & \text{if $b=0$}.
 % 		\end{cases}.$$
 % 	When evaluated on $I'[v\gets\mathbf{v}]$, $\mathsf{test}_b(I'[v\gets\mathbf{v}])$ will be $1$ when either
 % 	$\mathbf{v}=\mathbf{e}_{1}$ and $b=\rhd$ (first position)
@@ -345,34 +358,34 @@ $$
 % Finally, we define
 %  $$
 %  \mathsf{move}_d(z,Z,z',Z'):=\begin{cases}
-%  e_{\mathsf{pred}}(z,Z,z',Z) & \text{if $d=\gets$}\\
-%   e_{\mathsf{succ}}(z,Z,z',Z) & \text{if $d=\to$}.
+%  e_{\mathsf{Prev}}(z,Z,z',Z) & \text{if $d=\gets$}\\
+%   e_{\mathsf{Next}}(z,Z,z',Z) & \text{if $d=\to$}.
 %  \end{cases},
 %  $$
 %  $\mathsf{move}_d(I')$ will simply return the predecessor matrix when $d=\gets$ and the successor matrix when $d=\to$. This expression will be used to move the heads.
 % We define the expression $e_T$, as follows\footnote{In the expression I uses $;w$ to indicate the output variable. That is, the for loops updates all instances for $X_1,\ldots,X_m,Y_1,\ldots,Y_\ell$ and $w$, but the result of the expression is only what is in the instance corresponding to $w$. We can simulate this again if we allow constant dimensional canonical basis vectors in $\mathsf{MATLANG}$.}:
 
-We are now finally ready to define $e_f^{\geq N}$:
+We are now finally ready to define $e_f^{\geq N}$ :
 \begin{multline*}
 e_f^{\geq N}:= \mathsf{for\,} v_1,\ldots,v_{k},Q_1,\ldots,Q_m,H_1,\ldots,H_\ell,W_1,\ldots,W_s, H_{W_1},\ldots,H_{W_s},O,H_O . \\
-(e_{Q_1},\ldots,e_{Q_m},e_{H_1},\ldots,e_{H_\ell},e_{W_1},\ldots,e_{W_s},e_{H_{W_1}},\ldots,e_{H_{W_s}},e_{O}, e_{H_O})
+(e_{Q_1},\ldots,e_{Q_m},e_{H_1},\ldots,e_{H_\ell},e_{W_1},\ldots,e_{W_s},e_{H_{W_1}},\ldots,e_{H_{W_s}},e_{O}, e_{H_O}).
 \end{multline*}
-with expressions (we use $\star$ below to mark irrelevant information in the transitions):
+Refer to section \ref{app:def} for the definition of this form of the for loop. The expressions used are (we use $\star$ below to mark irrelevant information in the transitions):
  \allowdisplaybreaks
 \begin{align*}
-	e_{Q_1}&:=\left(\prod_{j=1}^{k} \textsf{ismin}(v_i)\right)\cdot\mathsf{min}
+	e_{Q_1}&:=\left(\prod_{j=1}^{k} \textsf{min}(v_i)\right)\cdot e_{\mathsf{min}}
 	+ \sum_{\substack{(q_i,a_1,\ldots,a_\ell,b,c)\\
-	\Delta(q_i,a_1,\ldots,a_\ell,b,c)=(q_1,\star)}} \!\!\!\!\!\!\!\!\! \mathsf{isconf}_{q_i,a_1,\ldots,a_\ell,b,c}\cdot \mathsf{min} \\
+	\Delta(q_i,a_1,\ldots,a_\ell,b,c)=(q_1,\star)}} \!\!\!\!\!\!\!\!\! \mathsf{isconf}_{q_i,a_1,\ldots,a_\ell,b,c}\cdot e_{\mathsf{min}} \\
 	e_{Q_j}&:=\sum_{\substack{(q_i,a_1,\ldots,a_\ell,b,c)\\
-	\Delta(q_i,a_1,\ldots,a_\ell,b,c)=(q_j,\star)}} \!\!\!\!\!\!\!\!\! \mathsf{isconf}_{q_i,a_1,\ldots,a_\ell,b,c}\cdot \mathsf{min}
+	\Delta(q_i,a_1,\ldots,a_\ell,b,c)=(q_j,\star)}} \!\!\!\!\!\!\!\!\! \mathsf{isconf}_{q_i,a_1,\ldots,a_\ell,b,c}\cdot e_{\mathsf{min}}
 	 \quad \text{for $j\neq 1$}\\
-	e_{H_i}&:=2\left(\prod_{j=1}^{k} \textsf{ismin}(v_i)\right)\cdot\mathsf{min}
+	e_{H_i}&:=2\left(\prod_{j=1}^{k} \textsf{min}(v_i)\right)\cdot e_{\mathsf{min}}
 	+\sum_{\substack{(q,a_1,\ldots,a_\ell,b,d)\\
 	\Delta(q,a_1,\ldots,a_\ell,b,c)=(\star,\mathsf{d_i},\star)}}\!\!\!\!\!\!\!\!\! \mathsf{isconf}_{q,a_1,\ldots,a_\ell,b,c}\cdot\mathsf{move\_inp}^i_{\mathsf{d}_i}\\
-	e_{H_{W_i}}&:=2\left(\prod_{j=1}^{k} \textsf{ismin}(v_i)\right)\cdot\mathsf{min}
+	e_{H_{W_i}}&:=2\left(\prod_{j=1}^{k} \textsf{min}(v_i)\right)\cdot e_{\mathsf{min}}
 	+\sum_{\substack{(q,a_1,\ldots,a_\ell,b,d)\\
 	\Delta(q,a_1,\ldots,a_\ell,b,c)=(\star,\mathsf{d_{\ell+1}},\star)}}\!\!\!\!\!\!\!\!\! \mathsf{isconf}_{q,a_1,\ldots,a_\ell,b,c}\cdot\mathsf{move\_work}_{\mathsf{d}_{\ell+1}}^i\\
-	e_{H_O}&:=2\left(\prod_{j=1}^{k} \textsf{ismin}(v_i)\right)\cdot\mathsf{min}
+	e_{H_O}&:=2\left(\prod_{j=1}^{k} \textsf{min}(v_i)\right)\cdot e_{\mathsf{min}}
 	+\sum_{\substack{(q,a_1,\ldots,a_\ell,b,d)\\
 	\Delta(q,a_1,\ldots,a_\ell,b,c)=(\star,\mathsf{d}_{\ell+2})}}\!\!\!\!\!\!\!\!\! \mathsf{isconf}_{q,a_1,\ldots,a_\ell,b,c}\cdot\mathsf{move\_outp}_{\mathsf{d}_{\ell+2}}\\
 	e_{W_i}&:=\sum_{\substack{(q,a_1,\ldots,a_\ell,b,d)\\
@@ -386,11 +399,11 @@ induction on the number of iterations). We next explain how the border cases $n<
 For each $n<N$ and every possible input words
 $w_1,\ldots,w_\ell$ of size $n$, we define a MATLANG expression which check whether
 $\mathsf{mat}(R_i)=\mathsf{vec}(w_i)$ for each $i\in[\ell]$. This can be easily done since $n$ 
-can be regarded as a constant. For example, to check whether $\mathsf{mat}(R_i)=(0,1,1)^t$ we simply write
+can be regarded as a constant. For example, to check whether $\mathsf{mat}(R_i)=[0,1,1]^T$ we simply write
 $$
-(1- R_i^t\cdot \mathsf{min})\cdot (R_i^t\cdot e_{\mathsf{succ}}\cdot\min)\cdot (1- R_i^t\cdot e_{\mathsf{succ}}\cdot e_{\mathsf{succ}}\cdot \min)\cdot (1- \mathbf{1}(R_i)^t\cdot e_{\mathsf{succ}}\cdot e_{\mathsf{succ}}\cdot e_{\mathsf{succ}}\cdot \min)
+(1- R_i^T\cdot e_{\mathsf{min}})\cdot (R_i^T\cdot e_{\mathsf{Next}}\cdot e_{\mathsf{min}})\cdot (1- R_i^T\cdot e_{\mathsf{Next}}\cdot e_{\mathsf{Next}}\cdot e_{\mathsf{min}})\cdot (1- e_{\ones}(R_i)^T\cdot e_{\mathsf{Next}}\cdot e_{\mathsf{Next}}\cdot e_{\mathsf{Next}}\cdot e_{\mathsf{min}})
 $$
-which will evaluate to $1$ if and only if $\mathsf{mat}(R_i)=(0,1,1)^t$. We note that the factor is in 
+which will evaluate to $1$ if and only if $\mathsf{mat}(R_i)=[0,1,1]^T$. We note that the factor is in 
 place to check that the dimension $\mathsf{mat}(R_i)$ is three.
   We denote by
 $e_{n,w}^i$ the expression which evaluates to $1$ if and only if $\mathsf{mat}(R_i)=\mathsf{vec}(w)$
@@ -399,7 +412,7 @@ We can similarly
 write any word $w$ of fixed size in the matrix variable $O$. For example, suppose that $w=101$
 then we write 
 $$
-O+ \mathsf{min}+  e_{\mathsf{succ}}\cdot e_{\mathsf{succ}}\cdot\mathsf{min}.
+O+ e_{\mathsf{min}}+  e_{\mathsf{Next}}\cdot e_{\mathsf{Next}}\cdot e_{\mathsf{min}}.
 $$
 We write $e_{n,w}$ be the expression which write $w$ of size $|w|=n$ in matrix variable $O$.
 Then, the expressions
@@ -426,6 +439,6 @@ $$
 e_f:=e_f^{<N} + \mathsf{dim\_is\_greater\_than_N}\cdot e_f^{\geq 0}
 $$
 where $\mathsf{dim\_is\_greater\_than_N}$ is the expression
-$\mathbf{1}(R_i)^t\cdot\underbrace{e_{\mathsf{succ}}\cdot\cdots\cdot e_{\mathsf{succ}}}_{\text{$N$ times}}$ 
+$e_{\ones}(R_i)^T\cdot\underbrace{e_{\mathsf{Next}}\cdot\cdots\cdot e_{\mathsf{Next}}}_{\text{$N$ times}}$ 
 which will evaluate to $1$ if an only if the input dimension is larger or equal than $N$.
 \end{proof}

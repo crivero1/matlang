@@ -1,7 +1,28 @@
-To simplify some proofs, we assume \langfor to have functions that process only matrices of size $1\times 1$.
-As stated in section \ref{sec:restrict}, if we have this restricted form of \textit{function application},
-using the \texttt{for} operator, we can do \textit{function application} on matrices of arbitrary (but equal) size.
-Furthermore, we can accomplish this using only $\ssum$.
+\begin{itemize}
 
-The constant in expressions are assumed to be $1\times 1$ matrices. 
+
+\item To simplify some proofs, we assume \langfor to have functions that process only matrices of size $1\times 1$ 
+and not scalar product. This is useful when the function allowed is $\kprod$, since one can be computed using the other and viceversa.
+Note that, if $\ssum$ is present, multiplication function application on matrices of any size can be simulated as 
+$$
+f_{\kprod}(e_1,\ldots, e_n) :=\Sigma x_i \Sigma x_j. (x_i^T\cdot e_1\cdot x_j)\times \ldots \times (x_i^T\cdot e_n\cdot x_j) \times x_i\cdot x_j^T,
+$$
+which also holds if $e_1,\ldots, e_n$ are scalars. Furthermore, if we restrict $f_{\kprod}$ to
+work only on scalars, it is enough to simulate scalar product (and thus, full function application). Let $c$ a scalar:
+$$
+c\times A :=\Sigma x_i \Sigma x_j. f_{\kprod}(c, x_i^T\cdot A\cdot x_j) \times x_i\cdot x_j^T,
+$$
+
+
+\item For general functions, if we have scalar product and function application on scalars ($f_{1\times 1}$),
+we can simulate full function application, when we have $\ssum$:
+$$
+f(e_1,\ldots, e_n) :=\Sigma x_i \Sigma x_j. f_{1\times 1}(x_i^T\cdot e_1\cdot x_j, \ldots ,x_i^T\cdot e_n\cdot x_j) \times x_i\cdot x_j^T.
+$$
+
+
+\item The constant in expressions are assumed to be $1\times 1$ matrices. 
 For instance, when we write $(1-e_{\ones}(v)^T\cdot v)$ we actually mean $([1]-e_{\ones}(v)^T\cdot v)$.
+
+
+\end{itemize}

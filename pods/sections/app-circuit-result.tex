@@ -61,7 +61,7 @@ For example, a circuit that encodes the function $f(a_1,a_2,a_3,a_4)=a_1a_2 +a_3
 \end{tikzpicture}
 \end{center}
 
-We can simulate the polynomial $x^2+xy$ by doing $f(A)$ where $A=[x \hspace{1ex} x \hspace{1ex} x \hspace{1ex} y]^*$. The main idea is to traverse the circuit top down in a depth first search way and store visited gates in a stack and its corresponding current values in another stack, and aggregate in the iterations according to the gate type.
+We can simulate the polynomial $x^2+xy$ by doing $f(A)$ where $A=[x \hspace{1ex} x \hspace{1ex} x \hspace{1ex} y]^T$. The main idea is to traverse the circuit top down in a depth first search way and store visited gates in a stack and its corresponding current values in another stack, and aggregate in the iterations according to the gate type.
 
 For a stack $S$, the operations are standard:
 
@@ -108,7 +108,7 @@ The corresponding $\lbrace 0,1 \rbrace^n\rightarrow\lbrace 0,1 \rbrace^n$ functi
 	\item[--] $\isone{g}$: $1$ if and only if $g$ is a $1$-gate.
 	\item[--] $\isinput{g}$: $1$ if and only if $g$ is an input gate.
 	\item[--] $\getfirst{g}$: outputs the $\texttt{id}$ of the first child of $g$.
-	\item[--] $\getinput{g}$: outputs $e_i$ where the $i$-th input gate of $A$ is encoded by $g$.
+	\item[--] $\getinput{g}$: outputs $a_i$ where the $i$-th input gate of $A$ is encoded by $g$.
 	\item[--] $\isnotlast{g_1}{g_2}$: $1$ if and only if $g_2$ is not the last child gate of $g_1$.
 	\item[--] $\nextgate{g_1}{g_2}$: outputs the $\texttt{id}$ of the next child gate of $g_1$ after $g_2$.
 	\item[--] $\getroot$: outputs the $\texttt{id}$ of the root gate of the circuit.
@@ -178,7 +178,7 @@ The $Evaluate$ algorithm gives us the output of the circuit. Note that after eac
 
 Next, we show how to encode this algorithm in $\langfor$.
 
-Let $n_0\in\mathbb{N}$ be big enough for $\star$ to hold and let $n\geq k$. Hence, the number of gates (values) is bounded by $n^k$ and we need $k\log (n)$ bits to encode the id of each gate.
+Let $n_0\in\mathbb{N}$ be big enough for ($\star$) to hold and let $n\geq k$. Hence, the number of gates (values) is bounded by $n^k$ and we need $k\log (n)$ bits to encode the id of each gate.
 
 To simulate the two stacks $\cG$ and $\cV$ we keep a matrix $X$ of dimensions $n \times n$.
 
@@ -209,48 +209,49 @@ Since $n\geq n_0$, $(\star)$ holds and thus we never use more than $n-3$ bits to
 
 An important detail is that the $\texttt{ids}$ of the gates are encoded as $\texttt{id}_r000$ for it to have dimension $n$, where $\texttt{id}_r$ is the corresponding binary number in reverse.
 
-We make a series of definitions to make the notation more clear.
+We make a series of definitions to make the notation more clear. Refer to section \ref{app:order} for more information
+about these expressions.
 
-Let $e_i$ be the $i$-th canonical vector. $S$ and $P$ denote the successor and predecessor matrices respectively, such that
+Let $b_i$ be the $i$-th canonical vector. $\mathsf{Next}$ and $\mathsf{Prev}$ denote the successor and predecessor matrices respectively, such that
 
 \[
-  			S\cdot e_i=\begin{cases}
+  			\mathsf{Next}\cdot b_i=\begin{cases}
                e_{i+1} \text{ if } i\leq n \\
                \mathbf{0} \text{ otherwise }
             \end{cases}
 \]
 
 \[
-  			P\cdot e_i=\begin{cases}
-               e_{i-1} \text{ if } i\geq n \\
+  			\mathsf{Prev}\cdot b_i=\begin{cases}
+               b_{i-1} \text{ if } i\geq n \\
                \mathbf{0} \text{ otherwise }
             \end{cases}
 \]
 
-We write $e_{min}$ for the first canonical vector and $e_{max}$ for the last canonical vector. For any $i$ we write 
+We write expressions $e_{\mathsf{min}}$ for the first canonical vector and $e_{\mathsf{max}}$ for the last canonical vector. For any $i$ we write 
 \begin{align*}
-	e_{min+i} &= S^i\cdot e_{min} \\
-	e_{max+i} &= P^i\cdot e_{max}
+	e_{\mathsf{min}+\mathsf{i}} &= \mathsf{Next}^i\cdot e_{\mathsf{min}} \\
+	e_{\mathsf{max}+\mathsf{i}} &= \mathsf{Prev}^i\cdot e_{\mathsf{max}}
 \end{align*}
 
 We use the extra $\lbrace 0,1 \rbrace^n\rightarrow\lbrace 0,1 \rbrace^n$ functions that have a $\langfor$ translation:
 
 \[
-  			min(e)=\begin{cases}
-               1 \text{ if } e=e_{min} \\
+  			\mathsf{min}(e)=\begin{cases}
+               1 \text{ if } e=e_{\mathsf{min}} \\
                0 \text{ otherwise }
              \end{cases}
 \]
 
 \[
-  			max(e)=\begin{cases}
-               1 \text{ if } e=e_{max} \\
+  			\mathsf{max}(e)=\begin{cases}
+               1 \text{ if } e=e_{\mathsf{max}} \\
                0 \text{ otherwise }
              \end{cases}
 \]
 
 \[
-  			less(e_i,e_j)=\begin{cases}
+  			\mathsf{succ}(b_i,b_j)=\begin{cases}
                1 \text{ if } i\leq j \\
                0 \text{ otherwise }
              \end{cases}
@@ -260,17 +261,17 @@ When used in $\langfor$ these functions output $[0]$ and $[1]$.
 
 Now 
 \begin{align*}
-	e_{V}&:=e_{max-2} \\
-	e_{G_{top}}&:=e_{max-1} \\
-	e_{V_{top}}&:=e_{max}
+	e_{V}&:=e_{\mathsf{max}-2} \\
+	e_{G_{top}}&:=e_{\mathsf{max}-1} \\
+	e_{V_{top}}&:=e_{\mathsf{max}}
 \end{align*}
 
-For a canonical vector, let $$\Iden{e_i}:=\ssum v. less(v,e_i)\cdot (v\cdot v^*).$$ This matrix has ones in the diagonal up to position $i$ marked by $e_{i}$. We define the following sub-matrices of $X$:
+For a canonical vector, let $$\Iden{b_i}:=\ssum v. \mathsf{succ}(v,b_i)\cdot (v\cdot v^T).$$ This matrix has ones in the diagonal up to position $i$ marked by $e_{i}$. We define the following sub-matrices of $X$:
 \begin{align*}
 	V_{top} &:= X\cdot e_{V_{top}} \\
-	V &:= \Iden{V_{top}} \cdot X \cdot e_v \\
+	V &:= \Iden{V_{top}} \cdot X \cdot e_V \\
  	G_{top} &:=X\cdot e_{G_{top}} \\
- 	G &:= \Iden{G_{top}}\cdot X \cdot \Iden{e_{max-3}}
+ 	G &:= \Iden{G_{top}}\cdot X \cdot \Iden{e_{\mathsf{max}-3}}
 \end{align*}
 
 For example, if we are in a step where $\getsize{\cG}=\getsize{\cV} + 1$ then
@@ -287,14 +288,14 @@ X = \begin{bmatrix}
      0 & 0 & 0 & 0
 \end{bmatrix}, 
 G = \begin{bmatrix}
-    \texttt{id}_1  \\
-    \texttt{id}_2 \\
-    \vdots   \\
-    \texttt{id}_{j-1} \\
-    \texttt{id}_j \\
-    0 \\
-    \vdots \\
-     0 
+    \texttt{id}_1 & 0 & 0 & 0 \\
+    \texttt{id}_2 & 0 & 0 & 0\\
+    \vdots & \vdots & \vdots & \vdots  \\
+    \texttt{id}_{j-1} & 0 & 0 & 0\\
+    \texttt{id}_j & 0 & 0 & 0\\
+    0 & 0 & 0 & 0 \\
+    \vdots & \vdots & \vdots & \vdots \\
+     0 & 0 & 0 & 0
 \end{bmatrix}, 
 V = \begin{bmatrix}
     v_1  \\
@@ -328,19 +329,21 @@ V_{top} = \begin{bmatrix}
 \end{bmatrix}
 \]
 
-Here, $V$ is a vector encoding the stack of values in $X$ and $G$ is a matrix encoding the stack of gates in $X$. Note that what is \textit{over} the top of the stacks is always set to zero due to $\Iden{G_{top}}$ and $\Iden{V_{top}}$.
+Here, $V$ is a vector encoding the stack of values in $X$ and $G$ is a matrix encoding the stack of gates in $X$.
+Note that what is \textit{over} the top of the stacks is always set to zero due to $\Iden{G_{top}}$ and $\Iden{V_{top}}$.
+Also, note that $G$ is of the same size as $X$. We sometimes omit the zeroes due to simplicity.
 
-To set the initial state (algorithm \ref{alg:eval_code} line 2) we define the $\langfor$ expression: $$\text{START}:= e_{min}\cdot \getroot^* + e_{min}\cdot e_{G_{top}}^*.$$
+To set the initial state (algorithm \ref{alg:eval_code} line 2) we define the $\langfor$ expression: $$\text{START}:= e_{\mathsf{min}}\cdot \getroot^T + e_{\mathsf{min}}\cdot e_{G_{top}}^T.$$
 For the initialize step, we define the $\langfor$ expressions: INIT${\_}$PLUS (algorithm \ref{alg:init_code}, lines 2, 3, 4), INIT${\_}$PROD (algorithm \ref{alg:init_code}, lines 5, 6, 7), CONST (algorithm \ref{alg:init_code}, lines 8, 9) and INPUT (algorithm \ref{alg:init_code}, lines 10, 11):
 
 \begin{align*}
-	\text{INIT{\_}PLUS} &:= \isplus{G^*\cdot G_{top}}\odot \left[ G + S\cdot G_{top} \cdot \getfirst{G^*\cdot G_{top}}^*  + S\cdot G_{top}\cdot e_{G_{top}}^* +V\cdot e_{V} + S\cdot V_{top}\cdot e_{V_{top}}^* \right] \\
-	\text{INIT{\_}PROD} &:= \isprod{G^*\cdot G_{top}}\odot \left[ G + S\cdot G_{top} \cdot \getfirst{G^*\cdot G_{top}}^* + S\cdot G_{top}\cdot e_{G_{top}}^* +(V + S\cdot v_{top})\cdot e_{V} + S\cdot V_{top}\cdot e_{V_{top}}^* \right] \\
-	\text{CONST} &:= \isone{G^*\cdot G_{top}}\odot \left[ G + (V + S\cdot v_{top})\cdot e_{V} + S\cdot V_{top}\cdot e_{V_{top}}^* \right] \\
-	\text{INPUT} &:= \isinput{G^*\cdot G_{top}}\odot \left[ G + \left(V + \left( A^* \cdot \getinput{G^*\cdot G_{top}} \cdot S\cdot V_{top} \right)\right)\cdot e_{V} + S\cdot V_{top}\cdot e_{V_{top}}^* \right]
+	\text{INIT{\_}PLUS} &:= \isplus{G^T\cdot G_{top}}\odot \left[ G + (\mathsf{Next}\cdot G_{top}) \cdot \getfirst{G^T\cdot G_{top}}^T  + \mathsf{Next}\cdot G_{top}\cdot e_{G_{top}}^T +V\cdot e_{V}^T + \mathsf{Next}\cdot V_{top}\cdot e_{V_{top}}^T \right] \\
+	\text{INIT{\_}PROD} &:= \isprod{G^T\cdot G_{top}}\odot \left[ G + (\mathsf{Next}\cdot G_{top}) \cdot \getfirst{G^T\cdot G_{top}}^T + \mathsf{Next}\cdot G_{top}\cdot e_{G_{top}}^T +(V + \mathsf{Next}\cdot v_{top})\cdot e_{V}^T + \mathsf{Next}\cdot V_{top}\cdot e_{V_{top}}^T \right] \\
+	\text{CONST} &:= \isone{G^T\cdot G_{top}}\odot \left[ G + (V + \mathsf{Next}\cdot V_{top})\cdot e_{V}^T + \mathsf{Next}\cdot V_{top}\cdot e_{V_{top}}^T \right] \\
+	\text{INPUT} &:= \isinput{G^T\cdot G_{top}}\odot \left[ G + \left(V + \left( A^T \cdot \mathsf{Next}\cdot V_{top} \cdot \getinput{G^T\cdot G_{top}}^T \right)\right)\cdot e_{V}^T + \mathsf{Next}\cdot V_{top}\cdot e_{V_{top}}^T \right]
 \end{align*} 
 
-Here, $G^*\cdot G_{top}$ is to get the current id in the top of the stack. In INIT${\_}$PLUS we get the current stack $G$, we add $S\cdot G_{top} \cdot \getfirst{G^*\cdot G_{top}}^*$ which is an $n\times n$ matrix with the first child of $G^*\cdot G_{top}$ in the next row. Then $S\cdot G_{top}\cdot e_{G_{top}}^*$ adds $S\cdot G_{top}$ to the $n-1$ column to mark the gate we added as the top. Next, we do the same with the values by adding $V\cdot e_{V} + S\cdot V_{top}\cdot e_{V_{top}}^*$.
+Here, $G^T\cdot G_{top}$ is to get the current id in the top of the stack. In INIT${\_}$PLUS we get the current stack $G$, we add $\mathsf{Next}\cdot G_{top} \cdot \getfirst{G^T\cdot G_{top}}^T$ which is an $n\times n$ matrix with the first child of $G^T\cdot G_{top}$ in the next row. Then $\mathsf{Next}\cdot G_{top}\cdot e_{G_{top}}^T$ adds $\mathsf{Next}\cdot G_{top}$ to the $n-1$ column to mark the gate we added as the top. Next, we do the same with the values by adding $V\cdot e_{V} + \mathsf{Next}\cdot V_{top}\cdot e_{V_{top}}^T$.
 
 The $\langfor$ expression equivalent to algorithm \ref{alg:init_code} is $$\text{INIT}:=\text{INIT{\_}PLUS}+\text{INIT{\_}PROD}+\text{CONST}+\text{INPUT}.$$
 
@@ -397,16 +400,16 @@ When the operation is INIT{\_}PLUS or INIT{\_}PROD, if we start with
 \]
 
 
-For the aggregate expression (algorithm \ref{alg:agg_code}) we do the following. Let $$\pondIden{e_i}{c}=\ssum v. (v^*\cdot e_i)\cdot c\cdot v\cdot v^* + (1-v^*\cdot e_i)\cdot v \cdot v^*,$$ namely, it is the identity with $c$ in position $(i,i)$.
+For the aggregate expression (algorithm \ref{alg:agg_code}) we do the following. Let $$\pondIden{b_i}{c}=\ssum v. (v^T\cdot b_i)\cdot c\cdot v\cdot v^T + (1-v^T\cdot b_i)\cdot v \cdot v^T,$$ namely, it is the identity with $c$ in position $(i,i)$.
 
 We define the expressions: AGG${\_}$PLUS (algorithm \ref{alg:agg_code}, lines 4, 5), AGG${\_}$PROD (algorithm \ref{alg:agg_code}, lines 6, 7),  IS${\_}$NOT${\_}$LAST (algorithm \ref{alg:agg_code}, lines 8, 9), IS${\_}$LAST and POP:
 
 \begin{align*}
-	\text{POP} &:= \Iden{P\cdot G_{top}}\cdot G + P\cdot V_{top}\cdot e_{V_{top}}^*  \\
-	\text{AGG{\_}PLUS} &:= \isplus{G^* \cdot \left( P \cdot G_{top}\right)} \odot \left[ \left( \Iden{P\cdot V_{top}} \cdot V + \left( V^* \cdot V_{top} \right)\left( P\cdot V_{top} \right)\right) \cdot e_{V}^* \right] \\
-	\text{AGG{\_}PROD} &:= \isprod{G^* \cdot \left( P \cdot G_{top}\right)} \odot \left[ \left( \pondIden{P\cdot V_{top}}{V^* \cdot V_{top}} \cdot \Iden{P\cdot V_{top}} \cdot V \right) \cdot e_{V}^* \right] \\
-	\text{IS{\_}NOT{\_}LAST} &:= \isnotlast{G^* \cdot \left( P \cdot G_{top}\right)}{G^* \cdot G_{top}} \odot \left[  G_{top} \cdot \nextgate{G^* \cdot \left( P\cdot G_{top} \right) }{G^* \cdot G_{top}} + G_{top}\cdot e_{G_{top}}^* \right] \\
-	\text{IS{\_}LAST} &:= \left( 1 - \isnotlast{G^* \cdot \left( P \cdot G_{top}\right)}{G^* \cdot G_{top}} \right)\odot \left[ \left( P\cdot G_{top} \right) \cdot e_{G_{top}}^* \right]
+	\text{POP} &:= \Iden{\mathsf{Prev}\cdot G_{top}}\cdot G + \mathsf{Prev}\cdot V_{top}\cdot e_{V_{top}}^T  \\
+	\text{AGG{\_}PLUS} &:= \isplus{G^T \cdot \left( P \cdot G_{top}\right)} \odot \left[ \left( \Iden{\mathsf{Prev}\cdot V_{top}} \cdot V + \left( V^T \cdot V_{top} \right)\left( \mathsf{Prev}\cdot V_{top} \right)\right) \cdot e_{V}^T \right] \\
+	\text{AGG{\_}PROD} &:= \isprod{G^T \cdot \left( P \cdot G_{top}\right)} \odot \left[ \left( \pondIden{\mathsf{Prev}\cdot V_{top}}{V^T \cdot V_{top}} \cdot \Iden{\mathsf{Prev}\cdot V_{top}} \cdot V \right) \cdot e_{V}^T \right] \\
+	\text{IS{\_}NOT{\_}LAST} &:= \isnotlast{G^T \cdot \left( P \cdot G_{top}\right)}{G^T \cdot G_{top}} \odot \left[  G_{top} \cdot \nextgate{G^T \cdot \left( \mathsf{Prev}\cdot G_{top} \right) }{G^T \cdot G_{top}}^T + G_{top}\cdot e_{G_{top}}^T \right] \\
+	\text{IS{\_}LAST} &:= \left( 1 - \isnotlast{G^T \cdot \left( P \cdot G_{top}\right)}{G^T \cdot G_{top}} \right)\odot \left[ \left( \mathsf{Prev}\cdot G_{top} \right) \cdot e_{G_{top}}^T \right]
 \end{align*}
 
 The $\langfor$ expression equivalent to algorithm \ref{alg:agg_code} is $$\text{AGG}:=\text{POP} + \text{AGG{\_}PLUS}+\text{AGG{\_}PROD}+\text{IS{\_}NOT{\_}LAST}+\text{IS{\_}LAST}.$$
@@ -415,17 +418,17 @@ The $Evaluate$ method (algorithm \ref{alg:eval_code}) is defined as follows:
 
 \begin{align*}
 	\text{EVAL}&[A]= \\
-	&e_{min}^* \cdot \ffor{X}{v_1, \ldots, v_k}: \big\lbrace \\
-	&\left( \sprod_{i=1}^k min(v_i)\right) \odot START + \\
-	&\left( 1- \sprod_{i=1}^k min(v_i)\right) \odot \left( \left(1 - min(G_{top})\cdot min(V_{top}) \right) \odot \left[ \left( 1 - G_{top}^*\cdot V_{top} \right) \odot \text{INIT} + \left(  G_{top}^*\cdot V_{top} \right) \odot \text{AGG} \right] + min(G_{top})\odot min(V_{top})\odot X\right) \\ 
-	&\big\rbrace \cdot e_{V}
+	&e_{\mathsf{min}}^T \cdot \big\lbrace \ffor{X}{v_1, \ldots, v_k}: \\
+	&\left( \sprod_{i=1}^k \mathsf{min}(v_i)\right) \odot START + \\
+	&\left( 1- \sprod_{i=1}^k \mathsf{min}(v_i)\right) \odot \left( \left(1 - \mathsf{min}(G_{top})\cdot \mathsf{min}(V_{top}) \right) \odot \left[ \left( 1 - G_{top}^T\cdot V_{top} \right) \odot \text{INIT} + \left(  G_{top}^T\cdot V_{top} \right) \odot \text{AGG} \right] + \mathsf{min}(G_{top})\odot \mathsf{min}(V_{top})\odot X\right) \\ 
+	&\big\rbrace\cdot e_{V}
 \end{align*}
 
-Note that the $ \texttt{for}$-expression does the evaluation. The final output is in $X[1,max-2]$, we extract this value by multiplying the final result as $e_{min}^*\cdot [\texttt{for}(\ldots )]\cdot e_{V}$.
+Note that the $ \texttt{for}$-expression does the evaluation. The final output is in $X[1,max-2]$, we extract this value by multiplying the final result as $e_{\mathsf{min}}^T\cdot [\texttt{for}(\ldots )]\cdot e_{V}$.
 
 Finally, we need to take care of all $n<n_0$, where $(\star)$ does not necessarily hold. For any $i$, let: $$\text{Eval}[i,A]:= \text{ the } 1\times 1 \text{ matrix with the value of the polynomial } f(A) \text{ when } n=i.$$
 
-Then we define: $$f(A)=\ssum_{i=0}^{n_0-1}(e_{min+i}\cdot e_{max}^*)\odot \text{EVAL}[i,A] + \left( (S^{n_0}\cdot e_{min})^*\cdot \ones (e_{min}) \right)\odot \text{EVAL}[A].$$ Above, $(e_{min+i}\cdot e_{max}^*)$ checks if the dimension is equal to $i$, and $(S^{n_0}\cdot e_{min})^*\cdot \ones (e_{min})$ checks if the dimension is greater or equal than $n_0$.
+Then we define: $$f(A)=\ssum_{i=0}^{n_0-1}(e_{\mathsf{min}+\mathsf{i}}\cdot e_{\mathsf{max}}^T)\odot \text{EVAL}[i,A] + \left( (\mathsf{Next}^{n_0}\cdot e_{\mathsf{min}})^T\cdot e_{\ones} (e_{\mathsf{min}}) \right)\odot \text{EVAL}[A].$$ Above, $(e_{\mathsf{min}+\mathsf{i}}\cdot e_{\mathsf{max}}^T)$ checks if the dimension is equal to $i$, and $(\mathsf{Next}^{n_0}\cdot e_{\mathsf{min}})^T\cdot e_{\ones} (e_{\mathsf{min}})$ checks if the dimension is greater or equal than $n_0$.
 
 
 

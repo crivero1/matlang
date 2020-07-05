@@ -43,7 +43,8 @@ Let $e$ be a $\langprod$ expression.
   \item If $e=\ssum v. e_1$ then $\Phi(e):=\ssum x.\ssum y.\Phi(e_1)\left[ R_v^\cI\gets x=y \right]$.
   \item If $e=\qhadprod v. e_1$ then $\Phi(e):=\sprod x.\ssum y.\Phi(e_1)\left[ R_v^\cI\gets x=y \right]$.
 \end{itemize}
-Note that in the last two translations we sum a lot of zeroes.
+Note that in the last two translations we sum a lot of zeroes. Here, we do not need to translate scalar multiplication
+because it can be simulated using $\circ$ (which is equivalent to $f_{\kprod}$, see section \ref{app:simp}).
 
 We now encode weighted structures into matrices and vectors. Let $\Gamma$ be a relational vocabulary 
 where $\arity(R) \leq 2$. 
