@@ -78,15 +78,18 @@ A (\lang) \textit{instance} $\I$ over a schema $\Sch$ is a pair $\I = (\dom,\con
 \item $\sem{a\times e}{\I} := a\times \sem{e}{\I}$; and
 \item $\sem{f(e_1,\ldots ,e_k)}{\I}$ is a matrix $A$ of the same size as $\sem{e_1}{\I}$, and where $A_{ij}$ has the value $f(\sem{e_1}{\I}_{ij},\ldots ,\sem{e_k}{\I}_{ij})$.
 \end{itemize}
-This concludes the description and semantics of \lang. We next provide some simple example.
+This concludes the description and semantics of \lang. 
+%We next provide some simple example.
 
-\begin{example}Consider the \langf{$f_\odot$} expression with $f_\odot:\RR^2\to\RR:(x,y)\mapsto x\cdot y$:
-$$\mathsf{cwalk}:= (\ones(V))^T\cdot f_{\odot}\bigl(V\cdot V, \diag(\ones(V)\bigr)\cdot\ones(V).$$
-Let $\Sch$  consist of $\Mnam:=\{V\}$ and $\size(V):=(\alpha,\alpha)$ such that
-matrices assigned to $V$ by instances $\I$ over $\Sch$ are square matrices.
-It is readily verified that $\mathsf{cwalk}$ is well-typed and more specifically, $\ttype(\mathsf{cwalk})=(1,1)$, i.e., it returns an element of $\RR$ on any  instance $\I$. Let $\I$ be such that $\dom(\alpha)=n$ and  $\conc(V)$ is an adjacency matrix $A$ of an undirected graph $G$ consisting of $n$ vertices. Then, it is readily verified that $\sem{\mathsf{cwalk}}{\I}$ returns the number of paths of length two in $G$ which start in and end at the same vertex.\qed
-\end{example}
-\cristian{Do we need this example?}
+%\begin{example}Consider the \langf{$f_\odot$} expression with $f_\odot:\RR^2\to\RR:(x,y)\mapsto x\cdot y$:
+%$$\mathsf{cwalk}:= (\ones(V))^T\cdot f_{\odot}\bigl(V\cdot V, \diag(\ones(V)\bigr)\cdot\ones(V).$$
+%Let $\Sch$  consist of $\Mnam:=\{V\}$ and $\size(V):=(\alpha,\alpha)$ such that
+%matrices assigned to $V$ by instances $\I$ over $\Sch$ are square matrices.
+%It is readily verified that $\mathsf{cwalk}$ is well-typed and more specifically, $\ttype(\mathsf{cwalk})=(1,1)$, i.e., it returns an element of $\RR$ on any  instance $\I$. Let $\I$ be such that $\dom(\alpha)=n$ and  $\conc(V)$ is an adjacency matrix $A$ of an undirected graph $G$ consisting of $n$ vertices. Then, it is readily verified that $\sem{\mathsf{cwalk}}{\I}$ returns the number of paths of length two in $G$ which start in and end at the same vertex.\qed
+%\end{example}
+%\cristian{Do we need this example?}
+
+
 %Although \lang\ forms a solid basis for a matrix query language, it is limited in expressive power. Indeed, \lang\ is subsumed by first order logic with aggregates that uses only three variables \cite{matlang}. As consequence, no \lang\ expression exists that can compute the transitive closure of a graph (represented by its adjacency matrix) or can compute the inverse of a matrix. Furthermore, no \lang\ expression exists which detects four-cliques in a graph \cite{matlang}.
 %Also, $\lang$ is not expressive enough to perform classical linear algebra algorithms such as LU-decomposition (Gaussian elimination).
 % Rather than extending \lang\ with specific linear algebra operators, such as matrix inversion, we next introduce a limited form of recursion in \lang.

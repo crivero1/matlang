@@ -33,6 +33,22 @@ $\sem{\initf{e_0}{v}{X}{e}}{\I}$.
 
 As an illustration, we consider the Floyd-Warshall algorithm given in the Introduction. 
 
+%\begin{example}\label{ex:floyd}
+%Consider the following expression in $\langf{f_>}$, where $f_>:\RR^2\to\RR$, is a function such that $f_>(x,y) = 1$ when $x>y$, and is zero otherwise:
+%\begin{tabbing}
+%\texttt{for\,}\=$e_k,\, X_1\!=\!A.\ \ X_1 \ + $\\
+%\> \texttt{for\,}\=$e_i, \, X_2.\ \ X_2 \ +$ \\
+%\>\>\texttt{for\,}\=$e_j,\, X_3.\ \ X_3 \ +$ \\
+%\>\>\> $f_>(e_i^T\cdot X_1 \cdot e_j\ ,\ $\=$e_i^T\cdot X_1\cdot e_k + e_k^T\cdot X_1\cdot e_j)\ \cdot$\\
+%\>\>\>\>$(e_i^T\cdot X_1\cdot e_k + e_k^T\cdot X_1\cdot e_j) \times e_i\cdot e_j^T$
+%\end{tabbing}
+%The expression $e_{FW}$ simulates the Floyd-Warshall algorithm by updating the matrix $A$, which is stored in the variable $X_1$. The inner sub-expression here constructs an $n\times n$ matrix that contains the distance of the path between $i$ and $j$ that goes through $k$ if and only if this distance is less than what we had previously here.. ZERO SHOULD BE INFINITY.
+%$(i,j)$ if and only if one can reach the vertex $j$ from $i$ by going through $k$, and zero elsewhere. If an instance $\I$ assigns to $A$ the adjacency matrix of a graph, then $\sem{e_{FW}}{\I}$ contains the shortest distance between a vertex $i$ and the vertex $j$.
+%% The transitive closure in then obtained using the $\langf{f_>}$ expression $f_>(e_{FW})$, where $f_{>0}:\RR\to\RR$ is such that $f_{>0}(x):=1$ if $x>0$ and $f_{>0}(x):=0$ otherwise.  
+%\cristian{The same with the problem of the shortest path mentioned in the intro.}
+%\qed
+%\end{example}
+
 \begin{example}\label{ex:floyd}
 Consider the following expression:
 \begin{tabbing}
@@ -41,9 +57,9 @@ $e_{FW} := $ \texttt{for\,}\=$e_k,\, X_1\!=\!A.\ \ X_1 \ + $\\
 \>\>\texttt{for\,}\=$e_j,\, X_3.\ \ X_3 \ +$ \\
 \>\>\>$(e_i^T\cdot X_1\cdot e_k \cdot e_k^T\cdot X_1\cdot e_j)\times e_i\cdot e_j^T$
 \end{tabbing}
-The expression $e_{FW}$ simulates the Floyd-Warshall algorithm by updating the matrix $A$, which is stored in the variable $X_1$. The inner sub-expression here constructs an $n\times n$ matrix that contains one in the position $(i,j)$ if and only if one can reach the vertex $j$ from $i$ by going through $k$, and zero elsewhere. If an instance $\I$ assigns to $A$ the adjacency matrix of a graph, then $\sem{e_{FW}}{\I}$ contains the shortest distance between a vertex $i$ and the vertex $j$.
+The expression $e_{FW}$ simulates the Floyd-Warshall algorithm by updating the matrix $A$, which is stored in the variable $X_1$. The inner sub-expression here constructs an $n\times n$ matrix that contains one in the position $(i,j)$ if and only if one can reach the vertex $j$ from $i$ by going through $k$, and zero elsewhere. If an instance $\I$ assigns to $A$ the adjacency matrix of a graph, then $\sem{e_{FW}}{\I}$ contains a non zero value if and only if $j$ is reachable from $i$. If we use the function $f_{>0}:\RR\to\RR$, with $f_{>0}(x):=1$ if $x>0$ and $f_{>0}(x):=0$ otherwise, then the $\langf{f_{>0}}$ expression $f_{>0}(e_{FW})$ computes precisely the same matrix as the algorithm from the Introduction.
 % The transitive closure in then obtained using the $\langf{f_>}$ expression $f_>(e_{FW})$, where $f_{>0}:\RR\to\RR$ is such that $f_{>0}(x):=1$ if $x>0$ and $f_{>0}(x):=0$ otherwise.  
-\cristian{The same with the problem of the shortest path mentioned in the intro.}
+%\cristian{The same with the problem of the shortest path mentioned in the intro.}
 \qed
 \end{example}
 
