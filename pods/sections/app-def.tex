@@ -1,21 +1,23 @@
-We sometimes want to iterate over $k$ canonical vectors. We define:
+We sometimes want to iterate over $k$ canonical vectors. We define the following shorthand notation:
 \begin{align*}
   \ffor{v_1,\ldots, v_k}{X}{e(X,v_1,\ldots, v_n)}:= &\ffor{v_1}{X_1}{X_1 +} \\
   &\hspace{1em}\initf{X_1}{v_2}{X_2}{X_2 + } \\
   &\hspace{2em}\initf{X_2}{v_3}{X_3}{X_3 + } \\
   &\hspace{8em}\ddots \\
-  &\hspace{4em}\initf{X_{k-1}}{v_k}{X_k}{ e(X_k,v_1,\ldots, v_k)}
+  &\hspace{4em}\initf{X_{k-1}}{v_k}{X_k}{ e(X_k,v_1,\ldots, v_k)}.
 \end{align*}
-To reference $l$ independent vectors in every iteration and update them in different ways we define
+To reference $\ell$ different vector variables $X_1,\ldots,X_\ell$ in every iteration and update them in different ways we define:
 \begin{align*}
-&\ffor{v}{X_1,\ldots, X_l}{\left( e_1(X_1,v), e_2(X_2,v), \ldots, e_l(X_l,v) \right)} :=\\
-&\hspace{4em}\ffor{v}{X}{e_1(X\cdot e_{\mathsf{min}},v)\cdot e_{\mathsf{min}}^T + e_2(X\cdot e_{\mathsf{min} + 1},v)\cdot e_{\mathsf{min} + 1}^T + \ldots + e_l(X\cdot e_{\mathsf{max}},v)\cdot e_{\mathsf{max}}^T}
+&\ffor{v}{X_1,\ldots, X_\ell}{\left( e_1(X_1,v), e_2(X_2,v), \ldots, e_l(X_\ell,v) \right)} :=\\
+&\hspace{4em}\ffor{v}{X}{e_1(X\cdot e_{\mathsf{min}},v)\cdot e_{\mathsf{min}}^T + e_2(X\cdot e_{\mathsf{min} + 1},v)\cdot e_{\mathsf{min} + 1}^T + \ldots + e_\ell(X\cdot e_{\mathsf{max}},v)\cdot e_{\mathsf{max}}^T}
 \end{align*}
-Note that for the latter operator to be semantically correct both $X_i,e_i$ for $ i=1,\ldots,l$ have to be of type $\alpha\times 1$ as $v$, and $X$ has to be of type $\alpha\times\gamma$ as the expression inside.
-Here, $e_{\mathsf{min}}$ and $e_{\mathsf{min} + i}$ are $b_1$ and $b_{1+i}$. We define this expressions in section \ref{app:order}. Same with $e_{\mathsf{max}}=b_n$.
-The combinations of both previous operators is defined as
+We note that for the latter expression to be semantically correct both $v$, $X_i$ and $e_i$ for $ i=1,\ldots,\ell$ have to be of type $\alpha\times 1$, and $X$ has to be of type $\alpha\times\gamma$ as the expression inside. 
+\floris{I believe that $\gamma$ should be $\alpha$? Also, this implies that we cannot loop over more than $\alpha$ different vector variables. Does this cause a problem later on?}
+When evaluated on an instance $\I$,
+$e_{\mathsf{min}}, e_{\mathsf{min} + i}$ evaluate to $b_1$ and $b_{1+i}$, respectively, and we show their defining expressions in section \ref{app:order}. Similarly for $e_{\mathsf{max}}=b_n$.
+The combinations of both previous operators results in:
 \begin{align*}
-&\ffor{v_1,\ldots, v_k}{X_1,\ldots, X_l}{\left( e_1(X_1,v_1,\ldots, v_k), e_2(X_2,v_1,\ldots, v_k), \ldots, e_l(X_l,v_1,\ldots, v_k) \right)} :=\\
-&\hspace{4em}\ffor{v_1,\ldots, v_k}{X}{e_1(X\cdot e_{\mathsf{min}},v)\cdot e_{\mathsf{min}}^T + e_2(X\cdot e_{\mathsf{min} + 1},v)\cdot e_{\mathsf{min} + 1}^T + \ldots + e_l(X\cdot e_{\mathsf{max}},v)\cdot e_{\mathsf{max}}^T}
+&\ffor{v_1,\ldots, v_k}{X_1,\ldots, X_\ell}{\left( e_1(X_1,v_1,\ldots, v_k), e_2(X_2,v_1,\ldots, v_k), \ldots, e_\ell(X_\ell,v_1,\ldots, v_k) \right)} :=\\
+&\hspace{4em}\ffor{v_1,\ldots, v_k}{X}{e_1(X\cdot e_{\mathsf{min}},v)\cdot e_{\mathsf{min}}^T + e_2(X\cdot e_{\mathsf{min} + 1},v)\cdot e_{\mathsf{min} + 1}^T + \ldots + e_\ell(X\cdot e_{\mathsf{max}},v)\cdot e_{\mathsf{max}}^T}
 \end{align*}
-It is clear that this expression iterates over $k$ canonical vectors and references $l$ independent vectors updating them in their particular way.
+It is clear that this expression iterates over $k$ canonical vectors and references $\ell$ independent vectors updating each of them in their particular way.
