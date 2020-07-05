@@ -1,4 +1,3 @@
-%!TEX root = /Users/fgeerts/Documents/MLforloops/pods/main.tex
 \newtheorem*{INVERSE}{Proposition~\ref{prop:inverse}}
 We next turn our attention to computing the inverse and determinant of a matrix.
 To show Proposition \ref{prop:inverse} we first show that it holds when considering non-singular lower or upper triangular matrices.
@@ -165,10 +164,10 @@ outputs $\bar c$ when $V$ is interpreted as matrix $A$. Observe that we only use
 
 We can now define
 $$
-e_{\mathsf{det}}(M):=\left( \left(\left( \sprod w. (-1)\times e_{\ones}(M)\right)^T\cdot e_{\mathsf{max}}\right) \times e_{\bar c}(M) \right)^T\cdot e_{\mathsf{max}},
+e_{\mathsf{det}}(V):=\left( \left(\left( \sprod w. (-1)\times e_{\ones}(V)\right)^T\cdot e_{\mathsf{max}}\right) \times e_{\bar c}(V) \right)^T\cdot e_{\mathsf{max}},
 $$
-an expression that, when $M$ is interpreted as any matrix $A$, outputs $\mathsf{det}(A)$.
-Here, $(\sprod w. (-1)\times e_{\ones}(M))$ is the $n$ dimensional vector with $(-1)^n$ in all of its entries.
+an expression that, when $V$ is interpreted as any matrix $A$, outputs $\mathsf{det}(A)$.
+Here, $(\sprod w. (-1)\times e_{\ones}(V))$ is the $n$ dimensional vector with $(-1)^n$ in all of its entries.
 Since $c_n=(-1)^n\mathsf{det}(A)$, we extract $(-1)^n(-1)^n\mathsf{det}(A)=\mathsf{det}(A)$ with $e_{\mathsf{max}}$.
 
 For the inverse, we have that
@@ -185,23 +184,25 @@ $$
 $$
 where
 $$
-e_{\mathsf{invPow}}(M, v):= \sprod w. (1-\mathsf{max}(w)) \times \left[ (1 - \mathsf{succ}(w,v))\times M + \mathsf{succ}(w,v)\times e_{\mathsf{Id}} \right] + \mathsf{max}(w)\times e_{\mathsf{Id}}.
+e_{\mathsf{invPow}}(V, v):= \sprod w. (1-\mathsf{max}(w)) \times \left[ (1 - \mathsf{succ}(w,v))\times V + \mathsf{succ}(w,v)\times e_{\mathsf{Id}} \right] + \mathsf{max}(w)\times e_{\mathsf{Id}}.
 $$
 Here, $e_{\mathsf{invPow}}(A, b_i)=A^{n-1-i}$ and $e_{\mathsf{invPow}}(A, b_n)=I$.
 Note that we always multiply by $e_{\mathsf{Id}}$ in the last step.
-Define
+To conclude, we define:
 $$
-e_{\mathsf{inv}}(M):= f_{/}(1, e_{\bar c}(M)^T\cdot e_{\mathsf{max}})\times e_{\mathsf{pow}}(M, e_{\mathsf{max}}) + \left[ \ssum v. f_{/}\left( e_{\bar c}(A)^T\cdot v, e_{\bar c}(A)^T\cdot e_{\mathsf{max}} \right)\times e_{\mathsf{invPow}}(A, v) \right],
+e_{\mathsf{inv}}(V):= f_{/}(1, e_{\bar c}(V)^T\cdot e_{\mathsf{max}})\times e_{\mathsf{pow}}(V, e_{\mathsf{max}}) + \left[ \ssum v. f_{/}\left( e_{\bar c}(V)^T\cdot v, e_{\bar c}(V)^T\cdot e_{\mathsf{max}} \right)\times e_{\mathsf{invPow}}(V, v) \right],
 $$
-an expresion that, when $M$ is interpreted as any invertible matrix $A$, computes $A^{-1}$.
+an expression that, when $V$ is interpreted as any invertible matrix $A$, computes $A^{-1}$.
 \end{proof}
 
-As stated at the beginning of this section, note that we only use $\ssum$, $\sprod$ and $e_{\mathsf{Pred}}$.
 
+\floris{The following relates to B.2 and results in Section 6? We need a precise statement here since this has to be matched with what is written (or will be written in Section 6).}
 
 Here we only use operators $\ssum$ and $\sprod$ defined in section \ref{sec:restrict}. 
 And also assume access to order, this is, we have an expression $e_{\mathsf{Prev}}$. This is enough to 
 compute everything related to order, as it was shown in \ref{app:asset_order}.
+
+As stated at the beginning of this section, note that we only use $\ssum$, $\sprod$ and $e_{\mathsf{Pred}}$.
 
 
 % $$

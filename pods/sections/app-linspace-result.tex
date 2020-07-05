@@ -1,5 +1,8 @@
-Here we prove that any polinomial time Turing machine working within linear space and producing linear space
-output, can be simulated in \langfor. For this proof and section only, we will denote the canonical vectors as 
+%!TEX root = /Users/fgeerts/Documents/MLforloops/pods/main.tex
+We start by showing a crucial ingredient for making the correspondence between \langfor
+and arithmetic circuits. More specifically, 
+we show that any polynomial time Turing machine, working within linear space and producing linear space output, can be simulated in \langfor. 
+For this proof and section only, we will denote the canonical vectors as
 $\mathbf{e}_1, \ldots, \mathbf{e}_n$, since $b$ will be used to represent a value on a position of a tape.
 
 We consider  deterministic Turing Machines (TM) $T$ consisting of $\ell$ read-only input tapes, 
@@ -73,11 +76,11 @@ in the proof.}
 $Q_1,\ldots,Q_m,R_1,\ldots,R_\ell,H_1,\ldots,H_\ell,W_1,\ldots,W_s,H_{W_1},\ldots,H_{W_s},O,H_O, v_1,\ldots,v_{k}$ 
 with $\mathsf{size}(V)=\alpha\times 1$ for all $V\in\mathcal{M}$; and (ii)~a $\mathsf{MATLANG}$ 
 expression $e_f$ over $\mathcal{S}$ such that for the instance 
-$I=(\mathcal{D},\textsf{mat})$ over $\mathcal{S}$ with $\mathcal{D}(\alpha)=n$ and 
+$\I=(\mathcal{D},\textsf{mat})$ over $\mathcal{S}$ with $\mathcal{D}(\alpha)=n$ and 
 $$\mathsf{mat}(R_i)=\mathsf{vec}(w_i)\in \mathbb{R}^n\text{, for $i\in[\ell]$ and all other matrix variables instantiated with the zero vector in $\mathbb{R}^n$} $$
 for words $w_1,\ldots,w_\ell\in\Sigma^n$ and such that $\mathsf{vec}(w_i)$ is the $n\times 1$-vector 
-encoding the word $w_i$, we have that the $\mathsf{mat}(O)=\mathsf{vec}(f_n(w_1,\ldots,w_n))\in\mathbb{R}^n$ 
-after evaluating $e_f(I)$.
+encoding the word $w_i$, we have that  $\mathsf{mat}(O)=\mathsf{vec}(f_n(w_1,\ldots,w_n))\in\mathbb{R}^n$ 
+after evaluating $e_f$ on $\I$.
 \end{proposition}
 \begin{proof}
 	The expression $e_f$ we construct will simulate the TM $T$. To have some more control on the space 
@@ -116,21 +119,21 @@ $q_i$ when
  vector in $\mathbb{R}^n$.	
 
 Finally, the variables $v_1,\ldots,v_{k}$ represent $k$ canonical vectors  which are use to iterate 
-in for loops. By iterating over then, we can perform $n^{k}$ iterations, 
+in for-loops. By iterating over then, we can perform $n^{k}$ iterations, 
 which suffices for simulating the $\mathcal{O}(n^{k-1})$ steps used by $T$ to reach an accepting configuration. 
 % (We recall that $T$ loops when reaching an accepting configuration.)
 
 With these matrix variables in place, we start by defining $e_f$. It will consists of two subexpressions
-$e_f^{\geq N}$, for dealing with $n\geq N$, and $e_f^{<N}$, for dealing with $n<N$. We explain the expresion
+$e_f^{\geq N}$, for dealing with $n\geq N$, and $e_f^{<N}$, for dealing with $n<N$. We explain the expression
 $e_f^{\geq N}$ first.
 
 
 
 In our  expressions we use subexpressions which we defined before. These subexpression 
 require some auxiliary variables, as detailed below. As a consequence, $e_f$ will be an expressions 
-defined over an extended schema $\mathcal{S}'$. Hence, the instance $I$ in the statement of the Proposition 
-is  an instance $I'$ of $\mathcal{S}'$ which
-coincides with $I$ on $\mathcal{S}$ and in which the auxiliary matrix variables are all instantiated with 
+defined over an extended schema $\mathcal{S}'$. Hence, the instance $\I$ in the statement of the Proposition 
+is  an instance $\I'$ of $\mathcal{S}'$ which
+coincides with $\I$ on $\mathcal{S}$ and in which the auxiliary matrix variables are all instantiated with 
 zero vectors or matrices, depending on their size.
 
 Now, we specify the finite auxiliary variables involved in the \langfor expression. These arise
@@ -370,7 +373,7 @@ We are now finally ready to define $e_f^{\geq N}$ :
 e_f^{\geq N}:= \mathsf{for\,} v_1,\ldots,v_{k},Q_1,\ldots,Q_m,H_1,\ldots,H_\ell,W_1,\ldots,W_s, H_{W_1},\ldots,H_{W_s},O,H_O . \\
 (e_{Q_1},\ldots,e_{Q_m},e_{H_1},\ldots,e_{H_\ell},e_{W_1},\ldots,e_{W_s},e_{H_{W_1}},\ldots,e_{H_{W_s}},e_{O}, e_{H_O}).
 \end{multline*}
-Refer to section \ref{app:def} for the definition of this form of the for loop. The expressions used are (we use $\star$ below to mark irrelevant information in the transitions):
+Refer to section \ref{app:def} for the definition of this form of the for-loop. The expressions used are (we use $\star$ below to mark irrelevant information in the transitions):
  \allowdisplaybreaks
 \begin{align*}
 	e_{Q_1}&:=\left(\prod_{j=1}^{k} \textsf{min}(v_i)\right)\cdot e_{\mathsf{min}}
