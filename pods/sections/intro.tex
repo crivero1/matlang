@@ -7,17 +7,30 @@ Both \lara and \lang have been studied by the database theory community, showing
 
 One approach would be to add these constructions explicitly to the language. Indeed, this was done for \lang in~\cite{matlang-journal}, and \lara in ~\cite{BarceloH0S20}. In these works, the authors have extended the core language with the trace, the inverse, the determinant, or the eigenvectors operators and study the expressive power of the result. However, one can argue that there is nothing special in these operators, apart they have been used historically in linear algebra textbooks and they extend the expressibility of the core language. The question here is whether these new operators form a sound and natural choice to extend the core language, or they are some particular queries that we would like to support. 
 
-In this paper we take a more principle approach by studying what are the atomic operations needed to define standard linear algebra algorithms. Inspecting any linear algebra textbook, one sees that most linear algebra procedures heavily rely on the use of for-loops in which iterations happen over the dimensions of the matrices involved. To illustrate this, let us consider the example of computing the transitive closure of a graph. This is usually done using  the Floyd-Warshall algorithm~\cite{cormen}, which takes as its input the $n\times n$ adjacency matrix $A$ representing our graph, and operates according to the following pseudo-code:
-\vspace{-1ex}
+In this paper we take a more principle approach by studying what are the atomic operations needed to define standard linear algebra algorithms. Inspecting any linear algebra textbook, one sees that most linear algebra procedures heavily rely on the use of for-loops in which iterations happen over the dimensions of the matrices involved. To illustrate this, let us consider the example of computing the transitive closure of a graph. This is usually done using the Floyd-Warshall algorithm~\cite{cormen}, which takes as its input a boolean $n\times n$ adjacency matrix $A$ representing our graph, and operates according to the following pseudo-code:
+%\vspace{-1ex}
 \begin{tabbing}
 \quad\texttt{for}\=\,  $k = 1..n$ \texttt{do}\\
 \> \texttt{for}\=\,  $i = 1..n$ \texttt{do}\\
 \> \> \texttt{for}\=\,  $j = 1..n$ \texttt{do}\\
-\> \> \> $A[i,j] := A[i,j] + A[i,k]\cdot A[k,j]$
+\> \> \> $A[i,j] := A[i,j] \texttt{ OR } A[i,k] \texttt{ AND } A[k,j]$
 \end{tabbing}
 %\vspace{-1ex}
-After executing the algorithm, all of the non zero entries signify an edge in the transitive closure graph (and also the length of the shortest path between the two nodes). 
-\cristian{This is not exactly true. If we use $\cdot$ as $+$ and $+$ as min, it works, namely if we use the min/plus semiring. Should we say it?}
+After executing the algorithm, all of the non zero entries signify an edge in the transitive closure graph. 
+%\cristian{This is not exactly true. If we use $\cdot$ as $+$ and $+$ as min, it works, namely if we use the min/plus semiring. Should we say it?}
+
+% FOR THE REAL ALGORITHM WE TREAT ZERO AS INFINITY!!!
+%\vspace{-1ex}
+%\begin{tabbing}
+%\quad\texttt{for}\=\,  $k = 1..n$ \texttt{do}\\
+%\> \texttt{for}\=\,  $i = 1..n$ \texttt{do}\\
+%\> \> \texttt{for}\=\,  $j = 1..n$ \texttt{do}\\
+%\> \> \> \texttt{if} $A[i,j]$\=\, $> A[i,k] + A[k,j]$\\
+%\> \> \> \> $A[i,j] := A[i,k]+ A[k,j]$
+%\end{tabbing}
+%%\vspace{-1ex}
+%After executing the algorithm, all of the non zero entries signify an edge in the transitive closure graph (and also the length of the shortest path between the two nodes). 
+
 
 When examining standard linear algebra algorithms such as Gaussian elimination, $LU$-decomposition, computing the inverse of a matrix, or its determinant, we can readily see that this pattern continues. Namely, we observe that there are two main components to such algorithms: (i) the ability to iterate up to the matrix dimension; and (ii) the ability to access a particular position in our matrix. In order to allow this behavior in a query language, we propose to extend \lang with limited recursion in the form of for-loops, resulting in the language \langfor. To  simulate the two components of standard linear algebra algorithms in a natural way, we simulate a loop of the form \texttt{for}\, $i=1..n$ \texttt{do} by leveraging canonical vectors. In other words, we use the canonical vectors $b_1=(1,0,\ldots)$, $b_2=(0,1,\ldots)$, \ldots, to access specific rows and columns, and iterate over these vectors. As a consequence of this, we obtain a language able to compute important linear algebra operators such as $LU$-decomposition, determinant, matrix inverse, among other things.
 
