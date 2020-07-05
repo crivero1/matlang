@@ -5,8 +5,9 @@ the case when all expressions $e_1,\ldots,e_k$ have type $1\times 1$. Furthermor
 % assume \langfor to have functions that process only matrices of size $1\times 1$
 % and not scalar product.
 
-\floris{I am confused by what follows below. I see that general function application can be
-reduced to scalar function application. Similarly, matrix multiplication be reduced (do we use this?). BUT the expression for scalar multiplication used scalar multiplication?!?}
+% \floris{I am confused by what follows below. I see that general function application can be
+% reduced to scalar function application. Similarly, matrix multiplication be reduced (do we use this?). BUT the expression for scalar multiplication used scalar multiplication?!?}
+\thomas{Resolved here, the following is used in the proofs of section 6. The reduction of matrix multiplication it's not used I believe}
 \begin{itemize}
 \item 
 For general function applications $f(e_1,\ldots,e_k)$, if we have $\ssum$, scalar product and function application on scalars ($f_{1\times 1}$), we can simulate full function application, as follows:
@@ -19,10 +20,10 @@ Note that, if $\ssum$ is present, multiplication function application on matrice
 $$
 f_{\kprod}(e_1,\ldots, e_n) :=\Sigma x_i \Sigma x_j. (x_i^T\cdot e_1\cdot x_j)\times \ldots \times (x_i^T\cdot e_n\cdot x_j) \times x_i\cdot x_j^T,
 $$
-which also holds if $e_1,\ldots, e_n$ are scalars. Furthermore, if we restrict $f_{\kprod}$ to
-work only on scalars, it is enough to simulate scalar product (and thus, full function application). Let $c$ a scalar:
+which also holds if $e_1,\ldots, e_n$ are scalars. If we have function application, we can simulate 
+scalar product. Let $c$ a scalar:
 $$
-c\times A :=\Sigma x_i \Sigma x_j. f_{\kprod}(c, x_i^T\cdot A\cdot x_j) \times x_i\cdot x_j^T,
+c\times A :=f_{\kprod}(e_{\ones}(A)^T\cdot c \cdot e_{\ones}(A)^T, A).
 $$
 
 

@@ -37,10 +37,11 @@ be found, this implies that no interchange is required as well and we can move o
 
 To find the vector $u$ in $P$, we can, for example, find the first entry $j\geq k$ in column $k$ of $A_k$ that holds a non-zero value. More generally, we can find the first entry in a vector $a$ that holds a non-zero value by using the function $f_{>0}$. Indeed, consider the following expression:
 $$
-\nneq{a}{u}:=\ffor{v}{X}{\left( 1-e_{\ones}(v)^T\cdot X \right) \times f_{>0}(v^T\cdot a)\times v + \mathsf{max}(v)\times\left( 1-e_{\ones}(v)^T\cdot X \right)\times \left( 1 - f_{>0}(v^T\cdot a) \right) \times u}
+\nneq{a}{u}:=\ffor{v}{X}{\left( 1-e_{\ones}(v)^T\cdot X \right) \times f_{>0}\left( ( v^T\cdot a )^2 \right)\times v + \mathsf{max}(v)\times\left( 1-e_{\ones}(v)^T\cdot X \right)\times \left( 1 - f_{>0}\left( ( v^T\cdot a )^2 \right) \right) \times u}
 $$
 Here, $\nneq{a}{u}$ receives two $n$ dimensional vectors $a$ and $u$ and outputs a 
-canonical vector $b_j$ such that $a_j$ is the first non-zero entry of $a$, or $u$ if such non-zero value does not exist in $a$. The above expression simply checks in each iteration
+canonical vector $b_j$ such that $a_j$ is the first non-zero entry of $a$, or $u$ if such non-zero value does not exist in $a$. We check for $f_{>0}((\cdot)^2)$ 
+in case a negative number is tested. The above expression simply checks in each iteration
 whether $X$ already holds a canonical vector. If so, then $X$ is not updated. Otherwise,
 $X$ is replaced by the current canonical vector $b_j$ if and only if $b_j^T\cdot a$ is non-zero. Furthermore, when the final canonical vector is considered and $X$ does not hold
 a canonical vector yet and $b_n^T\cdot a$ is zero, the vector $u$ is returned.
@@ -55,10 +56,15 @@ $$
 From the explanations given above, it should be clear that $e_{P_u}(A,u)$ computes the necessary permutation matrix of $A_k$ for the column indicated by $u$, or $I$
 if no permutation is needed, or if such permutation does not exist (so we skip the current column). Also, we have to modify the $\red{V}{y}$ operators, as follows:
 $$
-\red{V}{y}:= e_{\mathsf{Id}}+ f_{>0}(y^T\cdot V\cdot y)\times f_/(\ccol{V}{y},\left[ -(y^T\cdot V\cdot y)\times e_{\ones}(y) + \left( 1 - f_{>0}(y^T\cdot V\cdot y) \right)\times e_{\ones}(y) \right])\cdot y^T,
+\red{V}{y}:= e_{\mathsf{Id}}+ f_{>0}\left( ( y^T\cdot V\cdot y)^2 \right)\times f_/(\ccol{V}{y},\left[ -(y^T\cdot V\cdot y)\times e_{\ones}(y) + \left( 1 - f_{>0}\left( ( y^T\cdot V\cdot y)^2 \right) \right)\times e_{\ones}(y) \right])\cdot y^T,
 $$
-so that when $V$ is interpreted by a  matrix $B$ and $y=b_i$, it returns the identity when $B_{ii}=0$.
-\floris{Perhaps an extra line of explanation can be given for the expression above? It is not directly clear.}
+so that when $V$ is interpreted by a matrix $B$ and $y=b_i$, it returns $I+c_ib_i^T$ if $B_{ii}$ is not zero. 
+If $B_{ii}=0$ then we divide $\ccol{B}{b_i}$ by $e_{\ones}(b_i)$ (so we don't get \textit{undefined}), 
+but we don't add $c_ib_i^T$ precisely because $B_{ii}=0$, and return the identity so nothing happens. We check 
+for $f_{>0}((\cdot)^2)$ in case a negative number is tested.
+
+\thomas{Extra line added.}
+
 Finally, we define
 $$
 e_{L^{-1}P}(V):=\initf{e_{\mathsf{Id}}}{v}{X}{\red{e_{P_v}(X\cdot V,v)\cdot X\cdot V}{v}\cdot e_{P_v}(X\cdot V,v)\cdot X}
