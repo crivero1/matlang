@@ -1,9 +1,13 @@
-%!TEX root = /Users/fgeerts/Documents/MLforloops/pods/main.tex
+% !TeX spellcheck = en_US
+%!TEX root = ../main.tex
+
 Linear algebra-based algorithms have become a key component in data analytical workflows. As such, there is a growing interest in the database community to integrate linear algebra functionalities into relational database management systems \cite{Jermaine/17/LAonRA,2019Boehm,LARA_Berlin_2016,JankovLYCZJG19,Khamis0NOS18}. In particular, from a query language perspective, several proposals have recently been put forward to unify relational algebra and linear algebra. Two notable examples of this are: \lara~\cite{HutchisonHS17}, a minimalistic language in which a number of atomic operations on so-called associative tables are proposed, and \lang, a query language for manipulating matrices \cite{matlang-journal}.
 
 Both \lara and \lang have been studied by the database theory community, showing interesting connections to relational algebra and logic. For example, fragments of \lara are known to capture first-order logic with aggregation~\cite{BarceloH0S20}, and \lang has been recently shown to be equivalent to a restricted version of the (positive) relational algebra on $K$-relations, \rak~\cite{brijder2019matrices}, where $K$ denotes a semiring. On the other hand, there are some standard constructions in linear algebra that are out of reach for these languages. For instance, it was shown that under standard complexity-theoretic assumptions, \lara can not compute the inverse of a matrix or its determinant~\cite{BarceloH0S20}, and operations such as the transitive closure of a matrix are known to be inexpressible in \lang~\cite{matlang-journal}. Given that these are fundamental constructs in linear algebra, one might wonder how to extend \lara or \lang in order to allow expressing such properties.
 
-One approach would be to add these constructions explicitly to the language. Indeed, this was done for \lang in~\cite{matlang-journal}, and \lara by design allows user-defined functions. In this paper we take another approach, and analyze what are the atomic operations needed to define standard linear algebra algorithms. Inspecting any linear algebra textbook, one sees that most linear algebra procedures heavily rely on the use of for-loops in which iterations happen over the dimensions of the matrices involved. To illustrate this, let us consider the example of computing the transitive closure of a graph. This is usually done using  the Floyd-Warshall algorithm~\cite{cormen}, which takes as its input the $n\times n$ adjacency matrix $A$ representing our graph, and operates according to the following pseudo-code:
+One approach would be to add these constructions explicitly to the language. Indeed, this was done for \lang in~\cite{matlang-journal}, and \lara in ~\cite{BarceloH0S20}. In these works, the authors have extended the core language with the trace, the inverse, the determinant, or the eigenvectors operators and study the expressive power of the result. However, one can argue that there is nothing special in these operators, apart they have been used historically in linear algebra textbooks and they extend the expressibility of the core language. The question here is whether these new operators form a sound and natural choice to extend the core language, or they are some particular queries that we would like to support. 
+
+In this paper we take a more principle approach by studying what are the atomic operations needed to define standard linear algebra algorithms. Inspecting any linear algebra textbook, one sees that most linear algebra procedures heavily rely on the use of for-loops in which iterations happen over the dimensions of the matrices involved. To illustrate this, let us consider the example of computing the transitive closure of a graph. This is usually done using  the Floyd-Warshall algorithm~\cite{cormen}, which takes as its input the $n\times n$ adjacency matrix $A$ representing our graph, and operates according to the following pseudo-code:
 \vspace{-1ex}
 \begin{tabbing}
 \quad\texttt{for}\=\,  $k = 1..n$ \texttt{do}\\
@@ -13,6 +17,7 @@ One approach would be to add these constructions explicitly to the language. Ind
 \end{tabbing}
 %\vspace{-1ex}
 After executing the algorithm, all of the non zero entries signify an edge in the transitive closure graph (and also the length of the shortest path between the two nodes). 
+\cristian{This is not exactly true. If we use $\cdot$ as $+$ and $+$ as min, it works, namely if we use the min/plus semiring. Should we say it?}
 
 When examining standard linear algebra algorithms such as Gaussian elimination, $LU$-decomposition, computing the inverse of a matrix, or its determinant, we can readily see that this pattern continues. Namely, we observe that there are two main components to such algorithms: (i) the ability to iterate up to the matrix dimension; and (ii) the ability to access a particular position in our matrix. In order to allow this behavior in a query language, we propose to extend \lang with limited recursion in the form of for-loops, resulting in the language \langfor. To  simulate the two components of standard linear algebra algorithms in a natural way, we simulate a loop of the form \texttt{for}\, $i=1..n$ \texttt{do} by leveraging canonical vectors. In other words, we use the canonical vectors $b_1=(1,0,\ldots)$, $b_2=(0,1,\ldots)$, \ldots, to access specific rows and columns, and iterate over these vectors. As a consequence of this, we obtain a language able to compute important linear algebra operators such as $LU$-decomposition, determinant, matrix inverse, among other things.
 
@@ -27,8 +32,8 @@ previously.
 % Our main contributions can be summarized as follows.
 \begin{itemize}[leftmargin=0.5cm]
 	\item After we recall \lang in Section~\ref{sec:matlang}, we show in Section~\ref{sec:formatlang}
-	how for-loops can be added to \lang in a natural way. We also observe in that section that
-	\langfor strictly extends \lang. In addition, we note that our use of canonical vectors to define for-loops results in the availability of an order relation.
+	how for-loops can be added to \lang in a natural way. We also observe that
+	\langfor strictly extends \lang. In addition, we discuss some design decisions behind the definition of \langfor, noting that our use of canonical vectors results in the availability to have an order relation.
 	
 	\item In Section~\ref{sec:queries} we show that \langfor can compute important linear algebra algorithms in a natural way. We provide expressions in \langfor for LU decomposition (used to solve linear systems of equations), the determinant and matrix inversion.
 	\item More generally, in Section~\ref{sec:circuits} we report our main technical contribution.
