@@ -1,10 +1,9 @@
-%!TEX root = /Users/fgeerts/Documents/MLforloops/pods/main.tex
 \newtheorem*{PALU}{Proposition~\ref{prop:palu}}
 We next consider LU-decomposition with pivoting. We recall proposition \ref{prop:palu}:
 
 \begin{PALU}
-  There exist expressions $e_{L^{-1}P}(M)$ and $e_U(M)$ in $\langforf{f_/,f_{>0}}$  such that
-  $L^{-1}\cdot P=\sem{e_{L^{-1}P}}{\I}$ and $U=\sem{e_U}{\I}$, satisfy $L^{-1}\cdot P\cdot A=U$.
+  There exist expressions $e_{L^{-1}P}(V)$ and $e_U(V)$ in $\langforf{f_/,f_{>0}}$  such that
+  $L^{-1}\cdot P=\sem{e_{L^{-1}P}}{\I}$ and $U=\sem{e_U}{\I}$, satisfy $L^{-1}\cdot P\cdot A=U$, where $\I$ is an instance such that $\conc(V)=A$. 
 \end{PALU}
 \begin{proof}
 We assume that $f_{/}$ and $f_{>0}$ are in $\mathcal{F}$. Let $A$ be an arbitrary matrix.
@@ -20,67 +19,79 @@ We assume that $f_{/}$ and $f_{>0}$ are in $\mathcal{F}$. Let $A$ be an arbitrar
 % where in step $v=b_k$ we do $T_k=\red{X\cdot A}{v}$.
 % It is worth noting that because of the definition of $\ccol{\cdot}{\cdot}$ inside $\red{\cdot}{\cdot}$,
 % we always get $T_n=I$.
-By contrast to when $A$ is LU-factorizable, during LU-decomposition process we may need row interchange (pivoting) in each step of the iteration. Let us assume that row interchange is needed immediately before 
+By contrast to when $A$ is LU-factorizable, during the LU-decomposition process we may need row interchange (pivoting) in each step of the iteration. Let us assume that row interchange is needed immediately before 
 step $k$, $1\leq k\leq n$. In other words, we now aim to reduce the $k$-th column of $A_k=T_{k-1}\cdots T_1\cdot A$, 
 or $A_k=A$ if $k=1$, but now $A_k$ has a zero pivot, i.e., $(A_{k})_{kk}=0$. 
 Let $P$ be the matrix that denotes the necessary row interchange. If we know
 $P$, then 
 % We aim to reduce the $k$-th column of $PA_{k}$ since $A_{k}$ has a zero pivot.
 to compute $T_k$ we need to perform $\red{P\cdot X\cdot A}{v}$ in this iteration,
-where $\red(\cdot)$ is the expression in \langfor reducing a column, as explained in the main body of the paper.
+where $\red{\cdot}$ is the expression in \langfor reducing a column, as explained in the main body of the paper.
 Furthermore, we need to apply the permutation $P$ to the current result, resulting in the 
 expression $\initf{I}{v}{X}{\red{P\cdot X\cdot A}{v}\cdot P\cdot X}$. We now remark that
-$P$ is a permutation matrix of the  form $P = I - u\cdot u^T$ and denotes row interchange (if multiplied by left) 
-of rows $i$ and $j$ if $u=(b_{i}-b_{j})$. Note that we are performing a row interchange for column $k$ and thus $i=k$ and $j>k-1$. If no interchange is needed, $i=j=k$ and $P=I$.
+$P$ is a permutation matrix of the  form $P = I - u\cdot u^T$ and it denotes an interchange (if multiplied by left) of rows $i$ and $j$ if $u=(b_{i}-b_{j})$. Note that we are performing a row interchange for column $k$ and thus $i=k$ and $j>k-1$. If no interchange is needed, $i=j=k$ and $P=I$.
 Also note that when $k=n$ no interchange takes place. Furthermore, if no suitable $b_j$ can
-be found, this implies that no interchange is required as well and we can move to next column.
+be found, this implies that no interchange is required as well and we can move on to next column.
 %  since we are using $P$ before
 % reducing the $k$-th column so we are interchanging rows of index strictly greater than $k-1$
 
-To find the vector $u$ in $P$, we can, for example, find the first entry $j$ in column $k$ of $A_k$ that holds a non-zero value. We can find the first entry in a vector $a$ that holds a non-zero value by using the function $f_{>0}$. Indeed, consider the following expression:
+To find the vector $u$ in $P$, we can, for example, find the first entry $j\geq k$ in column $k$ of $A_k$ that holds a non-zero value. More generally, we can find the first entry in a vector $a$ that holds a non-zero value by using the function $f_{>0}$. Indeed, consider the following expression:
 $$
 \nneq{a}{u}:=\ffor{v}{X}{\left( 1-e_{\ones}(v)^T\cdot X \right) \times f_{>0}(v^T\cdot a)\times v + \mathsf{max}(v)\times\left( 1-e_{\ones}(v)^T\cdot X \right)\times \left( 1 - f_{>0}(v^T\cdot a) \right) \times u}
 $$
 Here, $\nneq{a}{u}$ receives two $n$ dimensional vectors $a$ and $u$ and outputs a 
-canonical vector $b_j$ such that $a_j$ is the first non zero entry of $a$, or $u$ if such nonzero value does not exist in $a$. The above expression simply checks in each iteration
+canonical vector $b_j$ such that $a_j$ is the first non-zero entry of $a$, or $u$ if such non-zero value does not exist in $a$. The above expression simply checks in each iteration
 whether $X$ already holds a canonical vector. If so, then $X$ is not updated. Otherwise,
 $X$ is replaced by the current canonical vector $b_j$ if and only if $b_j^T\cdot a$ is non-zero. Furthermore, when the final canonical vector is considered and $X$ does not hold
-a canonical vector yet and the $b_n^T\cdot a$ is zero, the vector $u$ is returned.
+a canonical vector yet and $b_n^T\cdot a$ is zero, the vector $u$ is returned.
 
-Then we compute 
+We use $\nneq{a}{u}$ to find a pivot for a specific column. Let us assume again that we
+want to find a pivot in column $k$ of $A_k$. We can then first make all entries in that column, with indexes smaller or equal to $k$, zero, just as we did by means of $\ccol{\cdot}{\cdot}$ in the
+definition of $\red{\cdot}$. Except, now we also need to make the $k$the entry zero as well.
+Let us denote by $\ccoleq{\cdot}{\cdot}$ the operation $\ccol{\cdot}{\cdot}$, as defined in the main body of the paper, but using $\mathsf{succ}$ instead of $\mathsf{succ}^+$ (to include the $k$ entry). Given this, we can construct $P=I-u\cdot u^T$ as follows:
 $$
-e_{P_u}(A,u) := e_{\mathsf{Id}} - \left[ u - \nneq{ \ccoleq{A}{u} }{u} \right]\left[ u - \nneq{ \ccoleq{A}{u} }{u} \right]^T.
+e_{P_u}(A,u) := e_{\mathsf{Id}} - \left[ u - \nneq{ \ccoleq{A}{u} }{u} \right]\cdot \left[ u - \nneq{ \ccoleq{A}{u} }{u} \right]^T.
 $$ 
-Here $\ccoleq{\cdot}{\cdot}$ is the same as $\ccol{\cdot}{\cdot}$ but uses $S_{\leq}$ instead of 
-$S_{<}$. The expression $e_{P_u}(A,u)$ computes the necessary permutation matrix of $A$ for the column indicated by $u$, or $I$
-if no permutation is needed, or if such permutation does not exist (so we skip the current row).
-Also, we have to modify the $\red{V}{y}$ operator as 
+From the explanations given above, it should be clear that $e_{P_u}(A,u)$ computes the necessary permutation matrix of $A_k$ for the column indicated by $u$, or $I$
+if no permutation is needed, or if such permutation does not exist (so we skip the current column). Also, we have to modify the $\red{V}{y}$ operators, as follows:
 $$
-\red{V}{y}:= e_{\mathsf{Id}}+ f_{>0}(y^T\cdot V\cdot y)\times f_/(\ccol{V}{y},\left[ -(y^T\cdot V\cdot y)\times e_{\ones}(y) + \left( 1 - f_{>0}(y^T\cdot V\cdot y) \right)\times e_{\ones}(y) \right])\cdot y^T
+\red{V}{y}:= e_{\mathsf{Id}}+ f_{>0}(y^T\cdot V\cdot y)\times f_/(\ccol{V}{y},\left[ -(y^T\cdot V\cdot y)\times e_{\ones}(y) + \left( 1 - f_{>0}(y^T\cdot V\cdot y) \right)\times e_{\ones}(y) \right])\cdot y^T,
 $$
-So, when $V$ is interpretetd by a  matrix $B$ and $y=b_i$, it returns the identity when $B_{ii}=0$.
-Thus 
+so that when $V$ is interpreted by a  matrix $B$ and $y=b_i$, it returns the identity when $B_{ii}=0$.
+\floris{Perhaps an extra line of explanation can be given for the expression above? It is not directly clear.}
+Finally, we define
 $$
-e_{L^{-1}P}(M):=\initf{e_{\mathsf{Id}}}{v}{X}{\red{e_{P_v}(XM,v)\cdot X\cdot M}{v}\cdot e_{P_v}(XM,v)\cdot X}
+e_{L^{-1}P}(V):=\initf{e_{\mathsf{Id}}}{v}{X}{\red{e_{P_v}(X\cdot V,v)\cdot X\cdot V}{v}\cdot e_{P_v}(X\cdot V,v)\cdot X}
 $$
-and $e_{\mathsf{U}}(M):=e_{L^{-1}P}(M)\cdot M$ are the stated expressions.
+and $e_{\mathsf{U}}(V):=e_{L^{-1}P}(V)\cdot V$ as the desired expressions.
 
-When evaluated,
-results in $U=T_{n}\cdots T_kPT_{k-1}\cdots T_1A$. 
-We now explain why $T_{n}\cdots T_kPT_{k-1}\cdots T_1 = L^{-1}P.$ 
-
-Now, for $T_{l}=I-c_lb_l^T$ with $l\leq k-1$ we have that $b_l^TP=b_l$ because $b_l$ has zeroes in positions 
-$i$ and $j$. Note that $P^2=I$, thus $PT_lP=P^2-Pc_lb_l^TP=I-\widehat{c}_lb_l^T=\widehat{T}_l.$ Where 
-$\widehat{c}_l=Pc_l$. Now
+As a final observation, in the definition of $e_{L^{-1}P}(V)$ 
+we interlaced permutation matrices with the $T_i$'s. More specifically, 
+$A_k=T_k\cdot P\cdot T_{k-1}\cdots T_1\cdot A$. We observe, however, that for $\ell\leq k-1$ and
+$T_{\ell}=I-c_\ell\cdot b_\ell^T$, we have that  $b_\ell^T\cdot P=b_\ell$ because $b_\ell$ has zeroes in positions in the rows involved in the row exchange $P$. Also, note that  $P^2=I$ and thus 
+$$P\cdot T_\ell\cdot P=P^2-P\cdot c_\ell\cdot b_\ell^T\cdot P=I-\widehat{c}_\ell\cdot b_l^T=\widehat{T}_\ell.$$
+%
+% When evaluated,
+% results in $U=T_{n}\cdots T_kPT_{k-1}\cdots T_1A$.
+% We now explain why $T_{n}\cdots T_kPT_{k-1}\cdots T_1 = L^{-1}P.$
+%
+% Now, for $T_{l}=I-c_lb_l^T$ with $l\leq k-1$ we have that $b_l^TP=b_l$ because $b_l$ has zeroes in positions
+% $i$ and $j$. Note that $P^2=I$, thus $PT_lP=P^2-Pc_lb_l^TP=I-\widehat{c}_lb_l^T=\widehat{T}_l.$ Where
+% $\widehat{c}_l=Pc_l$. Now
+As a consequence,
 $$
-T_{n}\cdots T_kPT_{k-1}\cdots T_1=T_{n}\cdots T_kPT_{k-1}P^2T_{k-2}P^2\cdots P^2 T_1P^2=T_{n}\cdots T_k(PT_{k-1}P)(PT_{k-2}P)(P\cdots P)(PT_1P)P=T_{n}\cdots T_k\widehat{T}_{k-1}\cdots \widehat{T}_1P
+T_k\cdot P\cdot T_{k-1}\cdots T_1=T_k\cdot P\cdot T_{k-1}\cdot P^2\cdot T_{k-2}\cdot P^2\cdots P^2 \cdot T_1\cdot P^2=T_k\cdot (P\cdot T_{k-1}\cdot P)\cdots (P\cdot T_1\cdot P)\cdot P=\widehat{T}_{k-1}\cdots \widehat{T}_1\cdot P,
 $$
-and $L^{-1} = T_{n}\cdots T_k\widehat{T}_{k-1}\cdots \widehat{T}_1$.
-
-The goal is to compute $P$ within the iteration. The output of the PALU algorithm is $L^{-1}P$, this is, 
-we aim to construct an expression $e_{L^{-1}P}(V)$ such that $U=e_{L^{-1}P}(A)\cdot A$. We also define 
-$e_{\mathsf{U}}(V)=e_{L^{-1}P}(A)\cdot A$.
-
+and thus we may assume that $P$ occurs at the end. Hence, we obtain $L^{-1}\cdot P\cdot A=U$.
+% $$
+% T_{n}\cdots T_kPT_{k-1}\cdots T_1=T_{n}\cdots T_kPT_{k-1}P^2T_{k-2}P^2\cdots P^2 T_1P^2=T_{n}\cdots T_k(PT_{k-1}P)(PT_{k-2}P)(P\cdots P)(PT_1P)P=T_{n}\cdots T_k\widehat{T}_{k-1}\cdots \widehat{T}_1P
+% $$
+% and $L^{-1} = T_{n}\cdots T_k\widehat{T}_{k-1}\cdots \widehat{T}_1$.
+%
+% The goal is to compute $P$ within the iteration. The output of the PALU algorithm is $L^{-1}P$, this is,
+% we aim to construct an expression $e_{L^{-1}P}(V)$ such that $U=e_{L^{-1}P}(A)\cdot A$. We also define
+% $e_{\mathsf{U}}(V)=e_{L^{-1}P}(A)\cdot A$.
+%
 \end{proof}
 
 % Now we show that if we have can do the PALU factorization (compute $e_{L^{-1}P}$), we can compute 
