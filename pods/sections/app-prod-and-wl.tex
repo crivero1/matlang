@@ -16,7 +16,8 @@ We prove proposition \ref{prop:wl}:
   \end{itemize}	
 \end{WL}
 
-\textit{Proof}. The proof is by induction in both directions. 
+\begin{proof}
+The proof is by induction in both directions. 
 First, let $\Sch=(\Mnam,\size)$ be a schema of square matrices, that is, there exists an $\alpha$ such 
 that $\size(V) \in \{1, \alpha\} \times \{1,\alpha\}$ for every $V \in \Mnam$.
 Define the relational vocabulary $\text{WL}(\Sch) = \{R_V \mid V \in \Mnam\}$ such that $\arity(R_V) = 2$ 
@@ -77,4 +78,5 @@ Let $\varphi$ be a formula over $\Gamma$.
 \end{itemize}
 
 The last two translations hold easily due to the fact that there are no free variables.
-\qed
+
+\end{proof}

@@ -10,7 +10,9 @@ Here we present the proof of proposition \ref{prop:ara_to_sum}.
 	Similarly for when $|\cR(\arae)| = 1$, or $|\cR(\arae)| = 0$ respectively.
 \end{ARATOSUM}
 
-\textit{Proof}. Let $\cR$ be binary relational schema. For each $R\in \cR$ we associate a matrix variable 
+\begin{proof}
+
+Let $\cR$ be binary relational schema. For each $R\in \cR$ we associate a matrix variable 
 $V_R$ such that, if $R$ is a binary relational signature, then $V_R$ represents a (square) matrix, 
 if $R$ is unary, then $V_R$ represents a vector and if $|R|=0$ then $V_R$ represents a constant. Formally, 
 fix a symbol $\arae \in \DD \setminus \{1\}$. Let $\text{Mat}(\cR)$ denote the \lang \ schema
@@ -46,4 +48,5 @@ The proof is by induction.
 
 Note that for function application we only allow $\kprod$, 
 which we can assume to have because we can do scalar multiplication and $\ssum$ (see section \ref{app:simp}).
-\qed
+
+\end{proof}

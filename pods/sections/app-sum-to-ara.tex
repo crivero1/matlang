@@ -13,7 +13,9 @@ We prove proposition \ref{prop:sum_to_ara}.
 	$\text{Rel}(\Sch)(\arae(e))=\{\}$, respectively.
 \end{SUMTOARA}
 
-\textit{Proof}. We start from a matrix schema $\Sch=(\Mnam,\size)$, where $\Mnam\subset \Mvar$ is a finite set of matrix variables, 
+\begin{proof}
+
+We start from a matrix schema $\Sch=(\Mnam,\size)$, where $\Mnam\subset \Mvar$ is a finite set of matrix variables, 
 and $\size: \Mvar \mapsto \DD\times \DD$ is a function that maps each matrix variable to a pair of size symbols. 
 On the relational side we have for each size symbol $\alpha\in\DD\setminus\{1\}$, attributes $\alpha$, $\row_\alpha$, 
 and $\col_\alpha$ in $\att$. For each $V\in\Mnam$ and $\alpha \in \DD$ we denote
@@ -87,7 +89,8 @@ $$
 Here, we only allow scalar $\kprod$ function application, 
 which is equivalent to scalar product, as mentioned in section \ref{app:simp}.
 Note that we can access the zero values of matrices because the indexes are in the active domain of $\text{Rel}(\I)$ due to the existence of $R_\alpha^{\text{Rel}(\I)}(t)$, for each $\alpha \in \DD$.
-\qed
+
+\end{proof}
 
 % Consider a matrix instance $\I = (\dom,\conc)$ over a schema $\Sch$.
 % Let $V\in\Mnam$ with $\size(V)=(\alpha,\beta)$ and let $\conc(V)$ be its corresponding matrix of dimension $\dom(\alpha)\times \dom(\beta)$.
