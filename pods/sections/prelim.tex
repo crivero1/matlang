@@ -1,7 +1,7 @@
 %!TEX root = ../main.tex
 %!TeX spellcheck = en_US
 
-We start by recalling the matrix query language \lang, introduced in \cite{matlang,matlang-journal}, which serves as our starting point.
+We start by recalling the matrix query language \lang, introduced in \cite{matlang-journal}, which serves as our starting point.
 
 \smallskip
 \noindent
@@ -98,7 +98,7 @@ Just as it is commonly done in \lang, we will sometimes abuse the notation and u
 %As we will see shortly, this extension allows us to express many linear algebra algorithms, including matrix inversion and LU-decomposition.
 %\floris{The paragraph above needs to be modified as it may overlap too much with the yet-to-be-written Introduction.}
 
-Although \lang\ forms a solid basis for a matrix query language, it is limited in expressive power. Indeed, \lang\ is subsumed by first order logic with aggregates that uses only three variables \cite{matlang}. As consequence, no \lang\ expression exists that can compute the transitive closure of a graph (represented by its adjacency matrix) or can compute the inverse of a matrix. Rather than extending \lang\ with specific linear algebra operators, such as matrix inversion, we next introduce a limited form of recursion in \lang.
+Although \lang\ forms a solid basis for a matrix query language, it is limited in expressive power. Indeed, \lang\ is subsumed by first order logic with aggregates that uses only three variables \cite{matlang-journal}. As consequence, no \lang\ expression exists that can compute the transitive closure of a graph (represented by its adjacency matrix) or can compute the inverse of a matrix. Rather than extending \lang\ with specific linear algebra operators, such as matrix inversion, we next introduce a limited form of recursion in \lang.
 %FIRST TRY
 
 %

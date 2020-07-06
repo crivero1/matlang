@@ -7,7 +7,7 @@ Both \lara and \lang have been studied by the database theory community, showing
 
 One approach would be to add these constructions explicitly to the language. Indeed, this was done for \lang in~\cite{matlang-journal}, and \lara in ~\cite{BarceloH0S20}. In these works, the authors have extended the core language with the trace, the inverse, the determinant, or the eigenvectors operators and study the expressive power of the result. However, one can argue that there is nothing special in these operators, apart they have been used historically in linear algebra textbooks and they extend the expressibility of the core language. The question here is whether these new operators form a sound and natural choice to extend the core language, or they are some particular queries that we would like to support. 
 
-In this paper we take a more principle approach by studying what are the atomic operations needed to define standard linear algebra algorithms. Inspecting any linear algebra textbook, one sees that most linear algebra procedures heavily rely on the use of for-loops in which iterations happen over the dimensions of the matrices involved. To illustrate this, let us consider the example of computing the transitive closure of a graph. This can be done using the following modification of the Floyd-Warshall algorithm~\cite{cormen}, which takes as its input an $n\times n$ adjacency matrix $A$ representing our graph, and operates according to the following pseudo-code:
+In this paper we take a more principle approach by studying what are the atomic operations needed to define standard linear algebra algorithms. Inspecting any linear algebra textbook, one sees that most linear algebra procedures heavily rely on the use of for-loops in which iterations happen over the dimensions of the matrices involved. To illustrate this, let us consider the example of computing the transitive closure of a graph. This can be done using a modification of the Floyd-Warshall algorithm~\cite{cormen}, which takes as its input an $n\times n$ adjacency matrix $A$ representing our graph, and operates according to the following pseudo-code:
 %\vspace{-1ex}
 \begin{tabbing}
 \quad\texttt{for}\=\,  $k = 1..n$ \texttt{do}\\
@@ -84,7 +84,7 @@ Due to space limitations, most proofs are referred to the appendix.
 \smallskip
 \noindent
 \textbf{Related work.} 
-We already mentioned \lara~\cite{HutchisonHS17} and \lang~\cite{matlang,matlang-journal}
+We already mentioned \lara~\cite{HutchisonHS17} and \lang~\cite{matlang-journal}
 whose expressive power was further analyzed in~\cite{BarceloH0S20,brijder2019matrices,Geerts19,Geerts20}.
 Extensions of \texttt{SQL} for matrix manipulations are reported in~\cite{Jermaine/17/LAonRA}. Most relevant
 is~\cite{JankovLYCZJG19} in which a recursion mechanism is added to \texttt{SQL} which resembles for-loops.
