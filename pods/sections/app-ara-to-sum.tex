@@ -11,20 +11,24 @@ Here we present the proof of proposition \ref{prop:ara_to_sum}.
 \end{ARATOSUM}
 
 \begin{proof}
-
 Let $\cR$ be binary relational schema. For each $R\in \cR$ we associate a matrix variable 
 $V_R$ such that, if $R$ is a binary relational signature, then $V_R$ represents a (square) matrix, 
 if $R$ is unary, then $V_R$ represents a vector and if $|R|=0$ then $V_R$ represents a constant. Formally, 
 fix a symbol $\arae \in \DD \setminus \{1\}$. Let $\text{Mat}(\cR)$ denote the \lang \ schema
-$(\Mnam,\size)$ such that $\Mnam = \{ V_R \mid R \in \cR\}$ and $\size(V_R) = (\arae, \arae)$ 
-whenever $|R| = 2$, $\size(V_R) = (\arae, 1)$ whenever $|R|=1$ and $\size(V_R) = (1, 1)$ whenever $|R|=0$. 
+$(\Mnam_\cR,\size_\cR)$ such that $\Mnam_\cR = \{ V_R \mid R \in \cR\}$ and $\size_\cR(V_R) = (\alpha, \alpha)$ 
+whenever $|R| = 2$, $\size_\cR(V_R) = (\alpha, 1)$ whenever $|R|=1$ and $\size_\cR(V_R) = (1, 1)$ whenever $|R|=0$. 
 Let $\cJ$ be the $K$-instance of $\cR$ and suppose that $\adom(\cJ) = \{d_1, \ldots, d_n\}$ is 
 the active domain (with arbitrary order) of $\cJ$. 
-Define the matrix instance $\text{Mat}(\cJ) = (\dom,\conc)$ such 
-that $\dom(\arae) = n$, $\conc(V_R)_{i,j} = R^{\cJ}((d_i, d_j))$ whenever $|R|=2$, $\conc(V_R)_{i,1} = R^{\cJ}((d_i))$ 
-whenever $|R|=1$, and $\conc(V_R)_{1,1} = R^{\cJ}((1))$ whenever $|R|=1$. 
+Define the matrix instance $\text{Mat}(\cJ) = (\dom_\cJ,\conc_\cJ)$ such 
+that $\dom_\cJ(\arae) = n$, $\conc_\cJ(V_R)_{i,j} = R^{\cJ}((d_i, d_j))$ whenever $|R|=2$, $\conc_\cJ(V_R)_{i} = R^{\cJ}((d_i))$ 
+whenever $|R|=1$, 
+\floris{This case relates to nullary relations. What does $R^{\cJ}((1))$ mean?}
+and $\conc_\cJ(V_R)_{1,1} = R^{\cJ}((1))$ whenever $|R|=1$. 
 Note that we consider the active domain of the whole $K$-instance.
-The proof is by induction.
+The proof is by induction on the structure of expressions.
+
+\floris{We need to introduce the vector variables $V_A$ for attributes $A$
+explicitly in the induction?!}
 
 \begin{itemize}
   \item If $\arae = R$ then $\Psi (\arae):=V_R$. Note that if $|R|=2$ then 
@@ -32,6 +36,7 @@ The proof is by induction.
     If $|R|=1$ then 
     $$\sem{\Psi(\arae)}{\text{Mat}(\cJ)}_{i,j}=\conc(V_R)_{i,1} = R^{\cJ}((d_i))=\ssem{\arae}{\cJ}((d_i)).$$
     And if $|R|=0$ then 
+	\floris{Not sure about this:}
     $\sem{\Psi(\arae)}{\text{Mat}(\cJ)}_{i,j}=\conc(V_R)_{1,1} = R^{\cJ}((1))=\ssem{\arae}{\cJ}((1))$.
   \item If $\arae=\arae_1\cup\arae_2$ then $\Psi(\arae):=\Psi(\arae_1)+\Psi(\arae_2)$.
   \item If $\arae = \pi_{Y}(\arae_1)$ for $Y\subseteq R(\arae_1)$. Let $\cV = \lbrace V_A:A\in R(\arae_1)\setminus Y \rbrace$. 
@@ -39,6 +44,7 @@ The proof is by induction.
     $$
     \Psi(\arae) = \sum_{V\in\cV} \Psi(\arae_1) = \ssum V_{A_1}. \ssum \cdots \ssum V_{A_{l}}. \Psi(\arae_1).
     $$
+\floris{What is $V_{\mathsf{Eq}_Y}$??}
   \item If $\arae = \sigma_Y(\arae_1)$ with $Y\subseteq R(\arae_1)$ then 
     $\Psi(\arae):=f_{\kprod}\left( \Psi(\arae_1), V_{\mathsf{Eq}_Y} \right)$.
   \item If $\arae = \rho_{X\rightarrow Y}(\arae_1)$ then $\Psi (\arae):= \Psi (\arae_1)\left[ V_A\gets V_B, A\in X, B\in Y, A \mapsto B \right]$.
