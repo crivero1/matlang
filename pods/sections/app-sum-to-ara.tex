@@ -40,9 +40,13 @@ If $\size(V)=(\alpha,1)$ then $R_V^{\text{Rel}(\I)}(t):=\conc(V)_{i1}$ whenever 
 Similarly, if $\size(V)=(1,\beta)$ then $R_V^{\text{Rel}(\I)}(t):=\conc(V)_{1j}$ whenever $t(\col_\beta) = j \leq \dom(\beta)$ and $\kzero$ otherwise.
 If $\size(V)=(1,1)$ then $R_V^{\text{Rel}(\I)}(t):=\conc(V)_{11}$ only when $t(1) = \kone$ and $\kzero$ otherwise.
 
-The proof is by induction. Let $e$ be a \langsum expression such that $\Sch (e)=(\alpha, \beta)$.
+\floris{The inductive proof needs to accommodate for more than two attributes?!
+This is needed for the summation case and this is how we did before with Jan's ARA syntax..
+}
+The proof is by induction on the structure of \langsum expressions. Let $e$ be a \langsum expression such that $\Sch (e)=(\alpha, \beta)$.
 \begin{itemize}
-  \item If $e=V$ then $\arae (e):=R_V^{\text{Rel}(\I)}$.
+  \item If $e=V$ then $\arae (e):=R_V$.
+  % $\arae (e):=R_V^{\text{Rel}(\I)}$.
 
   \item If $e=e_1^T$ with $\Sch (e_1)=(\alpha, \beta)$ then \[
 \arae(e) :=
@@ -50,15 +54,16 @@ The proof is by induction. Let $e$ be a \langsum expression such that $\Sch (e)=
 \rho_{\mathrm{row}_\alpha \to \mathrm{col}_\alpha,\mathrm{col}_\beta \to \mathrm{row}_\beta}\bigl(\arae(e_1)\bigr) & \text{if } \alpha \neq 1 \neq \beta; \cr
 \rho_{\mathrm{row}_\alpha \to \mathrm{col}_\alpha}\bigl(\arae(e_1)\bigr) & \text{if } \alpha \neq 1 = \beta; \cr
 \rho_{\mathrm{col}_\beta \to \mathrm{row}_\beta}\bigl(\arae(e_1)\bigr) & \text{if } \alpha = 1 \neq \beta; \cr
-\arae(e_1) & \text{if } \alpha = 1 = \beta,
+\arae(e_1) & \text{if } \alpha = 1 = \beta.
 \end{cases}
 \]
-
+\floris{Why is the next case included? The ones operator is expressible in \langsum, no?}
   \item If $e:=e_{\ones}(e')$ where $\Sch(e')=(\alpha, \beta)$ and $e_{\ones}(\cdot)$ is the $\mathsf{ones}$ operator
   then $\arae(e):=\rho_{\alpha\rightarrow\row_\alpha}(\mathsf{Eq}_{\alpha})$
 
   \item If $e=e_1+e_2$ with $\Sch (e_1)=\Sch (e_2)=(\alpha, \beta)$ then $\arae (e):=\arae (e_1)\cup \arae (e_2)$.
 
+\floris{Are we assuming scalar function application? The use of $f=\odot$ should be made clear. That is, we consider $\langsum$ but without function applications in the statement. Now apparently we need a pointwise function. This relates to an earlier comment and to the result that Damogoj wrote in the main part at some points. We need to bring this back into A2 and so that we can cite it here.}
   \item If $e=f(e_1,\ldots, e_k)$ with $\Sch(e_i)=\Sch(e_j)$ for all $i,j\in[1,k]$, with $f=\kprod$, then $\arae(e):=\arae(e_1)\Join \ldots \Join\arae(e_k)$.
 
   \item If $e=e_1\cdot e_2$ with $\Sch (e_1)=(\alpha, \gamma)$ and $\Sch (e_2)=(\gamma, \beta)$, we have two cases. If $\gamma = 1$ then $\arae (e):=\arae (e_1)\Join \arae (e_2)$.
@@ -72,14 +77,25 @@ $$
 % then the expression evaluates to $e_1(\I [V\leftarrow e_{k}^{\dom(\gamma)}])_{ij}$. 
 % Hence, by projecting in attributes $\lbrace \row_\alpha, \col_\beta\rbrace$ we range over all $k$ and sum up all $K$-values for each entry.
   \item If $e=\ssum V. e_1$ where $\Sch(e_1)=(\alpha,\beta)$ and $\Sch(V)=(\gamma,1)$. Then we do 
+  % $$
+  % \pi_{\lbrace \row_{\alpha}, \col_{\beta} \rbrace}\left( \arae (e_1)\left[ R_{V}^{\text{Rel}(\I)}\leftarrow R_{\mathsf{Id}}^{\gamma} \right] \right).
+  % $$
   $$
-  \pi_{\lbrace \row_{\alpha}, \col_{\beta} \rbrace}\left( \arae (e_1)\left[ R_{V}^{\text{Rel}(\I)}\leftarrow R_{\mathsf{Id}}^{\gamma} \right] \right).
+  \pi_{\lbrace \row_{\alpha}, \col_{\beta} \rbrace}\left( \arae (e_1)\left[ R_{V}\leftarrow R_{\mathsf{Id}}^{\gamma} \right] \right).
   $$
-  Here $R_{\mathsf{Id}}^{\gamma}$ is the binary relation encoding the identity of size $\gamma\times\gamma$ and
+  
+  
+  Here $R_{\mathsf{Id}}^{\gamma}$ is an expression that, when evaluated, results identity of size $\dom(\gamma)\times\dom(\gamma)$ and which 
   is defined as 
+  % $$
+ %  R_{\mathsf{Id}}^{\gamma}:= \sigma_{\lbrace \row_{\gamma},\col_{\gamma} \rbrace }\left( \rho_{\gamma\rightarrow\row_\gamma}\left( R_\gamma^{\text{Rel}(\I)} \right) \Join \rho_{\gamma\rightarrow\col_\gamma}\left( R_\gamma^{\text{Rel}(\I)} \right)\right)
+ %  $$
   $$
-  R_{\mathsf{Id}}^{\gamma}:= \sigma_{\lbrace \row_{\gamma},\col_{\gamma} \rbrace }\left( \rho_{\gamma\rightarrow\row_\gamma}\left( R_\gamma^{\text{Rel}(\I)} \right) \Join \rho_{\gamma\rightarrow\col_\gamma}\left( R_\gamma^{\text{Rel}(\I)} \right)\right)
+  R_{\mathsf{Id}}^{\gamma}:= \sigma_{\lbrace \row_{\gamma},\col_{\gamma} \rbrace }\left( \rho_{\gamma\rightarrow\row_\gamma}\left( R_\gamma \right) \Join \rho_{\gamma\rightarrow\col_\gamma}\left( R_\gamma\right)\right).
   $$
+  Furthermore, $\arae (e_1)\left[ R_{V}\leftarrow R_{\mathsf{Id}}^{\gamma} \right]$
+  means that every occurrence of $R_V$ in $e_1$ is replaced by  $R_{\mathsf{Id}}^{\gamma}$.
+  
   Note that when $\arae (e_1)\left[ R_{V}\leftarrow R_{\mathsf{Id}}^{\gamma} \right]$ is instantiated with with tuple $t$ such that $t(\row_\alpha)=i$, $t(\col_\beta)=j$, 
   $t(\row_\gamma)=k$ and $t(\col_\gamma)=k$ (other values of are zero),
   then the expression evaluates to $e_1(\I [V\leftarrow e_{k}^{\dom(\gamma)}])_{ij}$. 
@@ -88,8 +104,7 @@ $$
 
 Here, we only allow scalar $\kprod$ function application, 
 which is equivalent to scalar product, as mentioned in section \ref{app:simp}.
-Note that we can access the zero values of matrices because the indexes are in the active domain of $\text{Rel}(\I)$ due to the existence of $R_\alpha^{\text{Rel}(\I)}(t)$, for each $\alpha \in \DD$.
-
+% Note that we can access the zero values of matrices because the indexes are in the active domain of $\text{Rel}(\I)$ due to the existence of $R_\alpha^{\text{Rel}(\I)}(t)$, for each $\alpha \in \DD$.
 \end{proof}
 
 % Consider a matrix instance $\I = (\dom,\conc)$ over a schema $\Sch$.
