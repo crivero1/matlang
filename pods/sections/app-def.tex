@@ -7,17 +7,17 @@ We sometimes want to iterate over $k$ canonical vectors. We define the following
   &\hspace{4em}\initf{X_{k-1}}{v_k}{X_k}{ e(X_k,v_1,\ldots, v_k)}.
 \end{align*}
 To reference $\ell$ different vector variables $X_1,\ldots,X_\ell$ in every iteration and update them in different ways we define:
-\begin{align*}
-&\ffor{v}{X_1,\ldots, X_\ell}{\left( e_1(X_1,v), e_2(X_2,v), \ldots, e_l(X_\ell,v) \right)} :=\\
-&\hspace{4em}\ffor{v}{X}{e_1(X\cdot e_{\mathsf{min}},v)\cdot (e_{\diag}(e_{\ones}(X^T))\cdot e_{\mathsf{min}})^T + e_2(X\cdot e_{\mathsf{min} + 1},v)\cdot (e_{\diag}(e_{\ones}(X^T))\cdot e_{\mathsf{min} + 1})^T + \ldots + e_\ell(X\cdot e_{\mathsf{max}},v)\cdot (e_{\diag}(e_{\ones}(X^T))\cdot e_{\mathsf{max}})^T}
-\end{align*}
+\begin{multline*}
+\ffor{v}{X_1,\ldots, X_\ell}{\left( e_1(X_1,v), e_2(X_2,v), \ldots, e_l(X_\ell,v) \right)} :=
+\ffor{v}{X}{e_1(X\cdot e_{\mathsf{min}},v)\cdot (e_{\diag}(e_{\ones}(X^T))\cdot e_{\mathsf{min}})^T +\\ e_2(X\cdot e_{\mathsf{min} + 1},v)\cdot (e_{\diag}(e_{\ones}(X^T))\cdot e_{\mathsf{min} + 1})^T + \ldots + e_\ell(X\cdot e_{\mathsf{max}},v)\cdot (e_{\diag}(e_{\ones}(X^T))\cdot e_{\mathsf{max}})^T}
+\end{multline*}
 We note that for the latter expression to be semantically correct $v$ has to be of type $\gamma\times 1$, 
 both $X_i$ and $e_i$ for $ i=1,\ldots,\ell$ have to be of type $\alpha\times 1$, 
 and $X$ has to be of type $\alpha\times\beta$, where $\dom(\beta)=\ell$. Here
 we use $e_{\diag}(e_{\ones}(X^T))$ to compute the $\beta\times\beta$ identity and ensure the typing of the
 $e_{\mathsf{min} + i}$.
-\floris{I believe that $\gamma$ should be $\alpha$? Also, this implies that we cannot loop over more than $\alpha$ different vector variables. Does this cause a problem later on?}
-\thomas{I changed the semantics to be more general, now $v$ can be of any type independently of $X, X_1,...$, and its typing is ensured by the typing of the $e_i$}
+% \floris{I believe that $\gamma$ should be $\alpha$? Also, this implies that we cannot loop over more than $\alpha$ different vector variables. Does this cause a problem later on?}
+% \thomas{I changed the semantics to be more general, now $v$ can be of any type independently of $X, X_1,...$, and its typing is ensured by the typing of the $e_i$}
 When evaluated on an instance $\I$,
 $e_{\mathsf{min}}, e_{\mathsf{min} + i}$ evaluate to $b_1^{\dom(\beta)}$ and $b_{1+i}^{\dom(\beta)}$, 
 respectively, and we show their defining expressions in section \ref{app:order}.
