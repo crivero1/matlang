@@ -1,61 +1,73 @@
-\floris{This section should be placed in the appropriate place, i.e., this should be part of proofs for the last section. Let's see how the paper evolves? What is the precise result shown here?}
-\thomas{Updated, I think now it's more clear what is shown here. It should still go in the appendix of the last section? To me it seems order related.}
+% \floris{This section should be placed in the appropriate place% , i.e., this should be part of proofs for the last section. Let's see how the paper evolves? What is the precise result shown here?}
+% \thomas{Updated, I think now it's more clear what is shown here. It should still go in the appendix of the last section? To me it seems order related.}
 
 % Assume we can only perform the restricted versions of $\ffor{v}{X}{e}$, this is, we can only do 
 % $\ssum$ and $\sprod$. Note that these operators also iterate over canonical vectors
 % in certain order. Since they are operations that \textit{aggregate} information, it doesn't seem
 % possible to access this order explicitly and compare canonical vectors, like in the full version of $\langfor$.
 % Let's see what we can do if this order is \textit{supplied}. 
-We here show that if we have $e_{S_{<}}$, using $\ssum$ and $\sprod$ we
-can do everything related to order (everything defined in section \ref{app:order}).
-The goal of this is to have a restriction in the recursion property of $\ffor{v}{X}{e}$, this is, 
-in the iteration we don't allow access to the current result.
-We call this fragment \langsum extended with $\sprod$ and $e_{S_<}$, as in section \ref{subsec:langlinear}.
+We conclude by verifying that the fragment defined in Section \ref{subsec:langlinear}
+can perform matrix inversion. To this aim, we verify that all order
+predicates in Section \ref{app:order} can be derived using $\ssum$, $\sprod$, $f_{>0}$ and 
+$e_{S_{<}}$. Given this, it suffices to observe that Csanky's algorithm, as shown in Section~\ref{app:inverse}, only relies on expressions using $\ssum$ and $\sprod$ and order information on canonical vectors and $f_/$.
+As consequence, our fragment can perform matrix inversion and compute the determinant.
 
-Supose we have $e_{S_{<}}$ (and thus $e_{S_{\leq}}$) such that the following holds:
 
-$$
-b_i^T\cdot S_{<} \cdot b_j=\begin{cases}
-               1, \text{ if } i < j.\\
-              \mathbf{0}, \text{ if not.}
-            \end{cases}
-$$
-As a consequence we
-can compute $\mathsf{succ}$ and $\mathsf{succ}^+$. We can define
+It remains to show that if we have $e_{S_{<}}$, using $\ssum$ and $\sprod$ and $f_{>0}$ we can
+can define all order predicates from Section~\ref{app:order}. We note that due to the restricted for-loops
+in $\ssum$ and $\sprod$, we do not have access to the intermediate
+result in the iterations and as such, it is unclear whether order information can be computed. This is why
+we assume access to $e_{S_<}$.
+
+We first remark that if we have $e_{S_{<}}$, we can also obtain
+ $e_{S_{\leq}}$ by adding $e_{\mathsf{Id}}$. Hence,
+%
+%  such that the following holds:
+%
+% $$
+% b_i^T\cdot S_{<} \cdot b_j=\begin{cases}
+%                1, \text{ if } i < j.\\
+%               \mathbf{0}, \text{ if not.}
+%             \end{cases}
+% $$
+% As a consequence we
+we can compute $\mathsf{succ}$ and $\mathsf{succ}^+$ as well. Furthermore, 
 \begin{align*}
   e_{\mathsf{min}}&:=\ssum v. \left[ \sprod w. \mathsf{succ}(w,v)\right] \times v. \\
   e_{\mathsf{max}}&:=\ssum v. \left[ \sprod w. \left( 1-\mathsf{succ}(w,v) \right) \right] \times v.
 \end{align*}
-Consider $S_<$ and the matrix $J$ that consist of all ones (assume they are $n\times n$). From linear algebra we know that
-\[
-S_<^2 \circ \left( S_{<}^2-2\times J\right) \circ \left( S_{<}^2-3\times J\right) = \begin{bmatrix}
-    0 & n-1 & 0 & \cdots &  0 \\
-    0 & \ddots & \ddots & \vdots & \vdots \\
-    0 & \ddots & \ddots & \vdots & 0\\
-    \hdotsfor{4} & n-1 \\
-    0 & \cdots & \cdots & \cdots & 0 
-\end{bmatrix}.
-\]
-Recall that $\circ$ is the Hadamard product. We can compute a matrix that has $n-1$ in
-all of its entries as $\ssum v.(1-\mathsf{max}(v))\times e_{\ones}(v)\cdot e_{\ones}(v)^T$.
-So, if we have $f_{/}$ we can define
-$$
-e_{\mathsf{Pred}}:= f_{/}\left( f_{\odot}\left(e_{S_{<}}^2, e_{S_{<}}^2-2\times (e_{\ones}(e_{S_{<}})\cdot e_{\ones}(e_{S_{<}})^T), e_{S_{<}}^2-3\times (e_{\ones}(e_{S_{<}})\cdot e_{\ones}(e_{S_{<}})^T) \right),\ssum v.(1-\mathsf{max}(v))\times e_{\ones}(v)\cdot e_{\ones}(v)^T\right) 
-$$
-Thus we have $e_{\mathsf{Next}}:=e_{\mathsf{Pred}}^T$.
-We can now define $\mathsf{prev}(v)$ and $\mathsf{next}(v)$ as in the previous section. 
-The same goes with $e_{\mathsf{getPrevMatrix}}(V)$, 
-$e_{\mathsf{getNextMatrix}}(V)$, $e_{\mathsf{min}+i}$ and $e_{\mathsf{max}+i}$.
-
-
-% Note that, if we have $f_{>0}$ we can define
+Both expressions are only using $\ssum$ and $\sprod$ and $\mathsf{succ}$, so are in our fragment.
+% Consider $S_<$ and the matrix $J$ that consist of all ones (assume they are $n\times n$). From linear algebra we know that
+% \[
+% S_<^2 \circ \left( S_{<}^2-2\times J\right) \circ \left( S_{<}^2-3\times J\right) = \begin{bmatrix}
+%     0 & n-1 & 0 & \cdots &  0 \\
+%     0 & \ddots & \ddots & \vdots & \vdots \\
+%     0 & \ddots & \ddots & \vdots & 0\\
+%     \hdotsfor{4} & n-1 \\
+%     0 & \cdots & \cdots & \cdots & 0
+% \end{bmatrix}.
+% \]
+% Recall that $\circ$ is the Hadamard product. We can compute a matrix that has $n-1$ in
+% all of its entries as $\ssum v.(1-\mathsf{max}(v))\times e_{\ones}(v)\cdot e_{\ones}(v)^T$.
+% So, if we have $f_{/}$ we can define
 % $$
-% e_{\mathsf{Pred}}:= e_{S_{<}}- f_{>0}(e_{S_{<}}^2)
+% e_{\mathsf{Pred}}:= f_{/}\left( f_{\odot}\left(e_{S_{<}}^2, e_{S_{<}}^2-2\times (e_{\ones}(e_{S_{<}})\cdot e_{\ones}(e_{S_{<}})^T), e_{S_{<}}^2-3\times (e_{\ones}(e_{S_{<}})\cdot e_{\ones}(e_{S_{<}})^T) \right),\ssum v.(1-\mathsf{max}(v))\times e_{\ones}(v)\cdot e_{\ones}(v)^T\right)
 % $$
-% Also $e_{\mathsf{Next}}:=e_{\mathsf{Pred}}^T$.
-% We can now define $\mathsf{prev}(v)$ and $\mathsf{next}(v)$ as in the previous section. 
-% The same goes with $e_{\mathsf{getPrevMatrix}}(V)$, 
+% Thus we have $e_{\mathsf{Next}}:=e_{\mathsf{Pred}}^T$.
+% We can now define $\mathsf{prev}(v)$ and $\mathsf{next}(v)$ as in the previous section.
+% The same goes with $e_{\mathsf{getPrevMatrix}}(V)$,
 % $e_{\mathsf{getNextMatrix}}(V)$, $e_{\mathsf{min}+i}$ and $e_{\mathsf{max}+i}$.
+Furthermore, if we have $f_{>0}$ then we can define
+$$
+e_{\mathsf{Pred}}:= e_{S_{<}}- f_{>0}(e_{S_{<}}^2)
+$$
+Also, recall that  $e_{\mathsf{Next}}:=e_{\mathsf{Pred}}^T$. As a consequence, 
+we can now define $\mathsf{prev}(v)$ and $\mathsf{next}(v)$ as in \ref{app:order}. Similarly,
+it is readily verified that also $e_{\mathsf{getPrevMatrix}}(V)$,
+$e_{\mathsf{getNextMatrix}}(V)$, $e_{\mathsf{min}+i}$ and $e_{\mathsf{max}+i}$ can be expressed
+in our fragment.
+
+
 
 % On the other hand, supose we have $e_{\mathsf{Prev}}$
 % (and thus $e_{\mathsf{Next}}$) such that the following holds:
