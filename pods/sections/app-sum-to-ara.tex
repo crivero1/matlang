@@ -43,6 +43,7 @@ If $\size(V)=(1,1)$ then $R_V^{\text{Rel}(\I)}(t):=\conc(V)_{11}$ only when $t(1
 \floris{The inductive proof needs to accommodate for more than two attributes?!
 This is needed for the summation case and this is how we did before with Jan's ARA syntax..
 }
+\thomas{Yes, I assume that the relations that represent the matrices have at most two attributes. But the ARA expressions can have more attributes, like in the summation case, where $e_1$ has attributes $\row_\alpha, \col_\beta, \row_\gamma$, and then I modify it to use $\col_\gamma$ also (I end up projecing on tow attributes though). This is what happens if the we sum over a variable, we replace that relation and project. If that variable is not instantiated by any $\ssum$ then it should be replaced with the relation that the instance constructed (first case). Not sure if this is what you mean.}
 The proof is by induction on the structure of \langsum expressions. Let $e$ be a \langsum expression such that $\Sch (e)=(\alpha, \beta)$.
 \begin{itemize}
   \item If $e=V$ then $\arae (e):=R_V$.
@@ -58,12 +59,14 @@ The proof is by induction on the structure of \langsum expressions. Let $e$ be a
 \end{cases}
 \]
 \floris{Why is the next case included? The ones operator is expressible in \langsum, no?}
+\thomas{Yes, but I made it explicitly (like the function application) because it was easier than simulate the scalar product. As it says in section \ref{app:simp}, both of these operators can simulate scalar prod, so scalar product is doable in ARA since ones and $f_{\odot}$ are.}
   \item If $e:=e_{\ones}(e')$ where $\Sch(e')=(\alpha, \beta)$ and $e_{\ones}(\cdot)$ is the $\mathsf{ones}$ operator
   then $\arae(e):=\rho_{\alpha\rightarrow\row_\alpha}(\mathsf{Eq}_{\alpha})$
 
   \item If $e=e_1+e_2$ with $\Sch (e_1)=\Sch (e_2)=(\alpha, \beta)$ then $\arae (e):=\arae (e_1)\cup \arae (e_2)$.
 
 \floris{Are we assuming scalar function application? The use of $f=\odot$ should be made clear. That is, we consider $\langsum$ but without function applications in the statement. Now apparently we need a pointwise function. This relates to an earlier comment and to the result that Damogoj wrote in the main part at some points. We need to bring this back into A2 and so that we can cite it here.}
+\thomas{Since we can do the ones operator in ARA, instead of simulating scalar product in ARA we simulate $f_{\odot}$. With this and the ones translation, we can simulate scalar prod.}
   \item If $e=f(e_1,\ldots, e_k)$ with $\Sch(e_i)=\Sch(e_j)$ for all $i,j\in[1,k]$, with $f=\kprod$, then $\arae(e):=\arae(e_1)\Join \ldots \Join\arae(e_k)$.
 
   \item If $e=e_1\cdot e_2$ with $\Sch (e_1)=(\alpha, \gamma)$ and $\Sch (e_2)=(\gamma, \beta)$, we have two cases. If $\gamma = 1$ then $\arae (e):=\arae (e_1)\Join \arae (e_2)$.
