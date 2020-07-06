@@ -17,7 +17,8 @@ We prove proposition \ref{prop:wl}:
 \end{WL}
 
 \begin{proof}
-The proof is by induction in both directions. 
+Both directions are proved by induction on the structure of expression.
+
 First, let $\Sch=(\Mnam,\size)$ be a schema of square matrices, that is, there exists an $\alpha$ such 
 that $\size(V) \in \{1, \alpha\} \times \{1,\alpha\}$ for every $V \in \Mnam$.
 Define the relational vocabulary $\text{WL}(\Sch) = \{R_V \mid V \in \Mnam\}$ such that $\arity(R_V) = 2$ 
@@ -28,9 +29,9 @@ $\text{WL}(\I) = (\{1, \ldots, n\}, \{R_V^{\I}\} )$ such that $\dom(\alpha) = n$
 $R_V^{\I}(i, j) = \conc(V)_{i,j}$ if $\size(V) = (\alpha, \alpha)$, $R_V^{\I}(i) = \conc(V)_{i}$ 
 if $\size(V) \in \{(\alpha,1), (1,\alpha)\}$, and $R_V^{\I} = \conc(V)$ if $\size(V) = (1,1)$.
 
-Let $e$ be a $\langprod$ expression.
+Let $e$ be a \langprod expression.
 \begin{itemize}
-  \item If $e:=V$ then $\Phi(e):=R_V^{\cI}$.
+  \item If $e:=V$ then $\Phi(e):=R_V$.
   \item if $e:= e_1^T$ when $\Sch(e)\in \{(\alpha,1), (1,\alpha)\}$ then $\Phi(e):=\Phi(e_1)$. If $\Sch(e)=\alpha\times\alpha$ then
   $$
   \Phi(e)(i,j):=\Phi(e_1)(\sigma\left[ i\mapsto \sigma(j), j\mapsto \sigma(i) \right]).
