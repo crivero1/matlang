@@ -136,7 +136,7 @@ This is where $R_\alpha^{\text{Rel}(\I)}$ and $R_\beta^{\text{Rel}(\I)}$ are use
 %
 % find a way to encode all entries of a matrix in ARA. For instance, we need to be able to encode a $\kzero$-matrix of dimension $(\alpha,\beta)$ in~$\mathsf{RA}_{K}^+$.
 We are now ready to state the first connection between \langsum and $\mathsf{RA}_{K}^+$  by using the previous encoding. The proof of the proposition below is by induction on the structure of expressions in \langsum.
-\begin{proposition}
+\begin{proposition}\label{prop:sum_to_ara} 
 	For each \langsum expression $e$ over schema $\Sch$ such that $\Sch(e)=(\alpha,\beta)$ with $\alpha\neq 1\neq\beta$, there exists an $\mathsf{RA}_{K}^+$  expression $\Phi(e)$ over relational schema $\text{Rel}(\Sch)$ such that $\text{Rel}(\Sch)(\Phi(e))=\{\row_\alpha,\row_\beta\}$ and 
 	such that for any instance $\I$ over~$\Sch$,
 	$$
@@ -158,7 +158,7 @@ $(\Mnam_\cR,\size_\cR)$ such that $\Mnam_\cR = \{ V_R \mid R \in \cR\}$ and $\si
 Take now a $K$-instance $\cJ$ of $\cR$ and suppose that $\adom(\cJ) = \{d_1, \ldots, d_n\}$ is the active domain of $\cJ$ (the order over $\adom(\cJ)$ is arbitrary). Then we define the matrix instance $\text{Mat}(\cJ) = (\dom_\cJ,\conc_\cJ)$ such that $\dom_\cJ(\alpha) = n$, $\conc_\cJ(V_R)_{i,j} = R^{\cJ}((d_i, d_j))$ whenever $|R|=2$, and $\conc_\cJ(V_R)_{i} = R^{\cJ}((d_i))$ whenever $|R|=1$. 
 Note that, although each $K$-relation can have a different active domain, we encode them as square matrices by considering the active domain of the $K$-instance. By again using an inductive proof on the structure of 
 $\mathsf{RA}_{K}^+$ expression, we obtain the following result.
-\begin{proposition}
+\begin{proposition}\label{prop:ara_to_sum} 
 	Let $\cR$ be a binary relational schema. For each $\mathsf{RA}_{K}^+$  expression $\arae$ over $\cR$  such that $|\cR(\arae)| = 2$, there exists a \langsum  expression $\Psi(\arae)$ over \lang \ schema $\text{Mat}(\cR)$ such that for any $K$-instance $\cJ$ with $\adom(\cJ) = \{d_1, \ldots, d_n\}$ over $\cR$,
 	$$
 	\ssem{\arae}{\cJ}((d_i, d_j))=\sem{\Psi(\arae)}{\text{Mat}(\cJ)}_{i,j}.

@@ -58,7 +58,7 @@ Define $\text{Mat}(\Gamma) = (\Mnam_\Gamma,\size_\Gamma)$ such that $\Mnam_\Gamm
 Then we define the matrix instance $\text{Mat}(\cA) = (\dom,\conc)$ such that $\dom(\alpha) = n$, $\conc(V_{R})_{i,j} = R^{\cA}(a_i, a_j)$ if $\arity(R)=2$, $\conc(V_{R})_{i} = R^{\cA}(a_i)$ if $\arity(R)=1$, and $\conc(V_{R}) = R^{\cA}$ otherwise.
 
 Let $\Sch$ be a \lang\ schema of square matrices and $\Gamma$ a relational vocabulary of relational symbols of arity at most $2$. 
-\begin{proposition}
+\begin{proposition} \label{prop:wl}
 Weighted logics over $\Gamma$ and \langprod over $\Sch$ have the same expressive power. More specifically,
 \begin{itemize}
 	\item for each \langprod expression $e$ over $\Sch$ such that $\Sch(e)=(1,1)$, there exists a WL-formula $\Phi(e)$ over $\text{WL}(\Sch)$ such that for every instance $\I$ of~$\Sch$, 
