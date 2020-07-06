@@ -353,9 +353,9 @@ For the initialize step, we define the $\langfor$ expressions: INIT${\_}$PLUS (a
 	\text{INIT{\_}PLUS} &:= \isplus{G^T\cdot G_{top}}\times \left[ G + (\mathsf{Next}\cdot G_{top}) \cdot \getfirst{G^T\cdot G_{top}}^T  + \mathsf{Next}\cdot G_{top}\cdot e_{G_{top}}^T +V\cdot e_{V}^T + \mathsf{Next}\cdot V_{top}\cdot e_{V_{top}}^T \right] \\
 	\text{INIT{\_}PROD} &:= \isprod{G^T\cdot G_{top}}\times \left[ G + (\mathsf{Next}\cdot G_{top}) \cdot \getfirst{G^T\cdot G_{top}}^T + \mathsf{Next}\cdot G_{top}\cdot e_{G_{top}}^T +(V + \mathsf{Next}\cdot v_{top})\cdot e_{V}^T + \mathsf{Next}\cdot V_{top}\cdot e_{V_{top}}^T \right] \\
 	\text{CONST} &:= \isone{G^T\cdot G_{top}}\times \left[ G + (V + \mathsf{Next}\cdot V_{top})\cdot e_{V}^T + \mathsf{Next}\cdot V_{top}\cdot e_{V_{top}}^T \right] \\
-	\text{INPUT} &:= \isinput{G^T\cdot G_{top}}\times \left[ G + \left(V + \left( A^T \cdot \mathsf{Next}\cdot V_{top} \cdot \getinput{G^T\cdot G_{top}}^T \right)\right)\cdot e_{V}^T + \mathsf{Next}\cdot V_{top}\cdot e_{V_{top}}^T \right]
+	\text{INPUT} &:= \isinput{G^T\cdot G_{top}}\times \left[ G + \left(V + \left( v^T \cdot \mathsf{Next}\cdot V_{top} \cdot \getinput{G^T\cdot G_{top}}^T \right)\right)\cdot e_{V}^T + \mathsf{Next}\cdot V_{top}\cdot e_{V_{top}}^T \right]
 \end{align*} 
-
+Where $v$ is the matrix variable stated in the theorem, the one associated with the input $A$ of the circuit.
 Here, $G^T\cdot G_{top}$ is to get the current id in the top of the stack. In INIT${\_}$PLUS we get the current stack $G$, we add $\mathsf{Next}\cdot G_{top} \cdot \getfirst{G^T\cdot G_{top}}^T$ which is an $n\times n$ matrix with the first child of $G^T\cdot G_{top}$ in the next row. Then $\mathsf{Next}\cdot G_{top}\cdot e_{G_{top}}^T$ adds $\mathsf{Next}\cdot G_{top}$ to the $n-1$ column to mark the gate we added as the top. Next, we do the same with the values by adding $V\cdot e_{V} + \mathsf{Next}\cdot V_{top}\cdot e_{V_{top}}^T$.
 
 The $\langfor$ expression equivalent to algorithm \ref{alg:init_code} is $$\text{INIT}:=\text{INIT{\_}PLUS}+\text{INIT{\_}PROD}+\text{CONST}+\text{INPUT}.$$
