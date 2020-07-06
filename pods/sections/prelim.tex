@@ -16,8 +16,9 @@ $e$ & $::=$ & $V\in \Mvar$ & (matrix variable)\\
  & $|$ & $\diag(e)$ & (diagonalization of a vector)\\  
  & $|$ & $e_1 \cdot e_2$ & (matrix multiplication)\\   
  & $|$ & $e_1 + e_2$ & (matrix addition)\\   
- & $|$ & $a\times e$ & (scalar multiplication, $a\in\RR$)\\   
-  & $|$ & $f(e_1,\ldots ,e_k)$ & (pointwise application of $f\in\Fun_k$).    
+ % & $|$ & $a\times e$ & (scalar multiplication, $a\in\RR$)\\
+ & $|$ & $e_1\times e_2$ & (scalar multiplication)\\
+ & $|$ & $f(e_1,\ldots ,e_k)$ & (pointwise application of $f\in\Fun_k$).    
 \end{tabular}
 \vspace{1ex}
 
@@ -54,7 +55,7 @@ To help us determine whether a \lang\ expression can always be evaluated, we def
  % and undefined otherwise;
 \item $\ttype(e_1 + e_2):=(\alpha,\beta)$ if $\ttype(e_1)=\ttype(e_2)=(\alpha,\beta)$;
  % and undefined otherwise;
-\item $\ttype(a\times e):=(\alpha,\beta)$ if $\ttype(e)=(\alpha,\beta)$; and
+\item $\ttype(e_1\times e_2):=(\alpha,\beta)$ if $\ttype(e_1)=(1,1)$ and $\ttype(e_2)=(\alpha,\beta)$; and
 \item $\ttype(f(e_1,\ldots ,e_k)):= (\alpha,\beta)$, whenever $\ttype(e_1) = \cdots = \ttype(e_k) := (\alpha,\beta)$ and $f\in\Fun_k$.
  % and is undefined otherwise.
 \end{itemize}
@@ -75,11 +76,11 @@ A (\lang) \textit{instance} $\I$ over a schema $\Sch$ is a pair $\I = (\dom,\con
 \item $\sem{\diag(e)}{\I}$ is a diagonal matrix with the vector $\sem{e}{\I}$ on its main diagonal, and zero in every other position;
 \item $\sem{e_1\cdot e_2}{\I} := \sem{e_1}{\I} \cdot \sem{e_2}{\I}$;
 \item $\sem{e_1+ e_2}{\I} := \sem{e_1}{\I} + \sem{e_2}{\I}$;
-\item $\sem{a\times e}{\I} := a\times \sem{e}{\I}$; and
+\item $\sem{e_1\times e_2}{\I} := a\times \sem{e}{\I}$ with $\sem{e_1}{\I}=[a]$; and
 \item $\sem{f(e_1,\ldots ,e_k)}{\I}$ is a matrix $A$ of the same size as $\sem{e_1}{\I}$, and where $A_{ij}$ has the value $f(\sem{e_1}{\I}_{ij},\ldots ,\sem{e_k}{\I}_{ij})$.
 \end{itemize}
 %This concludes the description and semantics of \lang. 
-Just as it is commonly done in \lang, we will sometimes abuse the notation and use $1\times 1$ matrices as scalars and vice versa. For an in-depth discussion on why this is permissible from an expressiveness point of view, see \cite{matlang-journal}. 
+% Just as it is commonly done in \lang, we will sometimes abuse the notation and use $1\times 1$ matrices as scalars and vice versa. For an in-depth discussion on why this is permissible from an expressiveness point of view, see \cite{matlang-journal}.
 
 %We next provide some simple example.
 
