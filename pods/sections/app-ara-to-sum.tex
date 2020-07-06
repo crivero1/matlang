@@ -22,8 +22,8 @@ the active domain (with arbitrary order) of $\cJ$.
 Define the matrix instance $\text{Mat}(\cJ) = (\dom_\cJ,\conc_\cJ)$ such 
 that $\dom_\cJ(\arae) = n$, $\conc_\cJ(V_R)_{i,j} = R^{\cJ}((d_i, d_j))$ whenever $|R|=2$, $\conc_\cJ(V_R)_{i} = R^{\cJ}((d_i))$ 
 whenever $|R|=1$, 
-\floris{This case relates to nullary relations. What does $R^{\cJ}((1))$ mean?}
-and $\conc_\cJ(V_R)_{1,1} = R^{\cJ}((1))$ whenever $|R|=1$. 
+\floris{This case relates to nullary relations. What does $R^{\cJ}$ mean?}
+and $\conc_\cJ(V_R)_{1,1} = R^{\cJ}$ whenever $|R|=1$. 
 Note that we consider the active domain of the whole $K$-instance.
 The proof is by induction on the structure of expressions.
 
@@ -37,7 +37,7 @@ explicitly in the induction?!}
     $$\sem{\Psi(\arae)}{\text{Mat}(\cJ)}_{i,j}=\conc(V_R)_{i,1} = R^{\cJ}((d_i))=\ssem{\arae}{\cJ}((d_i)).$$
     And if $|R|=0$ then 
 	\floris{Not sure about this:}
-    $\sem{\Psi(\arae)}{\text{Mat}(\cJ)}_{i,j}=\conc(V_R)_{1,1} = R^{\cJ}((1))=\ssem{\arae}{\cJ}((1))$.
+    $\sem{\Psi(\arae)}{\text{Mat}(\cJ)}_{i,j}=\conc(V_R)_{1,1} = R^{\cJ}=\ssem{\arae}{\cJ}$.
   \item If $\arae=\arae_1\cup\arae_2$ then $\Psi(\arae):=\Psi(\arae_1)+\Psi(\arae_2)$.
   \item If $\arae = \pi_{Y}(\arae_1)$ for $Y\subseteq R(\arae_1)$. Let $\cV = \lbrace V_A:A\in R(\arae_1)\setminus Y \rbrace$. 
     Then

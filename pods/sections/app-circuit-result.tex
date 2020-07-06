@@ -11,7 +11,7 @@ We prove theorem \ref{th-circuits-ml}:
 
 \begin{proof}
 
-Let $f(A)$ be a function over a $n\times 1$ vector $A$ such that $f$ can be computed by a $L-$uniform arithmetic circuit of log-depth. Each gate of the circuit that encodes $f$ has an $\texttt{id}\in\lbrace 0,1 \rbrace^n$. From now on, when we write $g$ for a gate of the circuit, we mean the $\texttt{id}$ encoding $g$.
+Let $\Phi_n$ be a circuit with $n$ input gates and such that it can be computed by a $L-$uniform arithmetic circuit of log-depth. Each gate of the circuit that encodes $f$ has an $\texttt{id}\in\lbrace 0,1 \rbrace^n$. From now on, when we write $g$ for a gate of the circuit, we mean the $\texttt{id}$ encoding $g$.
 Let $n^k$ be a polynomial such that the number of wires $W(n)\leq n^k$ for $n$ big enough. Further, we assume that $2W(n)\leq n^k$. We need this because the for-matlang simulation of the circuit is in a depth first search way, so $2W(n)$ wires will be traversed.
 Then we have that:
 \begin{itemize}
@@ -121,7 +121,7 @@ The corresponding $\lbrace 0,1 \rbrace^n\rightarrow\lbrace 0,1 \rbrace^n$ functi
 	\item[--] $\isone{g}$: $1$ if and only if $g$ is a $1$-gate.
 	\item[--] $\isinput{g}$: $1$ if and only if $g$ is an input gate.
 	\item[--] $\getfirst{g}$: outputs the $\texttt{id}$ of the first child of $g$.
-	\item[--] $\getinput{g}$: outputs canonical vector $b_i$ where the $i$-th input gate of $A$ is encoded by $g$.
+	\item[--] $\getinput{g}$: outputs canonical vector $b_i$, where the $i$-th input gate of $\Phi_n$ is encoded by $g$.
 	\item[--] $\isnotlast{g_1}{g_2}$: $1$ if and only if $g_2$ is not the last child gate of $g_1$.
 	\item[--] $\nextgate{g_1}{g_2}$: outputs the $\texttt{id}$ of the next child gate of $g_1$ after $g_2$.
 	\item[--] $\getroot$: outputs the $\texttt{id}$ of the root gate of the circuit.
@@ -229,7 +229,7 @@ Let $b_i$ be the $i$-th canonical vector. $\mathsf{Next}$ and $\mathsf{Prev}$ de
 
 \[
   			\mathsf{Next}\cdot b_i=\begin{cases}
-               e_{i+1} \text{ if } i\leq n \\
+               b_{i+1} \text{ if } i\leq n \\
                \mathbf{0} \text{ otherwise }
             \end{cases}
 \]
@@ -430,7 +430,7 @@ The $\langfor$ expression equivalent to algorithm \ref{alg:agg_code} is $$\text{
 The $Evaluate$ method (algorithm \ref{alg:eval_code}) is defined as follows:
 
 \begin{align*}
-	\text{EVAL}&[A]= \\
+	\text{EVAL}&[v]= \\
 	&e_{\mathsf{min}}^T \cdot \big\lbrace \ffor{X}{v_1, \ldots, v_k}: \\
 	&\left( \sprod_{i=1}^k \mathsf{min}(v_i)\right) \times START + \\
 	&\left( 1- \sprod_{i=1}^k \mathsf{min}(v_i)\right) \times \left( \left(1 - \mathsf{min}(G_{top})\cdot \mathsf{min}(V_{top}) \right) \times \left[ \left( 1 - G_{top}^T\cdot V_{top} \right) \times \text{INIT} + \left(  G_{top}^T\cdot V_{top} \right) \times \text{AGG} \right] + \mathsf{min}(G_{top})\times \mathsf{min}(V_{top})\times X\right) \\ 
@@ -439,8 +439,15 @@ The $Evaluate$ method (algorithm \ref{alg:eval_code}) is defined as follows:
 
 Note that the $ \texttt{for}$-expression does the evaluation. The final output is in $X[1,max-2]$, we extract this value by multiplying the final result as $e_{\mathsf{min}}^T\cdot [\texttt{for}(\ldots )]\cdot e_{V}$.
 
-Finally, we need to take care of all $n<n_0$, where $(\star)$ does not necessarily hold. For any $i$, let: $$\text{Eval}[i,A]:= \text{ the } 1\times 1 \text{ matrix with the value of the polynomial } f(A) \text{ when } n=i.$$
+Finally, we need to take care of all $n<n_0$, where $(\star)$ does not necessarily hold. For any $i$, let: $$\text{Eval}[i,A]:= \text{ the } 1\times 1 \text{ matrix with the value of the polynomial } \Phi_n(A) \text{ when } n=i.$$
 
-Then we define: $$f(A)=\ssum_{i=0}^{n_0-1}(e_{\mathsf{min}+\mathsf{i}}\cdot e_{\mathsf{max}}^T)\times \text{EVAL}[i,A] + \left( (\mathsf{Next}^{n_0}\cdot e_{\mathsf{min}})^T\cdot e_{\ones} (e_{\mathsf{min}}) \right)\times \text{EVAL}[A].$$ Above, $(e_{\mathsf{min}+\mathsf{i}}\cdot e_{\mathsf{max}}^T)$ checks if the dimension is equal to $i$, and $(\mathsf{Next}^{n_0}\cdot e_{\mathsf{min}})^T\cdot e_{\ones} (e_{\mathsf{min}})$ checks if the dimension is greater or equal than $n_0$.
+Then we define: 
+$$
+\Phi_n(a_1,\ldots, a_i)=\ssum_{i=0}^{n_0-1}\left( e_{\mathsf{min}+\mathsf{i}}^T\cdot (e_{\mathsf{diag}}(e_{\ones}(v))\cdot e_{\mathsf{max}}) \right) \times \text{EVAL}[i,v] + \left( (\mathsf{Next}^{n_0}\cdot e_{\mathsf{min}})^T\cdot e_{\ones} (v) \right)\times \text{EVAL}[v].
+$$ 
+Above, $(e_{\mathsf{min}+\mathsf{i}}^T\cdot e_{\mathsf{max}})$ checks if the dimension is equal to $i$ (we multiply
+by the $n\times n$ identity $e_{\mathsf{diag}}(e_{\ones}(v))$ to ensure typing), 
+and $(\mathsf{Next}^{n_0}\cdot e_{\mathsf{min}})^T\cdot e_{\ones} (e_{\mathsf{min}})$ checks if the 
+dimension is greater or equal than $n_0$.
 
 \end{proof}
