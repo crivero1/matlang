@@ -192,7 +192,10 @@ Note that this result crucially depends on the fact that expressions in \langfor
 Given a \langfor expression $e$ over a schema $\Sch$, it is undecidable to check whether $e$ is of polynomial degree.
 \end{proposition}
 
-In general, determining a syntactic subclass of \langfor expressions which are of polynomial degree seems similar to the analysis of terminating conditions of programs with for loops \cite{florisKnows?}. We leave the study of \langfor fragments which can be simulated by circuits of polynomial degree for future work.
+%In general, determining a syntactic subclass of \langfor expressions which are of polynomial degree seems similar to the analysis of terminating conditions of programs with for loops \cite{florisKnows?}. We leave the study of \langfor fragments which can be simulated by circuits of polynomial degree for future work.
+
+Of course, one might wonder whether it is possible to define a syntactic subclass of \langfor expressions that are of polynomial degree and can still express many important linear algebra algorithms. We identify one such class in Section \ref{ss:sumML}, called \langsum, and in fact show that this class is powerful enough to capture relational algebra on (binary) $K$-relations. 
+
 
 \floris{What I am missing is what it is precisely that prevents us from doing any circuit in \langfor and what do these results actually imply. What cannot be done?}
 

@@ -5,11 +5,19 @@ additive updates, and show that it is equivalent in expressive to the (positive)
 relational algebra on $K$-relations. We then extend \langsum such that also updates involving pointwise-multiplication (Hadamard product) are allowed. The resulting fragment, \langprod, is shown to be equivalent in expressive power to weighted logics. Finally, we consider the fragment in which updates involving sum and matrix multiplication, and possibly order information, is allowed. From the results in Section~\ref{sec:queries}, we infer that the latter fragment suffices to compute matrix inversion. An overview of the fragments and their relationships are depicted in Figure~\ref{}.
 
 \subsection{Summation matlang and relational algebra}
+\label{ss:sumML}
 When defining $4$-cliques and in several other expressions we have seen so far, we actually only update $X$ by adding some matrix to it. This restricted form of the $\texttt{for}$ loop proved useful throughout the paper, and we will therefore introduce it as a special operator. That is, we define:
 $$\Sigma v. e := \ffor{v}{X}{X + e}.$$
 We define the subfragment of \langfor, called \langsum, to consist of the $\Sigma$ operator plus the ``core'' operators in \lang, namely, transposition, matrix multiplication and addition, scalar multiplication, and pointwise function applications.
 
-Interestingly enough, this restricted version of \texttt{for} already allows us to capture the \lang\ operators that are not present in the syntax of \langsum. More precisely, we see from Examples~\ref{} and~\ref{} that the one-vector and $\diag$ operator are expressible in \langsum. Combined with the observation that the $4$-clique
+%REMOVE IF TOO MUCH SPACE
+One property of \langsum is that it only allows expressions of polynomial degree. Indeed, one can easily show that \langsum can only create a matrix entry that is polynomial in the dimension $n$ of the expression. More precisely, we can show the following:
+\begin{proposition}\label{prop:poly}
+Every expression in \langsum is of polynomial degree.
+\end{proposition}
+%REMOVE IF TOO MUCH SPACE
+
+Interestingly enough, this restricted version of \texttt{for} already allows us to capture the \lang\ operators that are not present in the syntax of \langsum. More precisely, we see from Examples~\ref{ex:onevec} and~\ref{ex:diag} that the one-vector and $\diag$ operator are expressible in \langsum. Combined with the observation that the $4$-clique
 expression of Example~\ref{ex:fourcliques} is in \langsum, the following result is immediate.
 %
 %
