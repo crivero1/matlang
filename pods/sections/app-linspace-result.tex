@@ -261,9 +261,9 @@ $\lhd$) differently. More specifically, for the input tapes $R_i$ and heads $H_i
 $$
 \mathsf{move\_inp}^i_{\mathsf{d}}:=
 \begin{cases}
-2\cdot \mathsf{min}(H_i)\cdot H_i + 1/2\cdot\mathsf{max}(1/2\cdot H_i)\cdot H_i  + (1-\mathsf{min}(H_i))(1-\mathsf{max}(1/2H_i))\cdot e_{\mathsf{Prev}}\cdot H_i  
+2\times \mathsf{min}(H_i)\times H_i + 1/2\times\mathsf{max}(1/2\times H_i)\times H_i  + (1-\mathsf{min}(H_i))(1-\mathsf{max}(1/2 \times H_i))\times e_{\mathsf{Prev}}\cdot H_i  
 & \text{if $\mathsf{d}=\leftarrow$}\\
-2\cdot \mathsf{max}(H_i)\cdot H_i + 1/2\cdot\mathsf{min}(1/2\cdot H_i)\cdot H_i  + (1-\mathsf{min}(1/2\cdot H_i))(1-\mathsf{max}(H_i))\cdot e_{\mathsf{Next}}\cdot H_i  
+2\times \mathsf{max}(H_i)\times H_i + 1/2\times\mathsf{min}(1/2\times H_i)\times H_i  + (1-\mathsf{min}(1/2\times H_i))(1-\mathsf{max}(H_i))\times e_{\mathsf{Next}}\cdot H_i  
  & \text{if $\mathsf{d}=\rightarrow$}\\
 H_i & \text{if $\mathsf{d}=\sqcup$}. 
 \end{cases}
@@ -278,7 +278,7 @@ moves to the left:
 $$
 \mathsf{move\_outp}_{\mathsf{d}}:=
 \begin{cases}
-1/2\cdot\mathsf{min}(1/2\cdot H_O)\cdot H_O  + (1-\mathsf{min}(1/2\cdot H_O))\cdot e_{\mathsf{Next}}\cdot H_O  
+1/2\times\mathsf{min}(1/2\times H_O)\times H_O  + (1-\mathsf{min}(1/2\times H_O))\times e_{\mathsf{Next}}\times H_O  
  & \text{if $\mathsf{d}=\rightarrow$}\\
 H_O & \text{if $\mathsf{d}=\sqcup$}. 
 \end{cases}
@@ -290,8 +290,8 @@ $W_i$ for $i\neq 1,s$ and define
 $$
 \mathsf{move\_work}^i_{\mathsf{d}}:=
 \begin{cases}
-	-\mathsf{min}(H_{W_i})\cdot H_{W_i} + (1-\mathsf{min}(H_{W_i}))\cdot e_{\mathsf{Prev}}\cdot H_{W_i} + \mathsf{min}(H_{W_{i+1}})\cdot e_{\mathsf{max}} & \text{if $\mathsf{d}=\leftarrow$}\\
-		-\mathsf{max}(H_{W_i})\cdot H_{W_i} + (1-\mathsf{max}(H_{W_i}))\cdot e_{\mathsf{Next}}\cdot H_{W_i} + \mathsf{max}(H_{W_{i-1}})\cdot e_{\mathsf{min}} & \text{if $\mathsf{d}=\rightarrow$}\\
+	-\mathsf{min}(H_{W_i})\times H_{W_i} + (1-\mathsf{min}(H_{W_i}))\times e_{\mathsf{Prev}}\cdot H_{W_i} + \mathsf{min}(H_{W_{i+1}})\times e_{\mathsf{max}} & \text{if $\mathsf{d}=\leftarrow$}\\
+		-\mathsf{max}(H_{W_i})\times H_{W_i} + (1-\mathsf{max}(H_{W_i}))\times e_{\mathsf{Next}}\cdot H_{W_i} + \mathsf{max}(H_{W_{i-1}})\times e_{\mathsf{min}} & \text{if $\mathsf{d}=\rightarrow$}\\
 	H_{W_i} & \text{if $\mathsf{d}=\sqcup$}. 	
 \end{cases}
 $$
@@ -302,8 +302,8 @@ For $i=s$ we can ignore the parts in the previous expression that involve $W_{s+
 $$
 \mathsf{move\_work}^s_{\mathsf{d}}:=
 \begin{cases}
-	-\mathsf{min}(H_{W_s})\cdot H_{W_i} + (1-\mathsf{min}(H_{W_s}))\cdot e_{\mathsf{Prev}}\cdot H_{W_s}  & \text{if $\mathsf{d}=\leftarrow$}\\
-		-\mathsf{max}(H_{W_s}) \cdot H_{W_s} + (1-\mathsf{max}(H_{W_s}))\cdot e_{\mathsf{Next}}\cdot H_{W_s} + \mathsf{max}(H_{W_{s-1}})\cdot e_{\mathsf{min}} & \text{if $\mathsf{d}=\rightarrow$}\\
+	-\mathsf{min}(H_{W_s})\times H_{W_i} + (1-\mathsf{min}(H_{W_s}))\times e_{\mathsf{Prev}}\cdot H_{W_s}  & \text{if $\mathsf{d}=\leftarrow$}\\
+		-\mathsf{max}(H_{W_s}) \times H_{W_s} + (1-\mathsf{max}(H_{W_s}))\times e_{\mathsf{Next}}\cdot H_{W_s} + \mathsf{max}(H_{W_{s-1}})\times e_{\mathsf{min}} & \text{if $\mathsf{d}=\rightarrow$}\\
 	H_{W_s} & \text{if $\mathsf{d}=\sqcup$}. 	
 \end{cases}
 $$
@@ -312,8 +312,8 @@ into account:
 $$
 \mathsf{move\_work}^1_{\mathsf{d}}:=
 \begin{cases}
-	2\cdot \mathsf{min}(H_{W_1})\cdot H_{W_i} + (1-\mathsf{min}(H_{W_1}))\cdot e_{\mathsf{Prev}}\cdot H_{W_1} + \mathsf{min}(H_{W_{2}})\cdot e_{\mathsf{max}} & \text{if $\mathsf{d}=\leftarrow$}\\
-		1/2\cdot\mathsf{min}(1/2\cdot H_{W_1})\cdot H_{W_1} + (1-\mathsf{max}(1/2\cdot H_{W_1}))\cdot e_{\mathsf{Next}}\cdot H_{W_1}  & \text{if $\mathsf{d}=\rightarrow$}\\
+	2\times \mathsf{min}(H_{W_1})\times H_{W_i} + (1-\mathsf{min}(H_{W_1}))\times e_{\mathsf{Prev}}\cdot H_{W_1} + \mathsf{min}(H_{W_{2}})\times e_{\mathsf{max}} & \text{if $\mathsf{d}=\leftarrow$}\\
+		1/2\times\mathsf{min}(1/2\times H_{W_1})\times H_{W_1} + (1-\mathsf{max}(1/2\times H_{W_1}))\times e_{\mathsf{Next}}\cdot H_{W_1}  & \text{if $\mathsf{d}=\rightarrow$}\\
 	H_{W_1} & \text{if $\mathsf{d}=\sqcup$}. 	
 \end{cases}
 $$
@@ -321,25 +321,25 @@ A final ingredient for defining $e_f^{\geq N}$ are expressions which update the 
 To define these expression, we need the position and symbol to put on the tape. For the output tape we define
 $$
 \mathsf{write\_outp}_b:=\begin{cases}
-\mathsf{min}(1/2\cdot H_O)\cdot O & \text{if $b=\rhd$}\\
-(1-\mathsf{min}(1/2\cdot H_O))\cdot\left((1-O^T\cdot H_O)\cdot O + (O^T\cdot H_O)\cdot (O-H_O)\right) &\text{if $b=0$}\\
-(1-\mathsf{min}(1/2\cdot H_O))\cdot\left((1-O^T\cdot H_O)\cdot (O+H_O) + (O^T\cdot H_O)\cdot O\right) &\text{if $b=1$}\\
+\mathsf{min}(1/2\times H_O)\times O & \text{if $b=\rhd$}\\
+(1-\mathsf{min}(1/2\times H_O))\times\left((1-O^T\cdot H_O)\times O + (O^T\cdot H_O)\times (O-H_O)\right) &\text{if $b=0$}\\
+(1-\mathsf{min}(1/2\times H_O))\times\left((1-O^T\cdot H_O)\times (O+H_O) + (O^T\cdot H_O)\times O\right) &\text{if $b=1$}\\
 \end{cases}
 $$
 and similarly for the work tapes $i\neq 1$:
 $$
 \mathsf{write\_work}_b^i:=\begin{cases}
 W_i & \text{if $b=\rhd$}\\
-(1-W_i^T\cdot H_{W_i})\cdot W_i + (W_i^T\cdot H_{W_i})\cdot (W_i-H_{W_i}) &\text{if $b=0$}\\
-(1-W_i^T\cdot H_{W_i})\cdot (W_i+H_{W_i}) + (W_i^T\cdot H_{W_i})\cdot W_i &\text{if $b=1$},
+(1-W_i^T\cdot H_{W_i})\times W_i + (W_i^T\cdot H_{W_i})\times (W_i-H_{W_i}) &\text{if $b=0$}\\
+(1-W_i^T\cdot H_{W_i})\times (W_i+H_{W_i}) + (W_i^T\cdot H_{W_i})\times W_i &\text{if $b=1$},
 \end{cases}
 $$
 and for  $W_1$ we have to take care again of the begin marker:
 $$
 \mathsf{write\_work}_b^1:=\begin{cases}
-\mathsf{min}(1/2\cdot H_{W_1})\cdot W_1 & \text{if $b=\rhd$}\\
-(1-\mathsf{min}(1/2\cdot H_{W_1})\cdot\left((1-W_1^T\cdot H_{W_1})\cdot W_1 + (W_1^T\cdot H_{W_1})\cdot (W_1-H_{W_1})\right) &\text{if $b=0$}\\
-(1-\mathsf{min}(1/2\cdot H_{W_1})\cdot\left((1-W_1^T\cdot H_{W_1})\cdot (W_1+H_{W_1}) + (W_1^T\cdot H_{W_1})\cdot W_1\right) &\text{if $b=1$}.
+\mathsf{min}(1/2\times H_{W_1})\times W_1 & \text{if $b=\rhd$}\\
+(1-\mathsf{min}(1/2\times H_{W_1})\times\left((1-W_1^T\cdot H_{W_1})\times W_1 + (W_1^T\cdot H_{W_1})\times (W_1-H_{W_1})\right) &\text{if $b=0$}\\
+(1-\mathsf{min}(1/2\times H_{W_1})\times\left((1-W_1^T\cdot H_{W_1})\times (W_1+H_{W_1}) + (W_1^T\cdot H_{W_1})\times W_1\right) &\text{if $b=1$}.
 \end{cases}
 $$
 
@@ -377,25 +377,25 @@ e_f^{\geq N}:= \mathsf{for\,} v_1,\ldots,v_{k},Q_1,\ldots,Q_m,H_1,\ldots,H_\ell,
 We refer to section \ref{app:def} for the definition of this form of the for-loop. The expressions used are (we use $\star$ below to mark irrelevant information in the transitions):
  \allowdisplaybreaks
 \begin{align*}
-	e_{Q_1}&:=\left(\prod_{j=1}^{k} \textsf{min}(v_i)\right)\cdot e_{\mathsf{min}}
+	e_{Q_1}&:=\left(\prod_{j=1}^{k} \textsf{min}(v_i)\right)\times e_{\mathsf{min}}
 	+ \sum_{\substack{(q_i,a_1,\ldots,a_\ell,b,c)\\
-	\Delta(q_i,a_1,\ldots,a_\ell,b,c)=(q_1,\star)}} \!\!\!\!\!\!\!\!\! \mathsf{isconf}_{q_i,a_1,\ldots,a_\ell,b,c}\cdot e_{\mathsf{min}} \\
+	\Delta(q_i,a_1,\ldots,a_\ell,b,c)=(q_1,\star)}} \!\!\!\!\!\!\!\!\! \mathsf{isconf}_{q_i,a_1,\ldots,a_\ell,b,c}\times e_{\mathsf{min}} \\
 	e_{Q_j}&:=\sum_{\substack{(q_i,a_1,\ldots,a_\ell,b,c)\\
-	\Delta(q_i,a_1,\ldots,a_\ell,b,c)=(q_j,\star)}} \!\!\!\!\!\!\!\!\! \mathsf{isconf}_{q_i,a_1,\ldots,a_\ell,b,c}\cdot e_{\mathsf{min}}
+	\Delta(q_i,a_1,\ldots,a_\ell,b,c)=(q_j,\star)}} \!\!\!\!\!\!\!\!\! \mathsf{isconf}_{q_i,a_1,\ldots,a_\ell,b,c}\times e_{\mathsf{min}}
 	 \quad \text{for $j\neq 1$}\\
-	e_{H_i}&:=2\left(\prod_{j=1}^{k} \textsf{min}(v_i)\right)\cdot e_{\mathsf{min}}
+	e_{H_i}&:=2\left(\prod_{j=1}^{k} \textsf{min}(v_i)\right)\times e_{\mathsf{min}}
 	+\sum_{\substack{(q,a_1,\ldots,a_\ell,b,d)\\
-	\Delta(q,a_1,\ldots,a_\ell,b,c)=(\star,\mathsf{d_i},\star)}}\!\!\!\!\!\!\!\!\! \mathsf{isconf}_{q,a_1,\ldots,a_\ell,b,c}\cdot\mathsf{move\_inp}^i_{\mathsf{d}_i}\\
-	e_{H_{W_i}}&:=2\left(\prod_{j=1}^{k} \textsf{min}(v_i)\right)\cdot e_{\mathsf{min}}
+	\Delta(q,a_1,\ldots,a_\ell,b,c)=(\star,\mathsf{d_i},\star)}}\!\!\!\!\!\!\!\!\! \mathsf{isconf}_{q,a_1,\ldots,a_\ell,b,c}\times\mathsf{move\_inp}^i_{\mathsf{d}_i}\\
+	e_{H_{W_i}}&:=2\left(\prod_{j=1}^{k} \textsf{min}(v_i)\right)\times e_{\mathsf{min}}
 	+\sum_{\substack{(q,a_1,\ldots,a_\ell,b,d)\\
-	\Delta(q,a_1,\ldots,a_\ell,b,c)=(\star,\mathsf{d_{\ell+1}},\star)}}\!\!\!\!\!\!\!\!\! \mathsf{isconf}_{q,a_1,\ldots,a_\ell,b,c}\cdot\mathsf{move\_work}_{\mathsf{d}_{\ell+1}}^i\\
-	e_{H_O}&:=2\left(\prod_{j=1}^{k} \textsf{min}(v_i)\right)\cdot e_{\mathsf{min}}
+	\Delta(q,a_1,\ldots,a_\ell,b,c)=(\star,\mathsf{d_{\ell+1}},\star)}}\!\!\!\!\!\!\!\!\! \mathsf{isconf}_{q,a_1,\ldots,a_\ell,b,c}\times\mathsf{move\_work}_{\mathsf{d}_{\ell+1}}^i\\
+	e_{H_O}&:=2\left(\prod_{j=1}^{k} \textsf{min}(v_i)\right)\times e_{\mathsf{min}}
 	+\sum_{\substack{(q,a_1,\ldots,a_\ell,b,d)\\
-	\Delta(q,a_1,\ldots,a_\ell,b,c)=(\star,\mathsf{d}_{\ell+2})}}\!\!\!\!\!\!\!\!\! \mathsf{isconf}_{q,a_1,\ldots,a_\ell,b,c}\cdot\mathsf{move\_outp}_{\mathsf{d}_{\ell+2}}\\
+	\Delta(q,a_1,\ldots,a_\ell,b,c)=(\star,\mathsf{d}_{\ell+2})}}\!\!\!\!\!\!\!\!\! \mathsf{isconf}_{q,a_1,\ldots,a_\ell,b,c}\times\mathsf{move\_outp}_{\mathsf{d}_{\ell+2}}\\
 	e_{W_i}&:=\sum_{\substack{(q,a_1,\ldots,a_\ell,b,d)\\
-	\Delta(q,a_1,\ldots,a_\ell,b,c)=(\star,b',c',\star)}}\!\!\!\!\!\!\!\!\! \mathsf{isconf}_{q,a_1,\ldots,a_\ell,b,c}\cdot\mathsf{write\_work}_{b'}^i\\
+	\Delta(q,a_1,\ldots,a_\ell,b,c)=(\star,b',c',\star)}}\!\!\!\!\!\!\!\!\! \mathsf{isconf}_{q,a_1,\ldots,a_\ell,b,c}\times\mathsf{write\_work}_{b'}^i\\
 	e_{O}&:=\sum_{\substack{(q,a_1,\ldots,a_\ell,b,d)\\
-	\Delta(q,a_1,\ldots,a_\ell,b,c)=(\star,b',c',\star)}}\!\!\!\!\!\!\!\!\! \mathsf{isconf}_{q,a_1,\ldots,a_\ell,b,c}\cdot\mathsf{write\_outp}_{c'}.
+	\Delta(q,a_1,\ldots,a_\ell,b,c)=(\star,b',c',\star)}}\!\!\!\!\!\!\!\!\! \mathsf{isconf}_{q,a_1,\ldots,a_\ell,b,c}\times\mathsf{write\_outp}_{c'}.
 \end{align*}
 
 The correctness of $e_f^{\geq N}$ should be clear from the construction (one can formally verify this by
@@ -405,7 +405,7 @@ $w_1,\ldots,w_\ell$ of size $n$, we define a \langfor expression which checks wh
 $\mathsf{mat}(R_i)=\mathsf{vec}(w_i)$ for each $i\in[\ell]$. This can be easily done since $n$ 
 can be regarded as a constant. For example, to check whether $\mathsf{mat}(R_i)=[0,1,1]^T$ we simply write
 $$
-(1- R_i^T\cdot e_{\mathsf{min}})\cdot (R_i^T\cdot e_{\mathsf{Next}}\cdot e_{\mathsf{min}})\cdot (1- R_i^T\cdot e_{\mathsf{Next}}\cdot e_{\mathsf{Next}}\cdot e_{\mathsf{min}})\cdot (1- e_{\ones}(R_i)^T\cdot e_{\mathsf{Next}}\cdot e_{\mathsf{Next}}\cdot e_{\mathsf{Next}}\cdot e_{\mathsf{min}})
+(1- R_i^T\cdot e_{\mathsf{min}})\times (R_i^T\cdot e_{\mathsf{Next}}\cdot e_{\mathsf{min}})\times (1- R_i^T\cdot e_{\mathsf{Next}}\cdot e_{\mathsf{Next}}\cdot e_{\mathsf{min}})\times (1- e_{\ones}(R_i)^T\cdot e_{\mathsf{Next}}\cdot e_{\mathsf{Next}}\cdot e_{\mathsf{Next}}\cdot e_{\mathsf{min}})
 $$
 which will evaluate to $1$ if and only if $\mathsf{mat}(R_i)=[0,1,1]^T$. We note that the final factor is in 
 place to check that the dimension of $\mathsf{mat}(R_i)$ is three.
@@ -440,7 +440,7 @@ evaluate $f$ on inputs smaller than $N$.
 
 Our final expression $e_f$ is now given by
 $$
-e_f:=e_f^{<N} + \mathsf{dim\_is\_greater\_than_N}\cdot e_f^{\geq N}
+e_f:=e_f^{<N} + \mathsf{dim\_is\_greater\_than_N}\times e_f^{\geq N}
 $$
 where $\mathsf{dim\_is\_greater\_than_N}$ is the expression
 $e_{\ones}(R_i)^T\cdot\underbrace{e_{\mathsf{Next}}\cdot\cdots\cdot e_{\mathsf{Next}}}_{\text{$N$ times}}$ 
