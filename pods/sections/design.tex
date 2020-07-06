@@ -52,10 +52,10 @@ As an illustration, we consider the Floyd-Warshall algorithm given in the Introd
 \begin{example}\label{ex:floyd}
 Consider the following expression:
 \begin{tabbing}
-$e_{FW} := $ \texttt{for\,}\=$e_k,\, X_1\!=\!A.\ \ X_1 \ + $\\
-\> \texttt{for\,}\=$e_i, \, X_2.\ \ X_2 \ +$ \\
-\>\>\texttt{for\,}\=$e_j,\, X_3.\ \ X_3 \ +$ \\
-\>\>\>$(e_i^T\cdot X_1\cdot e_k \cdot e_k^T\cdot X_1\cdot e_j)\times e_i\cdot e_j^T$
+$e_{FW} := $ \texttt{for\,}\=$v_k,\, X_1\!=\!A.\ \ X_1 \ + $\\
+\> \texttt{for\,}\=$v_i, \, X_2.\ \ X_2 \ +$ \\
+\>\>\texttt{for\,}\=$v_j,\, X_3.\ \ X_3 \ +$ \\
+\>\>\>$(v_i^T\cdot X_1\cdot v_k \cdot v_k^T\cdot X_1\cdot v_j)\times v_i\cdot v_j^T$
 \end{tabbing}
 The expression $e_{FW}$ simulates the Floyd-Warshall algorithm by updating the matrix $A$, which is stored in the variable $X_1$. The inner sub-expression here constructs an $n\times n$ matrix that contains one in the position $(i,j)$ if and only if one can reach the vertex $j$ from $i$ by going through $k$, and zero elsewhere. If an instance $\I$ assigns to $A$ the adjacency matrix of a graph, then $\sem{e_{FW}}{\I}$ will be equal to the matrix produced by the algorithm given in the Introduction.
 %contains a non zero value if and only if $j$ is reachable from $i$. 
