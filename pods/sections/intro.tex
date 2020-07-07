@@ -17,6 +17,8 @@ In this paper we take a more principle approach by studying what are the atomic 
 \end{tabbing}
 %\vspace{-1ex}
 After executing the algorithm, all of the non zero entries signify an edge in the transitive closure graph (and in fact, the number of paths of length at most $n$ between the two nodes). 
+
+\cristian{I am not sure about this sentence. Depending on the order how is iterated, maybe you can compute more than $n$. Actually, if you don't add the identity to the original matrix, even the transitive closure will not work.}
 %\cristian{This is not exactly true. If we use $\cdot$ as $+$ and $+$ as min, it works, namely if we use the min/plus semiring. Should we say it?}
 
 % FOR THE REAL ALGORITHM WE TREAT ZERO AS INFINITY!!!

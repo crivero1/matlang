@@ -191,12 +191,12 @@ in \texttt{for} loops. Formally, for an expression $e$ we define the operator:
 $$
 \sprod v.\,  e=\ffor {v}{X = I}{X\cdot e}.
 $$
-where $I$ is the identity matrix. It is readily verified that  $\sprod v$ can expressed in terms of $\qhadprod v$.
+where $I$ is the identity matrix. We call \langmprod the subfragment of \langfor that consists of \langsum extended with $\sprod v$. It is readily verified that  $\sprod v$ can expressed in terms of $\qhadprod v$.
 Furthermore, by contrast to the Hadamard product, matrix multiplication is a non-commutative operator. As a consequence, one can formulate expressions that are not invariant under the order in which the canonical vectors
 are processed.
 
 \begin{proposition}
-	Every expression in \langprod can be defined in \langsum extended with $\sprod v$. Moreover, there exists an expression that uses the $\sprod v$ quantifier that cannot be defined in \langprod.
+	Every expression in \langprod can be defined in \langmprod. Moreover, there exists an expression that uses the $\sprod v$ quantifier that cannot be defined in \langprod.
 \end{proposition}
 
 What is interesting is that \langsum extended with $\sprod v$ suffices to compute the transitive closure,
@@ -213,6 +213,8 @@ as shown in Example~\ref{ex:floyd}, provided that we allow for the $f_{>0}$ func
 % $$ps(A) := \ssum v.\sprod w. \left( (w^* S_{<} v)\cdot (A-I) + I\right),$$
 Furthermore, if we extend this fragment with access to the matrix $S_{<}$, defining the (strict) order on canonical vectors, then Csanky's matrix inversion algorithm becomes expressible (if $f_/$ is allowed).
  We leave the study of this fragment and, in particular, the relationship to full \langfor, for future work. 
+ 
+Finally, in Figure~\ref{thefigure} we show a diagram of all the fragments of \langfor introduced in this section and their corresponding equivalence formalism.
 %
 % %
 % % matrix defined in Section~\ref{sec:order}. The outer loop here defines which power we compute. That is, when $v$ is the $i$th canonical vector, we compute $A^i$. Computing $A^i$ is achieved via the inner product loop, which uses $w^*S_{<}v$ to determine whether $w$ comes before $v$ in the ordering of canonical vectors. When this is the case we multiply the current result by $A$, and when $w$ is greater than $v$, we use $I$ not to affect the already computed result.
@@ -222,4 +224,60 @@ Furthermore, if we extend this fragment with access to the matrix $S_{<}$, defin
 %
 % It is interesting that the $\sprod v$ give the power of transitive closure to \langsum in a natural way and without defining it explicitly.
 %
+
+\begin{figure}
+	
+	\begin{tikzpicture}[->,>=stealth, semithick, auto, initial text= {}, initial distance= {3mm}, accepting distance= {4mm}, node distance=0.5cm, semithick]
+	
+	\node [rectangle, draw=black, fill=white, minimum height=4mm, minimum width=2cm, rounded corners] (ML) at (0, 0) {$\texttt{ML}$};
+	
+	\node [inner sep=0mm] (SML) at ($(ML) + (0,0.65)$) {$\texttt{sum}\text{-}\texttt{ML}\equiv \texttt{RA}^+_K$};
+	
+	\node [circle, radius=4mm,draw=black, fill=black, inner sep=0mm] (pCLIQUE) at ($(ML) + (1.4,0.1)$) {};
+	\node [right of=pCLIQUE,inner sep=0mm, node distance=0.65cm] (CLIQUE) {$\textsc{4Clique}$};
+	
+	\begin{pgfonlayer}{background}
+	\node (SMLc)[draw=black, inner sep=1.5mm, rounded corners,fit=(SML)(ML)(CLIQUE)] {};
+	\end{pgfonlayer}
+	
+	
+	\node [inner sep=0mm] (FOML) at ($(SML) + (0,0.7)$) {$\texttt{FO}\text{-}\texttt{ML} \equiv \texttt{WL}$};
+	
+	\node [circle, radius=4mm,draw=black, fill=black, inner sep=0mm] (pDP) at ($(pCLIQUE) + (1.7,0.2)$) {};
+	\node [right of=pDP,inner sep=0.5mm, node distance=0.3cm] (DP) {$\textsc{DP}$};
+	
+	
+	\begin{pgfonlayer}{background}
+	\node (FOMLc) [draw=black, inner sep=1.5mm, rounded corners,fit=(SMLc)(ML)(FOML)(DP)] {};
+	\end{pgfonlayer}
+	
+	
+	\node [inner sep=0mm] (PML)  at ($(FOML) + (0,0.7)$) {$\texttt{prod}\text{-}\texttt{ML} + S_{<}$};
+	
+	\node [circle, radius=4mm,draw=black, fill=black, inner sep=0mm] (pINV) at ($(pDP) + (1,1)$) {};
+	\node [right of=pINV,inner sep=0mm, node distance=0.35cm] (INV) {$\textsc{Inv}$};
+	
+	\node [circle, radius=4mm,draw=black, fill=black, inner sep=0mm] (pDET) at ($(pDP) + (1,0.2)$) {};
+	\node [right of=pDET,inner sep=0mm, node distance=0.35cm] (DET) {$\textsc{Det}$};
+	
+	
+	\begin{pgfonlayer}{background}
+	\node (PMLc) [draw=black, inner sep=1.5mm, rounded corners,fit=(SMLc)(ML)(FOMLc)(PML)(INV)(DET)] {};
+	\end{pgfonlayer}
+	
+	
+	\node [inner sep=0mm] (forML) at ($(PML) + (1,0.7)$) {$\texttt{for}\text{-}\texttt{ML} \equiv \text{Arithmetic Circuits}$};
+	
+	\node [circle, radius=4mm,draw=black, fill=black, inner sep=0mm] (pPALU) at ($(pINV) + (1, 0.5)$) {};
+	\node [right of=pPALU,inner sep=0mm, node distance=0.5cm] (PALU) {$\textsc{PALU}$};
+	
+	\begin{pgfonlayer}{background}
+	\node [draw=black, inner sep=1.5mm, rounded corners,fit=(SMLc)(ML)(FOMLc)(PMLc)(forML)(PALU)] {};
+	\end{pgfonlayer}
+	
+	\end{tikzpicture}
+	
+	\caption{Fragments of \langfor and their equivalences. The functions \textsc{4Clique}, \textsc{DP} (diagonal product), \textsc{Inv}, \textsc{Det}, and \textsc{PALU} decomposition are placed in their fragments.} \label{thefigure}
+	
+\end{figure}
 
