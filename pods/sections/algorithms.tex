@@ -25,9 +25,9 @@ we next show that \langfor can compute these decompositions.
 are reduced, one by one, to obtain the matrix $U$. The reduction of columns of $A$ is achieved
 as follows. Consider the first column $[A_{11},\ldots,A_{n1}]^T$ of $A$ and  define 
 $c_1 := [0, \alpha_{21},\ldots, \alpha_{n1}]^T$ 
-with $\alpha_{j1} := -\frac{A_{j1}}{A_{11}}$. Let $T_1:=I+ c_1\cdot e_1^T$ and consider
+with $\alpha_{j1} := -\frac{A_{j1}}{A_{11}}$. Let $T_1:=I+ c_1\cdot b_1^T$ and consider
 $T_1\cdot A$. We note that the first column of $T_1\cdot A$ is now equal to $[A_{11},0,\ldots,0]^T$. That is,
-all of its entries below the diagonal are zero. Additionally, the $j$th row of $T_1\cdot A$ is obtained by multiplying the first row of $A$ by $\alpha_{21}$ and adding it to the second row of $A$, as required. One then iteratively performs a similar computation, using a matrix $T_i:=I+c_i\cdot e_i^T$, where $c_i$ now depends on the $i$th column in $T_{i-1}\cdot\cdots\cdot T_1\cdot A$. As a consequence, $T_i\cdot T_{i-1}\cdots \cdot T_1\cdot A$ is upper triangular
+all of its entries below the diagonal are zero. Additionally, the $j$th row of $T_1\cdot A$ is obtained by multiplying the first row of $A$ by $\alpha_{21}$ and adding it to the second row of $A$, as required. One then iteratively performs a similar computation, using a matrix $T_i:=I+c_i\cdot b_i^T$, where $c_i$ now depends on the $i$th column in $T_{i-1}\cdot\cdots\cdot T_1\cdot A$. As a consequence, $T_i\cdot T_{i-1}\cdots \cdot T_1\cdot A$ is upper triangular
 in its first $i$ columns. At the end of this process, $T_n\cdot\cdots\cdot T_1\cdot A=U$ where $U$ is the desired upper triangular matrix.
 Furthermore, it is easily verified that each $T_i$ is invertible and by defining $L:=T_1^{-1}\cdot\cdots\cdot T_n^{-1}$ one obtains a lower triangular matrix satisfying $A=L\cdot U$. Of course, the above procedure is only successful when the denominators used in the definition of the vectors $c_i$ are non-zero. When this is the case we call a matrix $A$ \textit{LU-factorizable}. 
 

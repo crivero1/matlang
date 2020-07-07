@@ -114,7 +114,7 @@ Indeed, it suffices to consider the expression
 $$e_{\mathsf{diag}}:=
 \ffor{v}{X}{X + (v^T\cdot e) \times v\cdot v^T},$$ where $e$ is a \langfor\  expression of type $(\alpha,1)$. For this expression to be well-typed, $v$ has to be a vector variable of type $\alpha\times 1$ and $X$ a matrix variable of type $(\alpha,\alpha)$. Then, $\sem{e_{\mathsf{diag}}}{\I}$ is defined as follows.
 Initially, $A_0$ is the zero matrix of dimension $n\times n$, where $n=\dom(\alpha)$. Then, in each iteration
-$i\in[1..n]$, $A_{i}:=A_{i-1}+  (b_i^T\cdot\sem{e}{\I})\times (b_i^n\cdot (b_i^n)^T)$. In other words, $A_i$ is obtained by adding the matrix with value $(\sem{e}{\I})_i$ on position $(i,i)$ to $A_{i-1}$. Hence, $A_n=\sem{\diag(e)}{\I}$ and
+$i\in[1..n]$, $A_{i}:=A_{i-1}+  ((b_i^n)^T\cdot\sem{e}{\I})\times (b_i^n\cdot (b_i^n)^T)$. In other words, $A_i$ is obtained by adding the matrix with value $(\sem{e}{\I})_i$ on position $(i,i)$ to $A_{i-1}$. Hence, $A_n=\sem{\diag(e)}{\I}$ and
 thus we get that $\sem{e_{\mathsf{diag}}}{\I}=\sem{\diag(e)}{\I}$.\qed%
  \end{example}
 % That is, $A_i$ is obtained from $A_{i-1}$the $i$th entry of
