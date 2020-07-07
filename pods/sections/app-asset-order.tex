@@ -1,3 +1,5 @@
+% !TeX spellcheck = en_US
+%!TEX root = ../main.tex
 % \floris{This section should be placed in the appropriate place% , i.e., this should be part of proofs for the last section. Let's see how the paper evolves? What is the precise result shown here?}
 % \thomas{Updated, I think now it's more clear what is shown here. It should still go in the appendix of the last section? To me it seems order related.}
 
@@ -6,8 +8,9 @@
 % in certain order. Since they are operations that \textit{aggregate} information, it doesn't seem
 % possible to access this order explicitly and compare canonical vectors, like in the full version of $\langfor$.
 % Let's see what we can do if this order is \textit{supplied}. 
-We conclude by verifying that the fragment defined in Section \ref{subsec:langlinear}
-can perform matrix inversion. To this aim, we verify that all order
+We conclude by verifying that the fragment defined in Section \ref{subsec:langlinear}, i.e, 
+\langmprod extended with order and $f_{>0}$, 
+can perform matrix inversion and compute the determinant. To this aim, we verify that all order
 predicates in Section \ref{app:order} can be derived using $\ssum$, $\sprod$, $f_{>0}$ and 
 $e_{S_{<}}$. Given this, it suffices to observe that Csanky's algorithm, as shown in Section~\ref{app:inverse}, only relies on expressions using $\ssum$ and $\sprod$ and order information on canonical vectors and $f_/$.
 As consequence, our fragment can perform matrix inversion and compute the determinant.
