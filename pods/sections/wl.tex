@@ -1,9 +1,9 @@
 %!TEX root = ../main.tex
 % !TeX spellcheck = en_US
 % !TEX root = ../main.tex
-Similarly to using sum, we can use other operations to update $X$ in the \texttt{for} loop. The next natural choice is to consider products of matrices. In contrast to matrix sum, we have two options: either we can choose to use matrix product or to use the pointwise matrix product, also called the ``Hadamard product''. We postpone the discussion of using matrix product to the next subsection and first explain here the connection of sum and Hadamard product operators to weighted logics.
+Similarly to using sum, we can use other operations to update $X$ in the for-loop. The next natural choice is to consider products of matrices. In contrast to matrix sum, we have two options: either we can choose to use matrix product or to use the pointwise matrix product, also called the Hadamard product. We treat  matrix product in the next subsection and first explain here the connection of sum and Hadamard product operators to weighted logics.
 
-For the rest of this section, fix a semiring $(K, \ksum, \kprod, \kzero, \kone)$. The Hadamard product over $K$-matrices can be defined as the pointwise application of $\kprod$ between two matrices of the same size. Formally, we define the expression $e \hadprod e'$ where $e, e'$ are expressions with respect to $\cS$ and $\ttype(e) = \ttype(e')$ for some schema $\Sch=(\Mnam,\size)$. Then the semantics of $e \hadprod e'$ is the pointwise application of $\kprod$, namely, $\sem{e \hadprod e'}{\I}_{ij} = \sem{e}{\I}_{ij} \kprod \sem{e'}{\I}_{ij}$ for any instance $\I$ of $\cS$. This enables us to define, similar as for the $\Sigma v$, pointwise-product quantifier $\qhadprod v$ as follows:
+For the rest of this section, fix a semiring $(K, \ksum, \kprod, \kzero, \kone)$. The Hadamard product over $K$-matrices can be defined as the pointwise application of $\kprod$ between two matrices of the same size. Formally, we define the expression $e \hadprod e'$ where $e, e'$ are expressions with respect to $\cS$ and $\ttype(e) = \ttype(e')$ for some schema $\Sch=(\Mnam,\size)$. Then the semantics of $e \hadprod e'$ is the pointwise application of $\kprod$, namely, $\sem{e \hadprod e'}{\I}_{ij} = \sem{e}{\I}_{ij} \kprod \sem{e'}{\I}_{ij}$ for any instance $\I$ of $\cS$. This enables us to define, similar as for  $\Sigma v$, the  pointwise-product quantifier $\qhadprod v$ as follows:
 $$
 \qhadprod v. \  e := \ffor{v}{X\!=\!\kone}{X \circ e}.
 $$
@@ -11,19 +11,19 @@ where $\kone$ is a matrix with the same type as $X$ and all entries equal to the
 We cal \langprod  the subfragment of \langfor that consists of \langsum \ extended with $\qhadprod v$.
 
 \begin{example}
-	Similar to the trace of a matrix, a useful function in linear algebra is to compute the product of the values in the diagonal. 
-	Using the $\qhadprod v$ operator one can easily express this product as follows:
+	Similar to the trace of a matrix, a useful function in linear algebra is to compute the product of the values on the diagonal. 
+	Using the $\qhadprod v$ operator, this can be easily expressed:
 	 $$
-	 dp(A) := \qhadprod v. \ v^*\cdot A \cdot v.$$
+	 e_{\mathsf{dp}}(V) := \qhadprod v. \ v^T\cdot V \cdot v.$$
 \end{example}
 
-Clearly, the inclusion of this new operator extends the expressive power to \langsum. For example,  $dp(A)$ defines a function that grows exponentially in the dimension $n$ of $A$.
+Clearly, the inclusion of this new operator extends the expressive power to \langsum. For example,  $\sem{e_{\mathsf{dp}}}{\I}$ can be an exponentially large number in the dimension $n$ of the input.
  % and $tr(\cdot)$ is the trace of a matrix.
 By contrast, one can easily show that all expressions in \langsum can only return numbers polynomial in  $n$. That is, \langprod is more expressive than \langsum and $\mathsf{RA}_{K}^+$. 
 
 \cristian{I add this example, which I believe help to say that this fragment express some interesting properties. Also I used it in the diagram and to show that there are formulas that cannot be defined in sum-matlang.}
 
-To measure the expressive power of \langprod, we use weighted logics~\cite{DrosteG05} (WL) as a yardstick. Weighted logics extend monadic second order logic from the boolean semiring to any semiring $K$. Furthermore, it has been used extensively to characterize the expressive power of weighted automata in terms of logic~\cite{droste2009handbook}. We use here the first-order subfragment of weighted logics to suit our purpose and, moreover, we extend its semantics over weighted structures (similar as in~\cite{GradelV17}).
+To measure the expressive power of \langprod, we use weighted logics~\cite{DrosteG05} (WL) as a yardstick. Weighted logics extend monadic second-order logic from the boolean semiring to any semiring $K$. Furthermore, it has been used extensively to characterize the expressive power of weighted automata in terms of logic~\cite{droste2009handbook}. We use here the first-order subfragment of weighted logics to suit our purpose and, moreover, we extend its semantics over weighted structures (similar as in~\cite{GradelV17}).
 
 A relational vocabulary $\Gamma$ is a finite collection of relation symbols such that each $R \in \Gamma$ has an associated arity, denoted by $\arity(R)$.
 A $K$-weighted structure over $\Gamma$ (or just structure) is a pair $\cA = (A, \{R^\cA\}_{R \in \Gamma})$ such that $A$ is a non-empty finite set (i.e. the domain) and, for each $R \in \Gamma$, $R^\cA: A^{\arity(R)} \rightarrow K$ is a function that associates to each tuple in $A^{\arity(R)}$ a weight in $K$.
@@ -56,7 +56,7 @@ $$
 $$
 When $\varphi$ contains no free variables, we omit $\sigma$ and write $\ssem{\varphi}{\cA}$ instead of $\ssem{\varphi}{\cA}(\sigma)$.
 
-For comparing the expressive power of \langprod with WL, we have to show how to encode \lang\ instances into structures and vice versa. For this, we make two assumptions to put both languages at the same level: (1) we restrict structures to relation symbols of arity at most two and (2) we restrict instances to square matrices. The first assumption is for the same reasons than for comparing \langsum with $\mathsf{RA}_K^+$, and the second assumption is to have a more crisp translation between both languages. Indeed, understanding the relation of \langprod with WL for non-square matrices is slightly more complicated and we leave this for future work. 
+For comparing the expressive power of \langprod with WL, we have to show how to encode \lang\ instances into structures and vice versa. For this, we make two assumptions to put both languages at the same level: (1) we restrict structures to relation symbols of arity at most two and (2) we restrict instances to square matrices. The first assumption is for the same reasons as when comparing \langsum with $\mathsf{RA}_K^+$, and the second assumption is to have a crisp translation between both languages. Indeed, understanding the relation of \langprod with WL for non-square matrices is slightly more complicated and we leave this for future work. 
 
 Let $\Sch=(\Mnam,\size)$ be a schema of square matrices, that is, there exists an $\alpha$ such that $\size(V) \in \{1, \alpha\} \times \{1,\alpha\}$ for every $V \in \Mnam$.
 Define the relational vocabulary $\text{WL}(\Sch) = \{R_V \mid V \in \Mnam\}$ such that $\arity(R_V) = 2$ if $\size(V) = (\alpha, \alpha)$, $\arity(R_V) = 1$ if $\size(V) \in \{(\alpha,1), (1,\alpha)\}$, and $\arity(R_V) = 0$ otherwise.
