@@ -103,7 +103,9 @@ We now use the following induction hypotheses:
 Clearly, this suffices to show the proposition since we there consider expressions $e$ for which $\mathsf{free}(e)=\emptyset$, in which case the above statements reduce to the one given in the proposition.
 
 
-The proof is by induction on the structure of \langsum expressions. Let $e$ be a \langsum expression.
+The proof is by induction on the structure of \langsum expressions. In line with the simplifications in Section~\ref{app:simp}, it suffices to consider pointwise function application with $f_\odot$ instead of scalar multiplication. (We also note that we can express the one-vector operator in \langsum, so scalar multiplication can be expressed using $f_\odot$ in \langsum).
+
+Let $e$ be a \langsum expression.
 \begin{itemize}
   \item If $e=V$ then $\arae (e):=R_V$.
   \item If $e=v_p$ then $\arae (e):=\sigma_{\lbrace \row_\alpha,\gamma_p\rbrace}\bigl(\rho_{\row_\alpha\to \alpha}(R_\alpha)\bowtie \rho_{\gamma_p\to \alpha}(R_\alpha)\bigr)$ when  $v_p$ is of type $(\alpha,1)$. It is here that we introduce the attribute $\gamma_p$ associated with iterator variable $v_p$.
@@ -186,7 +188,7 @@ $$
  %  then the expression evaluates to $e_1(\I [V\leftarrow e_{k}^{\dom(\gamma)}])_{ij}$.
  %  Hence, by projecting in attributes $\lbrace \row_\alpha, \col_\beta\rbrace$ we range over all $k$ and sum up all $K$-values for each entry.
 \end{itemize}
-All other cases, when expression have type $(\alpha,1)$, $(1,\beta)$ or $(1,1)$ can be dealt with in a similar way.
+All other cases, when expressions have type $(\alpha,1)$, $(1,\beta)$ or $(1,1)$ can be dealt with in a similar way.
 % Here, we only allow scalar $\kprod$ function application,
 % which is equivalent to scalar product, as mentioned in section \ref{app:simp}.
 % Note that we can access the zero values of matrices because the indexes are in the active domain of $\text{Rel}(\I)$ due to the existence of $R_\alpha^{\text{Rel}(\I)}(t)$, for each $\alpha \in \DD$.
