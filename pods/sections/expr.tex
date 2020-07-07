@@ -185,7 +185,7 @@ With this definition, we can now identify the class of functions for which arith
 Let $f$ be a function with input matrices $A_1,\ldots ,A_k$ of dimensions $\alpha\times \beta$, with $\alpha,\beta \in \{n,1\}$. Then, $f$ is computed by a uniform circuit family over matrices of polynomial degree if and only if there is a \langfor expression of polynomial degree for $f$. 
 \end{corollary}
 
-Note that this result crucially depends on the fact that expressions in \langfor are of polynomial degree. Some \langfor expression are easily seen to produce results which are not polynomial. An example of such an expression is, for instance, $e_{\texttt{exp}} = \ffor{v}{X=I}{X\cdot X}$, over a schema $\Sch$ with $\ttype(v)= (\gamma,1)$, and $\ttype(X)=(1,1)$. Over an instance which assigns $n$ to $\gamma$ this expression computes the function $x^{2^n}$. Therefore, a natural question to ask then is whether we can determine the degree of a \langfor expression. Unfortunately, as we show in the following proposition this question is in fact undecidable.
+Note that this result crucially depends on the fact that expressions in \langfor are of polynomial degree. Some \langfor expression are easily seen to produce results which are not polynomial. An example of such an expression is, for instance, $e_{\texttt{exp}} = \ffor{v}{X=A}{X\cdot X}$, over a schema $\Sch$ with $\ttype(v)= (\gamma,1)$, and $\ttype(X)=(1,1)$. Over an instance which assigns $n$ to $\gamma$ this expression computes the function $a^{2^n}$, for $A=[a]$. Therefore, a natural question to ask then is whether we can determine the degree of a \langfor expression. Unfortunately, as we show in the following proposition this question is in fact undecidable.
 
 \begin{proposition}
 \label{prop-undec}
