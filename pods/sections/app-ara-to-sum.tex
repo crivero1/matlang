@@ -1,16 +1,3 @@
-\newtheorem*{ARATOSUM}{Proposition~\ref{prop:ara_to_sum}}
-
-Here we present the proof of proposition \ref{prop:ara_to_sum}.
-
-\begin{ARATOSUM}
-  Let $\cR$ be a binary relational schema. For each $\mathsf{RA}_{K}^+$  expression $\arae$ over $\cR$  such that $|\cR(\arae)| = 2$, there exists a \langsum  expression $\Psi(\arae)$ over \lang \ schema $\text{Mat}(\cR)$ such that for any $K$-instance $\cJ$ with $\adom(\cJ) = \{d_1, \ldots, d_n\}$ over $\cR$,
-	$$
-	\ssem{\arae}{\cJ}((d_i, d_j))=\sem{\Psi(\arae)}{\text{Mat}(\cJ)}_{i,j}.
-	$$
-	Similarly for when $|\cR(\arae)| = 1$, or $|\cR(\arae)| = 0$ respectively.
-\end{ARATOSUM}
-
-\begin{proof}
 Let $\cR$ be binary relational schema. For each $R\in \cR$ we associate a matrix variable 
 $V_R$ such that, if $R$ is a binary relational signature, then $V_R$ represents a (square) matrix, 
 if $R$ is unary, then $V_R$ represents a vector and if $|R|=0$ then $V_R$ represents a constant. Formally, 
@@ -25,34 +12,165 @@ whenever $|R|=1$,
 \floris{This case relates to nullary relations. What does $R^{\cJ}$ mean?}
 and $\conc_\cJ(V_R)_{1,1} = R^{\cJ}$ whenever $|R|=0$. 
 Note that we consider the active domain of the whole $K$-instance.
+
+We next translate \rak expressions in to \langsum expressions over an extended schema. More specifically, we extend 
+$\Mnam$ with matrix variables $V_A\in\Mnam_\cR $ for attributes $A$ appearing the \rak expression. We first simulate a \rak expression entry-wise.
+
 The proof is by induction on the structure of expressions.
 
-\floris{We need to introduce the vector variables $V_A$ for attributes $A$
-explicitly in the induction?!}
-
+\begin{lemma}\label{app:prop:point_ara}
+For every \rak expression $\arae$ over schema $\mathcal{R}$ with there is \langsum expression $\Psi(\arae)$ such that for every database instances $\I$ over $\mathcal{R}$ using consecutive domain assignment, 
+$$
+\ssem{\arae}{\cJ}(i_1,\ldots,i_p)=\sem{\Psi(\arae)}{\text{Mat}(\cJ)\cup e_{i_1}^{d_1},\ldots,e_{i_p}^{d_p}}
+$$
+\end{lemma}
+\begin{proof}
 \begin{itemize}
-  \item If $\arae = R$ then $\Psi (\arae):=V_R$. Note that if $|R|=2$ then 
-    $$\sem{\Psi(\arae)}{\text{Mat}(\cJ)}_{i,j}=\conc(V_R)_{i,j} = R^{\cJ}((d_i, d_j))=\ssem{\arae}{\cJ}((d_i, d_j)).$$ 
-    If $|R|=1$ then 
-    $$\sem{\Psi(\arae)}{\text{Mat}(\cJ)}_{i,j}=\conc(V_R)_{i,1} = R^{\cJ}((d_i))=\ssem{\arae}{\cJ}((d_i)).$$
-    And if $|R|=0$ then 
-	\floris{Not sure about this:}
-    $\sem{\Psi(\arae)}{\text{Mat}(\cJ)}_{i,j}=\conc(V_R)_{1,1} = R^{\cJ}=\ssem{\arae}{\cJ}$.
-  \item If $\arae=\arae_1\cup\arae_2$ then $\Psi(\arae):=\Psi(\arae_1)+\Psi(\arae_2)$.
-  \item If $\arae = \pi_{Y}(\arae_1)$ for $Y\subseteq R(\arae_1)$. Let $\cV = \lbrace V_A:A\in R(\arae_1)\setminus Y \rbrace$. 
-    Then
-    $$
-    \Psi(\arae) = \sum_{V\in\cV} \Psi(\arae_1) = \ssum V_{A_1}. \ssum \cdots \ssum V_{A_{l}}. \Psi(\arae_1).
-    $$
-\floris{What is $V_{\mathsf{Eq}_Y}$??}
-  \item If $\arae = \sigma_Y(\arae_1)$ with $Y\subseteq R(\arae_1)$ then 
-    $\Psi(\arae):=f_{\kprod}\left( \Psi(\arae_1), V_{\mathsf{Eq}_Y} \right)$.
-  \item If $\arae = \rho_{X\rightarrow Y}(\arae_1)$ then $\Psi (\arae):= \Psi (\arae_1)\left[ V_A\gets V_B, A\in X, B\in Y, A \mapsto B \right]$.
-  \item If $\arae = \arae_1\Join \arae_2$, where $R(\arae)=R(\arae_1)=R(\arae_2)$ then 
-    $\Psi (\arae):=f_{\kprod}\left( \Psi (\arae_1), \Psi (\arae_2) \right)$
+\item If $\arae=R$, then $\Psi(e):=V_{A_1}^t\cdot V_R\cdot V_{A_2}$ if $\mathcal{R}(R)=\{A_1,A_2\}$ with $A_1<A_2$; 
+$\Psi(e):=V_A^t\cdot V_R$ if $\mathcal{R}(R)=\{A\}$; and 
+$\Psi(e):=V_R$ if $\mathcal{R}(R)=\{\}$.
+\item If $\arae=\arae_1\cup \arae_2$ then
+$\Psi(\arae):=\Psi(\arae_1) + \Psi(\arae_2)$.
+\item If $\arae=\pi_{Y}(\arae')$ for $Y\subseteq \mathcal{R}(\arae')$ then
+$$
+\Psi(\arae):=\sum_{\{V_A\mid A\in \mathcal{R}(\arae')\setminus Y\}}\Psi(\arae').
+ $$
+\item If $\arae=\sigma_{Y}(\arae')$ with $Y\subseteq\mathcal{R}(\arae')$ then
+$$
+ \Psi(\arae):=\Psi(\arae')\cdot\prod_{A,B\in Y} V_{A}^t\cdot V_{B}.
+$$
+Here $\prod$ is just matrix multiplication.
+\item If $\arae=\rho_{X\mapsto Y}(\arae')$ then
+$$\Psi(\arae):=\Psi(\arae')[V_A\gets V_B\mid A\in X, B\in Y, A\mapsto B].$$
+\item If $\arae=\arae_1\bowtie \arae_2$ then
+$\Psi(\arae):=\Psi(\arae_1)\cdot \Psi(\arae_2)$.
 \end{itemize}
+\end{proof}
 
-Note that for function application we only allow $\kprod$, 
-which we can assume to have because we can do scalar multiplication and $\ssum$ (see section \ref{app:simp}).
+Now we can obtain proposition \ref{prop:ara_to_sum}.
+
+\newtheorem*{ARATOSUM}{Proposition~\ref{prop:ara_to_sum}}
+
+\begin{ARATOSUM}
+  Let $\cR$ be a binary relational schema. For each $\mathsf{RA}_{K}^+$  expression $\arae$ over $\cR$  such that $|\cR(\arae)| = 2$, there exists a \langsum  expression $\Psi(\arae)$ over \lang \ schema $\text{Mat}(\cR)$ such that for any $K$-instance $\cJ$ with $\adom(\cJ) = \{d_1, \ldots, d_n\}$ over $\cR$,
+	$$
+	\ssem{\arae}{\cJ}((d_i, d_j))=\sem{\Psi(\arae)}{\text{Mat}(\cJ)}_{i,j}.
+	$$
+	Similarly for when $|\cR(\arae)| = 1$, or $|\cR(\arae)| = 0$ respectively.
+\end{ARATOSUM}
+\begin{proof}
+As a consequence of lemma \ref{app:prop:point_ara}, when $\arae$ is a \rak expression 
+such that $\mathcal{R}(\arae)=\{A_1,A_2\}$ with $A_1<A_2$ we have that 
+$$
+\arae(\I)(t)=
+\sum_{V_{A_1},V_{A_2}}\Psi(\arae)\cdot V_{A_1}\cdot V_{A_2}^t.
+$$
+When $\mathcal{R}(\arae)=\{A\}$ we have
+$$
+\arae(\I)(t)=
+\sum_{V_{A}}\Psi(\arae)\cdot V_{A_1}.
+$$
+And when $\mathcal{R}(\arae)=\{\}$ we have
+$$
+\arae(\I)(t)=\Psi(\arae).
+$$
 
 \end{proof}
+ 
+
+% \newtheorem*{ARATOSUM}{Proposition~\ref{prop:ara_to_sum}}
+
+% Here we present the proof of proposition \ref{prop:ara_to_sum}.
+
+% \begin{ARATOSUM}
+%   Let $\cR$ be a binary relational schema. For each $\mathsf{RA}_{K}^+$  expression $\arae$ over $\cR$  such that $|\cR(\arae)| = 2$, there exists a \langsum  expression $\Psi(\arae)$ over \lang \ schema $\text{Mat}(\cR)$ such that for any $K$-instance $\cJ$ with $\adom(\cJ) = \{d_1, \ldots, d_n\}$ over $\cR$,
+% 	$$
+% 	\ssem{\arae}{\cJ}((d_i, d_j))=\sem{\Psi(\arae)}{\text{Mat}(\cJ)}_{i,j}.
+% 	$$
+% 	Similarly for when $|\cR(\arae)| = 1$, or $|\cR(\arae)| = 0$ respectively.
+% \end{ARATOSUM}
+
+% \begin{proof}
+% Let $\cR$ be binary relational schema. For each $R\in \cR$ we associate a matrix variable 
+% $V_R$ such that, if $R$ is a binary relational signature, then $V_R$ represents a (square) matrix, 
+% if $R$ is unary, then $V_R$ represents a vector and if $|R|=0$ then $V_R$ represents a constant. Formally, 
+% fix a symbol $\arae \in \DD \setminus \{1\}$. Let $\text{Mat}(\cR)$ denote the \lang \ schema
+% $(\Mnam_\cR,\size_\cR)$ such that $\Mnam_\cR = \{ V_R \mid R \in \cR\}$ and $\size_\cR(V_R) = (\alpha, \alpha)$ 
+% whenever $|R| = 2$, $\size_\cR(V_R) = (\alpha, 1)$ whenever $|R|=1$ and $\size_\cR(V_R) = (1, 1)$ whenever $|R|=0$. 
+% Let $\cJ$ be the $K$-instance of $\cR$ and suppose that $\adom(\cJ) = \{d_1, \ldots, d_n\}$ is 
+% the active domain (with arbitrary order) of $\cJ$. 
+% Define the matrix instance $\text{Mat}(\cJ) = (\dom_\cJ,\conc_\cJ)$ such 
+% that $\dom_\cJ(\arae) = n$, $\conc_\cJ(V_R)_{i,j} = R^{\cJ}((d_i, d_j))$ whenever $|R|=2$, $\conc_\cJ(V_R)_{i} = R^{\cJ}((d_i))$ 
+% whenever $|R|=1$, 
+% \floris{This case relates to nullary relations. What does $R^{\cJ}$ mean?}
+% and $\conc_\cJ(V_R)_{1,1} = R^{\cJ}$ whenever $|R|=0$. 
+% Note that we consider the active domain of the whole $K$-instance.
+% The proof is by induction on the structure of expressions.
+
+% \floris{We need to introduce the vector variables $V_A$ for attributes $A$
+% explicitly in the induction?!}
+
+% \begin{itemize}
+%   \item If $\arae = R$ then $\Psi (\arae):=V_R$. Note that if $|R|=2$ then 
+%     $$\sem{\Psi(\arae)}{\text{Mat}(\cJ)}_{i,j}=\conc(V_R)_{i,j} = R^{\cJ}((d_i, d_j))=\ssem{\arae}{\cJ}((d_i, d_j)).$$ 
+%     If $|R|=1$ then 
+%     $$\sem{\Psi(\arae)}{\text{Mat}(\cJ)}_{i,j}=\conc(V_R)_{i,1} = R^{\cJ}((d_i))=\ssem{\arae}{\cJ}((d_i)).$$
+%     And if $|R|=0$ then 
+% 	\floris{Not sure about this:}
+%     $\sem{\Psi(\arae)}{\text{Mat}(\cJ)}_{i,j}=\conc(V_R)_{1,1} = R^{\cJ}=\ssem{\arae}{\cJ}$.
+%   \item If $\arae=\arae_1\cup\arae_2$ then $\Psi(\arae):=\Psi(\arae_1)+\Psi(\arae_2)$.
+%   \item If $\arae = \pi_{Y}(\arae_1)$ for $Y\subseteq R(\arae_1)$. Let $\cV = \lbrace V_A:A\in R(\arae_1)\setminus Y \rbrace$. 
+%     Then
+%     $$
+%     \Psi(\arae) = \sum_{V\in\cV} \Psi(\arae_1) = \ssum V_{A_1}. \ssum \cdots \ssum V_{A_{l}}. \Psi(\arae_1).
+%     $$
+% \floris{What is $V_{\mathsf{Eq}_Y}$??}
+%   \item If $\arae = \sigma_Y(\arae_1)$ with $Y\subseteq R(\arae_1)$ then 
+%     $\Psi(\arae):=f_{\kprod}\left( \Psi(\arae_1), V_{\mathsf{Eq}_Y} \right)$.
+%   \item If $\arae = \rho_{X\rightarrow Y}(\arae_1)$ then $\Psi (\arae):= \Psi (\arae_1)\left[ V_A\gets V_B, A\in X, B\in Y, A \mapsto B \right]$.
+%   \item If $\arae = \arae_1\Join \arae_2$, where $R(\arae)=R(\arae_1)=R(\arae_2)$ then 
+%     $\Psi (\arae):=f_{\kprod}\left( \Psi (\arae_1), \Psi (\arae_2) \right)$
+% \end{itemize}
+
+% Note that for function application we only allow $\kprod$, 
+% which we can assume to have because we can do scalar multiplication and $\ssum$ (see section \ref{app:simp}).
+
+% \end{proof}
+
+% For the converse translation, we need to impose some restrictions. More precisely, we only consider a \rak expression $\arae$
+% that take as input relations of arity at most two and also have a schema of arity at most two. 
+% Note that intermediate expressions can create schemas of arbitraty size. We also make the assumption that there is an order, denoted by $<$, on the attributes in $\mathbf{att}$. In particular, we assume $A_1<A_2<\cdots$ for attributes $A_i\in\mathbf{att}$.
+
+% This is to identify which attributes correspond to rows and columns when moving the matrix setting. 
+
+% Consider a database schema $\mathcal{R}$ on a finite set $N$ of relation names
+%  assigning a relation schema $\mathcal{R}(R)\subseteq\mathbf{att}$ to each $R \in N$. We assume that $\mathcal{R}(R)$ has size at most two. With each relation name $R\in N$ we associate a matrix name $M_R$. Let $\text{Mat}(\mathcal{R})$ denote the set
+%  $V_R$ of matrix names for $R\in\mathcal{R}$. Consider an injective function $s:\mathbf{att}\to \DD$ associating with each attribute a unique size symbol. Let $V_R\in \text{Mat}(\mathcal{R})$ and
+% define
+%  $$
+% \size(V_R)=\begin{cases}
+% (s(A_1),s(A_2)) & \text{if $\mathcal{R}(R)=\{A_1,A_2\}$, $A_1<A_2$}\\
+% (s(A),1) & \text{if $\mathcal{R}(R)=\{A\}$}\\
+% (1,1) & \text{if $\mathcal{R}(R)=\{\}$}.
+% \end{cases}
+%  $$
+% Let $\mathbb{D}$ be a domain assignment. We define 
+% $\dom(\alpha)=|\mathbb{D}(A)|$ where $s(A)=\alpha$.
+% We only consider consecutive domain assignments, i.e.,
+% such that attribute values take values in $[1,||\mathbb{D}(A)|]$.
+% Consider 
+% a relation $r:
+% \mathcal{T}_{\mathbb{D}}(X) \to K$ of $R$ with $X\subseteq\{A_1,A_2\}$  as determined by
+% $\mathcal{R}(R)$. We associate a matrix instance $\I = (\dom,\conc)$ as follows.
+% We define $\dom(\alpha)=|\mathbb{D}(A_1)|$ and
+% $\dom(\beta)=|\mathbb{D}(A_2)|$ where $s(A_1)=\alpha$ and $s(A_2)=\beta$. Furthermore,
+% $\conc(V_R)=\text{Mat}(r)$ such that 
+% $(\text{Mat}(r))_{i,j} := r(t)$, where $t$ is (1) the tuple with $t(A_1) = i$ and $t(A_2) = j$ if $|X| = 2$; (2) the tuple with $t(A_1) = i$ and $j = 1$ if $X = {A_1}$,
+% (3) the tuple with $t(A_2) = j$ and $i = 1$ if $X = {A_2}$,
+% (3) the unique tuple of $r$ if $X=\emptyset$. Clearly, $\text{Mat}(r)$ is a matrix of dimension as
+% specified by $\mathbb{D}$. 
+
+
+%
+% In the following, when $\arae$ is
+% an \rak expression of schema $\mathcal{R}(\arae)=\{A_1,\ldots,A_k\}$ with $A_1<A_2<A_3<\cdots < A_k$
