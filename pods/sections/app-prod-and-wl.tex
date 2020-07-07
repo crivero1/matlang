@@ -43,20 +43,20 @@ Similar than in the proof of Proposition~\ref{prop:sum_to_ara}, for each express
 \begin{itemize}
 	\item If $e(v_1,\ldots,v_k)$ is of type $(\alpha,\alpha)$ then there exists a WL formula $\varphie(x_{\alpha}^\row,x_{\alpha}^\col, x_{v_1}, \ldots, x_{v_k})$ such that
 	$$
-	\ssem{\varphi(e)}{\text{WL}(\I)}(\sigma) \ = \ \sem{e}{\I[v_1\gets b_{i_1},\ldots,v_k\gets b_{i_k}]}_{i,j}
+	\ssem{\varphie}{\text{WL}(\I)}(\sigma) \ = \ \sem{e}{\I[v_1\gets b_{i_1},\ldots,v_k\gets b_{i_k}]}_{i,j}
 	$$
 	for assignment $\sigma$ with $\sigma(\xr)=i$, $\sigma(\xc)=j$ and $\sigma(x_{v_s})=i_s$ for $s=1,\ldots, k$.
 	
 	\item If $e(v_1,\ldots,v_k)$ is of type $(\alpha,1)$ then there exists a WL formula $\varphie(x_{\alpha}^\row, x_{v_1}, \ldots, x_{v_k})$ such that
 	$$
-	\ssem{\varphi(e)}{\text{WL}(\I)}(\sigma) \ = \ \sem{e}{\I[v_1\gets b_{i_1},\ldots,v_k\gets b_{i_k}]}_{i}
+	\ssem{\varphie}{\text{WL}(\I)}(\sigma) \ = \ \sem{e}{\I[v_1\gets b_{i_1},\ldots,v_k\gets b_{i_k}]}_{i}
 	$$
 	for assignment $\sigma$ with $\sigma(\xr)=i$ and $\sigma(x_{v_s})=i_s$ for $s=1,\ldots, k$.
 	And similarly for when $e$ is type $(1,\alpha)$.
 	
 	\item If $e(v_1,\ldots,v_k)$ is of type $(1,1)$ then there exists a WL formula $\varphie( x_{v_1}, \ldots, x_{v_k})$ such that
 	$$
-	\ssem{\varphi(e)}{\text{WL}(\I)}(\sigma) \ = \ \sem{e}{\I[v_1\gets b_{i_1},\ldots,v_k\gets b_{i_k}]}
+	\ssem{\varphie}{\text{WL}(\I)}(\sigma) \ = \ \sem{e}{\I[v_1\gets b_{i_1},\ldots,v_k\gets b_{i_k}]}
 	$$
 	for assignment $\sigma$ with $\sigma(x_{v_s})=i_s$ for $s=1,\ldots, k$.
 \end{itemize}
