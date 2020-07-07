@@ -41,7 +41,7 @@ $\lang$ is parametrized by a collection of functions $\Fun$ but in the remainder
 \noindent
 \textbf{Schemas and typing.}\,
 To define the semantics of \lang\ expressions we need a notion of schema and well-typedness of expressions. A \lang\ \textit{schema} $\Sch$ is a pair $\Sch=(\Mnam,\size)$, where $\Mnam\subset \Mvar$ is a finite set of matrix variables, and $\size: \Mnam \mapsto \DD\times \DD$ is a function that maps each matrix variable in $\Mnam$ to a pair of \textit{size symbols}. The $\size$ function helps us determine whether certain matrix operations, such as matrix multiplication, can be performed for matrices adhering to a schema. 
-We denote size symbols by greek letters $\alpha,\beta,\gamma$. We also assume that $1\in \DD$. 
+We denote size symbols by Greek letters $\alpha,\beta,\gamma$. We also assume that $1\in \DD$. 
 To help us determine whether a \lang\ expression can always be evaluated, we define the \textit{type} of an expression $e$, with respect to a schema $\Sch$, denoted by $\ttype(e)$, inductively as follows:
 \begin{itemize}
 \item $\ttype(V):= \size(V)$, for a matrix variable $V\in\Mnam$;

@@ -45,13 +45,13 @@ What we show in the remainder of this section is that any function $f$ which ope
 \subsection{From arithmetic circuits to \langfor}
 Let us first recall the definition of arithmetic circuits. 
 An \textit{arithmetic circuit} $\Phi$ over a set $X=\{x_1,\ldots,x_n\}$ of input variables is a directed
-acyclic labelled graph. The vertices of $\Phi$ are called \textit{gates} and denoted by $g_1,\ldots,g_m$;
+acyclic labeled graph. The vertices of $\Phi$ are called \textit{gates} and denoted by $g_1,\ldots,g_m$;
 the edges in $\Phi$ are called \textit{wires}. The children of a gate $g$ correspond to all gates
 $g'$ such that $(g,g')$ is an edge. The parents of $g$ correspond to all gates $g'$ 
 such that $(g',g)$ is an edge. The \textit{in-degree}, or a \textit{fan-in}, of a gate $g$ refers to its number of children, and 
 the \textit{out-degree} to its number of parents. We will not assume any restriction on the in-degree of a gate, and will thus consider circuits with unbounded fan-in. Gates with in-degree $0$ are called \textit{input gates}
-and are labelled by either a variable in $X$ or a constant $0$ or $1$. All other gates
-are labelled by either $+$ or $\times$, and are referred to as \textit{sum gates} or \textit{product gates}, respectively.
+and are labeled by either a variable in $X$ or a constant $0$ or $1$. All other gates
+are labeled by either $+$ or $\times$, and are referred to as \textit{sum gates} or \textit{product gates}, respectively.
 Gates with out-degree $0$ are called \textit{output gates}. When talking about arithmetic circuits, one usually focuses on circuits with $n$ input gates and a single output gate.\looseness=-1
 
 The \textit{size} of $\Phi$, denoted by $|\Phi|$, is its number of gates and wires. The \textit{depth} of $\Phi$, denoted

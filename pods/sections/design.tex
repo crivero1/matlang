@@ -1,10 +1,10 @@
 %!TEX root = ../main.tex
 % !TeX spellcheck = en_US
 \noindent\textbf{Loop Initialization.} As the reader may have observed, in the semantics of for-loops we 
-always initialise $A_0$ to the zero matrix~$\mathbf{0}$ (of appropriate dimensions). It is often convenient
+always initialize $A_0$ to the zero matrix~$\mathbf{0}$ (of appropriate dimensions). It is often convenient
 to start the iteration given some concrete matrix  originating from the result of evaluation a \langfor\ expression $e_0$. To make this explicit, we write $\initf{e_0}{v}{X}{e}$ and its semantics is defined as above
 with the difference that $A_0:=\sem{e_0}{\I}$. We observe, however, that $\initf{e_0}{v}{X}{e}$ can already
-be expressed in \langfor. In other words, we do not loose generality by assuming an initialisation of $A_0$ by $\mathbf{0}$.
+be expressed in \langfor. In other words, we do not loose generality by assuming an initialization of $A_0$ by $\mathbf{0}$.
 The key insight is that in \langfor\ we can check during evaluation whether or not
 the current canonical vector $b_i^n$ is equal to the $b_1^n$. This 
 %is not entirely trivial to see and 
@@ -98,7 +98,7 @@ To construct $S_{\leq}$, in the $i$-th iteration we further increment $X$ with
 (i)~the current last column in $X$ (via $X\cdot e_{\mathsf{max}}\cdot v^T$) which holds
 the $(i-1)$-th column of $S_{\leq}$; and (ii)~the current canonical vector (via $v\cdot v^T$). Hence, after iteration $i$, $X$ contains the first $i$ columns of $S_{\leq}$ and holds the $i$th column of $S_{\leq}$ in its last column. It is now readily verified that $X=S_{\leq}$ after the $n$th iteration.
 
-It should be clear that if we can compute $S_{\leq}$ using $e_{\leq}$, then we can easily define the following predicates and vectors related with the order of cannonical vectors:
+It should be clear that if we can compute $S_{\leq}$ using $e_{\leq}$, then we can easily define the following predicates and vectors related with the order of canonical vectors:
 \begin{itemize}
 	\item $\mathsf{succ}(u,v)$ such that $\mathsf{succ}(b_i^n,b_j^n)=1$ if $i\leq j$ and $0$ otherwise. Similarly, we can define
 	$\mathsf{succ}^+(u,v)$ such that  $\mathsf{succ}^+(b_i^n,b_j^n)=1$ if $i < j$ and $0$ otherwise;
