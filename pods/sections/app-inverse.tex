@@ -1,3 +1,5 @@
+% !TeX spellcheck = en_US
+%!TEX root = ../main.tex
 \newtheorem*{INVERSE}{Proposition~\ref{prop:inverse}}
 We next turn our attention to computing the inverse and determinant of a matrix.
 To show Proposition \ref{prop:inverse} we first show that it holds when considering non-singular lower or upper triangular matrices.
@@ -97,7 +99,7 @@ We are now ready to prove proposition \ref{prop:inverse}. We recall:
 
 \begin{proof}
 Let $A$ be an $n \times n$ matrix. As mentioned in the main body of the paper, we will implement Csanky's algorithm. Let $p_A(x):=\mathsf{det}(xI-A)$ denote  characteristic polynomial of $A$.  We write $p_A(x)=1 + \sum_{i=1}^n c_ix^i$ and let  $S_i:=\frac{1}{i+1}\mathsf{tr}(A^i)$ with $\mathsf{tr}(\cdot)$ the trace operator which sums up the diagonal elements of a matrix.
-Then, the coefficients $c_1,\ldots,c_n$ are known to satisfy 
+Then, the coefficients $c_1,\ldots,c_n$ are known to satisfy\footnote{We use a slightly different, but equivalent, system of equations than the one mentioned in the paper.} 
 $$
 \underbrace{\left(\begin{matrix}
 1 & 0 & 0 & \cdots & 0 & 0\\
