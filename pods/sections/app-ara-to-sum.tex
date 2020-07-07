@@ -20,8 +20,9 @@ $\arae$ with $\cR(\arae)=\lbrace A_{i_1}, \ldots, A_{i_l}\rbrace$ where $A_{i_k}
 We first simulate a \rak expression entry-wise.
 
 \begin{lemma}\label{app:prop:point_ara}
-For every \rak expression $\arae$ over schema $\mathcal{R}$ there is \langsum expression $\Psi(\arae)$ such that for every database instances $\cJ$ over $\mathcal{R}$ with with $\dom_\cJ(\alpha) = n$,
-using consecutive domain assignment, 
+For every \rak expression $\arae$ over schema $\mathcal{R}$ there is \langsum expression $\Psi(\arae)$ such that for every database instances $\cJ$ over $\mathcal{R}$ with $\dom_\cJ(\alpha) = n$
+and $\adom(\cJ) = \{d_1, \ldots, d_n\}$,
+using consecutive domain assignment, then
 $$
 \ssem{\arae}{\cJ}(d_{i_1},\ldots,d_{i_p})=\sem{\Psi(\arae)}{\text{Mat}(\cJ)\cup b_{d_{i_1}}^{n},\ldots,b_{d_{i_p}}^{n}}
 $$
