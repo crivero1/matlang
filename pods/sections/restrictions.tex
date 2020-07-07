@@ -194,7 +194,7 @@ Hence, \langsum cannot express the order predicates mentioned in Section~\ref{se
 
 \subsection{Matrix multiplication as a quantifier}\label{subsec:langlinear}
 In a similar way, we can consider a fragment in which sum and the usual product of matrices can be used
-in \texttt{for} loops. Formally, for an expression $e$ we define the operator:
+in for-loops. Formally, for an expression $e$ we define the operator:
 $$
 \sprod v.\,  e=\ffor {v}{X = I}{X\cdot e}.
 $$
@@ -221,7 +221,7 @@ as shown in Example~\ref{ex:floyd}, provided that we allow for the $f_{>0}$ func
 Furthermore, if we extend this fragment with access to the matrix $S_{<}$, defining the (strict) order on canonical vectors, then Csanky's matrix inversion algorithm becomes expressible (if $f_/$ is allowed).
  We leave the study of this fragment and, in particular, the relationship to full \langfor, for future work. 
  
-Finally, in Figure~\ref{thefigure} we show a diagram of all the fragments of \langfor introduced in this section and their corresponding equivalence formalism.
+Finally, in Figure~\ref{thefigure} we show a diagram of all the fragments of \langfor introduced in this section and their corresponding equivalent formalisms.
 %
 % %
 % % matrix defined in Section~\ref{sec:order}. The outer loop here defines which power we compute. That is, when $v$ is the $i$th canonical vector, we compute $A^i$. Computing $A^i$ is achieved via the inner product loop, which uses $w^*S_{<}v$ to determine whether $w$ comes before $v$ in the ordering of canonical vectors. When this is the case we multiply the current result by $A$, and when $w$ is greater than $v$, we use $I$ not to affect the already computed result.
@@ -284,7 +284,7 @@ Finally, in Figure~\ref{thefigure} we show a diagram of all the fragments of \la
 	
 	\end{tikzpicture}
 	
-	\caption{Fragments of \langfor and their equivalences. The functions \textsc{4Clique}, \textsc{DP} (diagonal product), \textsc{Inv}, \textsc{Det}, and \textsc{PALU} decomposition are placed in their fragments.} \label{thefigure}
+	\caption{Fragments of \langfor and their equivalences. The functions \textsc{4Clique}, \textsc{DP} (diagonal product), \textsc{Inv}, \textsc{Det}, and \textsc{PLU} decomposition are placed in their fragments.} \label{thefigure}
 \vspace{-2ex}
 \end{figure}
 
