@@ -21,7 +21,7 @@ The proof is by induction on the structure of expressions.
 \begin{lemma}\label{app:prop:point_ara}
 For every \rak expression $\arae$ over schema $\mathcal{R}$ with there is \langsum expression $\Psi(\arae)$ such that for every database instances $\I$ over $\mathcal{R}$ using consecutive domain assignment, 
 $$
-\ssem{\arae}{\cJ}(i_1,\ldots,i_p)=\sem{\Psi(\arae)}{\text{Mat}(\cJ)\cup e_{i_1}^{d_1},\ldots,e_{i_p}^{d_p}}
+\ssem{\arae}{\cJ}(i_1,\ldots,i_p)=\sem{\Psi(\arae)}{\text{Mat}(\cJ)\cup b_{i_1}^{d_1},\ldots,b_{i_p}^{d_p}}
 $$
 \end{lemma}
 \begin{proof}
