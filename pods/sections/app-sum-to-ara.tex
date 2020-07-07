@@ -1,9 +1,11 @@
+% !TeX spellcheck = en_US
+%!TEX root = ../main.tex
 \newtheorem*{SUMTOARA}{Proposition~\ref{prop:sum_to_ara}}
 
 We prove proposition \ref{prop:sum_to_ara}.
 
 \begin{SUMTOARA}
-  For each \langsum expression $e$ over schema $\Sch$ such that $\Sch(e)=(\alpha,\beta)$ with $\alpha\neq 1\neq\beta$, there exists an $\mathsf{RA}_{K}^+$  expression $\arae(e)$ over relational schema $\text{Rel}(\Sch)$ such that $\text{Rel}(\Sch)(\arae(e))=\{\row_\alpha,\row_\beta\}$ and 
+  For each \langsum expression $e$ over schema $\Sch$ such that $\Sch(e)=(\alpha,\beta)$ with $\alpha\neq 1\neq\beta$, there exists a \rak  expression $\arae(e)$ over relational schema $\text{Rel}(\Sch)$ such that $\text{Rel}(\Sch)(\arae(e))=\{\row_\alpha,\row_\beta\}$ and 
 	such that for any instance $\I$ over~$\Sch$,
 	$$
 	\sem{e}{\I}_{i,j}=\ssem{\arae(e)}{\text{Rel}(\I)}(t)
@@ -18,10 +20,14 @@ We prove proposition \ref{prop:sum_to_ara}.
 We start from a matrix schema $\Sch=(\Mnam,\size)$, where $\Mnam\subset \Mvar$ is a finite set of matrix variables, 
 and $\size: \Mvar \mapsto \DD\times \DD$ is a function that maps each matrix variable to a pair of size symbols. 
 On the relational side we have for each size symbol $\alpha\in\DD\setminus\{1\}$, attributes $\alpha$, $\row_\alpha$, 
-and $\col_\alpha$ in $\att$. For each $V\in\Mnam$ and $\alpha \in \DD$ we denote
-by $R_V$ and $R_\alpha$ its corresponding relation name, respectively. Then, given $\Sch$ we define the relational 
-schema $\text{Rel}(\Sch)$ such that $\fdom(\text{Rel}(\Sch)) =  \{R_\alpha \mid \alpha\in\DD\} \cup \{R_V \mid V \in \Mnam\}$ 
-where $\text{Rel}(\Sch)(R_\alpha) = \{\alpha\}$ and:
+and $\col_\alpha$ in $\att$. We also reserve some special attributes $\gamma_1,\ldots,\gamma_k$ whose role will become clear shortly.
+We will treat matrix variables that are used to iterate over canonical vectors differently from other matrix variables. To make the distinction clear we use capital $V\in \Mnam $ to indicate ``normal'' matrix variables and lower case $v_i\in\Mnam$ for the matrix variables used for iteration in for-loops.
+For each $V$ and $v_i$ $\in\Mnam$ and $\alpha \in \DD$ we denote
+by $R_V$, $R_v$ and $R_\alpha$ its corresponding relation name, respectively. 
+
+Then, given $\Sch$ we define the relational 
+schema $\text{Rel}(\Sch)$ such that $\fdom(\text{Rel}(\Sch)) =  \{R_\alpha \mid \alpha\in\DD\} \cup \{R_V \mid V \in \Mnam\} \cup \{R_v \mid v \in \Mnam\}$
+where $\text{Rel}(\Sch)(R_\alpha) = \{\alpha\}$ and for all $V\in\Mnam$:
 \[
 \text{Rel}(\Sch)(R_V) = \begin{cases}
 \lbrace\row_\alpha,\col_\beta \rbrace & \text{ if $ \size(V)=(\alpha,\beta)$} \\
@@ -31,6 +37,22 @@ where $\text{Rel}(\Sch)(R_\alpha) = \{\alpha\}$ and:
 \lbrace\rbrace & \text{ if $\size(V)=(1,1)$}.
 \end{cases}
 \]
+Furthermore, $\text{Rel}(\Sch)(R_{v_i})=\lbrace \row_\alpha,\col_\beta\rbrace$ if
+$\size(v_i)=(\alpha,1)$ and $\text{Rel}(\Sch)(R_{v_i})=\lbrace \rbrace$ if $\size(v_i)=(1,1)$.
+% For each $V\in\Mnam$ and $\alpha \in \DD$ we denote
+% by $R_V$ and $R_\alpha$ its corresponding relation name, respectively. Then, given $\Sch$ we define the relational
+% schema $\text{Rel}(\Sch)$ such that $\fdom(\text{Rel}(\Sch)) =  \{R_\alpha \mid \alpha\in\DD\} \cup \{R_V \mid V \in \Mnam\}$
+% where $\text{Rel}(\Sch)(R_\alpha) = \{\alpha\}$ and:
+% \[
+% \text{Rel}(\Sch)(R_V) = \begin{cases}
+% \lbrace\row_\alpha,\col_\beta \rbrace & \text{ if $ \size(V)=(\alpha,\beta)$} \\
+% \lbrace\row_\alpha \rbrace & \text{ if $ \size(V)=(\alpha,1)$} \\
+% \lbrace\col_\beta \rbrace  &
+% \text{ if $ \size(V)=(1,\beta)$} \\
+% \lbrace\rbrace & \text{ if $\size(V)=(1,1)$}.
+% \end{cases}
+% \]
+
 Next, for a matrix instance $\I = (\dom,\conc)$ over $\Sch$,
 let $V\in\Mnam$ with $\size(V)=(\alpha,\beta)$ and let $\conc(V)$ be its corresponding $K$-matrix of dimension $\dom(\alpha)\times \dom(\beta)$.
 The $K$-instance in $\mathsf{RA}_{K}^+$ according to $\I$ is $\text{Rel}(\I)$ with data domain $\ddom = \mathbb{N} \setminus \{0\}$. For each $V\in\Mnam$ we define 
@@ -38,18 +60,61 @@ $R_V^{\text{Rel}(\I)}(t):=\conc(V)_{ij}$ whenever $t(\row_\alpha) = i \leq \dom(
 Also, for each $\alpha \in \DD$ we define $R_\alpha^{\text{Rel}(\I)}(t):=\kone$ whenever $t(\alpha) \leq \dom(\alpha)$, and $\kzero$ otherwise.
 If $\size(V)=(\alpha,1)$ then $R_V^{\text{Rel}(\I)}(t):=\conc(V)_{i1}$ whenever $t(\row_\alpha) = i \leq \dom(\alpha)$ and $\kzero$ otherwise.
 Similarly, if $\size(V)=(1,\beta)$ then $R_V^{\text{Rel}(\I)}(t):=\conc(V)_{1j}$ whenever $t(\col_\beta) = j \leq \dom(\beta)$ and $\kzero$ otherwise.
-If $\size(V)=(1,1)$ then $R_V^{\text{Rel}(\I)}(t):=\conc(V)_{11}$ only when $t(1) = \kone$ and $\kzero$ otherwise.
+If $\size(V)=(1,1)$ then $R_V^{\text{Rel}(\I)}(()):=\conc(V)_{11}$.
 
-\floris{The inductive proof needs to accommodate for more than two attributes?!
-This is needed for the summation case and this is how we did before with Jan's ARA syntax..
-}
-\thomas{Yes, I assume that the relations that represent the matrices have at most two attributes. But the ARA expressions can have more attributes, like in the summation case, where $e_1$ has attributes $\row_\alpha, \col_\beta, \row_\gamma$, and then I modify it to use $\col_\gamma$ also (I end up projecing on tow attributes though). This is what happens if the we sum over a variable, we replace that relation and project. If that variable is not instantiated by any $\ssum$ then it should be replaced with the relation that the instance constructed (first case). Not sure if this is what you mean.}
-The proof is by induction on the structure of \langsum expressions. Let $e$ be a \langsum expression such that $\Sch (e)=(\alpha, \beta)$.
+When it comes to ``iterator'' variables $v_i\in\Mnam$, we define
+$R_{v_i}^{\text{Rel}(\I)}(t):=\kone$  whenever $t(\row_\alpha) = t(\col_\alpha)$ and
+$R_{v_i}^{\text{Rel}(\I)}(t):=\kzero$  whenever $t(\row_\alpha)=i\neq t(\col_\alpha)=j$ 
+with $t(\row_\alpha)=i$ and $t(\col_\alpha) = j$ with $i,j\leq \dom(\alpha)$ when $\size(v_i)=(\alpha,1)$, and $R_{v_i}^{\text{Rel}(\I)}(()):=\kone$ when $\size(v_i)=(1,1)$.
+In other words, we instantiate iterator variables with the identity matrix of appropriate dimensions. 
+
+Let $e$ be a \langsum expression. We define a notion of free vector variables, inductively, as follows: $\mathsf{free}(V):=\emptyset$, 
+$\mathsf{free}(v):=\{v\}$, $\mathsf{free}(e^T):=\mathsf{free}(e)$, $\mathsf{free}(e_1+e_2):=\mathsf{free}(e_1)\cup \mathsf{free}(e_2)$, $\mathsf{free}(e_1\cdot e_2):=\mathsf{free}(e_1)\cup \mathsf{free}(e_2)$,
+$\mathsf{free}(f_\odot(e_1,\ldots,e_k)):=\mathsf{free}(e_1)\cup\cdots \cup \mathsf{free}(e_k)$, and $\mathsf{free}(e=\ssum V. e_1)=\mathsf{free}(e_1)\setminus\{v\}$. We will explicitly denote the free variables in an expression $e$ by writing $e(v_1,\ldots,v_k)$.
+
+We now use the following induction hypotheses:
+\begin{itemize}
+	\item If $e(v_1,\ldots,v_k)$ is of type $(\alpha,\beta)$ then there exists a
+	\rak expression $\arae$ such that $\text{Rel}(\Sch)(\arae(e))=\{\row_\alpha,\col_\beta,\gamma_1,\ldots,\gamma_k\}$
+	and such that 
+	$$
+	\ssem{\arae(e)}{\text{Rel}(\I)}(t)=\sem{e}{\I[v_1\gets b_{i_1},\ldots,v_k\gets b_{i_k}]}_{i,j}
+	$$
+	for tuple $t(\mathrm{row}_\alpha)=i$, $t(\mathrm{col}_\beta)=j$ and $t(\gamma_s)=i_s$ for $s=1,\ldots, k$.
+	\item If $e(v_1,\ldots,v_k)$ is of type $(\alpha,1)$ then there exists a
+	\rak expression $\arae$ such that $\text{Rel}(\Sch)(\arae(e))=\{\row_\alpha,\gamma_1,\ldots,\gamma_k\}$
+	and such that 
+	$$
+	\ssem{\arae(e)}{\text{Rel}(\I)}(t)=\sem{e}{\I[v_1\gets b_{i_1},\ldots,v_k\gets b_{i_k}]}_{i,1}
+	$$
+	for tuple $t(\mathrm{row}_\alpha)=i$,  and $t(\gamma_s)=i_s$ for $s=1,\ldots, k$.
+	And similarly for when $e$ is type $(1,\beta)$.
+	\item If $e(v_1,\ldots,v_k)$ is of type $(1,1)$ then there exists a
+	\rak expression $\arae$ such that $\text{Rel}(\Sch)(\arae(e))=\{\gamma_1,\ldots,\gamma_k\}$
+	and such that 
+	$$
+	\ssem{\arae(e)}{\text{Rel}(\I)}(t)=\sem{e}{\I[v_1\gets b_{i_1},\ldots,v_k\gets b_{i_k}]}_{1,1}
+	$$
+	for tuple $t(\gamma_s)=i_s$ for $s=1,\ldots, k$.
+\end{itemize}
+Clearly, this suffices to show the proposition since expressions $e$ are considered for which $\mathsf{free}(e)=\emptyset$, in which case the above statements reduce to the one given in the proposition.
+
+
+The proof is by induction on the structure of \langsum expressions. Let $e$ be a \langsum expression.
 \begin{itemize}
   \item If $e=V$ then $\arae (e):=R_V$.
-  % $\arae (e):=R_V^{\text{Rel}(\I)}$.
+  \item If $e=v_p$ then $\arae (e):=\rho_{\col_\alpha\to \gamma_p}(R_{v_p})$ if $v_p$ is of type $(\alpha,1)$. It is here that we introduce the attribute $\gamma_p$ associated with iterator variable $v_p$.
+ We note that 
+$$ \ssem{\arae(v_p)}{\text{Rel}(\I)}(t)=\sem{v_p}{\I[v_p\gets b_{j}]}_{i,1}=(b_j)_{i,1}
+$$
+for $t(\mathrm{row}_\alpha)=i$ and $t[\gamma_p]=j$ since $(b_j)_{i,1}=\kone$ if $j=i$
+and this also holds when $t(\mathrm{row}_\alpha)=t[\gamma_p]=j$, and 
+$(b_j)_{i,1}=\kzero$ if $j\neq i$
+and this also holds when $t(\mathrm{row}_\alpha)\neq t[\gamma_p]=j$.
 
-  \item If $e=e_1^T$ with $\Sch (e_1)=(\alpha, \beta)$ then \[
+    % $\arae (e):=R_V^{\text{Rel}(\I)}$.
+
+  \item If $e(v_1,\ldots,v_k)=(e_1(v_1,\ldots,v_k))^T$ with $\Sch (e_1)=(\alpha, \beta)$ then \[
 \arae(e) :=
 \begin{cases}
 \rho_{\mathrm{row}_\alpha \to \mathrm{col}_\alpha,\mathrm{col}_\beta \to \mathrm{row}_\beta}\bigl(\arae(e_1)\bigr) & \text{if } \alpha \neq 1 \neq \beta; \cr
@@ -58,212 +123,332 @@ The proof is by induction on the structure of \langsum expressions. Let $e$ be a
 \arae(e_1) & \text{if } \alpha = 1 = \beta.
 \end{cases}
 \]
-\floris{Why is the next case included? The ones operator is expressible in \langsum, no?}
-\thomas{Yes, but I made it explicitly (like the function application) because it was easier than simulate the scalar product. As it says in section \ref{app:simp}, both of these operators can simulate scalar prod, so scalar product is doable in ARA since ones and $f_{\odot}$ are.}
-  \item If $e:=e_{\ones}(e')$ where $\Sch(e')=(\alpha, \beta)$ and $e_{\ones}(\cdot)$ is the $\mathsf{ones}$ operator
-  then $\arae(e):=\rho_{\alpha\rightarrow\row_\alpha}(\mathsf{Eq}_{\alpha})$
+ % \item If $e:=e_{\ones}(e')$ where $\Sch(e')=(\alpha, \beta)$ and $e_{\ones}(\cdot)$ is the $\mathsf{ones}$ operator
+ %  then $\arae(e):=\rho_{\alpha\rightarrow\row_\alpha}(\mathsf{Eq}_{\alpha})$
+\floris{There is an issue here since $e_1$ and $e_2$ can have different free iterator variables. I think we can ensure that both have the same by introducing them somehow, or alternative, since all operators are linear, by pushing $+$ all the way down? Not sure.}
+  \item If $e=e_1(v_1,\ldots,v_k)+e_2(v_1,\ldots,v_k)$ with $\Sch (e_1)=\Sch (e_2)=(\alpha, \beta)$ then $\arae (e):=\arae (e_1)\cup \arae (e_2)$.
 
-  \item If $e=e_1+e_2$ with $\Sch (e_1)=\Sch (e_2)=(\alpha, \beta)$ then $\arae (e):=\arae (e_1)\cup \arae (e_2)$.
-
-\floris{Are we assuming scalar function application? The use of $f=\odot$ should be made clear. That is, we consider $\langsum$ but without function applications in the statement. Now apparently we need a pointwise function. This relates to an earlier comment and to the result that Damogoj wrote in the main part at some points. We need to bring this back into A2 and so that we can cite it here.}
-\thomas{Since we can do the ones operator in ARA, instead of simulating scalar product in ARA we simulate $f_{\odot}$. With this and the ones translation, we can simulate scalar prod.}
-  \item If $e=f(e_1,\ldots, e_k)$ with $\Sch(e_i)=\Sch(e_j)$ for all $i,j\in[1,k]$, with $f=\kprod$, then $\arae(e):=\arae(e_1)\Join \ldots \Join\arae(e_k)$.
+  \item If $e=f_\odot(e_1,\ldots, e_k)$ with $\Sch(e_i)=\Sch(e_j)$ for all $i,j\in[1,k]$, then $\arae(e):=\arae(e_1)\Join \ldots \Join\arae(e_k)$.
 
   \item If $e=e_1\cdot e_2$ with $\Sch (e_1)=(\alpha, \gamma)$ and $\Sch (e_2)=(\gamma, \beta)$, we have two cases. If $\gamma = 1$ then $\arae (e):=\arae (e_1)\Join \arae (e_2)$.
 If $\gamma\neq 1$ then
 $$
-\arae (e) := \pi_{\lbrace \row_{\alpha},\row_{\beta} \rbrace}\left( \sigma_{\lbrace \col_\gamma, \row_\gamma \rbrace} \left( \arae (e_1)\Join \arae (e_2) \right) \right)
+\arae (e) := \pi_{\lbrace \row_{\alpha},\col_{\beta}, \gamma_1,\ldots,\gamma_k \rbrace}\left( \sigma_{\lbrace C_1, C_2 \rbrace} \left(\rho_{\col_\gamma\mapsto C_1}(\arae (e_1))\Join \rho_{\row_\gamma\to C_2}(\arae (e_2)) \right) \right),
 $$
+when $\text{Rel}(\Sch)(\arae(e_1))=\{\row_\alpha,\col_\gamma,\gamma_1',\ldots,\gamma_{k}'\}$,
+$\text{Rel}(\Sch)(\arae(e_2))=\{\row_\gamma,\col_\beta,\gamma_1'',\ldots,\gamma_{\ell}''\}$ and $\{\gamma_1,\ldots,\gamma_k\}=\{\gamma_1',\ldots,\gamma_k',\gamma_1'',\ldots,\gamma_k''\}$.
+
 
 %   \item If $e=\ssum V. e_1$ where $\Sch(e_1)=(\alpha,\beta)$ and $\Sch(V)=(\gamma,1)$. Then we can just do $\pi_{\text{Rel}(\Sch)(R_V)}\left( \arae (e_1) \right)$.
 % Note that when the $\row_\gamma$ attribute in $\arae (e_1)$ is instantiated with with tuple $t$ such that $t(\row_\alpha)=i$, $t(\col_\beta)=j$ and $t(\row_\gamma)=k$,
 % then the expression evaluates to $e_1(\I [V\leftarrow e_{k}^{\dom(\gamma)}])_{ij}$. 
 % Hence, by projecting in attributes $\lbrace \row_\alpha, \col_\beta\rbrace$ we range over all $k$ and sum up all $K$-values for each entry.
-  \item If $e=\ssum V. e_1$ where $\Sch(e_1)=(\alpha,\beta)$ and $\Sch(V)=(\gamma,1)$. Then we do 
-  % $$
-  % \pi_{\lbrace \row_{\alpha}, \col_{\beta} \rbrace}\left( \arae (e_1)\left[ R_{V}^{\text{Rel}(\I)}\leftarrow R_{\mathsf{Id}}^{\gamma} \right] \right).
-  % $$
+  \item If $e(v_1,\ldots,v_{p-1},v_{p+1},\ldots,v_k)=\ssum v_p. e_1(v_1,\ldots,v_k)$ where $\Sch(e_1)=(\alpha,\beta)$ and $\Sch(V)=(\gamma,1)$. Then we do 
   $$
-  \pi_{\lbrace \row_{\alpha}, \col_{\beta} \rbrace}\left( \arae (e_1)\left[ R_{V}\leftarrow R_{\mathsf{Id}}^{\gamma} \right] \right).
+  \arae (e):=\pi_{\text{Rel}(\Sch)(\arae(e_1))\setminus\{\gamma_p\}} \arae (e_2).
   $$
-  
-  
-  Here $R_{\mathsf{Id}}^{\gamma}$ is an expression that, when evaluated, results identity of size $\dom(\gamma)\times\dom(\gamma)$ and which 
-  is defined as 
-  % $$
- %  R_{\mathsf{Id}}^{\gamma}:= \sigma_{\lbrace \row_{\gamma},\col_{\gamma} \rbrace }\left( \rho_{\gamma\rightarrow\row_\gamma}\left( R_\gamma^{\text{Rel}(\I)} \right) \Join \rho_{\gamma\rightarrow\col_\gamma}\left( R_\gamma^{\text{Rel}(\I)} \right)\right)
+ Indeed, by induction we know that 
+ $$
+\ssem{\arae(e_1)}{\text{Rel}(\I)}(t)=\sem{e}{\I[v_1\gets b_{i_1},\ldots,v_k\gets b_{i_k}]}_{i,j}
+$$
+for tuple $t(\mathrm{row}_\alpha)=i$, $t(\mathrm{col}_\beta)=j$ and $t(\gamma_s)=i_s$ for $s=1,\ldots, k$.
+Hence, for $t(\mathrm{row}_\alpha)=i$, $t(\mathrm{col}_\beta)=j$ and $t(\gamma_s)=i_s$ for $s=1,\ldots, k$ and $s\neq p$,
+$$
+\ssem{\arae(e_1)}{\text{Rel}(\I)}(t):=\bigksum_{i_p=1,\ldots,\dom(\gamma)} \sem{e_1}{\I[v_1\gets b_{i_1},\ldots,v_k\gets b_{i_k}]}_{i,j},$$
+which is corresponds to 
+$$
+\sem{e}{\I[v_1\gets b_{i_1},\ldots,v_{p-1}\gets b_{p-1},v_{p+1}\gets b_{p+1},\ldots,v_k\gets b_k]}_{i,j}.
+$$
+ 
+ %  % $$
+ %  % \pi_{\lbrace \row_{\alpha}, \col_{\beta} \rbrace}\left( \arae (e_1)\left[ R_{V}^{\text{Rel}(\I)}\leftarrow R_{\mathsf{Id}}^{\gamma} \right] \right).
+ %  % $$
  %  $$
-  $$
-  R_{\mathsf{Id}}^{\gamma}:= \sigma_{\lbrace \row_{\gamma},\col_{\gamma} \rbrace }\left( \rho_{\gamma\rightarrow\row_\gamma}\left( R_\gamma \right) \Join \rho_{\gamma\rightarrow\col_\gamma}\left( R_\gamma\right)\right).
-  $$
-  Furthermore, $\arae (e_1)\left[ R_{V}\leftarrow R_{\mathsf{Id}}^{\gamma} \right]$
-  means that every occurrence of $R_V$ in $e_1$ is replaced by  $R_{\mathsf{Id}}^{\gamma}$.
-  
-  Note that when $\arae (e_1)\left[ R_{V}\leftarrow R_{\mathsf{Id}}^{\gamma} \right]$ is instantiated with with tuple $t$ such that $t(\row_\alpha)=i$, $t(\col_\beta)=j$, 
-  $t(\row_\gamma)=k$ and $t(\col_\gamma)=k$ (other values of are zero),
-  then the expression evaluates to $e_1(\I [V\leftarrow e_{k}^{\dom(\gamma)}])_{ij}$. 
-  Hence, by projecting in attributes $\lbrace \row_\alpha, \col_\beta\rbrace$ we range over all $k$ and sum up all $K$-values for each entry.
+ %  \pi_{\lbrace \row_{\alpha}, \col_{\beta} \rbrace}\left( \arae (e_1)\left[ R_{V}\leftarrow R_{\mathsf{Id}}^{\gamma} \right] \right).
+ %  $$
+ %
+ %
+ %  Here $R_{\mathsf{Id}}^{\gamma}$ is an expression that, when evaluated, results identity of size $\dom(\gamma)\times\dom(\gamma)$ and which
+ %  is defined as
+ %  % $$
+ % %  R_{\mathsf{Id}}^{\gamma}:= \sigma_{\lbrace \row_{\gamma},\col_{\gamma} \rbrace }\left( \rho_{\gamma\rightarrow\row_\gamma}\left( R_\gamma^{\text{Rel}(\I)} \right) \Join \rho_{\gamma\rightarrow\col_\gamma}\left( R_\gamma^{\text{Rel}(\I)} \right)\right)
+ % %  $$
+ %  $$
+ %  R_{\mathsf{Id}}^{\gamma}:= \sigma_{\lbrace \row_{\gamma},\col_{\gamma} \rbrace }\left( \rho_{\gamma\rightarrow\row_\gamma}\left( R_\gamma \right) \Join \rho_{\gamma\rightarrow\col_\gamma}\left( R_\gamma\right)\right).
+ %  $$
+ %  Furthermore, $\arae (e_1)\left[ R_{V}\leftarrow R_{\mathsf{Id}}^{\gamma} \right]$
+ %  means that every occurrence of $R_V$ in $e_1$ is replaced by  $R_{\mathsf{Id}}^{\gamma}$.
+ %
+ %  Note that when $\arae (e_1)\left[ R_{V}\leftarrow R_{\mathsf{Id}}^{\gamma} \right]$ is instantiated with with tuple $t$ such that $t(\row_\alpha)=i$, $t(\col_\beta)=j$,
+ %  $t(\row_\gamma)=k$ and $t(\col_\gamma)=k$ (other values of are zero),
+ %  then the expression evaluates to $e_1(\I [V\leftarrow e_{k}^{\dom(\gamma)}])_{ij}$.
+ %  Hence, by projecting in attributes $\lbrace \row_\alpha, \col_\beta\rbrace$ we range over all $k$ and sum up all $K$-values for each entry.
 \end{itemize}
-
-Here, we only allow scalar $\kprod$ function application, 
-which is equivalent to scalar product, as mentioned in section \ref{app:simp}.
+All other cases, when expression have type $(\alpha,1)$, $(1,\beta)$ or $(1,1)$ can be dealt with in a similar way.
+% Here, we only allow scalar $\kprod$ function application,
+% which is equivalent to scalar product, as mentioned in section \ref{app:simp}.
 % Note that we can access the zero values of matrices because the indexes are in the active domain of $\text{Rel}(\I)$ due to the existence of $R_\alpha^{\text{Rel}(\I)}(t)$, for each $\alpha \in \DD$.
 \end{proof}
 
-% Consider a matrix instance $\I = (\dom,\conc)$ over a schema $\Sch$.
-% Let $V\in\Mnam$ with $\size(V)=(\alpha,\beta)$ and let $\conc(V)$ be its corresponding matrix of dimension $\dom(\alpha)\times \dom(\beta)$.
-% Given an instance $\I$ over $\Sch$, the domain asssignment $\mathbb{D}_{\I}$ is defined as 
-% $\mathbb{D}_{\I}(\row_\alpha)=[1,\dom(\alpha)]$ and 
-% $\mathbb{D}_{\I}(\col_\alpha)=[1,\dom(\alpha)]$. 
-% We further  define the database instance $\text{Rel}_\Sch(\I)$  to consist of relations for each $V_R\in N$ defined as follows:
-% $\mathcal{T}_{\mathbb{D}_{\I}}(\text{Rel}(\Sch)(V_R)) \to K$ such that
-% $(\text{Rel}_{_\Sch}(I))(t):=\conc(V)_{ij}$ where (1) $t(\row_\alpha)=i$ if $\alpha\neq 1$ and equal to $1$ if $\alpha = 1$; and (2) $t(\col_\beta)=j$ if $\beta\neq 1$ and equal to $1$ if $\beta= 1$.
-
-% We next translate \lang$(\sum,\prod)$ expressions $e$ into \ARA expressions $\arae(e)$ by induction on the structure of $e$. The translation closely follows the translation given in~\cite{brijder2019matrices}, except that we  additionally need to consider summation, pointwise functions and the $\star$-projection.
-
-% \begin{itemize}
-% 	\item If $e=V$ then $\arae(e):=V_R$.
-% 	\item if $e=e_1^t$ where $\Sch(e_1)=(\alpha,\beta)$ then \[
-% \arae(e) :=
-% \begin{cases}
-% \rho_{\mathrm{col}_\alpha \to \mathrm{row}_\alpha,\mathrm{row}_\beta \to \mathrm{col}_\beta}\bigl(\arae(e_1)\bigr) & \text{if } \alpha \neq 1 \neq \beta; \cr
-% \rho_{\mathrm{col}_\alpha \to \mathrm{row}_\alpha}\bigl(\arae(e_1)\bigr) & \text{if } \alpha \neq 1 = \beta; \cr
-% \rho_{\mathrm{row}_\beta \to \mathrm{col}_\beta}\bigl(\arae(e_1)\bigr) & \text{if } \alpha = 1 \neq \beta; \cr
-% \arae(e_1) & \text{if } \alpha = 1 = \beta,
+%
+% \begin{proof}
+% We start from a matrix schema $\Sch=(\Mnam,\size)$, where $\Mnam\subset \Mvar$ is a finite set of matrix variables,
+% and $\size: \Mnam \mapsto \DD\times \DD$ is a function that maps each matrix variable to a pair of size symbols.
+% On the relational side we have for each size symbol $\alpha\in\DD\setminus\{1\}$, attributes $\alpha$, $\row_\alpha$,
+% and $\col_\alpha$ in $\att$.
+% We will treat matrix variables that are used to iterate over canonical vectors differently from other matrix variables. To make the distinction clear we use capital $V\in \Mnam $ to indicate a `normal'' matrix variables and lower case $v\in\Mnam$ for the matrix variables used for iteration in for-loops.
+% For each $V$ and $v_i$ $\in\Mnam$ and $\alpha \in \DD$ we denote
+% by $R_V$, $R_v$ and $R_\alpha$ its corresponding relation name, respectively.
+%
+%
+% Then, given $\Sch$ we define the relational
+% schema $\text{Rel}(\Sch)$ such that $\fdom(\text{Rel}(\Sch)) =  \{R_\alpha \mid \alpha\in\DD\} \cup \{R_V \mid V \in \Mnam\} \cup \{R_v \mid v \in \Mnam\}$
+% where $\text{Rel}(\Sch)(R_\alpha) = \{\alpha\}$ and for all $V\in\Mnam$:
+% \[
+% \text{Rel}(\Sch)(R_V) = \begin{cases}
+% \lbrace\row_\alpha,\col_\beta \rbrace & \text{ if $ \size(V)=(\alpha,\beta)$} \\
+% \lbrace\row_\alpha \rbrace & \text{ if $ \size(V)=(\alpha,1)$} \\
+% \lbrace\col_\beta \rbrace  &
+% \text{ if $ \size(V)=(1,\beta)$} \\
+% \lbrace\rbrace & \text{ if $\size(V)=(1,1)$}.
 % \end{cases}
 % \]
-
-% \item
-% 	If $e = e_1 \cdot e_2$ where $\Sch(e_1) = (\alpha,\gamma)$ and $\Sch(e_2) =(\gamma,\beta)$, then we consider two cases. If $\gamma = 1$, then $\arae(e) := \arae(e_1) \Join \arae(e_2)$. If $\gamma \neq 1$, then 
-% 	$$
-% 	\arae(e) := \hat{\pi}_C\Bigr(\rho_{\mathrm{col}_\gamma\to C}\bigl(\arae(e_1)\bigr)\Join\rho_{\mathrm{row}_\gamma\to C}\bigl(\arae(e_2)\bigr)\Bigr).$$
-% 	% , where $\varphi_1(\mathrm{col}_\gamma) = \varphi_2(\mathrm{row}_\gamma) = C \notin \{\mathrm{row}_\alpha, \mathrm{col}_\beta\}$ and $\varphi_1$ and $\varphi_2$ are the identity otherwise.
-% 	% If $e=e_1(v_1,\ldots,v_k)\cdot e_2(u_1,\ldots,u_s)$ where $e_1$ is $n\times\gamma$, $e_2$ is $\gamma\times m$. Let $\rho:\row_\gamma\rightarrow C,\col_\gamma\rightarrow C.$ We have two cases:
-% 	% 	\begin{itemize}
-% 	% 		\item If $\gamma\neq 1$ then $E=\widehat{\pi}_C\left( \rho\left(E_1\right)\bowtie\rho\left( E_2\right)\right).$
-% 	% 		\item If $\gamma = 1$ then $E=E_1\bowtie E_2$.
-% 	% 	\end{itemize}
-% 	\item If $e=f(e_1,\ldots,e_k)$ with $\Sch(e_i)=(1,1)$ for all $i\in[1,k]$, then
-% 	$\arae(e):=\text{Apply}[f]\bigl(\arae(e_1),\ldots,\arae(e_k)\bigr)$. 
-% 	% we have that $E=E_1\cup\cdots\cup E_s$ if $f$ is sum and $E=E_1\bowtie\cdots\bowtie E_s$ if $f$ is multiplication.
-% 	\item If $e=\ssum V.e_1$ where $\Sch(e_1)=(\alpha,\beta)$ and $\Sch(V)=(\gamma,1)$. Then,
-% 	in $\arae(e_1)$ we replace $V_R$ by $\arae_{Id}(V_R)$ which computes a binary 
-% 	relation encoding the $\gamma\times\gamma$ idenity matrix. Intuitively, by selecting different
-% 	columns of the identity matrix we can extract all canonical $\gamma\times 1$ basis vectors.
-% 	More precisely, $\arae_{Id}(V_R)$ is  defined by
-% 	$$
-% 	\sigma_{\{\mathrm{row}_\gamma,C_V\}}\Bigr(\mathbf{1}(V_R) \Join \mathbf{1}\bigl(\rho_{\mathrm{row}_\gamma \to C_V}(V_R)\bigr)\Bigr)$$
-% 	if $\gamma \neq 1$ and
-%    $\mathbf{1}(V_R)$ if $\gamma = 1$.
-%    Then,
-% 	$$
-% 	\arae(e):=\hat{\pi}_{C_V}\bigl(\arae(e_1)[V_R\gets \arae_{Id}(V_R)])\bigr).
-% 	$$
-
-% 	Note that when the $C_{V}$ attribute in $\arae(e_1[V_R\gets \arae_{Id}(V_R)])$
-% 	is instantiated with a value $j$ in $[1,n_\gamma]$, then this expression evaluates $e_1(\I[V\gets e_j^\gamma])$
-% 	Hence, by projecting over $C_V$ we range over all $j\in[1,n_\gamma]$ and sum up all $K$-values for each entry. 
-% \end{itemize}
-
-% \begin{proposition}
-% 	For each \lang$(\sum,\prod)$ expression $e$ over schema $\Sch$ such that $\Sch(e)=(\alpha,\beta)$ with $\alpha\neq 1\neq\beta$, there exists an \ARA expression $\arae(e)$ over schema $\text{Rel}(\Sch)$ such that $\text{Rel}(\Sch)(\arae(e))=\{\mathrm{row}_\alpha,\mathrm{col}_\beta\}$ and 
-% 	such that for any instance $\I$ over $\Sch$,
-% 	$$
-% 	e(\I)_{i,j}=\arae(e)(\text{Rel}_{\Sch}(\I))(t)
-% 	$$
-% 	for tuple $t(\mathrm{row}_\alpha)=i$ and $t(\mathrm{col}_\beta)=j$ in $\text{Rel}_{\Sch}(\I)$. Similarly for when $e$ has schema $\Sch(e)=(\alpha,1)$, $\Sch(e)=(1,\beta)$ or $\Sch(e)=(1,1)$, then $\arae(e)$ has schema $\text{Rel}(\Sch)(\arae(e))=\{\mathrm{row}_\alpha\}$,
-% $\text{Rel}(\Sch)(\arae(e))=\{\mathrm{col}_\alpha\}$, or
-% $\text{Rel}(\Sch)(\arae(e))=\{\}$, respectively.
-% \end{proposition}
-
-% For the converse translation, i.e., from \ARA to \lang++, we need to impose some restrictions. More precisely, we only consider \ARA expression $\varphi$
-% that take as input relations of arity at most two and also have a schema of arity at most two. Note that intermediate expressions can create schemas of arbitraty size. We also make the assumption that there is an order, denoted by $<$, on the attributes in $\mathbf{att}$. In particular, we assume $A_1<A_2<\cdots$ for attributes $A_i\in\mathbf{att}$.
-
-% This is to identify which attributes correspond to rows and columns when moving the matrix setting. 
-
-
-% Consider a database schema $\mathcal{R}$ on a finite set $N$ of relation names
-%  assigning a relation schema $\mathcal{R}(R)\subseteq\mathbf{att}$ to each $R \in N$. We assume that $\mathcal{R}(R)$ has size at most two. With each relation name $R\in N$ we associate a matrix name $M_R$. Let $\text{Mat}(\mathcal{R})$ denote the set
-%  $V_R$ of matrix names for $R\in\mathcal{R}$. Consider an injective function $s:\mathbf{att}\to \DD$ associating with each attribute a unique size symbol. Let $V_R\in \text{Mat}(\mathcal{R})$ and
-% define
-%  $$
-% \size(V_R)=\begin{cases}
-% (s(A_1),s(A_2)) & \text{if $\mathcal{R}(R)=\{A_1,A_2\}$, $A_1<A_2$}\\
-% (s(A),1) & \text{if $\mathcal{R}(R)=\{A\}$}\\
-% (1,1) & \text{if $\mathcal{R}(R)=\{\}$}.
-% \end{cases}
-%  $$
-% Let $\mathbb{D}$ be a domain assignment. We define 
-% $\dom(\alpha)=|\mathbb{D}(A)|$ where $s(A)=\alpha$.
-% We only consider consecutive domain assignments, i.e.,
-% such that attribute values take values in $[1,||\mathbb{D}(A)|]$.
-% Consider 
-% a relation $r:
-% \mathcal{T}_{\mathbb{D}}(X) \to K$ of $R$ with $X\subseteq\{A_1,A_2\}$  as determined by
-% $\mathcal{R}(R)$. We associate a matrix instance $\I = (\dom,\conc)$ as follows.
-% We define $\dom(\alpha)=|\mathbb{D}(A_1)|$ and
-% $\dom(\beta)=|\mathbb{D}(A_2)|$ where $s(A_1)=\alpha$ and $s(A_2)=\beta$. Furthermore,
-% $\conc(V_R)=\text{Mat}(r)$ such that 
-% $(\text{Mat}(r))_{i,j} := r(t)$, where $t$ is (1) the tuple with $t(A_1) = i$ and $t(A_2) = j$ if $|X| = 2$; (2) the tuple with $t(A_1) = i$ and $j = 1$ if $X = {A_1}$,
-% (3) the tuple with $t(A_2) = j$ and $i = 1$ if $X = {A_2}$,
-% (3) the unique tuple of $r$ if $X=\emptyset$. Clearly, $\text{Mat}(r)$ is a matrix of dimension as
-% specified by $\mathbb{D}$. 
-
-
-% %
-% % In the following, when $\varphi$ is
-% % an \ARA expression of schema $\mathcal{R}(\varphi)=\{A_1,\ldots,A_k\}$ with $A_1<A_2<A_3<\cdots < A_k$
-% %
-% We next translate \ARA expressions in to \lang$(\sum,\prod)$ expressions over an extended schema. More specifically, we extend 
-% $\Mnam$ with matrix variables $V_A$ for attributes $A$ appearing the \ARA expression. We first simulate \ARA expression entry-wise.
-
-% \begin{lemma}
-% For every \ARA expression $\varphi$ over schema $\mathcal{R}$ with there is \lang$(\sum,\prod)$ expression $\Upsilon(\varphi)$ such that for every database instances $\I$ over $\mathcal{R}$ using consecutive domain assignment, 
-% $$
-% \varphi(\I)(i_1,\ldots,i_p)=\Upsilon(\varphi)(\text{Mat}(\I)\cup \{e_{i_1}^{n_1},\ldots,e_{i_p}^{n_p})
-% $$
-% \end{lemma}
-% \begin{proof}
+% Furthermore, $\text{Rel}(\Sch)(R_V)=\lbrace \row_\alpha,\col_\alpha\rbrace$ if
+% $\size(v)=(\alpha,1)$ and $\text{Rel}(\Sch)(R_V)=\lbrace \rbrace$ if $\size(v)=(1,1)$.
+%
+% Next, for a matrix instance $\I = (\dom,\conc)$ over $\Sch$,
+% let $V\in\Mnam$ with $\size(V)=(\alpha,\beta)$ and let $\conc(V)$ be its corresponding $K$-matrix of dimension $\dom(\alpha)\times \dom(\beta)$.
+% The $K$-instance in $\mathsf{RA}_{K}^+$ according to $\I$ is $\text{Rel}(\I)$ with data domain $\ddom = \mathbb{N} \setminus \{0\}$. For each $V\in\Mnam$ we define
+% $R_V^{\text{Rel}(\I)}(t):=\conc(V)_{ij}$ whenever $t(\row_\alpha) = i \leq \dom(\alpha)$ and $t(\col_\beta) = j \leq \dom(\beta)$, and $\kzero$ otherwise.
+% Also, for each $\alpha \in \DD$ we define $R_\alpha^{\text{Rel}(\I)}(t):=\kone$ whenever $t(\alpha) \leq \dom(\alpha)$, and $\kzero$ otherwise.
+% If $\size(V)=(\alpha,1)$ then $R_V^{\text{Rel}(\I)}(t):=\conc(V)_{i1}$ whenever $t(\row_\alpha) = i \leq \dom(\alpha)$ and $\kzero$ otherwise.
+% Similarly, if $\size(V)=(1,\beta)$ then $R_V^{\text{Rel}(\I)}(t):=\conc(V)_{1j}$ whenever $t(\col_\beta) = j \leq \dom(\beta)$ and $\kzero$ otherwise.
+% If $\size(V)=(1,1)$ then $R_V^{\text{Rel}(\I)}(t):=\conc(V)_{11}$ only when $t(1) = \kone$ and $\kzero$ otherwise.
+%
+% \floris{The inductive proof needs to accommodate for more than two attributes?!
+% This is needed for the summation case and this is how we did before with Jan's ARA syntax..
+% }
+% \thomas{Yes, I assume that the relations that represent the matrices have at most two attributes. But the ARA expressions can have more attributes, like in the summation case, where $e_1$ has attributes $\row_\alpha, \col_\beta, \row_\gamma$, and then I modify it to use $\col_\gamma$ also (I end up projecing on tow attributes though). This is what happens if the we sum over a variable, we replace that relation and project. If that variable is not instantiated by any $\ssum$ then it should be replaced with the relation that the instance constructed (first case). Not sure if this is what you mean.}
+% The proof is by induction on the structure of \langsum expressions. Let $e$ be a \langsum expression such that $\Sch (e)=(\alpha, \beta)$.
 % \begin{itemize}
-% \item If $\varphi=R$, then $\Upsilon(e):=V_{A_1}^t\cdot V_R\cdot V_{A_2}$ if $\mathcal{R}(R)=\{A_1,A_2\}$ with $A_1<A_2$; 
-% $\Upsilon(e):=V_A^t\cdot V_R$ if $\mathcal{R}(R)=\{A\}$; and 
-% $\Upsilon(e):=V_R$ if $\mathcal{R}(R)=\{\}$. We define $\text{Ext}()$
-% \item If $\varphi=\mathbf{1}(\psi)$  then $
-% \Upsilon(\varphi):=\text{Apply}[x\mapsto 1](\Upsilon(\psi))$.
-% \item If $\varphi=\psi_1\cup \psi_2$ then
-% $\Upsilon(\varphi):=\text{Apply}[(x,y)\mapsto x+y](\Upsilon(\psi_1),\Upsilon(\psi_2))$.
-% \item If $\varphi=\pi_{Y}(\psi)$ for $Y\subseteq \mathcal{R}(\psi)$ then
+%   \item If $e=V$ then $\arae (e):=R_V$.
+%   % $\arae (e):=R_V^{\text{Rel}(\I)}$.
+%
+%   \item If $e=e_1^T$ with $\Sch (e_1)=(\alpha, \beta)$ then \[
+% \arae(e) :=
+% \begin{cases}
+% \rho_{\mathrm{row}_\alpha \to \mathrm{col}_\alpha,\mathrm{col}_\beta \to \mathrm{row}_\beta}\bigl(\arae(e_1)\bigr) & \text{if } \alpha \neq 1 \neq \beta; \cr
+% \rho_{\mathrm{row}_\alpha \to \mathrm{col}_\alpha}\bigl(\arae(e_1)\bigr) & \text{if } \alpha \neq 1 = \beta; \cr
+% \rho_{\mathrm{col}_\beta \to \mathrm{row}_\beta}\bigl(\arae(e_1)\bigr) & \text{if } \alpha = 1 \neq \beta; \cr
+% \arae(e_1) & \text{if } \alpha = 1 = \beta.
+% \end{cases}
+% \]
+% \floris{Why is the next case included? The ones operator is expressible in \langsum, no?}
+% \thomas{Yes, but I made it explicitly (like the function application) because it was easier than simulate the scalar product. As it says in section \ref{app:simp}, both of these operators can simulate scalar prod, so scalar product is doable in ARA since ones and $f_{\odot}$ are.}
+%   \item If $e:=e_{\ones}(e')$ where $\Sch(e')=(\alpha, \beta)$ and $e_{\ones}(\cdot)$ is the $\mathsf{ones}$ operator
+%   then $\arae(e):=\rho_{\alpha\rightarrow\row_\alpha}(\mathsf{Eq}_{\alpha})$
+%
+%   \item If $e=e_1+e_2$ with $\Sch (e_1)=\Sch (e_2)=(\alpha, \beta)$ then $\arae (e):=\arae (e_1)\cup \arae (e_2)$.
+%
+% \floris{Are we assuming scalar function application? The use of $f=\odot$ should be made clear. That is, we consider $\langsum$ but without function applications in the statement. Now apparently we need a pointwise function. This relates to an earlier comment and to the result that Damogoj wrote in the main part at some points. We need to bring this back into A2 and so that we can cite it here.}
+% \thomas{Since we can do the ones operator in ARA, instead of simulating scalar product in ARA we simulate $f_{\odot}$. With this and the ones translation, we can simulate scalar prod.}
+%   \item If $e=f(e_1,\ldots, e_k)$ with $\Sch(e_i)=\Sch(e_j)$ for all $i,j\in[1,k]$, with $f=\kprod$, then $\arae(e):=\arae(e_1)\Join \ldots \Join\arae(e_k)$.
+%
+%   \item If $e=e_1\cdot e_2$ with $\Sch (e_1)=(\alpha, \gamma)$ and $\Sch (e_2)=(\gamma, \beta)$, we have two cases. If $\gamma = 1$ then $\arae (e):=\arae (e_1)\Join \arae (e_2)$.
+% If $\gamma\neq 1$ then
 % $$
-% \Upsilon(\varphi):=\sum_{\{V_A\mid A\in \mathcal{R}(\psi)\setminus Y\}}\Upsilon(\psi).
-%  $$
-% \item If $\varphi=\sigma_{Y}(\psi)$ with $Y\subseteq\mathcal{R}(\psi)$ then
+% \arae (e) := \pi_{\lbrace \row_{\alpha},\row_{\beta} \rbrace}\left( \sigma_{\lbrace \col_\gamma, \row_\gamma \rbrace} \left( \arae (e_1)\Join \arae (e_2) \right) \right)
 % $$
-%  \Upsilon(\varphi):=\Upsilon(\psi)\cdot\prod_{A,B\in Y} V_{A}^t\cdot V_{B}.
-% $$
-% \item If $\varphi=\rho_{X\mapsto Y}(\psi)$ then
-% $$\Upsilon(\varphi):=\Upsilon(\psi)[V_A\gets V_B\mid A\in X, B\in Y, A\mapsto B].$$
-% \item If $\varphi=\psi_1\bowtie \psi_2$ then
-% $\Upsilon(\varphi):=\Upsilon(\psi_1)\cdot \Upsilon(\psi_2)$.
-% \item If $\varphi=\pi_{Y}^\star(\psi)$ for $Y\subseteq \mathcal{R}(\psi)$.
-% \item If $\varphi=\text{Apply}[f](\psi_1,\ldots,\psi_k)$  then
-% $\Upsilon(\varphi):=\text{Apply}[f](\Upsilon(\psi_1),\ldots,\Upsilon(Y_k))$.
+%
+% %   \item If $e=\ssum V. e_1$ where $\Sch(e_1)=(\alpha,\beta)$ and $\Sch(V)=(\gamma,1)$. Then we can just do $\pi_{\text{Rel}(\Sch)(R_V)}\left( \arae (e_1) \right)$.
+% % Note that when the $\row_\gamma$ attribute in $\arae (e_1)$ is instantiated with with tuple $t$ such that $t(\row_\alpha)=i$, $t(\col_\beta)=j$ and $t(\row_\gamma)=k$,
+% % then the expression evaluates to $e_1(\I [V\leftarrow e_{k}^{\dom(\gamma)}])_{ij}$.
+% % Hence, by projecting in attributes $\lbrace \row_\alpha, \col_\beta\rbrace$ we range over all $k$ and sum up all $K$-values for each entry.
+%   \item If $e=\ssum V. e_1$ where $\Sch(e_1)=(\alpha,\beta)$ and $\Sch(V)=(\gamma,1)$. Then we do
+%   % $$
+%   % \pi_{\lbrace \row_{\alpha}, \col_{\beta} \rbrace}\left( \arae (e_1)\left[ R_{V}^{\text{Rel}(\I)}\leftarrow R_{\mathsf{Id}}^{\gamma} \right] \right).
+%   % $$
+%   $$
+%   \pi_{\lbrace \row_{\alpha}, \col_{\beta} \rbrace}\left( \arae (e_1)\left[ R_{V}\leftarrow R_{\mathsf{Id}}^{\gamma} \right] \right).
+%   $$
+%
+%
+%   Here $R_{\mathsf{Id}}^{\gamma}$ is an expression that, when evaluated, results identity of size $\dom(\gamma)\times\dom(\gamma)$ and which
+%   is defined as
+%   % $$
+%  %  R_{\mathsf{Id}}^{\gamma}:= \sigma_{\lbrace \row_{\gamma},\col_{\gamma} \rbrace }\left( \rho_{\gamma\rightarrow\row_\gamma}\left( R_\gamma^{\text{Rel}(\I)} \right) \Join \rho_{\gamma\rightarrow\col_\gamma}\left( R_\gamma^{\text{Rel}(\I)} \right)\right)
+%  %  $$
+%   $$
+%   R_{\mathsf{Id}}^{\gamma}:= \sigma_{\lbrace \row_{\gamma},\col_{\gamma} \rbrace }\left( \rho_{\gamma\rightarrow\row_\gamma}\left( R_\gamma \right) \Join \rho_{\gamma\rightarrow\col_\gamma}\left( R_\gamma\right)\right).
+%   $$
+%   Furthermore, $\arae (e_1)\left[ R_{V}\leftarrow R_{\mathsf{Id}}^{\gamma} \right]$
+%   means that every occurrence of $R_V$ in $e_1$ is replaced by  $R_{\mathsf{Id}}^{\gamma}$.
+%
+%   Note that when $\arae (e_1)\left[ R_{V}\leftarrow R_{\mathsf{Id}}^{\gamma} \right]$ is instantiated with with tuple $t$ such that $t(\row_\alpha)=i$, $t(\col_\beta)=j$,
+%   $t(\row_\gamma)=k$ and $t(\col_\gamma)=k$ (other values of are zero),
+%   then the expression evaluates to $e_1(\I [V\leftarrow e_{k}^{\dom(\gamma)}])_{ij}$.
+%   Hence, by projecting in attributes $\lbrace \row_\alpha, \col_\beta\rbrace$ we range over all $k$ and sum up all $K$-values for each entry.
 % \end{itemize}
+%
+% Here, we only allow scalar $\kprod$ function application,
+% which is equivalent to scalar product, as mentioned in section \ref{app:simp}.
+% % Note that we can access the zero values of matrices because the indexes are in the active domain of $\text{Rel}(\I)$ due to the existence of $R_\alpha^{\text{Rel}(\I)}(t)$, for each $\alpha \in \DD$.
 % \end{proof}
-% As a consequence, when $\varphi$ is an \ARA expression such that $\mathcal{R}(\varphi)=\{A_1,A_2\}$ with $A_1<A_2$ we have that 
-% $$
-% \varphi(\I)(t)=
-% \sum_{V_{A_1},V_{A_2}}\Upsilon(\varphi)\cdot V_{A_1}\cdot V_{A_2}^t.
-% $$
-% When $\mathcal{R}(\varphi)=\{A\}$ we have
-% $$
-% \varphi(\I)(t)=
-% \sum_{V_{A}}\Upsilon(\varphi)\cdot V_{A_1}.
-% $$
-% and
-% when $\mathcal{R}(\varphi)=\{\}$ we have
-% $$
-% \varphi(\I)(t)=\Upsilon(\varphi).
-% $$
- 
-
-
+%
+% % Consider a matrix instance $\I = (\dom,\conc)$ over a schema $\Sch$.
+% % Let $V\in\Mnam$ with $\size(V)=(\alpha,\beta)$ and let $\conc(V)$ be its corresponding matrix of dimension $\dom(\alpha)\times \dom(\beta)$.
+% % Given an instance $\I$ over $\Sch$, the domain asssignment $\mathbb{D}_{\I}$ is defined as
+% % $\mathbb{D}_{\I}(\row_\alpha)=[1,\dom(\alpha)]$ and
+% % $\mathbb{D}_{\I}(\col_\alpha)=[1,\dom(\alpha)]$.
+% % We further  define the database instance $\text{Rel}_\Sch(\I)$  to consist of relations for each $V_R\in N$ defined as follows:
+% % $\mathcal{T}_{\mathbb{D}_{\I}}(\text{Rel}(\Sch)(V_R)) \to K$ such that
+% % $(\text{Rel}_{_\Sch}(I))(t):=\conc(V)_{ij}$ where (1) $t(\row_\alpha)=i$ if $\alpha\neq 1$ and equal to $1$ if $\alpha = 1$; and (2) $t(\col_\beta)=j$ if $\beta\neq 1$ and equal to $1$ if $\beta= 1$.
+%
+% % We next translate \lang$(\sum,\prod)$ expressions $e$ into \ARA expressions $\arae(e)$ by induction on the structure of $e$. The translation closely follows the translation given in~\cite{brijder2019matrices}, except that we  additionally need to consider summation, pointwise functions and the $\star$-projection.
+%
+% % \begin{itemize}
+% % 	\item If $e=V$ then $\arae(e):=V_R$.
+% % 	\item if $e=e_1^t$ where $\Sch(e_1)=(\alpha,\beta)$ then \[
+% % \arae(e) :=
+% % \begin{cases}
+% % \rho_{\mathrm{col}_\alpha \to \mathrm{row}_\alpha,\mathrm{row}_\beta \to \mathrm{col}_\beta}\bigl(\arae(e_1)\bigr) & \text{if } \alpha \neq 1 \neq \beta; \cr
+% % \rho_{\mathrm{col}_\alpha \to \mathrm{row}_\alpha}\bigl(\arae(e_1)\bigr) & \text{if } \alpha \neq 1 = \beta; \cr
+% % \rho_{\mathrm{row}_\beta \to \mathrm{col}_\beta}\bigl(\arae(e_1)\bigr) & \text{if } \alpha = 1 \neq \beta; \cr
+% % \arae(e_1) & \text{if } \alpha = 1 = \beta,
+% % \end{cases}
+% % \]
+%
+% % \item
+% % 	If $e = e_1 \cdot e_2$ where $\Sch(e_1) = (\alpha,\gamma)$ and $\Sch(e_2) =(\gamma,\beta)$, then we consider two cases. If $\gamma = 1$, then $\arae(e) := \arae(e_1) \Join \arae(e_2)$. If $\gamma \neq 1$, then
+% % 	$$
+% % 	\arae(e) := \hat{\pi}_C\Bigr(\rho_{\mathrm{col}_\gamma\to C}\bigl(\arae(e_1)\bigr)\Join\rho_{\mathrm{row}_\gamma\to C}\bigl(\arae(e_2)\bigr)\Bigr).$$
+% % 	% , where $\varphi_1(\mathrm{col}_\gamma) = \varphi_2(\mathrm{row}_\gamma) = C \notin \{\mathrm{row}_\alpha, \mathrm{col}_\beta\}$ and $\varphi_1$ and $\varphi_2$ are the identity otherwise.
+% % 	% If $e=e_1(v_1,\ldots,v_k)\cdot e_2(u_1,\ldots,u_s)$ where $e_1$ is $n\times\gamma$, $e_2$ is $\gamma\times m$. Let $\rho:\row_\gamma\rightarrow C,\col_\gamma\rightarrow C.$ We have two cases:
+% % 	% 	\begin{itemize}
+% % 	% 		\item If $\gamma\neq 1$ then $E=\widehat{\pi}_C\left( \rho\left(E_1\right)\bowtie\rho\left( E_2\right)\right).$
+% % 	% 		\item If $\gamma = 1$ then $E=E_1\bowtie E_2$.
+% % 	% 	\end{itemize}
+% % 	\item If $e=f(e_1,\ldots,e_k)$ with $\Sch(e_i)=(1,1)$ for all $i\in[1,k]$, then
+% % 	$\arae(e):=\text{Apply}[f]\bigl(\arae(e_1),\ldots,\arae(e_k)\bigr)$.
+% % 	% we have that $E=E_1\cup\cdots\cup E_s$ if $f$ is sum and $E=E_1\bowtie\cdots\bowtie E_s$ if $f$ is multiplication.
+% % 	\item If $e=\ssum V.e_1$ where $\Sch(e_1)=(\alpha,\beta)$ and $\Sch(V)=(\gamma,1)$. Then,
+% % 	in $\arae(e_1)$ we replace $V_R$ by $\arae_{Id}(V_R)$ which computes a binary
+% % 	relation encoding the $\gamma\times\gamma$ idenity matrix. Intuitively, by selecting different
+% % 	columns of the identity matrix we can extract all canonical $\gamma\times 1$ basis vectors.
+% % 	More precisely, $\arae_{Id}(V_R)$ is  defined by
+% % 	$$
+% % 	\sigma_{\{\mathrm{row}_\gamma,C_V\}}\Bigr(\mathbf{1}(V_R) \Join \mathbf{1}\bigl(\rho_{\mathrm{row}_\gamma \to C_V}(V_R)\bigr)\Bigr)$$
+% % 	if $\gamma \neq 1$ and
+% %    $\mathbf{1}(V_R)$ if $\gamma = 1$.
+% %    Then,
+% % 	$$
+% % 	\arae(e):=\hat{\pi}_{C_V}\bigl(\arae(e_1)[V_R\gets \arae_{Id}(V_R)])\bigr).
+% % 	$$
+%
+% % 	Note that when the $C_{V}$ attribute in $\arae(e_1[V_R\gets \arae_{Id}(V_R)])$
+% % 	is instantiated with a value $j$ in $[1,n_\gamma]$, then this expression evaluates $e_1(\I[V\gets e_j^\gamma])$
+% % 	Hence, by projecting over $C_V$ we range over all $j\in[1,n_\gamma]$ and sum up all $K$-values for each entry.
+% % \end{itemize}
+%
+% % \begin{proposition}
+% % 	For each \lang$(\sum,\prod)$ expression $e$ over schema $\Sch$ such that $\Sch(e)=(\alpha,\beta)$ with $\alpha\neq 1\neq\beta$, there exists an \ARA expression $\arae(e)$ over schema $\text{Rel}(\Sch)$ such that $\text{Rel}(\Sch)(\arae(e))=\{\mathrm{row}_\alpha,\mathrm{col}_\beta\}$ and
+% % 	such that for any instance $\I$ over $\Sch$,
+% % 	$$
+% % 	e(\I)_{i,j}=\arae(e)(\text{Rel}_{\Sch}(\I))(t)
+% % 	$$
+% % 	for tuple $t(\mathrm{row}_\alpha)=i$ and $t(\mathrm{col}_\beta)=j$ in $\text{Rel}_{\Sch}(\I)$. Similarly for when $e$ has schema $\Sch(e)=(\alpha,1)$, $\Sch(e)=(1,\beta)$ or $\Sch(e)=(1,1)$, then $\arae(e)$ has schema $\text{Rel}(\Sch)(\arae(e))=\{\mathrm{row}_\alpha\}$,
+% % $\text{Rel}(\Sch)(\arae(e))=\{\mathrm{col}_\alpha\}$, or
+% % $\text{Rel}(\Sch)(\arae(e))=\{\}$, respectively.
+% % \end{proposition}
+%
+% % For the converse translation, i.e., from \ARA to \lang++, we need to impose some restrictions. More precisely, we only consider \ARA expression $\varphi$
+% % that take as input relations of arity at most two and also have a schema of arity at most two. Note that intermediate expressions can create schemas of arbitraty size. We also make the assumption that there is an order, denoted by $<$, on the attributes in $\mathbf{att}$. In particular, we assume $A_1<A_2<\cdots$ for attributes $A_i\in\mathbf{att}$.
+%
+% % This is to identify which attributes correspond to rows and columns when moving the matrix setting.
+%
+%
+% % Consider a database schema $\mathcal{R}$ on a finite set $N$ of relation names
+% %  assigning a relation schema $\mathcal{R}(R)\subseteq\mathbf{att}$ to each $R \in N$. We assume that $\mathcal{R}(R)$ has size at most two. With each relation name $R\in N$ we associate a matrix name $M_R$. Let $\text{Mat}(\mathcal{R})$ denote the set
+% %  $V_R$ of matrix names for $R\in\mathcal{R}$. Consider an injective function $s:\mathbf{att}\to \DD$ associating with each attribute a unique size symbol. Let $V_R\in \text{Mat}(\mathcal{R})$ and
+% % define
+% %  $$
+% % \size(V_R)=\begin{cases}
+% % (s(A_1),s(A_2)) & \text{if $\mathcal{R}(R)=\{A_1,A_2\}$, $A_1<A_2$}\\
+% % (s(A),1) & \text{if $\mathcal{R}(R)=\{A\}$}\\
+% % (1,1) & \text{if $\mathcal{R}(R)=\{\}$}.
+% % \end{cases}
+% %  $$
+% % Let $\mathbb{D}$ be a domain assignment. We define
+% % $\dom(\alpha)=|\mathbb{D}(A)|$ where $s(A)=\alpha$.
+% % We only consider consecutive domain assignments, i.e.,
+% % such that attribute values take values in $[1,||\mathbb{D}(A)|]$.
+% % Consider
+% % a relation $r:
+% % \mathcal{T}_{\mathbb{D}}(X) \to K$ of $R$ with $X\subseteq\{A_1,A_2\}$  as determined by
+% % $\mathcal{R}(R)$. We associate a matrix instance $\I = (\dom,\conc)$ as follows.
+% % We define $\dom(\alpha)=|\mathbb{D}(A_1)|$ and
+% % $\dom(\beta)=|\mathbb{D}(A_2)|$ where $s(A_1)=\alpha$ and $s(A_2)=\beta$. Furthermore,
+% % $\conc(V_R)=\text{Mat}(r)$ such that
+% % $(\text{Mat}(r))_{i,j} := r(t)$, where $t$ is (1) the tuple with $t(A_1) = i$ and $t(A_2) = j$ if $|X| = 2$; (2) the tuple with $t(A_1) = i$ and $j = 1$ if $X = {A_1}$,
+% % (3) the tuple with $t(A_2) = j$ and $i = 1$ if $X = {A_2}$,
+% % (3) the unique tuple of $r$ if $X=\emptyset$. Clearly, $\text{Mat}(r)$ is a matrix of dimension as
+% % specified by $\mathbb{D}$.
+%
+%
+% % %
+% % % In the following, when $\varphi$ is
+% % % an \ARA expression of schema $\mathcal{R}(\varphi)=\{A_1,\ldots,A_k\}$ with $A_1<A_2<A_3<\cdots < A_k$
+% % %
+% % We next translate \ARA expressions in to \lang$(\sum,\prod)$ expressions over an extended schema. More specifically, we extend
+% % $\Mnam$ with matrix variables $V_A$ for attributes $A$ appearing the \ARA expression. We first simulate \ARA expression entry-wise.
+%
+% % \begin{lemma}
+% % For every \ARA expression $\varphi$ over schema $\mathcal{R}$ with there is \lang$(\sum,\prod)$ expression $\Upsilon(\varphi)$ such that for every database instances $\I$ over $\mathcal{R}$ using consecutive domain assignment,
+% % $$
+% % \varphi(\I)(i_1,\ldots,i_p)=\Upsilon(\varphi)(\text{Mat}(\I)\cup \{e_{i_1}^{n_1},\ldots,e_{i_p}^{n_p})
+% % $$
+% % \end{lemma}
+% % \begin{proof}
+% % \begin{itemize}
+% % \item If $\varphi=R$, then $\Upsilon(e):=V_{A_1}^t\cdot V_R\cdot V_{A_2}$ if $\mathcal{R}(R)=\{A_1,A_2\}$ with $A_1<A_2$;
+% % $\Upsilon(e):=V_A^t\cdot V_R$ if $\mathcal{R}(R)=\{A\}$; and
+% % $\Upsilon(e):=V_R$ if $\mathcal{R}(R)=\{\}$. We define $\text{Ext}()$
+% % \item If $\varphi=\mathbf{1}(\psi)$  then $
+% % \Upsilon(\varphi):=\text{Apply}[x\mapsto 1](\Upsilon(\psi))$.
+% % \item If $\varphi=\psi_1\cup \psi_2$ then
+% % $\Upsilon(\varphi):=\text{Apply}[(x,y)\mapsto x+y](\Upsilon(\psi_1),\Upsilon(\psi_2))$.
+% % \item If $\varphi=\pi_{Y}(\psi)$ for $Y\subseteq \mathcal{R}(\psi)$ then
+% % $$
+% % \Upsilon(\varphi):=\sum_{\{V_A\mid A\in \mathcal{R}(\psi)\setminus Y\}}\Upsilon(\psi).
+% %  $$
+% % \item If $\varphi=\sigma_{Y}(\psi)$ with $Y\subseteq\mathcal{R}(\psi)$ then
+% % $$
+% %  \Upsilon(\varphi):=\Upsilon(\psi)\cdot\prod_{A,B\in Y} V_{A}^t\cdot V_{B}.
+% % $$
+% % \item If $\varphi=\rho_{X\mapsto Y}(\psi)$ then
+% % $$\Upsilon(\varphi):=\Upsilon(\psi)[V_A\gets V_B\mid A\in X, B\in Y, A\mapsto B].$$
+% % \item If $\varphi=\psi_1\bowtie \psi_2$ then
+% % $\Upsilon(\varphi):=\Upsilon(\psi_1)\cdot \Upsilon(\psi_2)$.
+% % \item If $\varphi=\pi_{Y}^\star(\psi)$ for $Y\subseteq \mathcal{R}(\psi)$.
+% % \item If $\varphi=\text{Apply}[f](\psi_1,\ldots,\psi_k)$  then
+% % $\Upsilon(\varphi):=\text{Apply}[f](\Upsilon(\psi_1),\ldots,\Upsilon(Y_k))$.
+% % \end{itemize}
+% % \end{proof}
+% % As a consequence, when $\varphi$ is an \ARA expression such that $\mathcal{R}(\varphi)=\{A_1,A_2\}$ with $A_1<A_2$ we have that
+% % $$
+% % \varphi(\I)(t)=
+% % \sum_{V_{A_1},V_{A_2}}\Upsilon(\varphi)\cdot V_{A_1}\cdot V_{A_2}^t.
+% % $$
+% % When $\mathcal{R}(\varphi)=\{A\}$ we have
+% % $$
+% % \varphi(\I)(t)=
+% % \sum_{V_{A}}\Upsilon(\varphi)\cdot V_{A_1}.
+% % $$
+% % and
+% % when $\mathcal{R}(\varphi)=\{\}$ we have
+% % $$
+% % \varphi(\I)(t)=\Upsilon(\varphi).
+% % $$
+%
+%
+%
