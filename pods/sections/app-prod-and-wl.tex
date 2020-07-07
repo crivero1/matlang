@@ -1,3 +1,6 @@
+% !TeX spellcheck = en_US
+%!TEX root = ../main.tex
+
 \newtheorem*{WL}{Proposition~\ref{prop:wl}}
 
 We prove proposition \ref{prop:wl}:
@@ -19,45 +22,74 @@ We prove proposition \ref{prop:wl}:
 \begin{proof}
 Both directions are proved by induction on the structure of expression.
 
-First, let $\Sch=(\Mnam,\size)$ be a schema of square matrices, that is, there exists an $\alpha$ such 
+\smallskip
+
+\noindent \textbf{(\langprod to WL)} First, let $\Sch=(\Mnam,\size)$ be a schema of square matrices, that is, there exists an $\alpha$ such 
 that $\size(V) \in \{1, \alpha\} \times \{1,\alpha\}$ for every $V \in \Mnam$.
 Define the relational vocabulary $\text{WL}(\Sch) = \{R_V \mid V \in \Mnam\}$ such that $\arity(R_V) = 2$ 
 if $\size(V) = (\alpha, \alpha)$, $\arity(R_V) = 1$ if $\size(V) \in \{(\alpha,1), (1,\alpha)\}$, and 
 $\arity(R_V) = 0$ otherwise.
-Then given a matrix instance $\I = (\dom,\conc)$ over $\Sch$ define the structure 
-$\text{WL}(\I) = (\{1, \ldots, n\}, \{R_V^{\I}\} )$ such that $\dom(\alpha) = n$ and 
+Then given a matrix instance $\I = (\dom,\conc)$ over $\Sch$ with  $\dom(\alpha) = n$ define the structure 
+$\text{WL}(\I) = (\{1, \ldots, n\}, \{R_V^{\I}\} )$ such that 
 $R_V^{\I}(i, j) = \conc(V)_{i,j}$ if $\size(V) = (\alpha, \alpha)$, $R_V^{\I}(i) = \conc(V)_{i}$ 
 if $\size(V) \in \{(\alpha,1), (1,\alpha)\}$, and $R_V^{\I} = \conc(V)$ if $\size(V) = (1,1)$.
 
-Let $e$ be a \langprod expression.
-\begin{itemize}
-  \item If $e:=V$ then $\Phi(e):=R_V$.
-  \item if $e:= e_1^T$ when $\Sch(e)\in \{(\alpha,1), (1,\alpha)\}$ then $\Phi(e):=\Phi(e_1)$. If $\Sch(e)=\alpha\times\alpha$ then
-  $$
-  \Phi(e)(i,j):=\Phi(e_1)(\sigma\left[ i\mapsto \sigma(j), j\mapsto \sigma(i) \right]).
-  $$
-  \item If $e:=e_{\ones}(e')$ where $\Sch(e')=(\alpha, \beta)$ and $e_{\ones}(\cdot)$ is the $\mathsf{ones}$ operator 
-  then
-  \[
-\Phi(e)(i) := \begin{cases}
-1& \text{ if } i\leq\dom(\alpha)\ \\
-0 & \text{ in any other case.} 
-\end{cases}
-\]
-  \item If $e=e_1+e_2$ then $\Phi(e)=\Phi(e_1)\ksum \Phi(e_2)$.
-  \item If $e=e_1\circ e_2$ then $\Phi(e)=\Phi(e_1)\kprod \Phi(e_2)$.
-  \item If $e=e_1\cdot e_2$ when $\Sch(e_1)=(\alpha, \alpha)= \Sch(e_2)$ then 
-  $$
-  \Phi(e)(i,j):=\ssum k. \Phi(e_1)(i,k)\kprod\Phi(e_2)(k,j). 
-  $$
-  If $\Sch(e_1)=(\alpha, 1)$ and $\Sch(e_1)=(1, \alpha)$ then $\Phi(e)(i,j):=\Phi(e_1)(i)\kprod\Phi(e_2)(j)$.
-  \item If $e=\ssum v. e_1$ then $\Phi(e):=\ssum x.\ssum y.\Phi(e_1)\left[ R_v^\cI\gets x=y \right]$.
-  \item If $e=\qhadprod v. e_1$ then $\Phi(e):=\sprod x.\ssum y.\Phi(e_1)\left[ R_v^\cI\gets x=y \right]$.
-\end{itemize}
-Note that in the last two translations we sum a lot of zeroes. Here, we do not need to translate scalar multiplication
-because it can be simulated using the $\mathsf{ones}$ operator and $\circ$ (which is equivalent to $f_{\kprod}$, see section \ref{app:simp}).
+Similar than in the proof of Proposition~\ref{prop:sum_to_ara}, for each expression $e(v_1, \ldots, v_k)$ of type $(\alpha, \alpha)$ we must encode in WL the $\alpha$ and the vector variables $v_1, \ldots, v_k$. For this, we use variables $x_{\alpha}^\row$, $x_{\alpha}^\col$, and $x_{v_i}$ for each variable $v_1, \ldots, v_k$. Then we use the following inductive hypothesis (similar to Proposition~\ref{prop:sum_to_ara}):
 
-We now encode weighted structures into matrices and vectors. Let $\Gamma$ be a relational vocabulary 
+\newcommand{\varphie}{\varphi_e}
+\newcommand{\xr}{x_{\alpha}^\row}
+\newcommand{\xc}{x_{\alpha}^\col}
+
+\begin{itemize}
+	\item If $e(v_1,\ldots,v_k)$ is of type $(\alpha,\alpha)$ then there exists a WL formula $\varphie(x_{\alpha}^\row,x_{\alpha}^\col, x_{v_1}, \ldots, x_{v_k})$ such that
+	$$
+	\ssem{\varphi(e)}{\text{WL}(\I)}(\sigma) \ = \ \sem{e}{\I[v_1\gets b_{i_1},\ldots,v_k\gets b_{i_k}]}_{i,j}
+	$$
+	for assignment $\sigma$ with $\sigma(\xr)=i$, $\sigma(\xc)=j$ and $\sigma(x_{v_s})=i_s$ for $s=1,\ldots, k$.
+	
+	\item If $e(v_1,\ldots,v_k)$ is of type $(\alpha,1)$ then there exists a WL formula $\varphie(x_{\alpha}^\row, x_{v_1}, \ldots, x_{v_k})$ such that
+	$$
+	\ssem{\varphi(e)}{\text{WL}(\I)}(\sigma) \ = \ \sem{e}{\I[v_1\gets b_{i_1},\ldots,v_k\gets b_{i_k}]}_{i}
+	$$
+	for assignment $\sigma$ with $\sigma(\xr)=i$ and $\sigma(x_{v_s})=i_s$ for $s=1,\ldots, k$.
+	And similarly for when $e$ is type $(1,\alpha)$.
+	
+	\item If $e(v_1,\ldots,v_k)$ is of type $(1,1)$ then there exists a WL formula $\varphie( x_{v_1}, \ldots, x_{v_k})$ such that
+	$$
+	\ssem{\varphi(e)}{\text{WL}(\I)}(\sigma) \ = \ \sem{e}{\I[v_1\gets b_{i_1},\ldots,v_k\gets b_{i_k}]}
+	$$
+	for assignment $\sigma$ with $\sigma(x_{v_s})=i_s$ for $s=1,\ldots, k$.
+\end{itemize}
+If we prove the previous statement we are done, because the last bullet is what we want to show when $e$ has no free vector variables. 
+Then rest of the proof is to go by induction on the structure of \langprod expressions.
+For a WL-formula $\varphi$ and FO-variables $x,y$, we will write  $\varphi[x \mapsto y]$ the formula $\varphi$ when $x$ is replaced with $y$ all over the formula (syntactically).
+Let $e$ be a \langprod expression.
+\begin{itemize} \itemsep3mm
+  \item If $e:=V$ and $\Sch(e)= (\alpha, \alpha)$ then $\varphie:=R_V(\xr, \xc)$. Similarly, $\Sch(e)$ it is of type $(\alpha,1)$, $(1, \alpha)$, or $(1,1)$, then $\varphie:=R_V(\xr)$, $\varphie:=R_V(\xc)$, and $\varphie:=R_V$, respectively.
+  
+  \item If $e:=v$ and $\Sch(v)= (\alpha,1)$ then $\varphie := \xr = x_v$. Similar, if $\Sch(v)= (1,\alpha)$ then $\varphie := \xc = x_v$.
+  
+  \item if $e:= e_1^T$ and $\Sch(e)=(\alpha,\alpha)$ then
+  $$
+  \varphie:= \varphi_{e_1}[\xr \mapsto \xc, \xc \mapsto \xr].
+  $$
+  Similarly, if $\Sch(e)$ is equal to $(\alpha,1)$ or $(1,\alpha)$ then $\varphie:=\varphi_{e_1}[\xr \mapsto \xc]$ and $\varphie:=\varphi_{e_1}[\xc \mapsto \xr]$, respectively.   
+
+
+	\item If $e=e_1+e_2$ with $\Sch (e_1)=\Sch (e_2)$, then $\varphie:= \varphi_{e_1} \ksum \varphi_{e_2}$.
+	
+	\item If $e=f_\odot(e_1,\ldots, e_k)$ with $\Sch(e_i)=\Sch(e_j)$ for all $i,j\in[1,k]$, then $\varphie:= \varphi_{e_1} \kprod \varphi_{e_2} \cdots \kprod \varphi_{e_k}$.
+	
+	\item If $e=e_1\cdot e_2$ with $\Sch (e_1)=\Sch (e_2)=(\alpha, \alpha)$,  then $\varphie:= \Sigma y. \  \varphi_{e_1}[\xc \mapsto y] \kprod \varphi_{e_2}[\xr \mapsto y]$ where $y$ is a fresh variable not mentioned in $\varphi_{e_1}$ or $\varphi_{e_2}$. Instead, if $\Sch (e_1)= (\alpha', 1)$ and $\Sch (e_2)=(1, \alpha'')$ with $\alpha', \alpha'' \in \{\alpha, 1\}$, then $\varphie := \varphi_{e_1} \kprod \varphi_{e_2}$.
+	
+	\item If $e=\ssum v. e_1(v)$, then we define $\varphie := \Sigma x_{v}. \  \varphi_{e_1}(x_v)$.
+
+  \item If $e=\qhadprod v. e_1(v)$, then $\varphie := \sprod x_{v}.\  \varphi_{e_1}(x_v)$.
+\end{itemize}
+For the construction, it is straightforward to check that the inductive hypothesis holds for all cases. 
+
+\medskip
+\noindent \textbf{(WL to \langprod)} We now encode weighted structures into matrices and vectors. Let $\Gamma$ be a relational vocabulary 
 where $\arity(R) \leq 2$. 
 Define $\text{Mat}(\Gamma) = (\Mnam_\Gamma,\size_\Gamma)$ such 
 that $\Mnam_\Gamma = \{ V_{R} \mid R \in \Gamma\}$ and $\size_\Gamma(V_{R})$ is equal to 
