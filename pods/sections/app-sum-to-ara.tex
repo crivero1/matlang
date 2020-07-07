@@ -130,7 +130,15 @@ and this also holds when $t(\mathrm{row}_\alpha)\neq t[\gamma_p]=j$.
  % \item If $e:=e_{\ones}(e')$ where $\Sch(e')=(\alpha, \beta)$ and $e_{\ones}(\cdot)$ is the $\mathsf{ones}$ operator
  %  then $\arae(e):=\rho_{\alpha\rightarrow\row_\alpha}(\mathsf{Eq}_{\alpha})$
 \floris{There is an issue here since $e_1$ and $e_2$ can have different free iterator variables. I think we can ensure that both have the same by introducing them somehow, or alternative, since all operators are linear, by pushing $+$ all the way down? Not sure.}
-  \item If $e=e_1(v_1,\ldots,v_k)+e_2(v_1,\ldots,v_k)$ with $\Sch (e_1)=\Sch (e_2)=(\alpha, \beta)$ then $\arae (e):=\arae (e_1)\cup \arae (e_2)$.
+  % \item If $e=e_1(v_1,\ldots,v_k)+e_2(v_1,\ldots,v_k)$ with $\Sch (e_1)=\Sch (e_2)=(\alpha, \beta)$ then $\arae (e):=\arae (e_1)\cup \arae (e_2)$.
+	\item If $e=e_1(v_{i_{1}},\ldots,v_{i_p})+e_2(v_{j_1},\ldots,v_{j_q})$ with $\Sch (e_1)=\Sch (e_2)=(\alpha, \beta)$ 
+	where $\text{Rel}(\Sch)(\arae(e_1))=\lbrace\row_\alpha,\col_\beta, \gamma_{i_{1}}, \ldots, \gamma_{i_{p}} \rbrace$
+	and $\text{Rel}(\Sch)(\arae(e_2))=\lbrace\row_\alpha,\col_\beta, \gamma_{j_{1}}, \ldots, \gamma_{j_{q}} \rbrace$
+	then, if $t[X]$ is tuple $t$ restricted to set $X$, we define
+	$$
+	\ssem{\arae(e)}{\text{Rel}(\I)}(t)=\ssem{\arae(e_1)}{\text{Rel}(\I)}(t[\text{Rel}(\Sch)(\arae(e_1))]) + \ssem{\arae(e_2)}{\text{Rel}(\I)}(t[\text{Rel}(\Sch)(\arae(e_2))]).
+	$$
+	Here $\text{Rel}(\Sch)(\arae(e))=\lbrace\row_\alpha,\col_\beta, \gamma_{i_{1}}, \ldots, \gamma_{i_{p}}, \gamma_{j_{1}}, \ldots, \gamma_{j_{q}} \rbrace$ (if one $\gamma_{k}$ is repited, we leave just one).
 
   \item If $e=f_\odot(e_1,\ldots, e_k)$ with $\Sch(e_i)=\Sch(e_j)$ for all $i,j\in[1,k]$, then $\arae(e):=\arae(e_1)\Join \cdots \Join\arae(e_k)$.
 
