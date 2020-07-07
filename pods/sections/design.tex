@@ -1,10 +1,17 @@
-\noindent\textbf{Loop Initialization.} As the reader may have observed, in the semantics of \texttt{for} loops we 
+%!TEX root = ../main.tex
+% !TeX spellcheck = en_US
+\noindent\textbf{Loop Initialization.} As the reader may have observed, in the semantics of for-loops we 
 always initialise $A_0$ to the zero matrix~$\mathbf{0}$ (of appropriate dimensions). It is often convenient
 to start the iteration given some concrete matrix  originating from the result of evaluation a \langfor\ expression $e_0$. To make this explicit, we write $\initf{e_0}{v}{X}{e}$ and its semantics is defined as above
 with the difference that $A_0:=\sem{e_0}{\I}$. We observe, however, that $\initf{e_0}{v}{X}{e}$ can already
 be expressed in \langfor. In other words, we do not loose generality by assuming an initialisation of $A_0$ by $\mathbf{0}$.
 The key insight is that in \langfor\ we can check during evaluation whether or not
-the current canonical vector $b_i^n$ is equal to the $b_1^n$. This is not entirely trivial to see and is due to fact that \texttt{for} loops iterate over the canonical vectors in a fixed order. We discuss this more in the next subsection, when we talk about the order. In particular, we can define a \langfor expression $\mmin$, which when evaluated on an instance, returns $1$ if its input vector is $b_1^n$, and returns $0$ otherwise. Given $\mmin$, consider now the
+the current canonical vector $b_i^n$ is equal to the $b_1^n$. This 
+%is not entirely trivial to see and 
+is due to the fact that for-loops iterate over the canonical vectors in a fixed order. We discuss this more in the next paragraph.
+%subsection
+%, when we talk about the order. 
+In particular, we can define a \langfor expression $\mmin$, which when evaluated on an instance, returns $1$ if its input vector is $b_1^n$, and returns $0$ otherwise. Given $\mmin$, consider now the
 \langfor\ expression
  $$\ffor{v}{X}{\mmin{v}\cdot e(v,X/e_0) + (1-\mmin{v})\cdot e(v,X)},$$
  where we explicitly list $v$ and $X$ as matrix variables on which $e$ potentially depends on, and where
@@ -66,7 +73,7 @@ The expression $e_{FW}$ simulates the Floyd-Warshall algorithm by updating the m
 \end{example}
 
 
-\noindent\textbf{Order.} With the introduction of \texttt{for} loops we not only extend \lang\ with bounded recursion, we also introduce order information. Indeed, the semantics of the \texttt{for} operator assumes that the canonical vectors $b_1,b_2,\ldots$
+\noindent\textbf{Order.} With the introduction of for-loops we not only extend \lang\ with bounded recursion, we also introduce order information. Indeed, the semantics of the \texttt{for} operator assumes that the canonical vectors $b_1,b_2,\ldots$
 are accessed in this order. It implies, among other things, that \langfor\ expressions are not permutation-invariant.
 We can, for example, return the bottom right-most entry in a matrix. Indeed, consider the expression $e_{\mathsf{max}} := \ffor{v}{X}{v}$ which, for it to be well-typed, requires both $v$ and $X$ to be of type $(\alpha,1)$. Then, $\sem{e_{\mathsf{max}}}{\I}=b_n^n$, for $n=\dom(\alpha)$, simply because initially, $X=\mathbf{0}$, but $X$ will be overwritten by $b_1^n,b_2^n,\ldots,b_n^n$, in this order. Hence, at the end of the evaluation $b_n^n$ is returned.
 To extract the bottom right-most entry from a matrix, we now simply use $e_{\mathsf{max}}^T\cdot V\cdot e_{\mathsf{max}}$.
@@ -82,7 +89,7 @@ S_{\leq} = \begin{bmatrix}
 \end{bmatrix}.
 \] 
 We observe that $S_{\leq}$ has the property that $b_i^T\cdot S_{\leq} \cdot b_j=1$, for two canonical vectors $b_i$ and $b_j$ of the same dimension, if and only if $i\leq j$. Otherwise, $b_i^T\cdot S_{\leq} \cdot b_j=0$. 
-Interestingly, we can build matrix $S_{\leq}$ with the following \langfor expression:
+Interestingly, we can build the matrix $S_{\leq}$ with the following \langfor expression:
 $$
 e_{\leq}=\ffor{v}{X}{X + \left((X\cdot e_{\mathsf{max}}) + v \right)\cdot v^T + v\cdot e^T_{\mathsf{max}}},
 $$
@@ -100,7 +107,9 @@ It should be clear that if we can compute $S_{\leq}$ using $e_{\leq}$, then we c
 	\item $e_{\mathsf{min}}$ and $e_{\mathsf{max}}$ such that $\sem{e_{\mathsf{min}}}{\I}=b_1^n$ and 
 	$\sem{e_{\mathsf{max}}}{\I}=b_n^n$, respectively.
 \end{itemize}
-The definitions of these expressions is not entirely trivial and are detailed in the appendix.
+The definitions of these expressions 
+%is not entirely trivial and 
+are detailed in the appendix.
 
 Having order information available results in \langfor to be quite expressive. We heavily rely on order information in the next sections to compute the inverse of matrices and more generally to simulate low complexity Turing machines and arithmetic circuits.
 

@@ -3,7 +3,8 @@
 
 
 
-To extend \lang\ with recursion, we take inspiration from classical linear algebra algorithms, such as those described in \cite{num}. Many of these algorithms are based on \textit{for loops} in which the termination condition for each loop is determined by the matrix dimension. We have seen how the transitive closure of a matrix can be computed using for loops in the Introduction. Here we add this ability to \lang, and show that the resulting language, called $\langfor,$ can compute properties outside of the scope of \lang. We see more advanced examples, such as Gaussian elimination and computing an inverse of a matrix, later in the paper. 
+To extend \lang\ with recursion, we take inspiration from classical linear algebra algorithms, such as those described in \cite{num}. Many of these algorithms are based on \textit{for-loops} in which the termination condition for each loop is determined by the matrix dimensions. We have seen how the transitive closure of a matrix can be computed using for-loops in the Introduction. Here we add this ability to \lang, and show that the resulting language, called $\langfor,$ can compute properties outside of the scope of \lang. We see more advanced examples, such as Gaussian elimination and matrix inversion, later in the paper. 
+%computing the inverse of a matrix, 
 
 \subsection{Syntax and semantics of \langfor} The syntax of \langfor is defined just as for \lang but with an extra rule in the grammar:
 \medskip
@@ -109,13 +110,15 @@ Finally, $\sem{e_{\ones}}{\I}:=A_n$ and this now clearly coincides with $\sem{\o
 %
 \begin{example}\label{ex:diag}
 % Indeed, a minor variation of the expression $e_{\mathsf{Id}}$ suffices:
-As another example, we show that the $\diag$ operator is redundant in \langfor.
+% As another example, we
+We next show that the $\diag$ operator is redundant in \langfor.
 Indeed, it suffices to consider the expression
 $$e_{\mathsf{diag}}:=
 \ffor{v}{X}{X + (v^T\cdot e) \times v\cdot v^T},$$ where $e$ is a \langfor\  expression of type $(\alpha,1)$. For this expression to be well-typed, $v$ has to be a vector variable of type $\alpha\times 1$ and $X$ a matrix variable of type $(\alpha,\alpha)$. Then, $\sem{e_{\mathsf{diag}}}{\I}$ is defined as follows.
 Initially, $A_0$ is the zero matrix of dimension $n\times n$, where $n=\dom(\alpha)$. Then, in each iteration
-$i\in[1..n]$, $A_{i}:=A_{i-1}+  ((b_i^n)^T\cdot\sem{e}{\I})\times (b_i^n\cdot (b_i^n)^T)$. In other words, $A_i$ is obtained by adding the matrix with value $(\sem{e}{\I})_i$ on position $(i,i)$ to $A_{i-1}$. Hence, $A_n=\sem{\diag(e)}{\I}$ and
-thus we get that $\sem{e_{\mathsf{diag}}}{\I}=\sem{\diag(e)}{\I}$.\qed%
+$i\in[1..n]$, $A_{i}:=A_{i-1}+  ((b_i^n)^T\cdot\sem{e}{\I})\times (b_i^n\cdot (b_i^n)^T)$. In other words, $A_i$ is obtained by adding the matrix with value $(\sem{e}{\I})_i$ on position $(i,i)$ to $A_{i-1}$. Hence, $\sem{e_{\mathsf{diag}}}{\I}:=A_n=\sem{\diag(e)}{\I}$.\qed
+%  and
+% thus we get that $\sem{e_{\mathsf{diag}}}{\I}=\sem{\diag(e)}{\I}$.\qed%
  \end{example}
 % That is, $A_i$ is obtained from $A_{i-1}$the $i$th entry of
 % $\sem{e}{\I})^T$ is multiplied
@@ -169,7 +172,7 @@ thus we get that $\sem{e_{\mathsf{diag}}}{\I}=\sem{\diag(e)}{\I}$.\qed%
 
 These examples illustrate that we can limit \langfor to consist of the following ``core'' operators: transposition, matrix multiplication and addition, scalar multiplication, pointwise function application, and for-loops. More specific, \langfor is defined by the following simplified syntax:
 $$
-e ::= V \ \mid \ e^T \ \mid \ e_1 \cdot e_2 \ \mid \ e_1 + e_2 \ \mid \ a\times e  \ \mid \  f(e_1,\ldots ,e_k) \ \mid \ \ffor{v}{X}{e}
+e ::= V \ \mid \ e^T \!\ \mid \ e_1 \cdot e_2 \ \mid \ e_1 + e_2 \ \mid \ e_1\times e_2  \ \mid \  f(e_1,\ldots ,e_k) \ \mid \ \ffor{v}{X}{e}
 $$
 Similarly as for \lang, we write $\langforf{\Fun}$ for some set $\Fun$ of functions when these are required for the task at hand.
 
@@ -190,7 +193,7 @@ Similarly as for \lang, we write $\langforf{\Fun}$ for some set $\Fun$ of functi
 
 As a final example, we show that we can compute whether a graph contains a 4-$\textsf{clique}$ using \langfor.
 \begin{example}\label{ex:fourcliques}
-To test for $4$-cliques it suffices to consider the following expression with for-loop nested four times:
+To test for $4$-cliques it suffices to consider the following expression with for-loops nested four times:
 \begin{tabbing}
 \texttt{for\,}\=$u,\,X_1.\ \ X_1 \ + $\\
 \> \texttt{for\,}\=$v,\,X_2.\ \ X_2 \ +$ \\
@@ -215,7 +218,8 @@ contains a four-clique.\qed
 %
 % To distinguish four-cliques, we will need to determine whether we are dealing with four different nodes. For this, we will utilize the function $$g(u,v,w,r)=f(u,v)\cdot f(u,w)\cdot f(u,r)\cdot f(v,w)\cdot f(v,r)\cdot f(w,r),$$
 
-As mentioned previously, given \lang can not express 4-cliques \cite{matlang-journal}, we easily obtain the following.
+% As mentioned previously, g
+Given that \lang can not check for 4-cliques \cite{matlang-journal}, we easily obtain the following.
 
 \begin{proposition}
 \label{cor-ml-fml}
