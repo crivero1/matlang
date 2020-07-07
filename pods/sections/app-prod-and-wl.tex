@@ -86,7 +86,7 @@ Let $e$ be a \langprod expression.
 
   \item If $e=\qhadprod v. e_1(v)$, then $\varphie := \sprod x_{v}.\  \varphi_{e_1}(x_v)$.
 \end{itemize}
-For the construction, it is straightforward to check that the inductive hypothesis holds for all cases. 
+For the construction, it is straightforward to check that the inductive hypothesis holds for all cases. To conclude this direction, we have to define $\Phi(e) := \varphie$ for every expression $e$ and we are done.
 
 \medskip
 \noindent \textbf{(WL to \langprod)} We now encode weighted structures into matrices and vectors. Let $\Gamma$ be a relational vocabulary 
@@ -100,16 +100,21 @@ Then we define the matrix instance $\text{Mat}(\cA) = (\dom,\conc)$ such that $\
 $\conc(V_{R})_{i,j} = R^{\cA}(a_i, a_j)$ if $\arity(R)=2$, $\conc(V_{R})_{i,1} = R^{\cA}(a_i)$ if $\arity(R)=1$, 
 and $\conc(V_{R})_{1,1} = R^{\cA}$ otherwise.
 
-Let $\varphi$ be a formula over $\Gamma$.
-\begin{itemize}
-  \item If $\varphi:=x=y$ then $\Psi(\varphi):= \ssum v.v\cdot v^T$.
-  \item If $\varphi:=R$ then $\Psi(\varphi):=V_R$.
-  \item If $\varphi = \varphi_1 \ksum \varphi_2$ then $\Psi(\varphi):=\Psi(\varphi_1) + \Psi(\varphi_2)$.
-  \item If $\varphi = \varphi_1 \kprod \varphi_2$ then $\Psi(\varphi):=\Psi(\varphi_1) \circ \Psi(\varphi_2)$.
-  \item If $\varphi = \ssum x. \varphi_1$ then $\Psi(\varphi):=\ssum v.\Psi(\varphi_1)$.
-  \item If $\varphi = \qhadprod x. \varphi_1$ then $\Psi(\varphi):=\qhadprod v.\Psi(\varphi_1)$.
-\end{itemize}
+\newcommand{\evarphi}{e_\varphi}
 
-The last two translations hold easily due to the fact that there are no free variables.
+Similar to the above direction, we have to encode the FO variables of a formula $\varphi$ with vectors variables in the equivalent \langprod expression $\evarphi$. For this, for each FO variable $x$ we define a vector variable $v_x$ of type $(\alpha, 1)$. Then for each formula $\varphi(x_1, \ldots, x_k)$ we define an expression $\evarphi(v_{x_1}, \ldots, v_{x_k})$ of type $(1,1)$ such that for every assignment $\sigma$ of $x_1, \ldots, x_k$ we have:
+$$
+\sem{\evarphi}{\text{Mat}(\cA)[v_{x_1} \gets b_{i_1},\ldots,v_{x_1}\gets b_{i_k}]} \ = \ \ssem{\varphi}{\cA}(\sigma) 
+$$
+such that $\sigma(x_{s}) = i_s$ for every $s \leq k$. Note that when the formula has no free variables, the proof of the proposition is shown. Finally, we proceed by induction over the formula $\varphi$ over $\Gamma$.
+\begin{itemize} \itemsep3mm
+  \item If $\varphi:=x=y$ then $\evarphi:= v_x^T \cdot v_{y}$.
+  \item If $\varphi:=R(x,y)$ then $\evarphi:=v_x^T \cdot V_R \cdot v_{y}$. Similar, if $\varphi:=R(x)$ or $\varphi:=R$ then $\evarphi:= V_R^T \cdot v_{x}$  and $\evarphi:= V_R$, respectively. 
+  \item If $\varphi = \varphi_1 \ksum \varphi_2$ then $\evarphi:= e_{\varphi_1} + e_{\varphi_2}$.
+  \item If $\varphi = \varphi_1 \kprod \varphi_2$ then $\evarphi:= f_\odot(e_{\varphi_1},e_{\varphi_2})$.
+  \item If $\varphi = \ssum x.\  \varphi_1$ then $\evarphi :=\ssum v_x.\ e_{\varphi_1}$.
+  \item If $\varphi = \qhadprod x. \varphi_1$ then $\evarphi := \sprod v_x.\ e_{\varphi_1}$.
+\end{itemize}
+The inductive hypothesis can be proved following the construction. To finish the proof, we define $\Psi(\varphi) := \evarphi$ and the proposition is shown.
 
 \end{proof}
