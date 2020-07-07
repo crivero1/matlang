@@ -77,7 +77,7 @@ A (\lang) \textit{instance} $\I$ over a schema $\Sch$ is a pair $\I = (\dom,\con
 \item $\sem{\diag(e)}{\I}$ is a diagonal matrix with the vector $\sem{e}{\I}$ on its main diagonal, and zero in every other position;
 \item $\sem{e_1\cdot e_2}{\I} := \sem{e_1}{\I} \cdot \sem{e_2}{\I}$;
 \item $\sem{e_1+ e_2}{\I} := \sem{e_1}{\I} + \sem{e_2}{\I}$;
-\item $\sem{e_1\times e_2}{\I} := a\times \sem{e}{\I}$ with $\sem{e_1}{\I}=[a]$; and
+\item $\sem{e_1\times e_2}{\I} := a\times \sem{e_2}{\I}$ with $\sem{e_1}{\I}=[a]$; and
 \item $\sem{f(e_1,\ldots ,e_k)}{\I}$ is a matrix $A$ of the same size as $\sem{e_1}{\I}$, and where $A_{ij}$ has the value $f(\sem{e_1}{\I}_{ij},\ldots ,\sem{e_k}{\I}_{ij})$.
 \end{itemize}
 %This concludes the description and semantics of \lang. 
@@ -99,8 +99,12 @@ A (\lang) \textit{instance} $\I$ over a schema $\Sch$ is a pair $\I = (\dom,\con
 % Rather than extending \lang\ with specific linear algebra operators, such as matrix inversion, we next introduce a limited form of recursion in \lang.
 %As we will see shortly, this extension allows us to express many linear algebra algorithms, including matrix inversion and LU-decomposition.
 %\floris{The paragraph above needs to be modified as it may overlap too much with the yet-to-be-written Introduction.}
-
-Although \lang\ forms a solid basis for a matrix query language, it is limited in expressive power. Indeed, \lang\ is subsumed by first order logic with aggregates that uses only three variables \cite{matlang-journal}. As consequence, no \lang\ expression exists that can compute the transitive closure of a graph (represented by its adjacency matrix) or can compute the inverse of a matrix. Rather than extending \lang\ with specific linear algebra operators, such as matrix inversion, we next introduce a limited form of recursion in \lang.
+\noindent
+Although \lang\ forms a solid basis for a matrix query language, it is limited in expressive power. Indeed, \lang\ is subsumed by first order logic with aggregates that uses only three variables \cite{matlang-journal}. 
+Hence,
+% As consequence,
+ no \lang\ expression exists that can compute the transitive closure of a graph (represented by its adjacency matrix) or can compute the inverse of a matrix. Rather than extending \lang\ with specific linear algebra operators, such as matrix inversion, we  
+next introduce a limited form of recursion in \lang.\looseness=-1
 %FIRST TRY
 
 %
