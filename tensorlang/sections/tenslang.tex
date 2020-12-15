@@ -1,0 +1,87 @@
+\section{TENSORLANG syntax and semantics}\label{sec:tensorlang}
+
+We assume that we have a supply of matrix variables. The definiton of an instance $I$ on MATLANG is a function defined on a nonempty set $var(I)=\lbrace A, B, M, C,  \ldots\rbrace$, that assigns a concrete matrix to each element (matrix \textit{name}) of $var(I)$.
+
+
+Every expression $e$ is a matrix, either a matrix of $var(I)$ (\textit{base} matrix, if you will) or a result of an operation over matrices.
+  
+The syntax of MATLANG expressions is defined by the following grammar. Every sentence is an expression itself.
+
+\begin{align*}
+	e=M\hspace{1em}&\text{(matrix variable)} \\
+	\text{let } M=e_1 \text{ in } e_2\hspace{1em}&\text{(local binding)} \\
+	e^*\hspace{1em}&\text{(conjugate transpose)} \\
+	\mathbf{1}(e)\hspace{1em}&\text{(one-vector)} \\
+	\text{diag}(e)\hspace{1em}&\text{(diagonalization of a vector)} \\
+	e_1\cdot e_2\hspace{1em}&\text{(matrix multiplication)} \\
+	\text{apply}\left[ f \right](e_1, \ldots, e_n)\hspace{1em}&\text{(pointwise application of $f$)}
+\end{align*}
+
+The operations used in the semantics of the language are defined over complex numbers.
+
+\begin{itemize}
+	\item \textbf{Transpose:} if $A$ is a matrix then $A^*$ is its conjugate transpose.
+	\item \textbf{One-vector:} if $A$ is a $n\times m$ matrix then $\mathbf{1}(A)$ is the $n\times 1$ column vector full of ones.
+	\item \textbf{Diag:} if $v$ is a $m\times 1$ column vector then diag$(v)$ is the matrix
+		\[
+			\begin{bmatrix}
+			    v_{1}       & 0 & 0 & \dots & 0 \\
+			    0       & v_{2} & 0 & \dots & 0 \\
+			    \hdotsfor{5} \\
+			    0       & 0 & 0 & \dots & v_{m}
+			\end{bmatrix}
+		\]
+	\item \textbf{Matrix multiplication:} if $A$ is a $n\times m$ matrix and $B$ is a $m\times p$ matrix then $A\cdot B$ is the $n\times p$ matrix with $(AB)_{ij}=\sum_{k=1}^n A_{ik}B_{kj}$.
+	\item \textbf{Pointwise application:} if $A^{(1)}, \ldots, A^{(n)}$ are $m\times p$ matrices, then apply$\left[ f \right](A^{(1)}, \ldots, A^{(n)})$ is the $m\times p$ matrix $C$ where $C_{ij}=f(A^{(1)}_{ij}, \ldots, A^{(n)}_{ij})$.
+\end{itemize}
+	
+	The formal semantics have a set of rules for an expression $e$ to be valid on an instance $I$, this is, $e$ succesfully evaluates to a matrix $A$ on the instance $I$. This success is denoted as $e(I)=A$. Here $I\left[ M:=A\right]$ denotes the instance that is equal to $I$ except that maps $M$ to the matrix $A$.
+	
+	\begin{center}
+    \begin{tabular}{ r | l }
+    \hline
+    \textbf{Expression} & \textbf{Condition for validity}\\ \hline
+    $(\text{let } M=e_1 \text{ in } e_2)(I)=B$ & $e_1(I)=A,\hspace{1ex}e_2(I\left[ M:=A\right])=B$ \\ 
+    $e^*(I)=A^*$ & $e(I)=A$ \\
+    $\mathbf{1}(e)(I)=\mathbf{1}(A)$ & $e(I)=A$ \\
+    $\text{diag}(e)(I)=\text{diag}(A)$ & $e(I)=A$, $A$ is a column vector \\
+    $e_1\cdot e_2(I)=A\cdot B$ & \# columns of $A$ $=$ \# rows of $B$ \\
+    apply$\left[ f\right](e_1, \ldots, e_n)(I)=\text{apply}\left[ f\right](A_1, \ldots, A_n)$ & $\forall k, e_k(I)=A$ and all $A_k$ have the same dimentions \\
+    \end{tabular}
+\end{center}
+
+For example, $$\text{let }N=\mathbf{1}(M)^*\text{ in apply}[c](\mathbf{1}(N)),$$ is an expression, where $c$ denotes the constant function $c:x\rightarrow c$. The result is a $1\times 1$ matrix with $c$ as its entry. This expression is equivalent to apply$[c](\mathbf{1}(\mathbf{1}(M)^*))$.
+
+An example of what can be computed in MATLANG is the mean of a vector:
+\begin{align*}
+	&\text{let }N=\mathbf{1}(v)^*\cdot\mathbf{1}(v)\text{ in} \\
+	&\text{let }S=v^*\cdot\mathbf{1}(v)\text{ in} \\
+	&\text{let }R=\text{apply}[\div](S, N)\text{ in } R.
+\end{align*}
+Here, $N$ is the $1\times 1$ matrix with the dimention of $v$ as its entry. S computes the sum of all the entries of $v$. Finally, in $R$ we store the result of the sum divided by the dimention. \\
+
+
+One thing that is worth keeping in mind is that pointwise function application is powerful. With the expression apply[$f$]($\cdot$) one can compute other elemental operations over matrices that can be studied separately, such as:
+\begin{itemize}
+	\item Scalar multiplication: we compute $c\cdot A$ as
+		\begin{align*}
+			&\text{let }C=\text{apply}[c](\mathbf{1}(\mathbf{1}(A)^*))\text{ in} \\
+			&\text{let }M=\mathbf{1}(A)\cdot C\cdot\mathbf{1}(A^*)^*\text{ in apply}[\times](M,A).
+		\end{align*}
+	\item Addition: we compute $A+B$ as $$\text{let apply}[+](A,B).$$
+	\item Trace: let 
+		\[
+  			m(x, y)=\begin{cases}
+               x \text{ if } x-y>0 \\
+               0 \text{ if }x-y\leq 0
+            \end{cases}
+		\]
+		Then we compute the trace of $A$, $tr(A)$, as
+		\begin{align*}
+			&\text{let }I=\text{diag}(\mathbf{1}(A))\text{ in} \\
+			&\text{let }B=\text{apply}[-](A, I)\text{ in} \\
+			&\text{let }C=\text{apply}[m](A,B)\text{ in} \\
+			&\text{let }T=\text{apply}[+](A,I)\text{ in } \mathbf{1}(A)^*\cdot T\cdot\mathbf{1}(A)\\
+		\end{align*}
+\end{itemize}
+
