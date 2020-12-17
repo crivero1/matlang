@@ -1,18 +1,19 @@
 %!TEX root = ../main/main.tex
-\section{TENSORLANG syntax and semantics}\label{sec:tensorlang}
+\section{TENSORLANG: syntax and semantics}\label{sec:tensorlang}
 
+In the following, for $k\in\mathbb{N}$ we denote by $[k]$ the set $\{1,\ldots,k\}$.
 
 We regard tensors as multi-dimensional arrays, taking values from the reals (or complex numbers).
 More precisely, a tensor $T$ of \textit{order} $p$ and dimensions $n_1\times n_2\times\cdots\times n_p$,
-with $p,n_1,\ldots,n_p\in \mathbb{N}$, consists of elements
+with $p,n_1,\ldots,n_p\in \mathbb{N}$, consists of $\prod_{i=1}^p n_i$ elements
 $$T[i_1,\ldots,i_p]\in\mathbb{R}, \text{ for $i_j\in [n_j]$, $j\in[p]$}.$$
 
 The following operations seem to form a solid starting point:
 
 \begin{itemize}
-\item \textbf{Addition $(+)$, scalar multiplication $(\times)$ and general pointwise functions ($f(\cdot,\ldots,\cdot)$)} These are defined as usual, in an entry-wise way. Then tensors involved need to have the same order and dimensions.
+\item \textbf{Addition $(+)$, scalar multiplication $(\times)$ and general pointwise functions ($f(\cdot,\ldots,\cdot)$)} These are defined as usual, in an entry-wise way. The tensors involved need to have the same order and dimensions.
 
-\item \textbf{Tensor product} Let $S$ be a tensor of order $p$ and of dimension $n_1\times n_2\times\cdots\times n_p$. let 
+\item \textbf{Tensor product} Let $S$ be a tensor of order $p$ and of dimension $n_1\times n_2\times\cdots\times n_p$. Let 
 $T$ be a tensor of order $q$ of dimension $m_1\times m_2\times\cdots\times m_p$. Then \textit{tensor product} of $S$ and $T$, denoted by $S\otimes T$, is a tensor of order $p+q$ and of dimension 
 $n_1\times\cdots\times n_p\times m_1\times\cdots\times m_q$, and whose entries are defined as
 $$
@@ -23,19 +24,19 @@ $$
 T=\sum_{e_{i_1}^{n_1}}\cdots \sum_{e_{i_p}^{n_p}} T[i_1,\ldots,i_p]\times e_{i_1}^{n_1}\otimes \cdots \otimes e_{i_p}^{n_p},$$
 where $e_j^n$ denotes a basis vector (tensor of order $1$ of dimension $n$).
 
-\item \textbf{Contracted Tensor Multiplication.} Let $S$ be a tensor of order $p$ and of dimension $n_1\times n_2\times\cdots\times n_p$. let 
-$T$ be a tensor of order $q$ of dimension $m_1\times m_2\times\cdots\times m_p$. Consider a sequence
-$I$ of elements (non-repeated) of $[p]$ and a sequence $J$ of elements (non-repeated) of $[q]$. Assume that 
-$I$ and $J$ have the same length, that is, $I=\langle i_1,\ldots,i_s\rangle$ and $J=\langle j_1,\ldots,j_s\rangle$. Assume furthermore that for all $k\in[s]$, the dimensions satisfy $n_{i_k}=m_{j_k}$. We denote the
+\item \textbf{Contracted Tensor Multiplication.} Let $S$ be a tensor of order $p$ and of dimension $n_1\times n_2\times\cdots\times n_p$. Let 
+$T$ be a tensor of order $q$ of dimension $m_1\times m_2\times\cdots\times m_p$. Consider ordered sequences $I$ of $[p]$ and $J$ of $[q]$ such that $I$ and $J$
+are of the same length, and furthermore, neither $I$ nor $J$ contain duplicate entries.
+For example, let $I=\langle i_1,\ldots,i_s\rangle$ and $J=\langle j_1,\ldots,j_s\rangle$. Assume furthermore that for all $k\in[s]$, the dimensions satisfy $n_{i_k}=m_{j_k}$. We denote the
 indices for $S$ by $\mathbf{i}=(i_1,\ldots,i_p)$, those of $T$ by $\mathbf{j}=(j_1,\ldots,j_q)$. Given a sequence
 $J$ of length $s$, as above, $\mathbf{i}_{\bar I}$ is the subsequence of $\mathbf{i}$ corresponding to indices not in $I$, similarly for $\mathbf{j}_{\bar J}$. Note that $\mathbf{i}_{\bar I}$ and $\mathbf{j}_{\bar J}$ are sequence of length $p-s$ and $q-s$, respectively.
 
 Then the \textit{contracted tensor multiplication} of $S$ and $T$, relative to $I$ and $J$, is defined as the tensor
-of order $p+q-2s$ and of dimensions $\prod_{ i\not I} n_i\times \prod_{j\not J} m_j$, and whose entries are defined as
+of order $p+q-2s$ and of dimension $\bigtimes_{ i\not\in I} n_i\times \bigtimes_{j\not \in J} m_j$, and whose entries are defined as
 $$
 S\cdot_{I,J} T[\mathbf{i}_{\bar I},\mathbf{j}_{\bar J}]:=\sum_{i_1=1}^{n_1}\sum_{i_2=1}^{n_2}\cdots\sum_{i_s=1}^{n_s} T[\mathbf{i}]\cdot T[\mathbf{j}]
 $$
-See more details: \url{https://dl.acm.org/doi/pdf/10.1145/1186785.1186794}. If defined well, matrix and vector multiplicatio are special instances of the contracted tensor multiplication.
+See more details: \url{https://dl.acm.org/doi/pdf/10.1145/1186785.1186794}. Example of this are matrix matrix multiplication, matrix vector multiplication, and dot product of vectors.
 
 \item \textbf{Permutation, $\pi$-Transposition}. Let $T$ be a tensor of order $p$ and dimension $n_1\times n_2\times\cdots\times n_p$. Then, given a permutation 
 $\pi:[p]\to [p]$, we define its \textit{permutation} $T^\pi$ as the tensor of order $p$ and of dimension
@@ -45,6 +46,10 @@ T^{\pi}[i_{\pi(1)},\ldots,i_{\pi(p)}]:=T[i_1,\ldots,i_p].
 $$
 Note that when $T$ is a tensor of order $2$ (and thus a matrix), for $\pi:[2]\to[2]$ such that $\pi(1)=2$ and $\pi(2)=1$,
 $T^\pi[j,i]:=T[i,j]$ and this the standard matrix transposition. \url{https://arxiv.org/pdf/1411.1503.pdf} has more info.
+
+Note that this does not cover transposition of a vector. That is, one typically regards a vector as a tensor of order $p$, so the above definition cannot mimick transpose of a vector. You can also see a vector of order $2$ and of dimension $n\times 1$, then it works. But then, when you consider tensor product of vectors $e_i$ and $e_j$, you do not want a $4\times 4$-matrix, so here you prefer $e_i$ and $e_j$ to be order 1 tensors.
+Of course, this issue stems from the fact that tensor are not just arrays. A row vector is actually a covector, and tensors can have covariant and contravariant dimensions. I don't know whether we want to get into this. In any case, we can simply add row vectors as order $n$ vectors of dimension $1,\ldots,1$ and explicitly introduce vector transposition.
+
 
 \item Kronecker...
  \end{itemize}
