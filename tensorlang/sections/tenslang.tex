@@ -1,4 +1,6 @@
+% !TeX spellcheck = en_US
 %!TEX root = ../main/main.tex
+
 \section{TENSORLANG: syntax and semantics}\label{sec:tensorlang}
 
 In the following, for $k\in\mathbb{N}$ we denote by $[k]$ the set $\{1,\ldots,k\}$.
@@ -19,7 +21,7 @@ $n_1\times\cdots\times n_p\times m_1\times\cdots\times m_q$, and whose entries a
 $$
 (S\otimes T)[i_1,\ldots,i_p,j_1,\ldots,j_q]:=S[i_1,\ldots,i_p]\cdot T[j_1,\ldots,j_k].
 $$
-Of particular intrest is that any tensor $T$ of order $p$ and of dimension $n_1\times\cdots\times n_p$ can be written as 
+Of particular interest is that any tensor $T$ of order $p$ and of dimension $n_1\times\cdots\times n_p$ can be written as 
 $$
 T=\sum_{e_{i_1}^{n_1}}\cdots \sum_{e_{i_p}^{n_p}} T[i_1,\ldots,i_p]\times e_{i_1}^{n_1}\otimes \cdots \otimes e_{i_p}^{n_p},$$
 where $e_j^n$ denotes a basis vector (tensor of order $1$ of dimension $n$).
@@ -34,7 +36,7 @@ $J$ of length $s$, as above, $\mathbf{i}_{\bar I}$ is the subsequence of $\mathb
 Then the \textit{contracted tensor multiplication} of $S$ and $T$, relative to $I$ and $J$, is defined as the tensor
 of order $p+q-2s$ and of dimension $\bigtimes_{ i\not\in I} n_i\times \bigtimes_{j\not \in J} m_j$, and whose entries are defined as
 $$
-S\cdot_{I,J} T[\mathbf{i}_{\bar I},\mathbf{j}_{\bar J}]:=\sum_{i_1=1}^{n_1}\sum_{i_2=1}^{n_2}\cdots\sum_{i_s=1}^{n_s} T[\mathbf{i}]\cdot T[\mathbf{j}]
+S\cdot_{I,J} T[\mathbf{i}_{\bar I},\mathbf{j}_{\bar J}]:=\sum_{i_1=1}^{n_1}\sum_{i_2=1}^{n_2}\cdots\sum_{i_s=1}^{n_s} S[\mathbf{i}]\cdot T[\mathbf{j}]
 $$
 See more details: \url{https://dl.acm.org/doi/pdf/10.1145/1186785.1186794}. Example of this are matrix matrix multiplication, matrix vector multiplication, and dot product of vectors.
 
