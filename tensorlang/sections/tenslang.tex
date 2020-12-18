@@ -57,7 +57,65 @@ Of course, this issue stems from the fact that tensor are not just arrays. A row
  \end{itemize}
 
 
+\section{Related papers}
+
+\subsection{Theory}
+\begin{itemize}
+\item ``The complexity of tensor circuit evaluation''
+ \url{https://link.springer.com/article/10.1007/s00037-007-0222-0} 
+Tensor circuits and formulas are considered, evaluation problem is studied for semirings, algebraic Turing machines and complexity classes are tied to the evaluation problem.
+ 
+Although they work with tensors, everything is a matrix. That is, they use tensor product, but actually always work with the \textit{matricisation} of tensors.
+For example, the result of the tensor product is represented in matrix terms, by the Kronecker product.
+More precisely, if $A$ and $B$ are matrices of dimension $k\times \ell$ and $m\times n$, respectively,
+$$
+(A\otimes B)_{ij}=A_{q,r}\cdot B_{s,t}
+$$ 
+where $i=m(q-1)+s$ and $j=n(r-1)+t$.
+ 
+ They define a tensor circuit $C=(e_{1},\ldots,e_{n})$ 
+  where each $e_{i}$ is an instruction of the form
+ $$ M \,|\, e_{j}+e_{k} \,|\, e_{j}\cdot e_{k} \,|\, e_{j}\otimes e_{k} $$
+ with $j,k\in \{1,\ldots,i-1\}$ and $M$ is a matrix variable. They call it a tensor formula
+ if the underlying DAG is a tree.
+ 
+ Typing rules: tensor addition $e_{j}+e_{k}$, $e_j$ and $e_k$ must be of type $\alpha\times\beta$, result is of type $\alpha\times\beta$;
+matrix multiplication $e_{j}\cdot e_{k}$, $e_j$ of type $\alpha\times\beta$, $e_k$ of type
+$\beta\times \gamma$, result is of type $\alpha\times\gamma$;
+tensor product $e_{j}\otimes e_{k}$, if $e_j$ is of type $\alpha\times\beta$ and $e_k$ is of type $\gamma\times\delta$, then result is of type $(\alpha\cdot \gamma)\times (\beta\cdot\delta)$.
+
+Seems not cited very well, only other relevant paper is 
+``Circuits arithmétiques et calculs tensoriels'' \url{https://doi.org/10.1017/S1474748008000248}.
+  
+\item ``The Arithmetic Complexity of Tensor Contraction''
+\url{https://link.springer.com/article/10.1007%2Fs00224-015-9630-8}
+
+Tensor are multidimensional arrays, they simple refer to tensors of order $(n_1,\ldots,n_k)$ and refer to $k$ as their dimension (so different what I defined above). A tensor $T$ is mappings from $[n_1]\times [n_k]\to \mathbb{K}$. A special case of contraction is considered.
+
+First, $S$ and $T$ are $k$ and $\ell$ dimensional of order $(n_1,\ldots,n_k)$ and $(m_1,\ldots,m_\ell)$.
+take indexes $i\in[k]$ and $j\in[\ell]$ such that $n_i=m_j$. Then,
+$$
+(S\star_{i,j} T)[\mathbf{i}_1,\mathbf{i}_2,\mathbf{i_3},\mathbf{i}_4]:=\sum_{r=1}^{n_i} S[\mathbf{i}_1,r,\mathbf{i}+2]\cdot S[\mathbf{i}_3,r,\mathbf{i}_4],
+$$
+with $\mathbf{i}_1\in [n_1]\times \cdots\times [n_{i-1}]$, 
+$\mathbf{i}_2\in [n_{i+1}]\times \cdots\times [n_k]$, $\mathbf{i}_3\in [m_1]\times \cdots\times [m_{j-1}]$ and
+$\mathbf{i}_4\in [m_{j+1}]\times \cdots\times [m_\ell]$.
+
+So, this is like the contracted tensor multiplication defined earlier, but only on two indices. \textbf{Not sure whether the general contracted tensor multiplication can be expressed as repeated two index contracted version.}
+
+The consider $\star$-formulas, which are trees whose leaves are labeled by tensors or variables, and internal nodes are $\star_{i,j}$. Bottom up evaluation results in a polynomial in  $\mathbb{K}[X_1,\ldots,X_n]$ and they link $\star$-formulas to arithmetic circuits and the class $\mathsf{VP}$.
+  
+ \end{itemize}
+
+\subsection{Systems}
+\begin{itemize}
+\item \textbf{Matlab}: \url{https://dl.acm.org/doi/pdf/10.1145/1186785.1186794} need to check.
+\item \textbf{Maple}: \url{https://www.maplesoft.com/support/help/maple/view.aspx?path=DifferentialGeometry%2FTensor}
+\item \textbf{Tensorflow}:??
+\item \url{https://arxiv.org/abs/1405.7786}
+\end{itemize}
 %
+
 % We assume that we have a supply of matrix variables. The definiton of an instance $I$ on MATLANG is a function defined on a nonempty set $var(I)=\lbrace A, B, M, C,  \ldots\rbrace$, that assigns a concrete matrix to each element (matrix \textit{name}) of $var(I)$.
 %
 %
