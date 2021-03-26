@@ -1,0 +1,84 @@
+%!TEX root = ../main.tex
+% !TeX spellcheck = en_US
+% !TEX root = ../main.tex
+Similarly to using sum, we can use other operations to update $X$ in the for-loop. The next natural choice is to consider products of matrices. In contrast to matrix sum, we have two options: either we can choose to use matrix product or to use the pointwise matrix product, also called the Hadamard product. We treat  matrix product in the next subsection and first explain here the connection of sum and Hadamard product operators to weighted logics.
+
+For the rest of this section, fix a semiring $(K, \ksum, \kprod, \kzero, \kone)$. The Hadamard product over $K$-matrices can be defined as the pointwise application of $\kprod$ between two matrices of the same size. Formally, we define the expression $e \hadprod e'$ where $e, e'$ are expressions with respect to $\cS$ and $\ttype(e) = \ttype(e')$ for some schema $\Sch=(\Mnam,\size)$. Then the semantics of $e \hadprod e'$ is the pointwise application of $\kprod$, namely, $\sem{e \hadprod e'}{\I}_{ij} = \sem{e}{\I}_{ij} \kprod \sem{e'}{\I}_{ij}$ for any instance $\I$ of $\cS$. This enables us to define, similar as for  $\Sigma v$, the  pointwise-product quantifier $\qhadprod v$ as follows:
+$$
+\qhadprod v. \  e := \ffor{v}{X\!=\!e_{\kone}}{X \circ e}.
+$$
+where $e_\kone$ is the (easily definable) \langfor expression for the matrix with the same type as $X$ and all entries equal to the $\kone$-element of $K$ (i.e., we need to initialize $X$ accordingly with the $\kprod$-operator).
+We cal \langprod  the subfragment of \langfor that consists of \langsum \ extended with $\qhadprod v$.
+
+\begin{example}
+	Similar to the trace of a matrix, a useful function in linear algebra is to compute the product of the values on the diagonal. 
+	Using the $\qhadprod v$ operator, this can be easily expressed:
+	 $$
+	 e_{\mathsf{dp}}(V) := \qhadprod v. \ v^T\cdot V \cdot v.$$
+\end{example}
+
+Clearly, the inclusion of this new operator extends the expressive power to \langsum. For example,  $\sem{e_{\mathsf{dp}}}{\I}$ can be an exponentially large number in the dimension $n$ of the input.
+ % and $tr(\cdot)$ is the trace of a matrix.
+By contrast, one can easily show that all expressions in \langsum can only return numbers polynomial in  $n$. That is, \langprod is more expressive than \langsum and $\mathsf{RA}_{K}^+$. 
+
+\cristian{I add this example, which I believe help to say that this fragment express some interesting properties. Also I used it in the diagram and to show that there are formulas that cannot be defined in sum-matlang.}
+
+To measure the expressive power of \langprod, we use weighted logics~\cite{DrosteG05} (WL) as a yardstick. Weighted logics extend monadic second-order logic from the boolean semiring to any semiring $K$. Furthermore, it has been used extensively to characterize the expressive power of weighted automata in terms of logic~\cite{droste2009handbook}. We use here the first-order subfragment of weighted logics to suit our purpose and, moreover, we extend its semantics over weighted structures (similar as in~\cite{GradelV17}).
+
+A relational vocabulary $\Gamma$ is a finite collection of relation symbols such that each $R \in \Gamma$ has an associated arity, denoted by $\arity(R)$.
+A $K$-weighted structure over $\Gamma$ (or just structure) is a pair $\cA = (A, \{R^\cA\}_{R \in \Gamma})$ such that $A$ is a non-empty finite set (i.e. the domain) and, for each $R \in \Gamma$, $R^\cA: A^{\arity(R)} \rightarrow K$ is a function that associates to each tuple in $A^{\arity(R)}$ a weight in $K$.
+
+Let $X$ be a set of first-order variables. A $K$-weighted logic (WL) formula $\varphi$ over $\Gamma$ is defined by the following syntax:
+$$
+\begin{array}{rcl}
+\varphi & := & x = y \ \mid \ R(\bar{x}) \ \mid \ \varphi \ksum \varphi \ \mid \ \varphi \kprod \varphi \ \mid \ \Sigma x. \varphi \ \mid \ \Pi x. \varphi
+\end{array}
+$$ 
+where $x, y \in X$, $R \in \Gamma$, and $\bar{x} = x_1, \ldots, x_k$ is a sequence of variables in $X$ such that $k=\arity(R)$. As usual, we say that $x$ is a free variable of $\varphi$, if $x$ is not below $\Sigma x$ or $\Pi x$ quantifiers (e.g. $x$ is free in $\Sigma y. R(x,y)$ but $y$ is not). 
+Given that $K$ is fixed, from now on we talk about structures and formulas without mentioning $K$ explicitly.  
+
+An assignment $\sigma$ over a structure $\cA = (A, \{R^\cA\}_{R \in \Gamma})$ is a function $\sigma: X \rightarrow A$. Given $x \in X$ and $a \in A$, we denote by $\sigma[x \mapsto a]$ a new assignment such that $\sigma[x \mapsto a](y) = a$ whenever $x = y$ and $\sigma[x \mapsto a](y) = \sigma(y)$ otherwise. For $\bar{x} = x_1, \ldots, x_k$,  we write $\sigma(\bar{x})$ to say $\sigma(x_1),\ldots, \sigma(x_k)$. Given a structure $\cA = (A, \{R^\cA\}_{R \in \Gamma})$ and an assignment $\sigma$, we define the semantics $\ssem{\varphi}{\cA}(\sigma)$ of $\varphi$ as follows:
+$$
+\begin{array}{ll}
+\text{if $\varphi := x = y$, then} & \ssem{\varphi}{\cA}(\sigma) = 
+\left\{
+\begin{array}{ll}
+\kone & \text{if $\sigma(x) = \sigma(y)$} \\
+\kzero & \text{otherwise}
+\end{array}
+\right. \\
+\text{if $\varphi := R(\bar{x})$, then} & \ssem{\varphi}{\cA}(\sigma) = R^\cA(\sigma(\bar{x})) \\
+\text{if $\varphi := \varphi_1 \ksum \varphi_2$, then} & \ssem{\varphi}{\cA}(\sigma) = \ssem{\varphi_1}{\cA}(\sigma) \ksum \ssem{\varphi_2}{\cA}(\sigma)  \\
+\text{if $\varphi := \varphi_1 \kprod \varphi_2$, then} & \ssem{\varphi}{\cA}(\sigma) = \ssem{\varphi_1}{\cA}(\sigma) \kprod \ssem{\varphi_2}{\cA}(\sigma)  \\
+\text{if $\varphi := \Sigma x. \, \varphi'$, then} & \ssem{\varphi}{\cA}(\sigma) =  \bigksum_{a \in A} \ssem{\varphi'}{\cA}(\sigma[x \mapsto a]) \\
+\text{if $\varphi := \Pi x. \, \varphi'$, then} & \ssem{\varphi}{\cA}(\sigma) =  \bigkprod_{a \in A} \ssem{\varphi'}{\cA}(\sigma[x \mapsto a])
+\end{array}
+$$
+When $\varphi$ contains no free variables, we omit $\sigma$ and write $\ssem{\varphi}{\cA}$ instead of $\ssem{\varphi}{\cA}(\sigma)$.
+
+For comparing the expressive power of \langprod with WL, we have to show how to encode \lang\ instances into structures and vice versa. For this, we make two assumptions to put both languages at the same level: (1) we restrict structures to relation symbols of arity at most two and (2) we restrict instances to square matrices. The first assumption is for the same reasons as when comparing \langsum with $\mathsf{RA}_K^+$, and the second assumption is to have a crisp translation between both languages. Indeed, understanding the relation of \langprod with WL for non-square matrices is slightly more complicated and we leave this for future work. 
+
+Let $\Sch=(\Mnam,\size)$ be a schema of square matrices, that is, there exists an $\alpha$ such that $\size(V) \in \{1, \alpha\} \times \{1,\alpha\}$ for every $V \in \Mnam$.
+Define the relational vocabulary $\text{WL}(\Sch) = \{R_V \mid V \in \Mnam\}$ such that $\arity(R_V) = 2$ if $\size(V) = (\alpha, \alpha)$, $\arity(R_V) = 1$ if $\size(V) \in \{(\alpha,1), (1,\alpha)\}$, and $\arity(R_V) = 0$ otherwise.
+Then given a matrix instance $\I = (\dom,\conc)$ over $\Sch$ define the structure $\text{WL}(\I) = (\{1, \ldots, n\}, \{R_V^{\I}\} )$ such that $\dom(\alpha) = n$ and $R_V^{\I}(i, j) = \conc(V)_{i,j}$ if $\size(V) = (\alpha, \alpha)$, $R_V^{\I}(i) = \conc(V)_{i}$ if $\size(V) \in \{(\alpha,1), (1,\alpha)\}$, and $R_V^{\I} = \conc(V)$ if $\size(V) = (1,1)$.
+
+To encode weighted structures into matrices and vectors, the story is similar as for $\mathsf{RA}_K^+$. Let $\Gamma$ be a relational vocabulary where $\arity(R) \leq 2$. 
+Define $\text{Mat}(\Gamma) = (\Mnam_\Gamma,\size_\Gamma)$ such that $\Mnam_\Gamma = \{ V_{R} \mid R \in \Gamma\}$ and $\size_\Gamma(V_{R})$ is equal to $(\alpha, \alpha), (\alpha, 1)$, or $(1,1)$ if $\arity(R)=2$, $\arity(R)=1$, or $\arity(R)=0$, respectively, for some $\alpha \in \DD$. Similarly, let $\cA = (A, \{R^{\cA}\}_{R \in \Gamma})$ be a structure with $A = \{a_1, \ldots, a_n\}$, ordered arbitrarily.
+Then we define the matrix instance $\text{Mat}(\cA) = (\dom,\conc)$ such that $\dom(\alpha) = n$, $\conc(V_{R})_{i,j} = R^{\cA}(a_i, a_j)$ if $\arity(R)=2$, $\conc(V_{R})_{i} = R^{\cA}(a_i)$ if $\arity(R)=1$, and $\conc(V_{R}) = R^{\cA}$ otherwise.
+
+Let $\Sch$ be a \lang\ schema of square matrices and $\Gamma$ a relational vocabulary of relational symbols of arity at most $2$. We can then show the equivalence of \langprod and WL as follows. 
+\begin{proposition} \label{prop:wl}
+Weighted logics over $\Gamma$ and \langprod over $\Sch$ have the same expressive power. More specifically,
+\begin{itemize}
+	\item for each \langprod expression $e$ over $\Sch$ such that $\Sch(e)=(1,1)$, there exists a WL-formula $\Phi(e)$ over $\text{WL}(\Sch)$ such that for every instance $\I$ of~$\Sch$, 
+	$
+	\sem{e}{\I} = \ssem{\Phi(e)}{\text{WL}(\I)}
+	$.
+	\item for each WL-formula $\varphi$ over $\Gamma$ without free variables, there exists a \langprod expression $\Psi(\varphi)$ such that for any structure $\cA$ over~$\text{Mat}(\Gamma)$,
+	$
+	\ssem{\varphi}{\cA}=\sem{\Psi(\varphi)}{\text{Mat}(\cA)}
+	$.
+\end{itemize}	
+\end{proposition}
+
+\floris{Three comments: (1) a reviewer may be puzzled about square matrix assumption; (2) is it clear why in the proposition sentences are considered (no free variables); and (3) can we say anything at all about its repercussions in terms of expressive power (apart from being equivalent)? }

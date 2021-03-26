@@ -1,0 +1,238 @@
+%%
+%% This is file `sample-sigconf.tex',
+%% generated with the docstrip utility.
+%%
+%% The original source files were:
+%%
+%% samples.dtx  (with options: `sigconf')
+%% 
+%% IMPORTANT NOTICE:
+%% 
+%% For the copyright see the source file.
+%% 
+%% Any modified versions of this file must be renamed
+%% with new filenames distinct from sample-sigconf.tex.
+%% 
+%% For distribution of the original source see the terms
+%% for copying and modification in the file samples.dtx.
+%% 
+%% This generated file may be distributed as long as the
+%% original source files, as listed above, are part of the
+%% same distribution. (The sources need not necessarily be
+%% in the same archive or directory.)
+%%
+%% The first command in your LaTeX source must be the \documentclass command.
+\documentclass[sigconf]{acmart}
+
+%\settopmatter{printacmref=false} % Removes citation information below abstract
+%\renewcommand\footnotetextcopyrightpermission[1]{} % removes footnote with conference information in first column
+\pagestyle{plain} % removes running headers
+
+%%
+%% \BibTeX command to typeset BibTeX logo in the docs
+\AtBeginDocument{%
+  \providecommand\BibTeX{{%
+    \normalfont B\kern-0.5em{\scshape i\kern-0.25em b}\kern-0.8em\TeX}}}
+
+%% Rights management information.  This information is sent to you
+%% when you complete the rights form.  These commands have SAMPLE
+%% values in them; it is your responsibility as an author to replace
+%% the commands and values with those provided to you when you
+%% complete the rights form.
+\copyrightyear{2021}
+\acmYear{2021}
+\setcopyright{acmcopyright}
+\acmConference[PODS '21] {Proceedings of the 40th ACM SIGMOD-SIGACT-SIGAI Symposium on Principles of Database Systems}{June 20--25, 2021}{Virtual Event, China}
+\acmBooktitle{Proceedings of the 40th ACM SIGMOD-SIGACT-SIGAI Symposium on Principles of Database Systems (PODS '21), June 20--25, 2021, Virtual Event, China}
+\acmPrice{15.00}
+\acmISBN{978-1-4503-8381-3/21/06}
+\acmDOI{10.1145/XXXXXX.XXXXXX}
+
+\usepackage{enumitem}
+\input{./sections/macros.tex}
+
+%%
+%% Submission ID.
+%% Use this when submitting an article to a sponsored event. You'll
+%% receive a unique submission ID from the organizers
+%% of the event, and this ID should be used as the parameter to this command.
+%%\acmSubmissionID{123-A56-BU3}
+
+%%
+%% The majority of ACM publications use numbered citations and
+%% references.  The command \citestyle{authoryear} switches to the
+%% "author year" style.
+%%
+%% If you are preparing content for an event
+%% sponsored by ACM SIGGRAPH, you must use the "author year" style of
+%% citations and references.
+%% Uncommenting
+%% the next command will enable that style.
+%%\citestyle{acmauthoryear}
+
+%%
+%% end of the preamble, start of the body of the document source.
+\begin{document}
+
+%%
+%% The "title" command has an optional parameter,
+%% allowing the author to define a "short title" to be used in page headers.
+%\title{LOLA: A query language for Linear Algebra with LOops}
+\title{Expressive power of linear algebra query languages}
+%%
+%% The "author" command and its associated commands are used to define
+%% the authors and their affiliations.
+%% Of note is the shared affiliation of the first two authors, and the
+%% "authornote" and "authornotemark" commands
+%% used to denote shared contribution to the research.
+\author{Floris Geerts}
+\affiliation{%
+  \institution{University of Antwerp}
+%  \streetaddress{P.O. Box 1212}
+%  \city{Dublin}
+%  \state{Ohio}
+%  \postcode{43017-6221}
+}
+\email{floris.geerts@uantwerp.be}
+
+
+\author{Thomas Mu\~noz}
+\affiliation{%
+  \institution{PUC Chile and IMFD Chile}
+%  \streetaddress{1 Th{\o}rv{\"a}ld Circle}
+%  \city{Hekla}
+%  \country{Iceland}
+}
+\email{tfmunoz@uc.cl}
+
+\author{Cristian Riveros}
+\affiliation{%
+  \institution{PUC Chile and IMFD Chile}
+%  \streetaddress{1 Th{\o}rv{\"a}ld Circle}
+%  \city{Hekla}
+%  \country{Iceland}
+}
+\email{cristian.riveros@uc.cl}
+
+\author{Domagoj Vrgo\v{c}}
+\affiliation{%
+  \institution{PUC Chile and IMFD Chile}
+%  \streetaddress{1 Th{\o}rv{\"a}ld Circle}
+%  \city{Hekla}
+%  \country{Iceland}
+}
+\email{dvrgoc@ing.puc.cl}
+
+%%
+%% By default, the full list of authors will be used in the page
+%% headers. Often, this list is too long, and will overlap
+%% other information printed in the page headers. This command allows
+%% the author to define a more concise list
+%% of authors' names for this purpose.
+%\renewcommand{\shortauthors}{Trovato and Tobin, et al.}
+
+%%
+%% The abstract is a short summary of the work to be presented in the
+%% article.
+\begin{abstract}
+Linear algebra algorithms often require some sort of iteration or recursion as is illustrated by standard algorithms for Gaussian elimination, matrix inversion, and transitive closure. A key characteristic shared by these 
+algorithms is that they allow looping for a number of steps that is bounded by the matrix dimension. 
+In this paper we extend the matrix query language \lang with this type of recursion, and show that this suffices to express  classical linear algebra algorithms. We study the expressive power of this language and show that it naturally corresponds to arithmetic circuit families, which are often said to capture linear algebra. Furthermore, we analyze several sub-fragments of our language, and show that their expressive power is closely tied to logical formalisms on semiring-annotated relations.
+% how they can capture the expressive power of annotated relations and weighted logics.
+\end{abstract}
+
+%%
+%% Code generated by the tool at http://dl.acm.org/ccs.cfm.
+%%%
+\begin{CCSXML}
+<ccs2012>
+<concept>
+<concept_id>10003752.10003777.10003778</concept_id>
+<concept_desc>Theory of computation~Complexity classes</concept_desc>
+<concept_significance>500</concept_significance>
+</concept>
+<concept>
+<concept_id>10003752.10003777.10003781</concept_id>
+<concept_desc>Theory of computation~Circuit complexity</concept_desc>
+<concept_significance>500</concept_significance>
+</concept>
+</ccs2012>
+\end{CCSXML}
+
+
+% Next lines bug the leftmargin option on itemize
+%\ccsdesc[500]{Theory of computation~Complexity classes}
+%\ccsdesc[500]{Theory of computation~Circuit complexity}
+
+%%%
+%%% Keywords. The author(s) should pick words that accurately describe
+%%% the work being presented. Separate the keywords with commas.
+\keywords{complexity, query language, circuit complexity, matrix, linear algebra}
+%%%
+%% This command processes the author and affiliation and title
+%% information and builds the first part of the formatted document.
+\maketitle
+
+\section{Introduction}
+\input{./sections/intro.tex}
+
+
+
+\section{MATLANG}\label{sec:matlang}
+\input{./sections/prelim.tex}
+
+\section{Extending MATLANG with for loops}\label{sec:formatlang}
+\input{./sections/forloops.tex}
+
+
+%\section{Order}\label{sec:order}
+%\input{./sections/order.tex}
+
+\section{Algorithms in Linear Algebra}\label{sec:queries}
+\input{./sections/algorithms.tex}
+
+\section{Expressiveness of for loops}\label{sec:circuits}
+\input{./sections/expr.tex}
+
+
+\section{Restricting the power of for loops}\label{sec:restrict}
+\input{./sections/restrictions.tex}
+
+% \section{Connecting Linear Algebra with Relational Algebra}
+% \input{./sections/ara.tex}
+
+%\section{Applications}
+%\input{./sections/applications.tex}
+
+
+\section{Conclusions}\label{sec:conclude}
+\input{./sections/concl.tex}
+
+%%
+%% The next two lines define the bibliography style to be used, and
+%% the bibliography file.
+
+
+\bibliographystyle{ACM-Reference-Format}
+
+
+%UNCOMMENT IF FULL BIB IS DESIRED
+% \bibliography{biblio}
+\bibliography{nourlbiblio}
+
+%%
+%% If your work has an appendix, this is the place to put it.
+
+%\newpage 
+%\appendix
+
+%\onecolumn
+%\section*{Appendix}
+%\input{./sections/appendix.tex}
+
+
+
+\end{document}
+\endinput
+%%
+%% End of file `sample-sigconf.tex'.
