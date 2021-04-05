@@ -133,6 +133,7 @@ some not-so-natural expressions (and in some cases, like PLU, required to dig in
 implement it). One can argue that syntactic sugar can be added to aid in implementing more complex algorithms. So, I would have 
 liked to see some discussion on this and a comparison between the new language and some of the languages mentioned in the related 
 work section.\thomas{I don't know how to properly mention that it is \textbf{a} way to go, maybo not \textbf{the} way to go, that is to be determined in the future. The main result is strong enough to consider the setting, as other reviewers mention.}
+\domagoj{This is a dumb comment by the reviewer. I would not reply.}
 
 \TODO Space for the above discussion could be gained by pushing some more details in the appendix, such as part of the 
 definition of$ RA_K^+$ (e.g., the semantics is somehow obvious, and can be deferred to the appendix).
@@ -144,9 +145,10 @@ interesting/useful. I also would have given some more intuition of the 4-clique 
 I also find that the paper is at times sloppy and not very formal, even at the level of the definition of the syntax and 
 semantics of (for-)MATLANG.
 
-\TODO In particular, the semantics of (for-)MATLANG expressions is not well-defined, as no 
+\DONE In particular, the semantics of (for-)MATLANG expressions is not well-defined, as no 
 parenthesization in the syntax, or priority among the operators is specified. Hence the semantics of expressions 
 like $A+B \cdot C$ is ambiguous. \thomas{Working on this. Accepting suggestions.}
+\domagoj{Actually the semantics is fine. We assume that the thing is fully parenthesised in a sense (i.e. when we write $e_1 + e_2$ we assume to know what $e_1,e_2$ are). I added a paragraph on this, but I find it strange that PODS reviewers forgot how sytax definition works.}
 
 \OMIT Moreover, the notion of expressibility is never formally defined, especially when talking 
 about expressing specific constructs like the 4-clique. Without clarifying this, one can (I know this is a bit extreme) e.g., 
@@ -161,6 +163,7 @@ and the shape of the instance I are clearly defined.\thomas{Working on this.}
 
 \TODO  Another instance of this is Corollary 5.2, where the term "equivalent" is used, without formally defining it. Considering 
 that expressibility and equivalence results are the main task of the paper, I would make these notions and results more formal.
+\domagoj{The conditions are the same as in 5.1. Perhaps mention this, but nothing more is needed.}
 
 \DONE Also, the use of symbols and operators not formally part of the language, such as the minus symbol, literal matrices (i.e., 
 constants), etc., might deserve a footnote, mentioning that they are just syntactic sugar, and easily definable.
@@ -192,9 +195,10 @@ first element in v, for the type to be well-defined.\thomas{Working on this.}
 \item \DONE pg 5, definition of $f_/$. You might want to add a footnote to specify how to define the function when y is 0 (as any definition 
 would be fine).\thomas{I added a footnote that says we map division by zero to zero. If you prefer to say it in a parenthesis after the definition I'm ok with it, feel free to change it}
 \item \TODO pg 7, Theorem 5.1: As discussed above, fully qualify any variables $e_\Phi$ uses, and how $\cal I$ is defined.\thomas{Working on this.}
-\item \TODO pg 8, degree of an expression: circuit families have no notion of degree, circuits do. So definint the degree of an expression 
+\item \DONE pg 8, degree of an expression: circuit families have no notion of degree, circuits do. So definint the degree of an expression 
 as the "minimum" degree of a family does not make much sense. I would just define when an expression is of polynomial degree, 
 as it is the only notion needed later on.
+\domagoj{I did as the reviewer suggested. Works well enough for our purposes.}
 \item \DONE pg 8, right columns "expression are easily seen" -- expressions
 \item \DONE pg 9, title of Section 6.1: matlang -- MATLANG
 \item \TODO pg 11, "schema of square matrices" is misleading, as it makes it seem that the expressions allow arbitrary square matrices, 
@@ -242,13 +246,15 @@ now and should therefore be accepted.
 \subsection*{Comments}
 
 
-\TODO You have to state the operator priorities of MATLANG and for-MATLANG.\thomas{Working on this. Accepting suggestions.}
+\DONE You have to state the operator priorities of MATLANG and for-MATLANG.\thomas{Working on this. Accepting suggestions.}
+\domagoj{This is the same as above. We should just state that we assume the thing to be fully parenthesised, or given via a parse tree.}
 
-\TODO I do not understand why an Instance has to assign values to the size symbols.
+\DONE I do not understand why an Instance has to assign values to the size symbols.
 All sizes are implicit by the assigned matrices. I would rather have I: M $\rightarrow$ Mat[R]
 just assign matrices and then require that there exist a function D: Symb $\rightarrow$ N
 such that each assigned matrix has the correct dimensions. This should simplify some
 statements.\thomas{Thinking about this.}
+\domagoj{Added a comment about this after defining instances.}
 
 \DONE I also notices that you are very sloppy when it comes to formally defining I. In most
 of the examples, I is not defined at all. This should be changed. Probably it would
