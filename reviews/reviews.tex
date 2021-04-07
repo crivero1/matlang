@@ -204,13 +204,14 @@ in prod-ML + $S_\leq$  but not in FO-ML. This should be clarified.\thomas{Workin
 \item \DONE pg 2, "and show that two natural fragment" -- fragments
 \item \DONE pg 3, paragraph "Semantics": the schema $\cal S$ should be qualified as $(M,size)$. Same on the right column
 \item \DONE pg 3, before Example 3.1: the notation $\mathcal{I} [v := b^n_i, X := A_{i-1}]$ is not defined for multiple variable assignments.
-\item \TODO pg 4, when discussing how to implement arbitrary for-loop initializations, the authors conclude stating that "the result of 
+\item \DONE pg 4, when discussing how to implement arbitrary for-loop initializations, the authors conclude stating that "the result of 
 this evaluation is equal to $[| \text{for } v,X=e_0 . e|](I)$, but it appears to me that for this to be true, the instance I must also be 
 updated, to make v have one more element, so to "sacrifice" the first one for the initialization phase, and then use the rest as 
 expected. Moreover, due to this, the expression e must also change in the expression $(1-min(v)) \cdot e(v,X)$, to "filter out" the 
 first element in v, for the type to be well-defined.\thomas{Working on this.}
 
 \cristian{I don't see what is the problem here. I checked it and it is correct. To discuss.}
+\thomas{You're right, I think the reviewer didn't get that the instance is updated in each iteration of the for}
 
 \item \DONE pg 5, Section 4.1, the symbol I is used as the identity matrix, but sometimes the symbol $e_Id$ is used, please be uniform.\thomas{A small check doesn't hurt.}
 \item \DONE pg 5, right column: "provided that ithe entry" -- the ith entry.
