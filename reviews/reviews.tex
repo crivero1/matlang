@@ -50,7 +50,7 @@ core language for linear algebra), the solution is elegant (looping extension ta
 account) and effective (capture a robust class of linear algebra algorithms). Furthermore, meaningful restrictions of the 
 language are provided as well. Strong contribution for PODS.
 
-\OMIT On a different note, for-loops where considered before in the community as an extension of the relational algebra: 
+\TODO On a different note, for-loops where considered before in the community as an extension of the relational algebra: 
 Frank Neven, Martin Otto, Jerzy Tyszkiewicz, Jan Van den Bussche: 
 Adding For-Loops to First-Order Logic. Inf. Comput. 168(2): 156-186 (2001). Not in the context of matrix operations but 
 as an alternative to other looping constructs like while loops.
@@ -190,9 +190,10 @@ only under some assumptions (square matrices schemas). The same applies to Propo
 are specified outside (before) the claim.\thomas{Maybe define something like $\text{FO-ML}_{\mathcal{S}}$ to denote FO-ML restricted to a fixed dimension schema. And something similar with weighted logics, as $WL^2$ to represent that the vocabulary has arity at most two.}
 \cristian{I edit the legend of the figure and the content to say ``òver square matrices''. The crucial assumptions outside Prop. 6.7 are ok and I keep it.}
 
-\item \TODO Finally, although I can seen in the paper where 4Clique and DP are shown to lie outside of the lower language, i.e. 4Clique 
+\item \DONE Finally, although I can seen in the paper where 4Clique and DP are shown to lie outside of the lower language, i.e. 4Clique 
 in sum-ML/ML and DP in FO-ML / sum-ML, I could not find any mention (even in the appendix) that Inv and Det are actually 
-in prod-ML + $S_\leq$  but not in FO-ML. This should be clarified.\thomas{Working on this.}
+in prod-ML + $S_\leq$  but not in FO-ML. This should be clarified.\thomas{Added this comment on this on section 6.3: We do not know if the inversion and determinant algorithms
+are expressible in FO-MATLANG.}
 
 \end{enumerate}
 
@@ -307,7 +308,7 @@ more powerful than you want it to be.
 
 \item  \TODO What is your reasoning behind the name FO-MATLANG? FO is usually associated with
 first order logic and the name can lead to confusion. Maybe you can think of a
-better alternative or explain your choice of the name.\thomas{Thinking about this.}
+better alternative or explain your choice of the name.\thomas{Candidate: sp-MATLANG}
 
 \item  \OMIT You should use the $\colon$ latex operator instead of : in function declarations. The : is defined
 as an operator in latex and produces incorrect spacing.\thomas{Testing and working on this.}
