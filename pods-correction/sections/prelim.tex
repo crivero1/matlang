@@ -67,6 +67,8 @@ To help us determine whether a \lang\ expression can always be evaluated, we def
  We call an expression \textit{well-typed} according to the schema $\Sch$, if it has a defined type. 
 A well-typed expression can be evaluated regardless of the actual sizes of the matrices assigned to matrix variables, as we describe next.
 
+We will usually work with matrices with different sizes (i.e., ``rectangular matrices''), but sometimes it will be helpful to restrict to ``square matrices''. For this we say that $\Sch$ is a schema over square matrices if there exists $\alpha$ such that each variable has type $(\alpha,\alpha),(\alpha,1),(1,\alpha)$, or $(1,1)$. This restriction will be useful when comparing the expressiveness of our proposal with other formalism (e.g., see Section~\ref{sec:restrict}). 
+
 % $\dim(M)$ gives the dimension of the matrix $M$, where $\dim(M)\in \mathbb{N}^2$. We
 \smallskip
 \noindent

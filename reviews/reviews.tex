@@ -55,6 +55,8 @@ Frank Neven, Martin Otto, Jerzy Tyszkiewicz, Jan Van den Bussche:
 Adding For-Loops to First-Order Logic. Inf. Comput. 168(2): 156-186 (2001). Not in the context of matrix operations but 
 as an alternative to other looping constructs like while loops.
 
+\cristian{To discuss.}
+
 
 \newpage
 
@@ -124,7 +126,9 @@ I also find the sum-, FO-, and prod- fragments resonable limitations of the lang
 On the other hand, I believe that on the motivations and presentation side the paper is not on par with the high standards of a 
 PODS paper.
 
-\TODO One of the premises of the paper is to find the atomic operations to be introduced in MATLANG, that allow to "define standard 
+\begin{enumerate}
+	 
+\item \OMIT One of the premises of the paper is to find the atomic operations to be introduced in MATLANG, that allow to "define standard 
 linear algebra algorithms".
 I totally get the point, and it is clear that continuously adding ad hoc operators to the language is not the way to go. 
 However, if the explicitly provided premise is only to define standard algorithms, it is also fair to ask what other advantages 
@@ -134,53 +138,68 @@ implement it). One can argue that syntactic sugar can be added to aid in impleme
 liked to see some discussion on this and a comparison between the new language and some of the languages mentioned in the related 
 work section.\thomas{I don't know how to properly mention that it is \textbf{a} way to go, maybo not \textbf{the} way to go, that is to be determined in the future. The main result is strong enough to consider the setting, as other reviewers mention.}
 \domagoj{This is a dumb comment by the reviewer. I would not reply.}
+\cristian{I agree here to don't do anything. This is a PODS paper. One would expect a follow-up paper that does this.}
 
-\TODO Space for the above discussion could be gained by pushing some more details in the appendix, such as part of the 
+\item \OMIT Space for the above discussion could be gained by pushing some more details in the appendix, such as part of the 
 definition of$ RA_K^+$ (e.g., the semantics is somehow obvious, and can be deferred to the appendix).
 
-\TODO Similarly, in the equivalence between FO-MATLANG (with all square matrices of the same size) and WL, the authors could 
+\cristian{I marked it as ommited, given that it is related with the previous comment.}
+
+\item \OMIT Similarly, in the equivalence between FO-MATLANG (with all square matrices of the same size) and WL, the authors could 
 have spent some words in describing why such a fragment on restricted square matrices (all of the same size) is 
 interesting/useful. I also would have given some more intuition of the 4-clique expression in Example 3.3.\thomas{I would maybe define the schema as a "fixed dimension schema" (accepting names suggestion). We already mention that it is for a "crisp translation between both languages". I don't know how to elaborate more, we actually state the problem and say we leave it for future work.}
 
-I also find that the paper is at times sloppy and not very formal, even at the level of the definition of the syntax and 
-semantics of (for-)MATLANG.
+\cristian{Well, it is connected with the previous comment. Here I don't believe that this is necessary. FO-MATLANG is a natural syntactical restriction of For-MATLANG. So, no motivation is needed. I marked it as ommited.}
 
-\DONE In particular, the semantics of (for-)MATLANG expressions is not well-defined, as no 
+\item \OMIT I also find that the paper is at times sloppy and not very formal, even at the level of the definition of the syntax and 
+semantics of (for-)MATLANG.
+\cristian{To general the comment to do something.}
+
+\item \DONE In particular, the semantics of (for-)MATLANG expressions is not well-defined, as no 
 parenthesization in the syntax, or priority among the operators is specified. Hence the semantics of expressions 
 like $A+B \cdot C$ is ambiguous. \thomas{Working on this. Accepting suggestions.}
 \domagoj{Actually the semantics is fine. We assume that the thing is fully parenthesised in a sense (i.e. when we write $e_1 + e_2$ we assume to know what $e_1,e_2$ are). I added a paragraph on this, but I find it strange that PODS reviewers forgot how sytax definition works.}
+\cristian{Agree.}
 
-\OMIT Moreover, the notion of expressibility is never formally defined, especially when talking 
+\item \OMIT Moreover, the notion of expressibility is never formally defined, especially when talking 
 about expressing specific constructs like the 4-clique. Without clarifying this, one can (I know this is a bit extreme) e.g., 
 express 4-clique by encoding the adjacency matrix as a natural number (in binary), and use a function f from F, that given the 
 encoding of the matrix, checks if a 4-clique exists, placing 4-clique in $MATLANG[{f}]$.\thomas{I think he didn't understand our approach for functions. What he says is perfectly reasonable and does not go against any of our results. For example, corollary 6.2 includes this case.}
+\cristian{Agree.}
 
-\TODO Similar issues occur in other expressibility results such as Propositions 4.1, 4.2, 4.3 etc., where the instance I 
+\item \OMIT Similar issues occur in other expressibility results such as Propositions 4.1, 4.2, 4.3 etc., where the instance I 
 is never fully qualified. In this way, one can make the instance I map a dummy matrix M variable to the result of the function 
 to be computed, and make the for-MATLANG expression be just M, making all such claims trivially true.
 I believe such claims should be provided with a spirit similar to Theorem 5.3, where the variables of the expression, 
 and the shape of the instance I are clearly defined.\thomas{Working on this.}
+\cristian{No way. I disagree that the quantification is needed. It is obvious from the context. I marked it as ommited.}
 
-\TODO  Another instance of this is Corollary 5.2, where the term "equivalent" is used, without formally defining it. Considering 
+\item \OMIT  Another instance of this is Corollary 5.2, where the term "equivalent" is used, without formally defining it. Considering 
 that expressibility and equivalence results are the main task of the paper, I would make these notions and results more formal.
 \domagoj{The conditions are the same as in 5.1. Perhaps mention this, but nothing more is needed.}
+\cristian{Again, there is a matter of context that the reviewer is not considered. I disagree to modify this. I marked it as ommited.}
 
-\DONE Also, the use of symbols and operators not formally part of the language, such as the minus symbol, literal matrices (i.e., 
+\item \DONE Also, the use of symbols and operators not formally part of the language, such as the minus symbol, literal matrices (i.e., 
 constants), etc., might deserve a footnote, mentioning that they are just syntactic sugar, and easily definable.
 
-\TODO So, I would suggest to improve presentation in the above regard, in particular w.r.t. the expressibility results.
+\item \OMIT So, I would suggest to improve presentation in the above regard, in particular w.r.t. the expressibility results.
+\cristian{I disagree. So I marked it as ommited.}
 
-\TODO In Figure 1, the equivalences shown are a bit misleading as the paper does not show that FO-ML $\equiv$ WL in general, but 
+\item \DONE In Figure 1, the equivalences shown are a bit misleading as the paper does not show that FO-ML $\equiv$ WL in general, but 
 only under some assumptions (square matrices schemas). The same applies to Proposition 6.7, where such crucial assumptions 
 are specified outside (before) the claim.\thomas{Maybe define something like $\text{FO-ML}_{\mathcal{S}}$ to denote FO-ML restricted to a fixed dimension schema. And something similar with weighted logics, as $WL^2$ to represent that the vocabulary has arity at most two.}
+\cristian{I edit the legend of the figure and the content to say ``òver square matrices''. The crucial assumptions outside Prop. 6.7 are ok and I keep it.}
 
-\TODO Finally, although I can seen in the paper where 4Clique and DP are shown to lie outside of the lower language, i.e. 4Clique 
+\item \TODO Finally, although I can seen in the paper where 4Clique and DP are shown to lie outside of the lower language, i.e. 4Clique 
 in sum-ML/ML and DP in FO-ML / sum-ML, I could not find any mention (even in the appendix) that Inv and Det are actually 
 in prod-ML + $S_\leq$  but not in FO-ML. This should be clarified.\thomas{Working on this.}
 
+\end{enumerate}
+
 \subsection*{Minor comments}
 
-\begin{itemize}
+
+\begin{enumerate} \setcounter{enumi}{12}
 \item \DONE pg 2, "uniform arithmentic circuits" -- do you mean "uniform family"?
 \item \DONE pg 2, "and show that two natural fragment" -- fragments
 \item \DONE pg 3, paragraph "Semantics": the schema $\cal S$ should be qualified as $(M,size)$. Same on the right column
@@ -190,21 +209,29 @@ this evaluation is equal to $[| \text{for } v,X=e_0 . e|](I)$, but it appears to
 updated, to make v have one more element, so to "sacrifice" the first one for the initialization phase, and then use the rest as 
 expected. Moreover, due to this, the expression e must also change in the expression $(1-min(v)) \cdot e(v,X)$, to "filter out" the 
 first element in v, for the type to be well-defined.\thomas{Working on this.}
+
+\cristian{I don't see what is the problem here. I checked it and it is correct. To discuss.}
+
 \item \DONE pg 5, Section 4.1, the symbol I is used as the identity matrix, but sometimes the symbol $e_Id$ is used, please be uniform.\thomas{A small check doesn't hurt.}
 \item \DONE pg 5, right column: "provided that ithe entry" -- the ith entry.
 \item \DONE pg 5, definition of $f_/$. You might want to add a footnote to specify how to define the function when y is 0 (as any definition 
 would be fine).\thomas{I added a footnote that says we map division by zero to zero. If you prefer to say it in a parenthesis after the definition I'm ok with it, feel free to change it}
-\item \TODO pg 7, Theorem 5.1: As discussed above, fully qualify any variables $e_\Phi$ uses, and how $\cal I$ is defined.\thomas{Working on this.}
+\item \OMIT pg 7, Theorem 5.1: As discussed above, fully qualify any variables $e_\Phi$ uses, and how $\cal I$ is defined.\thomas{Working on this.}
+\cristian{Similar comments than before, for me the statement is correct. One can understand from the context where $e$ and  $\cal I$ comes from. I marked it as ommited. }
+
 \item \DONE pg 8, degree of an expression: circuit families have no notion of degree, circuits do. So definint the degree of an expression 
 as the "minimum" degree of a family does not make much sense. I would just define when an expression is of polynomial degree, 
 as it is the only notion needed later on.
 \domagoj{I did as the reviewer suggested. Works well enough for our purposes.}
+\cristian{I checked it and I agree with the reviewer. Also agree with the change of Domagoj.}
 \item \DONE pg 8, right columns "expression are easily seen" -- expressions
 \item \DONE pg 9, title of Section 6.1: matlang -- MATLANG
-\item \TODO pg 11, "schema of square matrices" is misleading, as it makes it seem that the expressions allow arbitrary square matrices, 
+\item \DONE pg 11, "schema of square matrices" is misleading, as it makes it seem that the expressions allow arbitrary square matrices, 
 of different dimensions, which is not the case. I would find an alternative name.\thomas{I propose the name: fixed dimension schema.}
+\cristian{I defined this formaly in Section 2, when we define schemas and typing. I spent one paragraph and it should be pretty clear what does this mean in the future. The name is good enough if it is clarified from the beginning.}
+
 \item \DONE pg 12, Section 6.3: "can expressed" -- can be expressed.
-\end{itemize}
+\end{enumerate}
 
 \newpage
 
@@ -246,39 +273,47 @@ now and should therefore be accepted.
 \subsection*{Comments}
 
 
-\DONE You have to state the operator priorities of MATLANG and for-MATLANG.\thomas{Working on this. Accepting suggestions.}
+\begin{enumerate}
+	\item  \OMIT You have to state the operator priorities of MATLANG and for-MATLANG.\thomas{Working on this. Accepting suggestions.}
 \domagoj{This is the same as above. We should just state that we assume the thing to be fully parenthesised, or given via a parse tree.}
+\cristian{Agree with Domagoj. This comment is not needed.}
 
-\DONE I do not understand why an Instance has to assign values to the size symbols.
+\item  \DONE I do not understand why an Instance has to assign values to the size symbols.
 All sizes are implicit by the assigned matrices. I would rather have I: M $\rightarrow$ Mat[R]
 just assign matrices and then require that there exist a function D: Symb $\rightarrow$ N
 such that each assigned matrix has the correct dimensions. This should simplify some
 statements.\thomas{Thinking about this.}
 \domagoj{Added a comment about this after defining instances.}
 
-\DONE I also notices that you are very sloppy when it comes to formally defining I. In most
+\item  \DONE I also notices that you are very sloppy when it comes to formally defining I. In most
 of the examples, I is not defined at all. This should be changed. Probably it would
 help to state that in the simple case with only one matrix symbol you write [[e]](A) to
 denote [[e]](I), where I is the function that assigns A to the only matrix symbol. Then
 you can get rid of I in the examples altogether.\thomas{I only changed it in the for-MATLANG expressions, I left matrix expressions with $I$. Again, please give a small check if you can.}
 
-\OMIT You point out that introducing loops also introduces order. Whether there is an order
+\item  \OMIT You point out that introducing loops also introduces order. Whether there is an order
 available or not is certainly an important aspect for query languages. It might be
 interesting in future work to look at the fragment of for-MATLANG, where the outcome
 of the loop may not depend on the order in which the canonical vectors are processed
 by the loop.
 
-\DONE When introducing the restricted variants you should point out that the variable X is
+\cristian{Agree. Thanks!}
+
+\item  \DONE When introducing the restricted variants you should point out that the variable X is
 not allowed inside the expression e. Otherwise sum-MATLANG will turn out to be much
 more powerful than you want it to be.
+\cristian{This is clear from the definition.}
 
-\TODO What is your reasoning behind the name FO-MATLANG? FO is usually associated with
+\item  \TODO What is your reasoning behind the name FO-MATLANG? FO is usually associated with
 first order logic and the name can lead to confusion. Maybe you can think of a
 better alternative or explain your choice of the name.\thomas{Thinking about this.}
 
-\TODO You should use the $\colon$ latex operator instead of : in function declarations. The : is defined
+\item  \OMIT You should use the $\colon$ latex operator instead of : in function declarations. The : is defined
 as an operator in latex and produces incorrect spacing.\thomas{Testing and working on this.}
 
-\DONE After Prop. 6.4: necessary -- necessarily
+\cristian{I disagree. I prefer the : over the $\colon$. So, I marked it as ommited. }
+
+\item  \DONE After Prop. 6.4: necessary -- necessarily
+\end{enumerate}
 
 \end{document}
