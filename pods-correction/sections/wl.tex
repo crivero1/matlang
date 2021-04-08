@@ -18,10 +18,7 @@ We cal \langprod  the subfragment of \langfor that consists of \langsum \ extend
 \end{example}
 
 Clearly, the inclusion of this new operator extends the expressive power to \langsum. For example,  $\sem{e_{\mathsf{dp}}}{\I}$ can be an exponentially large number in the dimension $n$ of the input.
- % and $tr(\cdot)$ is the trace of a matrix.
 By contrast, one can easily show that all expressions in \langsum can only return numbers polynomial in  $n$. That is, \langprod is more expressive than \langsum and $\mathsf{RA}_{K}^+$. 
-
-\cristian{I add this example, which I believe help to say that this fragment express some interesting properties. Also I used it in the diagram and to show that there are formulas that cannot be defined in sum-matlang.}
 
 To measure the expressive power of \langprod, we use weighted logics~\cite{DrosteG05} (WL) as a yardstick. Weighted logics extend monadic second-order logic from the boolean semiring to any semiring $K$. Furthermore, it has been used extensively to characterize the expressive power of weighted automata in terms of logic~\cite{droste2009handbook}. We use here the first-order subfragment of weighted logics to suit our purpose and, moreover, we extend its semantics over weighted structures (similar as in~\cite{GradelV17}).
 
@@ -80,5 +77,3 @@ Weighted logics over $\Gamma$ and \langprod over $\Sch$ have the same expressive
 	$.
 \end{itemize}	
 \end{proposition}
-
-\floris{Three comments: (1) a reviewer may be puzzled about square matrix assumption; (2) is it clear why in the proposition sentences are considered (no free variables); and (3) can we say anything at all about its repercussions in terms of expressive power (apart from being equivalent)? }

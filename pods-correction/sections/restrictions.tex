@@ -12,68 +12,23 @@ only update $X$ by adding some matrix to it. This restricted form of for-loop pr
 $$\Sigma v. e := \ffor{v}{X}{X + e}.$$
 Here, $e=e(v)$. We define the subfragment of \langfor, called \langsum, to consist of the $\Sigma$ operator plus the ``core'' operators in \lang, namely, transposition, matrix multiplication and addition, scalar multiplication, and pointwise function applications.
 
-%REMOVE IF TOO MUCH SPACE
 One property of \langsum is that it only allows expressions of polynomial degree. Indeed, one can easily show that \langsum can only create matrix entries that are polynomial in the dimension $n$ of the expression. More precisely, we can show the following:
 \begin{proposition}\label{prop:poly}
 Every expression in \langsum is of polynomial degree.
 \end{proposition}
-%REMOVE IF TOO MUCH SPACE
 
 Interestingly enough, this restricted version of for-loop already allows us to capture the \lang\ operators that are not present in the syntax of \langsum. More precisely, we see from Examples~\ref{ex:onevec} and~\ref{ex:diag} that the one-vector and $\diag$ operator are expressible in \langsum. Combined with the observation that the $4$-clique
 expression of Example~\ref{ex:fourcliques} is in \langsum, the following result is immediate.
-%
-%
-% Apart from defining the identity matrix with \langsum, the sum quantifier also allows for computing the trace of a matrix $A$ using the expression $tr(A) := \Sigma v. v^*\cdot A \cdot v$. Interestingly enough, this restricted version of \texttt{for} already allows us to capture the \lang\ operators that are not present in the syntax of \langsum. More precisely, we have:
-% \smallskip
-%
-% \noindent {\em Function application.} Notice that in \lang, a function is applied pointwise to matrices of arbitrary size, while \langsum only allows functions that process matrices of size $1\times 1$. Using the summation operator we can lift this condition, and allow applying a function $f:\mathbb{\RR}^n \mapsto \mathbb{\RR}$ on expressions $e_1,\ldots ,e_n$ of arbitrary (but equal) type by writing
-% $$\Sigma x_i \Sigma x_j. f(x_i^T\cdot e_1\cdot x_j, \ldots ,x_i^T\cdot e_n\cdot x_j) \cdot x_i\cdot x_j^T,$$
-% which simply reconstructs the matrix obtained by applying $f$ to every position of $e_1$ through $e_n$, by using the fact that for two canonical vectors $b_i^m$ and $b_j^n$, the product $b_i^m \cdot (b_j^n)^*$ defines a $m\times n$ matrix whose only non-zero entry is in the position $ij$.
-% \smallskip
-%
-% \noindent {\em One vector.} We can define $\ones(e) := \Sigma v.\, v.$ where $\ttype(v) = (\alpha, 1)$ and $\ttype(e) = (\alpha, \beta)$ for some $\beta$.
-% \smallskip
-%
-% \noindent {\em Diagonal of a vector.} The operator $\diag(e)$ can be defined as:
-% $$\diag(e) := \Sigma v. (v^T\cdot e) \cdot vv^T.$$
 
-% Furthermore, one can easily check that the 4-clique expression of Example~\ref{ex:fourcliques} can be defined in \langsum. Therefore, we conclude the following result.
 \begin{corollary}
 \lang\ is strictly subsumed by \langsum.
 \end{corollary}
 
-
-%To show that the inclusion here is strict, we illustrate how one can detect whether a undirected graph has a four clique, which it is not definable in \lang~\cite{BrijderGBW19}. For this, we define an expression $f(u,v) := 1 - u^*\cdot v$. Notice that when $u$ and $v$ are interpreted by two canonical vector of the same dimension, we have that:
-%\[
-%  			f(u,v)=1-u^*v=\begin{cases}
-%               0 \text{ if } u=v \\
-%               1 \text{ if } u\neq v
-%            \end{cases}
-%		\]
-%
-%To distinguish four-cliques, we will need to determine whether we are dealing with four different nodes. For this, we will utilize the function $$g(u,v,w,r)=f(u,v)\cdot f(u,w)\cdot f(u,r)\cdot f(v,w)\cdot f(v,r)\cdot f(w,r),$$
-%which, when evaluated over four canonical vectors of the same dimension, will give us 1 if and only if the four vectors are distinct. With this at hand, we can now define:		
-%\begin{multline*}
-%\texttt{4-clique}(A) := \ssum v_1.\ssum v_2. \ssum v_3. \ssum v_4.\\ (v_1^*Av_2)(v_1^*Av_3)(v_1^*Av_4)(v_2^*Av_3)(v_2^*Av_4)(v_3^*Av_4) \cdot
-%\\g(v_1,v_2,v_3,v_4).
-%\end{multline*}
-%
-%When $A$ is an adjacency matrix of an undirected graph $G$, then we have that $\texttt{4-clique}(A)$ is different from zero if and only if $G$ has a four-clique. Using this, and the fact that \lang\ is subsumed by First Order Logic with aggregates that uses only three variables \cite{matlang}, we immediately obtain the following:
-%
-%\begin{corollary}
-%There is a  \langfor expression that is not expressible in \lang.
-%\end{corollary}
-
 What operations over matrices can be defined with \langsum that is beyond \lang? In~\cite{brijder2019matrices}, it was shown that \lang\ is strictly included in the (positive) relational algebra on $K$-relations, denoted by $\mathsf{RA}_{K}^+$~\cite{GreenKT07}.\footnote{The algebra used in~\cite{brijder2019matrices} differs slightly from the one given in~\cite{GreenKT07}. In this paper we work with the original algebra $\mathsf{RA}_{K}^+$ as defined in~\cite{GreenKT07}.} 
-%
-%  (called the Annotated Relational Algebra (ARA) in~\cite{brijder2019matrices}).
-% There are subtle difference between ARA and the relational algebr
-%
 It thus seems natural to compare the expressive power of \langsum with $\mathsf{RA}_{K}^+$. 
 The main result in this section is that \langsum\ and $\mathsf{RA}_{K}^+$ 
 are equally expressive over binary schemas. 
 To make this equivalence precise, we next give the 
-%formal 
 definition of $\mathsf{RA}_{K}^+$~\cite{GreenKT07} and then show how to connect both formalisms.
 
 Let $\ddom$ be a data domain and $\att$ a set of attributes. A relational signature is a finite subset of $\att$. A relational schema is a function $\cR$ on finite set of symbols $\fdom(\cR)$ such that $\cR(R)$ is a relation signature for each $R \in \fdom(\cR)$. To simplify the notation, from now on we write $R$ to denote both the symbol $R$ and the relational signature $\cR(R)$.
@@ -113,8 +68,6 @@ $$
 where $Y = \cR(\arae_1)$ and $Z = \cR(\arae_2)$. It is important to note that the $\bigksum$-operation in the semantics of $\pi_X(\arae')$ is well-defined given that the support of $\ssem{\arae'}{\cJ}$ is always finite. 
 
 We are now ready for comparing \langsum with $\mathsf{RA}_{K}^+$ . First of all, we need to extend \langsum from $\RR$ to any semiring. Let $\mtr{K}$ denote the set of all $K$-matrices. 
-% Indeed, one can easily verify that the semantics of \lang, \langfor and \langsum can be translated from $\RR$ to $K$ by switching from matrices over $(\RR, +, \times, 0, 1)$ to matrices over $(K, \ksum, \kprod, \kzero, \kone)$.
-% From now on we
 Similarly as for \lang\ over $\RR$, given a \lang\ schema $\Sch$, a $K$-instance $\I$ over $\Sch$ is a pair $\I = (\dom,\conc)$, where $\dom : \DD \mapsto \NN$ assigns a value to each size symbol, and $\conc : \Mnam \mapsto \mtr{K}$ assigns a concrete $K$-matrix to each matrix variable. Then it is straightforward to extend the semantics of \lang, \langfor, and \langsum from $(\RR, +, \times, 0, 1)$ to $(K, \ksum, \kprod, \kzero, \kone)$ by switching $+$ with $\ksum$ and $\times$ with $\kprod$. 
 
 The next step to compare \langsum with $\mathsf{RA}_{K}^+$  is to represent $K$-matrices as $K$-relations.
@@ -135,12 +88,7 @@ Let $V\in\Mnam$ with $\size(V)=(\alpha,\beta)$ and let $\conc(V)$ be its corresp
 To encode $\I$ as a $K$-instance in $\mathsf{RA}_{K}^+$, we use as data domain $\ddom = \mathbb{N} \setminus \{0\}$. Then we construct the $K$-instance $\text{Rel}(\I)$ such that for each $V\in\Mnam$ we define 
 $R_V^{\text{Rel}(\I)}(t):=\conc(V)_{ij}$ whenever $t(\row_\alpha) = i \leq \dom(\alpha)$ and $t(\col_\beta) = j \leq \dom(\beta)$, and $\kzero$ otherwise. Furthermore, for each $\alpha \in \DD$ we define $R_\alpha^{\text{Rel}(\I)}(t):=\kone$ whenever $t(\alpha) \leq \dom(\alpha)$, and $\kzero$ otherwise. In other words, $R_\alpha$ and $R_\beta$ encodes the active domain of a matrix variable $V$ with $\size(V)=(\alpha,\beta)$. Given that the $\mathsf{RA}_{K}^+$ framework of \cite{GreenKT07} represents the ``absence'' of a tuple in the relation with $\kzero$, we need to separately encode the indexes in a matrix.
 This is where $R_\alpha^{\text{Rel}(\I)}$ and $R_\beta^{\text{Rel}(\I)}$ are used for.
-%
-% to be able to
-%
-% find a way to encode all entries of a matrix in ARA. For instance, we need to be able to encode a $\kzero$-matrix of dimension $(\alpha,\beta)$ in~$\mathsf{RA}_{K}^+$.
 We are now ready to state the first connection between \langsum and $\mathsf{RA}_{K}^+$  by using the previous encoding. The proof of the proposition below is by induction on the structure of expressions.
- % in \langsum.
 \begin{proposition}\label{prop:sum_to_ara} 
 	For each \langsum expression $e$ over schema $\Sch$ such that $\Sch(e)=(\alpha,\beta)$ with $\alpha\neq 1\neq\beta$, there exists an $\mathsf{RA}_{K}^+$  expression $\Phi(e)$ over relational schema $\text{Rel}(\Sch)$ such that $\text{Rel}(\Sch)(\Phi(e))=\{\row_\alpha,\row_\beta\}$ and 
 	such that for any instance $\I$ over~$\Sch$,
@@ -172,7 +120,6 @@ $\mathsf{RA}_{K}^+$ expressions, we obtain the following result.
 \end{proposition} 
 
 It is important to remark that the expression $\arae$ of the previous result can have intermediate expressions that are not necessarily binary, given that the proposition only restricts that the input relation and the schema of $\arae$ must have arity at most two. We recall from~\cite{brijder2019matrices} that \lang\ corresponds to $\mathsf{RA}_{K}^+$ where intermediate expressions are at most ternary, and this underlies, e.g., the inability of \lang\ to check for $4$-cliques. In \langsum, we can deal with intermediate relations of arbitrary arity. In fact, each new attribute can be seen to correspond to an application of the $\Sigma$ operator. For example, in the $4$-clique expression, four $\Sigma$ operators are needed, in analogy to how
-% the $4$-ary relation used when expressing
 $4$-clique is expressed in $\mathsf{RA}_{K}^+$.
 
 Given the previous two propositions we derive the following conclusion which is the first characterization of relational algebra with a (sub)-fragment of linear algebra.
@@ -209,31 +156,10 @@ are processed.
 What is interesting is that \langsum extended with $\sprod v$ suffices to compute the transitive closure,
  provided that we allow for the $f_{>0}$ function. Indeed, one can use the expression $e_{\mathsf{TC}}(V):=f_{>0}\bigl(\sprod v.\, (e_{\mathsf{Id}}+V)\bigr)$ for this purpose because
  $\sem{e_{\mathsf{TC}}}{\I}=f_{>0}\bigl((I+A)^n\bigr)$ when $\I$ assigns an $n\times n$ adjacency matrix $A$ to $V$, and non-zero entries in $(I+A)^n$ coincide with non-zero entries in  the transitive closure of $A$.
-% by means if $f_{>}$
-% as shown in Example~\ref{ex:floyd},
-%
-% Using the product operator we can express multiple interesting properties. To begin with, we can compute the product of diagonal elements of a matrix:
-% $$
-% dp(A) := \sprod v. v^*\cdot A \cdot v.$$
-% Another property of interest is computing the transitive closure of a graph adjacency matrix $A$. It is well known the transitive closure of this matrix, denoted $tc(A)$ equals to the matrix consisting of non-zero entries of $(I + A)^n$, where $n$ is the dimension of $A$. Using the product operator we can define:
-% $$tc(A) := f_{>0}(\sprod v. (I + A)),$$
-% where $f_{>0}(x) := 1$ if $x>0$, and $f_{>0}(x) = 0$ otherwise, is used to make the result a zero-one matrix. Notice that the expression for $tc(A)$ ignores the canonical vectors, and simply multiplies the previous result with $(I + A)$, thus computing the desired value.
-%
-% Using the combination of canonical sum and product, we can also define more general operators over matrices, such as the power sum operator, which, given a square matrix $A$, computes $I + A + A^2 + \cdots + A^n$. This operator, denoted by $ps(A)$ can be defined as:
-% $$ps(A) := \ssum v.\sprod w. \left( (w^* S_{<} v)\cdot (A-I) + I\right),$$
 Furthermore, if we extend this fragment with access to the matrix $S_{<}$, defining the (strict) order on canonical vectors, then Csanky's matrix inversion algorithm becomes expressible (if $f_/$ is allowed). We do not know if the inversion and determinant algorithms are expressible in \langprod.
  We leave the study of \langmprod and, in particular, the relationship to full \langfor, for future work.
  
 Finally, in Figure~\ref{thefigure} we show a diagram of all the fragments of \langfor over square matrices introduced in this section and their corresponding equivalent formalisms.
-%
-% %
-% % matrix defined in Section~\ref{sec:order}. The outer loop here defines which power we compute. That is, when $v$ is the $i$th canonical vector, we compute $A^i$. Computing $A^i$ is achieved via the inner product loop, which uses $w^*S_{<}v$ to determine whether $w$ comes before $v$ in the ordering of canonical vectors. When this is the case we multiply the current result by $A$, and when $w$ is greater than $v$, we use $I$ not to affect the already computed result.
-% %
-% % Note that $\sprod v$ can define the quantifier $\qhadprod v$ and, further, it increases the expressive power of \langprod~.
-% %
-%
-% It is interesting that the $\sprod v$ give the power of transitive closure to \langsum in a natural way and without defining it explicitly.
-%
 
 \begin{figure}
 	

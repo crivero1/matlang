@@ -49,6 +49,8 @@
 \acmDOI{10.1145/XXXXXX.XXXXXX}
 
 \usepackage{enumitem}
+\usepackage{balance}
+
 \input{./sections/macros.tex}
 
 %%
@@ -96,7 +98,7 @@
 \email{floris.geerts@uantwerp.be}
 
 
-\author{Thomas Mu\~{n}oz}
+\author{Thomas Mu{\~{n}}oz}
 \affiliation{%
   \institution{PUC Chile and IMFD Chile}
 %  \streetaddress{1 Th{\o}rv{\"a}ld Circle}
@@ -166,7 +168,7 @@ In this paper we extend the matrix query language \lang with this type of recurs
 %%%
 %%% Keywords. The author(s) should pick words that accurately describe
 %%% the work being presented. Separate the keywords with commas.
-\keywords{complexity, query language, circuit complexity, matrix, linear algebra}
+\keywords{complexity; query languages; circuit complexity; linear algebra}
 %%%
 %% This command processes the author and affiliation and title
 %% information and builds the first part of the formatted document.
@@ -197,24 +199,13 @@ In this paper we extend the matrix query language \lang with this type of recurs
 \section{Restricting the power of for loops}\label{sec:restrict}
 \input{./sections/restrictions.tex}
 
-% \section{Connecting Linear Algebra with Relational Algebra}
-% \input{./sections/ara.tex}
-
-%\section{Applications}
-%\input{./sections/applications.tex}
-
-
 \section{Conclusions}\label{sec:conclude}
 \input{./sections/concl.tex}
-
-%%
-%% The next two lines define the bibliography style to be used, and
-%% the bibliography file.
 
 
 \bibliographystyle{ACM-Reference-Format}
 
-
+\balance
 %UNCOMMENT IF FULL BIB IS DESIRED
 % \bibliography{biblio}
 \bibliography{nourlbiblio}
