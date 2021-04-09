@@ -147,18 +147,7 @@
 
 
 \begin{document}
-
-%%
-%% The "title" command has an optional parameter,
-%% allowing the author to define a "short title" to be used in page headers.
-%\title{LOLA: A query language for Linear Algebra with LOops}
 \title{Expressive power of linear algebra query languages}
-%%
-%% The "author" command and its associated commands are used to define
-%% the authors and their affiliations.
-%% Of note is the shared affiliation of the first two authors, and the
-%% "authornote" and "authornotemark" commands
-%% used to denote shared contribution to the research.
 \author{Floris Geerts}
 \affiliation{%
   \institution{University of Antwerp}
@@ -276,7 +265,8 @@ to the ones discussed previously.
 \smallskip
 \noindent
 \textbf{Contribution and outline.} 
-\begin{itemize}[leftmargin=0.5cm]
+\begin{itemize}
+	% [leftmargin=0.5cm]
 	\item After we recall \lang in Section~\ref{sec:matlang}, we show in Section~\ref{sec:formatlang}
 	how for-loops can be added to \lang in a natural way. We also observe that
 	\langfor strictly extends \lang. In addition, we discuss some design decisions behind the definition of \langfor, noting that our use of canonical vectors results in the availability of an order relation.
@@ -284,7 +274,7 @@ to the ones discussed previously.
 	\item In Section~\ref{sec:queries} we show that \langfor can compute important linear algebra algorithms in a natural way. We provide expressions in \langfor for LU decomposition (used to solve linear systems of equations), the determinant and matrix inversion.
 	\item More generally, in Section~\ref{sec:circuits} we report our main technical contribution.
 	 We show that every uniform family of arithmetic circuits of polynomial degree correspond to a \langfor expression, and vice versa, when a \langfor expression has polynomial degree, then there is an equivalent uniform family of arithmetic circuits. As a consequence, \langfor inherits all expressiveness properties of such circuits.
-	\item  Finally, in Section~\ref{sec:restrict} we generalize the semantics of \langfor to matrices with values in a semiring $K$, and show that two natural fragments of \langfor, \langsum, and \langprod, are equivalent to the (positive) relational algebra and weighted logics on binary $K$-relations, respectively. We also briefly comment on a minimal fragment of \langfor, based on \langmprod, that is able to compute matrix inversion.
+	\item  Finally,  we generalize the semantics of \langfor to matrices with values in a semiring $K$  in Section~\ref{sec:restrict}, and show that two natural fragments of \langfor, \langsum, and \langprod, are equivalent to the (positive) relational algebra and weighted logics on binary $K$-relations, respectively. We also briefly comment on a minimal fragment of \langfor, based on \langmprod, that is able to compute matrix inversion.
 \end{itemize}
 Due to space limitations, we only include some proof sketches. We refer
 to the full version~\cite{geerts2020expressive} for more details.
@@ -315,7 +305,6 @@ $e$ & $::=$ & $V\in \Mvar$ & (matrix variable)\\
  & $|$ & $\diag(e)$ & (diagonalization of a vector)\\  
  & $|$ & $e_1 \cdot e_2$ & (matrix multiplication)\\   
  & $|$ & $e_1 + e_2$ & (matrix addition)\\   
- % & $|$ & $a\times e$ & (scalar multiplication, $a\in\RR$)\\
  & $|$ & $e_1\times e_2$ & (scalar multiplication)\\
  & $|$ & $f(e_1,\ldots ,e_k)$ & (pointwise application of $f\in\Fun_k$).    
 \end{tabular}
@@ -529,7 +518,6 @@ We refer to the full version~\cite{geerts2020expressive} for details.
 Having order information available results in \langfor to be quite expressive. We heavily rely on order information in the next sections to compute the inverse of matrices and more generally to simulate low complexity Turing machines and arithmetic circuits.
 
 \section{Algorithms in Linear Algebra}\label{sec:queries}
-%!TEX root = ../main.tex
 One of our main motivations to introduce for-loops is to be able
 to express classical linear algebra algorithms in a natural way. We have seen that \langfor is
 quite expressive as it can check for cliques, compute the transitive closure, and can even
@@ -656,8 +644,6 @@ to $A$ and $A$ is invertible.
 \end{proposition}
 
 \section{Expressiveness of for loops}\label{sec:circuits}
-% !TeX spellcheck = en_US
-%!TEX root = ../main.tex
 In this section we explore the expressive power of $\langfor.$ Given that arithmetic circuits \cite{allender} capture most standard linear algebra algorithms \cite{Raz02,ShpilkaY10}, they seem as a natural candidate for comparison. Intuitively, an arithmetic circuit is similar to a boolean circuit \cite{aroraB2009}, except that it has gates computing the sum and the product function, and processes elements of $\RR$ instead of boolean values. To connect \langfor to arithmetic circuits we need a notion of uniformity of such circuits. After all, a \langfor expression can take matrices of arbitrary dimensions as input and we want to avoid having  different circuits for each dimension. To handle inputs of different sizes, we thus consider a notion of uniform families of arithmetic circuits, defined via a Turing machine generating a description of the circuit for each input size $n$.
 
 What we show in the remainder of this section is that any function $f$ which operates on matrices, and is computed by a uniform family of arithmetic circuits of bounded degree, can also be computed by a \langfor expression, and vice versa. In order to keep the notation light, we will focus on 
@@ -765,8 +751,6 @@ Let $f$ be a function taking as its input matrices $A_1,\ldots ,A_k$ of dimensio
 An interesting line of future work here is to see which additional functions can be added to arithmetic circuits and \langfor formulas, in order to preserve their equivalence. Note that this will crucially depend on the fact that these functions have to allow the depth reduction of \cite{AllenderJMV98} in order to be supported.
 
 \section{Restricting the power of for loops}\label{sec:restrict}
-%!TEX root = ../main.tex
-% !TeX spellcheck = en_US
 We conclude the paper by zooming in on some special fragments of \langfor and in which matrices can take values from an arbitrary (commutative) semiring $K$. In particular, we first consider \langsum, in which iterations can only perform
 additive updates, and show that it is equivalent in expressive power to the (positive)
 relational algebra on $K$-relations. We then extend \langsum such that also updates involving pointwise-multiplication (Hadamard product) are allowed. The resulting fragment, \langprod, is shown to be equivalent in expressive power to weighted logics. Finally, we consider the fragment \langmprod in which updates involving sum and matrix multiplication, and possibly order information, is allowed. From the results in Section~\ref{sec:queries}, we infer that the latter fragment suffices to compute matrix inversion. An overview of the fragments and their relationships are depicted in Figure~\ref{thefigure}.
@@ -774,8 +758,7 @@ relational algebra on $K$-relations. We then extend \langsum such that also upda
 \subsection{Summation \lang and relational algebra}
 \label{ss:sumML}
 When defining $4$-cliques and in several other expressions we have seen so far, we 
-%actually
-only update $X$ by adding some matrix to it. This restricted form of for-loop proved useful throughout the paper, and we therefore introduce it as a special operator. That is, we define:
+ only update $X$ by adding some matrix to it. This restricted form of for-loop proved useful throughout the paper, and we therefore introduce it as a special operator. That is, we define:
 $$\Sigma v. e := \ffor{v}{X}{X + e}.$$
 Here, $e=e(v)$. We define the subfragment of \langfor, called \langsum, to consist of the $\Sigma$ operator plus the ``core'' operators in \lang, namely, transposition, matrix multiplication and addition, scalar multiplication, and pointwise function applications.
 
@@ -1057,7 +1040,6 @@ Finally, in Figure~\ref{thefigure} we show a diagram of all the fragments of \la
 	\end{tikzpicture}
 	
 	\caption{Fragments of \langfor over square matrices and their equivalences. The functions \textsc{4Clique}, \textsc{DP} (diagonal product), \textsc{Inv}, \textsc{Det}, and \textsc{PLU} decomposition are placed in their fragments.} \label{thefigure}
-\vspace{-2ex}
 \end{figure}
 
 \section{Conclusions}\label{sec:conclude}
@@ -1072,11 +1054,7 @@ for for-loop linear algebra programs is proposed.
 
 \bibliographystyle{ACM-Reference-Format}
 \balance
-% %UNCOMMENT IF FULL BIB IS DESIRED
 \bibliography{biblio}
- % \bibliography{nourlbiblio}
 
 \end{document}
 \endinput
-%%
-%% End of file `sample-sigconf.tex'.
