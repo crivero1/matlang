@@ -58,6 +58,7 @@ as an alternative to other looping constructs like while loops.
 \cristian{To discuss.}
 \thomas{I did a quick read of the document. They add the for loop operator to relational algebra, and to first order logic. They focus on whether the nesting of the for loops adds any expressive power. An interesting question but not addressed in our paper since the presence of the operator suffices to gain expressive power. Moreover, we restrict the operator to understand its expressiveness. Maybe we could add this to the document? Specifically, at the beggining of section 3.}
 
+\floris{I added ``For-loop extensions of standard first-order logic are considered in [30] but with a different semantics as ours and in which no aggregation is supported''}
 \newpage
 
 \section*{REVIEWER 2}
@@ -139,7 +140,9 @@ liked to see some discussion on this and a comparison between the new language a
 work section.\thomas{I don't know how to properly mention that it is \textbf{a} way to go, maybo not \textbf{the} way to go, that is to be determined in the future. The main result is strong enough to consider the setting, as other reviewers mention.}
 \domagoj{This is a dumb comment by the reviewer. I would not reply.}
 \cristian{I agree here to don't do anything. This is a PODS paper. One would expect a follow-up paper that does this.}
-
+\floris{It is not a dumb comment. The language introduced is to study expressive power in a formal way, and is not intended
+to serve as ``the'' language for linear algebra. It is like fix point logics, you can use them to express things but it is not
+really a user-friendly language. Sure we don't want to comment?}
 \item \OMIT Space for the above discussion could be gained by pushing some more details in the appendix, such as part of the 
 definition of$ RA_K^+$ (e.g., the semantics is somehow obvious, and can be deferred to the appendix).
 
@@ -160,12 +163,15 @@ parenthesization in the syntax, or priority among the operators is specified. He
 like $A+B \cdot C$ is ambiguous. \thomas{Working on this. Accepting suggestions.}
 \domagoj{Actually the semantics is fine. We assume that the thing is fully parenthesised in a sense (i.e. when we write $e_1 + e_2$ we assume to know what $e_1,e_2$ are). I added a paragraph on this, but I find it strange that PODS reviewers forgot how sytax definition works.}
 \cristian{Agree.}
+\floris{Very strange comment indeed.}
 
 \item \OMIT Moreover, the notion of expressibility is never formally defined, especially when talking 
 about expressing specific constructs like the 4-clique. Without clarifying this, one can (I know this is a bit extreme) e.g., 
 express 4-clique by encoding the adjacency matrix as a natural number (in binary), and use a function f from F, that given the 
 encoding of the matrix, checks if a 4-clique exists, placing 4-clique in $MATLANG[{f}]$.\thomas{I think he didn't understand our approach for functions. What he says is perfectly reasonable and does not go against any of our results. For example, corollary 6.2 includes this case.}
 \cristian{Agree.}
+\floris{He just wants to point out that, if not familiar with expressibility, you could question what's the point of all this. Just
+instantiate a matrix with the solution and you're done. See also comment below.}
 
 \item \OMIT Similar issues occur in other expressibility results such as Propositions 4.1, 4.2, 4.3 etc., where the instance I 
 is never fully qualified. In this way, one can make the instance I map a dummy matrix M variable to the result of the function 
@@ -173,6 +179,7 @@ to be computed, and make the for-MATLANG expression be just M, making all such c
 I believe such claims should be provided with a spirit similar to Theorem 5.3, where the variables of the expression, 
 and the shape of the instance I are clearly defined.\thomas{Working on this.}
 \cristian{No way. I disagree that the quantification is needed. It is obvious from the context. I marked it as ommited.}
+\floris{The reviewer just asks to say that the expressions work for any matrix. Anyways.}
 
 \item \OMIT  Another instance of this is Corollary 5.2, where the term "equivalent" is used, without formally defining it. Considering 
 that expressibility and equivalence results are the main task of the paper, I would make these notions and results more formal.
