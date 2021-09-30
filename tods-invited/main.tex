@@ -1,0 +1,59 @@
+\documentclass[acmsmall]{acmart}
+
+\usepackage{enumitem}
+\usepackage{balance}
+
+\input{./extras/macros.tex}
+
+\input{./extras/title_authors}
+
+%%%%%%%%%%%%%%%%%%%
+%% Document body %%
+%%%%%%%%%%%%%%%%%%%
+
+\begin{document} 
+
+\input{./extras/abstract}
+\input{./extras/keywords}
+
+\maketitle
+
+\section{Introduction}
+\input{./sections/intro.tex}
+
+
+\section{MATLANG}\label{sec:matlang}
+\input{./sections/prelim.tex}
+
+\section{Extending MATLANG with for loops}\label{sec:formatlang}
+\input{./sections/forloops.tex}
+
+
+%\section{Order}\label{sec:order}
+%\input{./sections/order.tex}
+
+\section{Algorithms in Linear Algebra}\label{sec:queries}
+\input{./sections/algorithms.tex}
+
+\section{Expressiveness of for loops}\label{sec:circuits}
+\input{./sections/expr.tex}
+
+
+\section{Restricting the power of for loops}\label{sec:restrict}
+\input{./sections/restrictions.tex}
+
+\section{Conclusions}\label{sec:conclude}
+\input{./sections/concl.tex}
+
+
+
+%%%%%%%%%%%%%%%%%%%
+%%% Bibliography %%
+%%%%%%%%%%%%%%%%%%%
+
+\newpage
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{./extras/biblio}
+
+
+\end{document}

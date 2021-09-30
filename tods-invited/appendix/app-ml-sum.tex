@@ -1,0 +1,178 @@
+%!TEX root = /Users/fgeerts/Documents/MLforloops/pods/main.tex
+\newcommand{\remark}[1]{\textcolor{darkgray}{\bf Remark: }\textcolor{gray}{#1} }
+We next show that \lang$(\sum,\prod)$ and \ARA are closely connected. To make this correspondence formal we first establish a link between matrix schemas and relation schemas, and matrix instances and database instances. 
+
+We start from a matrix schema $\Sch=(\Mnam,\size)$, where $\Mnam\subset \Mvar$ is a finite set of matrix variables, and $\size: \Mvar \mapsto \DD\times \DD$ is a function that maps each matrix variable to a pair of size symbols. On the relational side
+we have for each size symbol $\alpha\in\DD\setminus\{1\}$, attributes $\row_\alpha$ and $\col_\alpha$ in $\mathbf{att}$. For each $V\in\Mnam$ we denote
+by $V_R$ its corresponding relation name. We take $N$ to be $\{V_R\mid V\in\Mnam\}$. Then, given $\Sch$, we define the database  schema $\text{Rel}(\Sch)$ such that for each $V_R\in N$,
+\[
+	\text{Rel}(\Sch)(V_R) = \begin{cases}
+		\lbrace\row_\alpha,\col_\beta \rbrace & \text{ if $ \size(V)=(\alpha,\beta)$} \\
+		\lbrace\row_\alpha \rbrace & \text{ if $ \size(V)=(\alpha,1)$} \\
+		\lbrace\col_\beta \rbrace  &
+	 \text{ if $ \size(V)=(1,\beta)$} \\
+		\lbrace\rbrace & \text{ if $\size(V)=(1,1)$}.
+\end{cases}
+\]
+
+Consider a matrix instance $\I = (\dom,\conc)$ over a schema $\Sch$.
+Let $V\in\Mnam$ with $\size(V)=(\alpha,\beta)$ and let $\conc(V)$ be its corresponding matrix of dimension $\dom(\alpha)\times \dom(\beta)$.
+Given an instance $\I$ over $\Sch$, the domain asssignment $\mathbb{D}_{\I}$ is defined as 
+$\mathbb{D}_{\I}(\row_\alpha)=[1,\dom(\alpha)]$ and 
+$\mathbb{D}_{\I}(\col_\alpha)=[1,\dom(\alpha)]$. 
+We further  define the database instance $\text{Rel}_\Sch(\I)$  to consist of relations for each $V_R\in N$ defined as follows:
+$\mathcal{T}_{\mathbb{D}_{\I}}(\text{Rel}(\Sch)(V_R)) \to K$ such that
+$(\text{Rel}_{_\Sch}(I))(t):=\conc(V)_{ij}$ where (1) $t(\row_\alpha)=i$ if $\alpha\neq 1$ and equal to $1$ if $\alpha = 1$; and (2) $t(\col_\beta)=j$ if $\beta\neq 1$ and equal to $1$ if $\beta= 1$.
+
+We next translate \lang$(\sum,\prod)$ expressions $e$ into \ARA expressions $\Phi(e)$ by induction on the structure of $e$. The translation closely follows the translation given in~\cite{brijder2019matrices}, except that we  additionally need to consider summation, pointwise functions and the $\star$-projection.
+
+\begin{itemize}
+	\item If $e=V$ then $\Phi(e):=V_R$.
+	\item if $e=e_1^t$ where $\Sch(e_1)=(\alpha,\beta)$ then \[
+\Phi(e) :=
+\begin{cases}
+\rho_{\mathrm{col}_\alpha \to \mathrm{row}_\alpha,\mathrm{row}_\beta \to \mathrm{col}_\beta}\bigl(\Phi(e_1)\bigr) & \text{if } \alpha \neq 1 \neq \beta; \cr
+\rho_{\mathrm{col}_\alpha \to \mathrm{row}_\alpha}\bigl(\Phi(e_1)\bigr) & \text{if } \alpha \neq 1 = \beta; \cr
+\rho_{\mathrm{row}_\beta \to \mathrm{col}_\beta}\bigl(\Phi(e_1)\bigr) & \text{if } \alpha = 1 \neq \beta; \cr
+\Phi(e_1) & \text{if } \alpha = 1 = \beta,
+\end{cases}
+\]
+\remark{In \lang++ we only need transposition. Complex conjugate transposition can be obtained by combining transposition with a pointwise function that takes the complex conjugate of a complex number.}
+\item
+	If $e = e_1 \cdot e_2$ where $\Sch(e_1) = (\alpha,\gamma)$ and $\Sch(e_2) =(\gamma,\beta)$, then we consider two cases. If $\gamma = 1$, then $\Phi(e) := \Phi(e_1) \Join \Phi(e_2)$. If $\gamma \neq 1$, then 
+	$$
+	\Phi(e) := \hat{\pi}_C\Bigr(\rho_{\mathrm{col}_\gamma\to C}\bigl(\Phi(e_1)\bigr)\Join\rho_{\mathrm{row}_\gamma\to C}\bigl(\Phi(e_2)\bigr)\Bigr).$$
+	% , where $\varphi_1(\mathrm{col}_\gamma) = \varphi_2(\mathrm{row}_\gamma) = C \notin \{\mathrm{row}_\alpha, \mathrm{col}_\beta\}$ and $\varphi_1$ and $\varphi_2$ are the identity otherwise.
+	% If $e=e_1(v_1,\ldots,v_k)\cdot e_2(u_1,\ldots,u_s)$ where $e_1$ is $n\times\gamma$, $e_2$ is $\gamma\times m$. Let $\rho:\row_\gamma\rightarrow C,\col_\gamma\rightarrow C.$ We have two cases:
+	% 	\begin{itemize}
+	% 		\item If $\gamma\neq 1$ then $E=\widehat{\pi}_C\left( \rho\left(E_1\right)\bowtie\rho\left( E_2\right)\right).$
+	% 		\item If $\gamma = 1$ then $E=E_1\bowtie E_2$.
+	% 	\end{itemize}
+	\item If $e=f(e_1,\ldots,e_k)$ with $\Sch(e_i)=(1,1)$ for all $i\in[1,k]$, then
+	$\Phi(e):=\text{Apply}[f]\bigl(\Phi(e_1),\ldots,\Phi(e_k)\bigr)$. 
+	% we have that $E=E_1\cup\cdots\cup E_s$ if $f$ is sum and $E=E_1\bowtie\cdots\bowtie E_s$ if $f$ is multiplication.
+	\item If $e=\ssum V.e_1$ where $\Sch(e_1)=(\alpha,\beta)$ and $\Sch(V)=(\gamma,1)$. Then,
+	in $\Phi(e_1)$ we replace $V_R$ by $\Phi_{Id}(V_R)$ which computes a binary 
+	relation encoding the $\gamma\times\gamma$ idenity matrix. Intuitively, by selecting different
+	columns of the identity matrix we can extract all canonical $\gamma\times 1$ basis vectors.
+	More precisely, $\Phi_{Id}(V_R)$ is  defined by
+	$$
+	\sigma_{\{\mathrm{row}_\gamma,C_V\}}\Bigr(\mathbf{1}(V_R) \Join \mathbf{1}\bigl(\rho_{\mathrm{row}_\gamma \to C_V}(V_R)\bigr)\Bigr)$$
+	if $\gamma \neq 1$ and
+   $\mathbf{1}(V_R)$ if $\gamma = 1$.
+   Then,
+	$$
+	\Phi(e):=\hat{\pi}_{C_V}\bigl(\Phi(e_1)[V_R\gets \Phi_{Id}(V_R)])\bigr).
+	$$
+	\remark{We need to introduce $\hat{\pi}$...}
+	Note that when the $C_{V}$ attribute in $\Phi(e_1[V_R\gets \Phi_{Id}(V_R)])$
+	is instantiated with a value $j$ in $[1,n_\gamma]$, then this expression evaluates $e_1(\I[V\gets e_j^\gamma])$
+	Hence, by projecting over $C_V$ we range over all $j\in[1,n_\gamma]$ and sum up all $K$-values for each entry. 
+	% \remark{Why is the following needed?}
+	% Finally, note that if $e=\ssum V_1 \ssum V_2 \cdots \ssum V_n. e'$ then$$\Phi(e)=\hat{\pi}_{C_{V_1}} \ldots \hat{\pi}_{C_{V_n}}\left( \Phi(e'[V_i\gets \Phi_{Id}(V_i) :i=1,\ldots, n])\right)$$ 
+	\item Todo scalar product. \remark{This needs to be added.}
+	% and let $E'$ be the corresponding ARA expression of $e'$. Note that $E'$ is $E'(\row_n, \col_m,A,A_1,\ldots,A_k), E'(\row_n,A,A_1,\ldots,A_k), E'(\col_m,A,A_1,\ldots,A_k)$ or $E'(A,A_1,\ldots,A_k)$ depending on the dimensions of $e'$. Then we have that $E=\widehat{\pi}_A(E').$ Note that this implies that if $e=\ssum v_1\ssum v_2\cdots\ssum v_k.e'(v_1,\ldots,v_k)$ then $E=\widehat{\pi}_{A_1}\widehat{\pi}_{A_2}\cdots\widehat{\pi}_{A_k}E'.$
+\end{itemize}
+
+\begin{proposition}
+	For each \lang$(\sum,\prod)$ expression $e$ over schema $\Sch$ such that $\Sch(e)=(\alpha,\beta)$ with $\alpha\neq 1\neq\beta$, there exists an \ARA expression $\Phi(e)$ over schema $\text{Rel}(\Sch)$ such that $\text{Rel}(\Sch)(\Phi(e))=\{\mathrm{row}_\alpha,\mathrm{col}_\beta\}$ and 
+	such that for any instance $\I$ over $\Sch$,
+	$$
+	e(\I)_{i,j}=\Phi(e)(\text{Rel}_{\Sch}(\I))(t)
+	$$
+	for tuple $t(\mathrm{row}_\alpha)=i$ and $t(\mathrm{col}_\beta)=j$ in $\text{Rel}_{\Sch}(\I)$. Similarly for when $e$ has schema $\Sch(e)=(\alpha,1)$, $\Sch(e)=(1,\beta)$ or $\Sch(e)=(1,1)$, then $\Phi(e)$ has schema $\text{Rel}(\Sch)(\Phi(e))=\{\mathrm{row}_\alpha\}$,
+$\text{Rel}(\Sch)(\Phi(e))=\{\mathrm{col}_\alpha\}$, or
+$\text{Rel}(\Sch)(\Phi(e))=\{\}$, respectively.
+\end{proposition}
+
+For the converse translation, i.e., from \ARA to \lang++, we need to impose some restrictions. More precisely, we only consider \ARA expression $\varphi$
+that take as input relations of arity at most two and also have a schema of arity at most two. Note that intermediate expressions can create schemas of arbitraty size. We also make the assumption that there is an order, denoted by $<$, on the attributes in $\mathbf{att}$. In particular, we assume $A_1<A_2<\cdots$ for attributes $A_i\in\mathbf{att}$.
+
+This is to identify which attributes correspond to rows and columns when moving the matrix setting. 
+
+
+Consider a database schema $\mathcal{R}$ on a finite set $N$ of relation names
+ assigning a relation schema $\mathcal{R}(R)\subseteq\mathbf{att}$ to each $R \in N$. We assume that $\mathcal{R}(R)$ has size at most two. With each relation name $R\in N$ we associate a matrix name $M_R$. Let $\text{Mat}(\mathcal{R})$ denote the set
+ $V_R$ of matrix names for $R\in\mathcal{R}$. Consider an injective function $s:\mathbf{att}\to \DD$ associating with each attribute a unique size symbol. Let $V_R\in \text{Mat}(\mathcal{R})$ and
+define
+ $$
+\size(V_R)=\begin{cases}
+(s(A_1),s(A_2)) & \text{if $\mathcal{R}(R)=\{A_1,A_2\}$, $A_1<A_2$}\\
+(s(A),1) & \text{if $\mathcal{R}(R)=\{A\}$}\\
+(1,1) & \text{if $\mathcal{R}(R)=\{\}$}.
+\end{cases}
+ $$
+Let $\mathbb{D}$ be a domain assignment. We define 
+$\dom(\alpha)=|\mathbb{D}(A)|$ where $s(A)=\alpha$.
+We only consider consecutive domain assignments, i.e.,
+such that attribute values take values in $[1,||\mathbb{D}(A)|]$.
+Consider 
+a relation $r:
+\mathcal{T}_{\mathbb{D}}(X) \to K$ of $R$ with $X\subseteq\{A_1,A_2\}$  as determined by
+$\mathcal{R}(R)$. We associate a matrix instance $\I = (\dom,\conc)$ as follows.
+We define $\dom(\alpha)=|\mathbb{D}(A_1)|$ and
+$\dom(\beta)=|\mathbb{D}(A_2)|$ where $s(A_1)=\alpha$ and $s(A_2)=\beta$. Furthermore,
+$\conc(V_R)=\text{Mat}(r)$ such that 
+$(\text{Mat}(r))_{i,j} := r(t)$, where $t$ is (1) the tuple with $t(A_1) = i$ and $t(A_2) = j$ if $|X| = 2$; (2) the tuple with $t(A_1) = i$ and $j = 1$ if $X = {A_1}$,
+(3) the tuple with $t(A_2) = j$ and $i = 1$ if $X = {A_2}$,
+(3) the unique tuple of $r$ if $X=\emptyset$. Clearly, $\text{Mat}(r)$ is a matrix of dimension as
+specified by $\mathbb{D}$. 
+
+
+%
+% In the following, when $\varphi$ is
+% an \ARA expression of schema $\mathcal{R}(\varphi)=\{A_1,\ldots,A_k\}$ with $A_1<A_2<A_3<\cdots < A_k$
+%
+We next translate \ARA expressions in to \lang$(\sum,\prod)$ expressions over an extended schema. More specifically, we extend 
+$\Mnam$ with matrix variables $V_A$ for attributes $A$ appearing the \ARA expression. We first simulate \ARA expression entry-wise.
+
+\begin{lemma}
+For every \ARA expression $\varphi$ over schema $\mathcal{R}$ with there is \lang$(\sum,\prod)$ expression $\Upsilon(\varphi)$ such that for every database instances $\I$ over $\mathcal{R}$ using consecutive domain assignment, 
+$$
+\varphi(\I)(i_1,\ldots,i_p)=\Upsilon(\varphi)(\text{Mat}(\I)\cup \{e_{i_1}^{n_1},\ldots,e_{i_p}^{n_p})
+$$
+\end{lemma}
+\begin{proof}
+\begin{itemize}
+\item If $\varphi=R$, then $\Upsilon(e):=V_{A_1}^t\cdot V_R\cdot V_{A_2}$ if $\mathcal{R}(R)=\{A_1,A_2\}$ with $A_1<A_2$; 
+$\Upsilon(e):=V_A^t\cdot V_R$ if $\mathcal{R}(R)=\{A\}$; and 
+$\Upsilon(e):=V_R$ if $\mathcal{R}(R)=\{\}$. We define $\text{Ext}()$
+\item If $\varphi=\mathbf{1}(\psi)$  then $
+\Upsilon(\varphi):=\text{Apply}[x\mapsto 1](\Upsilon(\psi))$.
+\item If $\varphi=\psi_1\cup \psi_2$ then
+$\Upsilon(\varphi):=\text{Apply}[(x,y)\mapsto x+y](\Upsilon(\psi_1),\Upsilon(\psi_2))$.
+\item If $\varphi=\pi_{Y}(\psi)$ for $Y\subseteq \mathcal{R}(\psi)$ then
+$$
+\Upsilon(\varphi):=\sum_{\{V_A\mid A\in \mathcal{R}(\psi)\setminus Y\}}\Upsilon(\psi).
+ $$
+\item If $\varphi=\sigma_{Y}(\psi)$ with $Y\subseteq\mathcal{R}(\psi)$ then
+$$
+ \Upsilon(\varphi):=\Upsilon(\psi)\cdot\prod_{A,B\in Y} V_{A}^t\cdot V_{B}.
+$$
+\item If $\varphi=\rho_{X\mapsto Y}(\psi)$ then
+$$\Upsilon(\varphi):=\Upsilon(\psi)[V_A\gets V_B\mid A\in X, B\in Y, A\mapsto B].$$
+\item If $\varphi=\psi_1\bowtie \psi_2$ then
+$\Upsilon(\varphi):=\Upsilon(\psi_1)\cdot \Upsilon(\psi_2)$.
+\item If $\varphi=\pi_{Y}^\star(\psi)$ for $Y\subseteq \mathcal{R}(\psi)$.  \remark{Todo.}
+\item If $\varphi=\text{Apply}[f](\psi_1,\ldots,\psi_k)$  then
+$\Upsilon(\varphi):=\text{Apply}[f](\Upsilon(\psi_1),\ldots,\Upsilon(Y_k))$.
+\end{itemize}
+\end{proof}
+As a consequence, when $\varphi$ is an \ARA expression such that $\mathcal{R}(\varphi)=\{A_1,A_2\}$ with $A_1<A_2$ we have that 
+$$
+\varphi(\I)(t)=
+\sum_{V_{A_1},V_{A_2}}\Upsilon(\varphi)\cdot V_{A_1}\cdot V_{A_2}^t.
+$$
+When $\mathcal{R}(\varphi)=\{A\}$ we have
+$$
+\varphi(\I)(t)=
+\sum_{V_{A}}\Upsilon(\varphi)\cdot V_{A_1}.
+$$
+and
+when $\mathcal{R}(\varphi)=\{\}$ we have
+$$
+\varphi(\I)(t)=\Upsilon(\varphi).
+$$
+ 
+
+

@@ -1,0 +1,162 @@
+%!TEX root = ../main.tex
+% !TeX spellcheck = en_US
+
+To extend \lang\ with recursion, we take inspiration from classical linear algebra algorithms, such as those described in \cite{num}. Many of these algorithms are based on \textit{for-loops} in which the termination condition for each loop is determined by the matrix dimensions. We have seen how the transitive closure of a matrix can be computed using for-loops in the Introduction. Here we add this ability to \lang, and show that the resulting language, called $\langfor,$ can compute properties outside of the scope of \lang. We see more advanced examples, such as Gaussian elimination and matrix inversion, later in the paper. 
+
+\subsection{Syntax and semantics of \langfor} The syntax of \langfor is defined just as for \lang but with an extra rule in the grammar:
+\medskip
+
+\begin{tabular}{lcll}
+ $\ffor{v}{X}{e}$ & (canonical for loop, with $v, X \in \Mvar$). 
+\end{tabular}
+
+\medskip
+\noindent Intuitively, $X$ is a matrix variable which is iteratively updated according to the expression $e$. We simulate iterations of the form ``\texttt{for} $i\in [1..n]$'' by letting $v$ loop over the \textit{canonical vectors} $b_1^n,\ldots,b_n^n$ of dimension $n$. Here,
+$b_1^n = [1\ 0 \cdots 0]^T$, $b_2^n = [0\ 1\ 0 \cdots 0]^T$, etc. When $n$ is clear from the context we simply write $b_1,b_2,\ldots$. In addition, the expression $e$ in the rule above may depend on $v$. 
+
+We next make the semantics precise and start by
+declaring the type of loop expressions.
+Given a schema $\Sch=(\Mnam,\size)$, the type of a \langfor expression $e$, denoted $\ttype(e)$, is defined inductively as in \lang but with following extra rule:
+\begin{itemize}
+\item $\ttype(\ffor{v}{X}{e}) := (\alpha,\beta)$, if \\
+$\ttype(e)=\ttype(X) =(\alpha,\beta)$ and $\ttype(v) = (\gamma,1)$.
+\end{itemize}
+We note that $\Sch$ now necessarily includes $v$ and $X$ as variables and assigns size symbols to them.
+We also remark that in the definition of the type of $\ffor{v}{X}{e}$, we require that $\ttype(X) = \ttype(e)$ as this expression updates the content of the variable $X$ in each iteration using the result of $e$. We further restrict the type of 
+$v$ to be a vector, i.e., $\ttype(v)=(\gamma,1)$, since $v$ will be instantiated with canonical vectors.
+A \langfor\ expression $e$ is well-typed over a schema $\Sch=(\Mnam,\size)$ if its type is defined. 
+
+For well-typed expressions we next define their semantics. This is done in an inductive way, just as for \lang. To define the semantics of $\ffor{v}{X}{e}$ over an instance $\I$, we need the following notation. Let $\I$ be an instance and $V\in \Mnam$. Then $\I[V_1 := A_1, \ldots, V_l:=A_l]$ denotes an instance that coincides with $\I$, except that the value of the matrix variable $V_i$ is given by the matrix $A$, for $i\in\lbrace 1, \ldots, l\rbrace$. Assume that
+$\ttype(v)= (\gamma,1)$, and $\ttype(e) = (\alpha,\beta)$ and $n := \dom(\gamma)$. Then, $\sem{\ffor{v}{X}{e}}{\I}$ is defined iteratively, as follows:
+\begin{itemize}
+\item Let $A_0 := \mathbf{0}$ be the zero matrix of size $\dom(\alpha)\times \dom(\beta)$.
+\item For $i=1,\ldots n$, compute $A_i:= \sem{e}{\I[v := b^{n}_i, X:= A_{i-1}]}$.
+\item Finally, set $\sem{\ffor{v}{X}{e}}{\I}:= A_{n}$.
+\end{itemize}
+
+For better understanding how \langfor  works, we next provide some  examples.
+We start by showing that the one-vector and $\diag$ operators are redundant
+in \langfor.
+\begin{example}\label{ex:onevec}
+We first show how the one-vector operator $\ones(e)$ can be expressed using \texttt{for} loops.
+It suffices to consider the expression
+$$e_{\ones}:=\ffor{v}{X}{X+v},$$
+with $\ttype(v)=(\alpha,1)=\ttype(X)$ if $\ttype(e)=(\alpha,\beta)$. This expression is well-typed
+and is of type $(\alpha,1)$. When evaluated over some instance $\I$ with $n=\dom(\alpha)$, $\sem{e_{\ones}}{\I}$ is defined as follows.
+Initially, $A_0:=\mathbf{0}$. Then $A_i:=A_{i-1}+b_i^n$, i.e., the $i$th canonical vector is added to $A_{i-1}$.
+Finally, $\sem{e_{\ones}}{\I}:=A_n$ and this now clearly coincides with $\sem{\ones(e)}{\I}$.\qed
+\end{example}
+
+\begin{example}\label{ex:diag}
+We next show that the $\diag$ operator is redundant in \langfor.
+Indeed, it suffices to consider the expression
+$$e_{\mathsf{diag}}:=
+\ffor{v}{X}{X + (v^T\cdot e) \times v\cdot v^T},$$ where $e$ is a \langfor\  expression of type $(\alpha,1)$. For this expression to be well-typed, $v$ has to be a vector variable of type $\alpha\times 1$ and $X$ a matrix variable of type $(\alpha,\alpha)$. Then, $\sem{e_{\mathsf{diag}}}{\I}$ is defined as follows.
+Initially, $A_0$ is the zero matrix of dimension $n\times n$, where $n=\dom(\alpha)$. Then, in each iteration
+$i\in[1..n]$, $A_{i}:=A_{i-1}+  ((b_i^n)^T\cdot\sem{e}{\I})\times (b_i^n\cdot (b_i^n)^T)$. In other words, $A_i$ is obtained by adding the matrix with value $(\sem{e}{\I})_i$ on position $(i,i)$ to $A_{i-1}$. Hence, $\sem{e_{\mathsf{diag}}}{\I}:=A_n=\sem{\diag(e)}{\I}$.\qed
+ \end{example}
+
+These examples illustrate that we can limit \langfor to consist of the following ``core'' operators: transposition, matrix multiplication and addition, scalar multiplication, pointwise function application, and for-loops. More specific, \langfor is defined by the following simplified syntax:
+$$
+e ::= V \ \mid \ e^T \!\ \mid \ e_1 \cdot e_2 \ \mid \ e_1 + e_2 \ \mid \ e_1\times e_2  \ \mid \  f(e_1,\ldots ,e_k) \ \mid \ \ffor{v}{X}{e}
+$$
+Similarly as for \lang, we write $\langforf{\Fun}$ for some set $\Fun$ of functions when these are required for the task at hand.
+
+As a final example, we show that we can compute whether a graph contains a 4-$\textsf{clique}$ using \langfor.
+\begin{example}\label{ex:fourcliques}
+To test for $4$-cliques it suffices to consider the following expression with for-loops nested four times:
+\begin{tabbing}
+\texttt{for\,}\=$u,\,X_1.\ \ X_1 \ + $\\
+\> \texttt{for\,}\=$v,\,X_2.\ \ X_2 \ +$ \\
+\>\>\texttt{for\,}\=$w,\,X_3.\ \ X_3 \ +$ \\
+\>\>\>\texttt{for\,}\=$x,\,X_4.\ \ X_4 \ +$ \\
+\>\>\>\>$u^T\cdot V\cdot v \cdot u^T\cdot V\cdot w\cdot u^T\cdot V\cdot x \cdot $\\
+\>\>\>\>$v^T\cdot V\cdot w \cdot v^T\cdot V\cdot x\cdot w^T\cdot V\cdot x \cdot g(u,v,w,x)$
+\end{tabbing}
+with $g(u,v,w,x)=f(u,v)\cdot f(u,w)\cdot f(u,x)\cdot f(v,w)\cdot f(v,x)\cdot f(w,x)$ and
+$f(u,v)=1-u^T\cdot v$. Note that $f(b_i^n,b_j^n)=1$ if $i\neq j$ and $f(b_i^n,b_j^n)=0$ otherwise.
+Hence, $g(b_i^n,b_j^n,b_k^n,b_\ell^n)=1$ if and only if all $i,j,k,l$ are pairwise different.
+When evaluating the expression on an instance $\I$ such that $V$ is assigned to the adjacency 
+matrix of a graph, the expression above evaluates to a non-zero value if and only if the graph
+contains a four-clique.\qed
+\end{example}
+
+Given that \lang can not check for 4-cliques \cite{matlang-journal}, we easily obtain the following.
+
+\begin{proposition}
+\label{cor-ml-fml}
+For any collection of functions $\Fun$, 
+$\langf{\Fun}$ is properly subsumed by $\langforf{\Fun}$.
+\end{proposition} 
+
+\subsection{Design decisions behind \langfor}
+\noindent\textbf{Loop Initialization.} As the reader may have observed, in the semantics of for-loops we 
+always initialize $A_0$ to the zero matrix~$\mathbf{0}$ (of appropriate dimensions). It is often convenient
+to start the iteration given some concrete matrix  originating from the result of evaluation a \langfor\ expression $e_0$. To make this explicit, we write $\initf{e_0}{v}{X}{e}$ and its semantics is defined as above
+with the difference that $A_0:=\sem{e_0}{\I}$. We observe, however, that $\initf{e_0}{v}{X}{e}$ can already
+be expressed in \langfor. In other words, we do not loose generality by assuming an initialization of $A_0$ by $\mathbf{0}$.
+The key insight is that in \langfor\ we can check during evaluation whether or not
+the current canonical vector $b_i^n$ is equal to $b_1^n$. This 
+is due to the fact that for-loops iterate over the canonical vectors in a fixed order. We discuss this more in the next paragraph.
+In particular, we can define a \langfor expression $\mmin$, which when evaluated on an instance, returns $1$ if its input vector is $b_1^n$, and returns $0$ otherwise. Given $\mmin$, consider now the
+\langfor\ expression
+ $$\ffor{v}{X}{\mmin{v}\cdot e(v,X/e_0) + (1-\mmin{v})\cdot e(v,X)},$$
+ where we explicitly list $v$ and $X$ as matrix variables on which $e$ potentially depends on, and where
+ $e(v,X/e_0)$ denotes the expression obtained by replacing every occurrence of $X$ in $e$ with $e_0$.
+When evaluating this expression on an instance $\I$, $A_0$ is initial set to the zero matrix, in the first iteration (when  $v=b_1^n$ and thus $\mmin{v}=1$)
+we have $A_1=\sem{e}{\I[v:=b_1^n,X:=\sem{e_0}{\I}]}$, and for consecutive iterations (when only the part related to $1-\mmin{v}$ applies) $A_i$ is updated as before. Clearly, the result of this evaluation is equal to
+$\sem{\initf{e_0}{v}{X}{e}}{\I}$. 
+
+
+As an illustration, we consider the Floyd-Warshall algorithm given in the Introduction. 
+
+\begin{example}\label{ex:floyd}
+Consider the following expression:
+\begin{tabbing}
+$e_{FW} := $ \texttt{for\,}\=$v_k,\, X_1\!=\!A.\ \ X_1 \ + $\\
+\> \texttt{for\,}\=$v_i, \, X_2.\ \ X_2 \ +$ \\
+\>\>\texttt{for\,}\=$v_j,\, X_3.\ \ X_3 \ +$ \\
+\>\>\>$(v_i^T\cdot X_1\cdot v_k \cdot v_k^T\cdot X_1\cdot v_j)\times v_i\cdot v_j^T$
+\end{tabbing}
+The expression $e_{FW}$ simulates the Floyd-Warshall algorithm by updating the matrix $A$, which is stored in the variable $X_1$. The inner sub-expression here constructs an $n\times n$ matrix that contains one in the position $(i,j)$ if and only if one can reach the vertex $j$ from $i$ by going through $k$, and zero elsewhere. If an instance $\I$ assigns to $A$ the adjacency matrix of a graph, then $\sem{e_{FW}}{\I}$ will be equal to the matrix produced by the algorithm given in the Introduction.
+\qed
+\end{example}
+
+
+\noindent\textbf{Order.} By introducing for-loops we not only extend \lang\ with bounded recursion, we also introduce order information. Indeed, the semantics of the \texttt{for} operator assumes that the canonical vectors $b_1,b_2,\ldots$
+are accessed in this order. It implies, among other things, that \langfor\ expressions are not permutation-invariant.
+We can, for example, return the bottom right-most entry in a matrix. Indeed, consider the expression $e_{\mathsf{max}} := \ffor{v}{X}{v}$ which, for it to be well-typed, requires both $v$ and $X$ to be of type $(\alpha,1)$. Then, $\sem{e_{\mathsf{max}}}{\I}=b_n^n$, for $n=\dom(\alpha)$, simply because initially, $X=\mathbf{0}$, but $X$ will be overwritten by $b_1^n,b_2^n,\ldots,b_n^n$, in this order. Hence, at the end of the evaluation $b_n^n$ is returned.
+To extract the bottom right-most entry from a matrix, we now simply use $e_{\mathsf{max}}^T\cdot V\cdot e_{\mathsf{max}}$.
+
+Although the order is implicit in \langfor, we can explicitly use this order in \langfor expressions. More precisely, the order on canonical vectors is made accessible by
+using the matrix:
+\[
+S_{\leq} = \begin{bmatrix}
+1 & 1 & \cdots &  1 \\
+0 & 1 & \cdots & 1\\
+\vdots & \vdots & \ddots & 1 \\
+0 & 0 & \cdots & 1 
+\end{bmatrix}.
+\] 
+We observe that $S_{\leq}$ has the property that $b_i^T\cdot S_{\leq} \cdot b_j=1$, for two canonical vectors $b_i$ and $b_j$ of the same dimension, if and only if $i\leq j$. Otherwise, $b_i^T\cdot S_{\leq} \cdot b_j=0$. 
+Interestingly, we can build the matrix $S_{\leq}$ with the following \langfor expression:
+$$
+e_{\leq}=\ffor{v}{X}{X + \left((X\cdot e_{\mathsf{max}}) + v \right)\cdot v^T + v\cdot e^T_{\mathsf{max}}},
+$$
+where $e_{\mathsf{max}}$ is as defined above. The intuition behind this expression is that by using the last canonical vector $b_n$, as returned by $e_{\mathsf{max}}$, we have access to the last column of $X$ (via the product $X\cdot e_{\mathsf{max}}$). We use this column such that after the $i$-th iteration, this column contains the $i$-th column of $S_{\leq}$. This is done by incrementing $X$ with $v\cdot e_{\mathsf{max}}^T$.
+To construct $S_{\leq}$, in the $i$-th iteration we further increment $X$ with 
+(i)~the current last column in $X$ (via $X\cdot e_{\mathsf{max}}\cdot v^T$) which holds
+the $(i-1)$-th column of $S_{\leq}$; and (ii)~the current canonical vector (via $v\cdot v^T$). Hence, after iteration $i$, $X$ contains the first $i$ columns of $S_{\leq}$ and holds the $i$th column of $S_{\leq}$ in its last column. It is now readily verified that $X=S_{\leq}$ after the $n$th iteration.
+
+It should be clear that if we can compute $S_{\leq}$ using $e_{\leq}$, then we can easily define the following predicates and vectors related with the order of canonical vectors:
+\begin{itemize}
+	\item $\mathsf{succ}(u,v)$ such that $\mathsf{succ}(b_i^n,b_j^n)=1$ if $i\leq j$ and $0$ otherwise. Similarly, we can define
+	$\mathsf{succ}^+(u,v)$ such that  $\mathsf{succ}^+(b_i^n,b_j^n)=1$ if $i < j$ and $0$ otherwise;
+	\item $\mathsf{min}(u)$ such that  $\mathsf{min}(b_i^n)=1$ if $i=1$ and $\mathsf{min}(b_i^n)=0$ otherwise; 
+	\item $\mathsf{max}(u)$ such that  $\mathsf{max}(b_i^n)=1$ if $i=n$ and $\mathsf{min}(b_i^n)=0$ otherwise; and
+	\item $e_{\mathsf{min}}$ and $e_{\mathsf{max}}$ such that $\sem{e_{\mathsf{min}}}{\I}=b_1^n$ and 
+	$\sem{e_{\mathsf{max}}}{\I}=b_n^n$, respectively.
+\end{itemize}
+We refer to the full version~\cite{geerts2020expressive} for details.
+
+Having order information available results in \langfor to be quite expressive. We heavily rely on order information in the next sections to compute the inverse of matrices and more generally to simulate low complexity Turing machines and arithmetic circuits.

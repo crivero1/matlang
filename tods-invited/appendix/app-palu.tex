@@ -1,0 +1,157 @@
+\newtheorem*{PALU}{Proposition~\ref{prop:palu}}
+We next consider LU-decomposition with pivoting. We recall proposition \ref{prop:palu}:
+
+\begin{PALU}
+  There exist expressions $e_{L^{-1}P}(V)$ and $e_U(V)$ in $\langforf{f_/,f_{>0}}$  such that
+  $L^{-1}\cdot P=\sem{e_{L^{-1}P}}{\I}$ and $U=\sem{e_U}{\I}$, satisfy $L^{-1}\cdot P\cdot A=U$, where $\I$ is an instance such that $\conc(V)=A$. 
+\end{PALU}
+\begin{proof}
+We assume that $f_{/}$ and $f_{>0}$ are in $\mathcal{F}$. Let $A$ be an arbitrary matrix.
+% Recall that $A$ is said to be LU factorizable if there exists matrices
+% $T_1,\ldots, T_{n}$ where $T_i=I+c_ib_i$ for $1\leq i < n$ and $T_n=I$ such that $T_{n}\cdots T_1A=U$ holds,
+% where $U$ is an upper triangular matrix. Define $A_k=T_{k-1}A_{k-1}$ for $1< k\leq n+1$ and $A_1=A$. Keep in
+% mind that $A_k$ is $A$ with its columns reduced up to index $k-1$ (so $A_{n+1}=U$).
+%
+% If $A$ needs no row interchange we compute
+% $$
+% L^{-1}=\initf{I}{v}{X}{\red{X\cdot A}{v}\cdot X},
+% $$
+% where in step $v=b_k$ we do $T_k=\red{X\cdot A}{v}$.
+% It is worth noting that because of the definition of $\ccol{\cdot}{\cdot}$ inside $\red{\cdot}{\cdot}$,
+% we always get $T_n=I$.
+By contrast to when $A$ is LU-factorizable, during the LU-decomposition process we may need row interchange (pivoting) in each step of the iteration. Let us assume that row interchange is needed immediately before 
+step $k$, $1\leq k\leq n$. In other words, we now aim to reduce the $k$-th column of $A_k=T_{k-1}\cdots T_1\cdot A$, 
+or $A_k=A$ if $k=1$, but now $A_k$ has a zero pivot, i.e., $(A_{k})_{kk}=0$. 
+Let $P$ be the matrix that denotes the necessary row interchange. If we know
+$P$, then 
+% We aim to reduce the $k$-th column of $PA_{k}$ since $A_{k}$ has a zero pivot.
+to compute $T_k$ we need to perform $\red{P\cdot X\cdot A}{v}$ in this iteration,
+where $\red{\cdot}$ is the expression in \langfor reducing a column, as explained in the main body of the paper.
+Furthermore, we need to apply the permutation $P$ to the current result, resulting in the 
+expression $\initf{I}{v}{X}{\red{P\cdot X\cdot A}{v}\cdot P\cdot X}$. We now remark that
+$P$ is a permutation matrix of the  form $P = I - u\cdot u^T$ and it denotes an interchange (if multiplied by left) of rows $i$ and $j$ if $u=(b_{i}-b_{j})$. Note that we are performing a row interchange for column $k$ and thus $i=k$ and $j>k-1$. If no interchange is needed, $i=j=k$ and $P=I$.
+Also note that when $k=n$ no interchange takes place. Furthermore, if no suitable $b_j$ can
+be found, this implies that no interchange is required as well and we can move on to next column.
+%  since we are using $P$ before
+% reducing the $k$-th column so we are interchanging rows of index strictly greater than $k-1$
+
+To find the vector $u$ in $P$, we can, for example, find the first entry $j\geq k$ in column $k$ of $A_k$ that holds a non-zero value. More generally, we can find the first entry in a vector $a$ that holds a non-zero value by using the function $f_{>0}$. Indeed, consider the following expression:
+$$
+\nneq{a}{u}:=\ffor{v}{X}{\left( 1-e_{\ones}(v)^T\cdot X \right) \times f_{>0}\left( ( v^T\cdot a )^2 \right)\times v + \mathsf{max}(v)\times\left( 1-e_{\ones}(v)^T\cdot X \right)\times \left( 1 - f_{>0}\left( ( v^T\cdot a )^2 \right) \right) \times u}
+$$
+Here, $\nneq{a}{u}$ receives two $n$ dimensional vectors $a$ and $u$ and outputs a 
+canonical vector $b_j$ such that $a_j$ is the first non-zero entry of $a$, or $u$ if such non-zero value does not exist in $a$. We check for $f_{>0}((\cdot)^2)$ 
+in case a negative number is tested. The above expression simply checks in each iteration
+whether $X$ already holds a canonical vector. If so, then $X$ is not updated. Otherwise,
+$X$ is replaced by the current canonical vector $b_j$ if and only if $b_j^T\cdot a$ is non-zero. Furthermore, when the final canonical vector is considered and $X$ does not hold
+a canonical vector yet and $b_n^T\cdot a$ is zero, the vector $u$ is returned.
+
+We use $\nneq{a}{u}$ to find a pivot for a specific column. Let us assume again that we
+want to find a pivot in column $k$ of $A_k$. We can then first make all entries in that column, with indexes smaller or equal to $k$, zero, just as we did by means of $\ccol{\cdot}{\cdot}$ in the
+definition of $\red{\cdot}$. Except, now we also need to make the $k$the entry zero as well.
+Let us denote by $\ccoleq{\cdot}{\cdot}$ the operation $\ccol{\cdot}{\cdot}$, as defined in the main body of the paper, but using $\mathsf{succ}$ instead of $\mathsf{succ}^+$ (to include the $k$ entry). Given this, we can construct $P=I-u\cdot u^T$ as follows:
+$$
+e_{P_u}(A,u) := e_{\mathsf{Id}} - \left[ u - \nneq{ \ccoleq{A}{u} }{u} \right]\cdot \left[ u - \nneq{ \ccoleq{A}{u} }{u} \right]^T.
+$$ 
+From the explanations given above, it should be clear that $e_{P_u}(A,u)$ computes the necessary permutation matrix of $A_k$ for the column indicated by $u$, or $I$
+if no permutation is needed, or if such permutation does not exist (so we skip the current column). Also, we have to modify the $\red{V}{y}$ operators, as follows:
+$$
+\red{V}{y}:= e_{\mathsf{Id}}+ f_{>0}\left( ( y^T\cdot V\cdot y)^2 \right)\times f_/(\ccol{V}{y},\left[ -(y^T\cdot V\cdot y)\times e_{\ones}(y) + \left( 1 - f_{>0}\left( ( y^T\cdot V\cdot y)^2 \right) \right)\times e_{\ones}(y) \right])\cdot y^T,
+$$
+so that when $V$ is interpreted by a matrix $B$ and $y=b_i$, it returns $I+c_ib_i^T$ if $B_{ii}$ is not zero. 
+If $B_{ii}=0$ then we divide $\ccol{B}{b_i}$ by $e_{\ones}(b_i)$ (so we don't get \textit{undefined}), 
+but we don't add $c_ib_i^T$ precisely because $B_{ii}=0$, and return the identity so nothing happens. We check 
+for $f_{>0}((\cdot)^2)$ in case a negative number is tested.
+
+\thomas{Extra line of explanation added.}
+
+Finally, we define
+$$
+e_{L^{-1}P}(V):=\initf{e_{\mathsf{Id}}}{v}{X}{\red{e_{P_v}(X\cdot V,v)\cdot X\cdot V}{v}\cdot e_{P_v}(X\cdot V,v)\cdot X}
+$$
+and $e_{\mathsf{U}}(V):=e_{L^{-1}P}(V)\cdot V$ as the desired expressions.
+
+As a final observation, in the definition of $e_{L^{-1}P}(V)$ 
+we interlaced permutation matrices with the $T_i$'s. More specifically, 
+$A_k=T_k\cdot P\cdot T_{k-1}\cdots T_1\cdot A$. We observe, however, that for $\ell\leq k-1$ and
+$T_{\ell}=I-c_\ell\cdot b_\ell^T$, we have that  $b_\ell^T\cdot P=b_\ell$ because $b_\ell$ has zeroes in positions in the rows involved in the row exchange $P$. Also, note that  $P^2=I$ and thus 
+$$P\cdot T_\ell\cdot P=P^2-P\cdot c_\ell\cdot b_\ell^T\cdot P=I-\widehat{c}_\ell\cdot b_l^T=\widehat{T}_\ell.$$
+%
+% When evaluated,
+% results in $U=T_{n}\cdots T_kPT_{k-1}\cdots T_1A$.
+% We now explain why $T_{n}\cdots T_kPT_{k-1}\cdots T_1 = L^{-1}P.$
+%
+% Now, for $T_{l}=I-c_lb_l^T$ with $l\leq k-1$ we have that $b_l^TP=b_l$ because $b_l$ has zeroes in positions
+% $i$ and $j$. Note that $P^2=I$, thus $PT_lP=P^2-Pc_lb_l^TP=I-\widehat{c}_lb_l^T=\widehat{T}_l.$ Where
+% $\widehat{c}_l=Pc_l$. Now
+As a consequence,
+$$
+T_k\cdot P\cdot T_{k-1}\cdots T_1=T_k\cdot P\cdot T_{k-1}\cdot P^2\cdot T_{k-2}\cdot P^2\cdots P^2 \cdot T_1\cdot P^2=T_k\cdot (P\cdot T_{k-1}\cdot P)\cdots (P\cdot T_1\cdot P)\cdot P=\widehat{T}_{k-1}\cdots \widehat{T}_1\cdot P,
+$$
+and thus we may assume that $P$ occurs at the end. Hence, we obtain $L^{-1}\cdot P\cdot A=U$.
+% $$
+% T_{n}\cdots T_kPT_{k-1}\cdots T_1=T_{n}\cdots T_kPT_{k-1}P^2T_{k-2}P^2\cdots P^2 T_1P^2=T_{n}\cdots T_k(PT_{k-1}P)(PT_{k-2}P)(P\cdots P)(PT_1P)P=T_{n}\cdots T_k\widehat{T}_{k-1}\cdots \widehat{T}_1P
+% $$
+% and $L^{-1} = T_{n}\cdots T_k\widehat{T}_{k-1}\cdots \widehat{T}_1$.
+%
+% The goal is to compute $P$ within the iteration. The output of the PALU algorithm is $L^{-1}P$, this is,
+% we aim to construct an expression $e_{L^{-1}P}(V)$ such that $U=e_{L^{-1}P}(A)\cdot A$. We also define
+% $e_{\mathsf{U}}(V)=e_{L^{-1}P}(A)\cdot A$.
+%
+\end{proof}
+
+% Now we show that if we have can do the PALU factorization (compute $e_{L^{-1}P}$), we can compute 
+% $\mathsf{minnz}$. Let $a$ be an $n$ dimensional vector such that there exists $k:1\leq k\leq n$ 
+% where $a_i=0$ for all $i<k$, this is, $k$ is the index of the first non zero entry of $a$ 
+% (it must exist, otherwise there is nothing to be proved and we return $\mathbf{0}$). 
+% Let $\lbrace d_1, \ldots, d_n\rbrace$ be an $n$ dimensional basis. 
+% Then, without loss of generality, $a$ is a linear combination of $d_1, \ldots, d_l$, with $l \leq n$. 
+% Now, let $A = \left[ a\hspace{1em} d_2 \hspace{1em} \cdots \hspace{1em}  d_n \right].$ 
+% Note that $A$ is PALU factorizable since $\lbrace a, d_2, \ldots, d_n\rbrace$ is a linearly 
+% independent set of $\mathbb{R}^n$. Furthermore, if we run the PALU algorithm the factorization results in
+
+% \[
+% U=(L^{-1}P)A = \begin{bmatrix}
+%     a_k & \cdots &  \vdots \\
+%     0 & \ddots & \vdots \\
+%     \vdots & \cdots & \cdots 
+% \end{bmatrix}.
+% \]
+
+% So, if we have the PALU function such that $e_{L^{-1}P}(A)=L^{-1}P$ and 
+% $e_{\mathsf{U}}(A)=e_{L^{-1}P}(A)\cdot A$, we can compute $\mathsf{minnz}$ in the following way:
+% \begin{align*}
+%     e_{\mathsf{minnz}}(a)=&\ffor{v}{X}{X+\left( \mathsf{succ}(v,X)\cdot\dfrac{a^Tv}{v_{min}^T\left[ e_{U}(A)\right]v_{min}} \right)\times (v-v_{max}) \\
+%     &\hspace{5em} + min(v)\times\left( v_{max} + \dfrac{a^Tv}{v_{min}^T\left[ e_{U}(A)\right]v_{min}}\times (v-v_{max})\right) \\
+%     &\hspace{5em} - \left( max(v)\cdot\left( 1-e_{\ones}(v)^TX \right)\right)\times v_{max} }
+% \end{align*}
+% \thomas{I actually don't know if I should add the last substraction, since we run $e_{\mathsf{minnz}}(a)$ 
+% only when $a\neq\mathbf{0}$, or we would end up dividing by zero.}
+% In the expression above, for initialization we use $min(v)$ as usual and we add $v_{max}$ to 
+% set $X=v_{max}$ so $\mathsf{succ}(v,X)=1$ until something changes. If $a_1\neq 0$ then we add $v-v_{max}$ 
+% and thus set $X=b_1$ and $\mathsf{succ}(v,X)=0$ since then, so $\mathsf{minnz}(a)=b_1$, as expected. 
+% If no nonzero value is found, we remove $v_{max}$ of $X$ to return $0$, as expected.
+% Next, $a^Tv$ extracts an entry of $a$, which will be zero until $v=b_k$, and we normalize it with $a_k$ 
+% obtained from $v_{min}^T\left[ e_{L^{-1}P}(A)\cdot A\right]v_{min}$, so we add $v$ only in this case and 
+% $X=b_k$ is set. From then on $\mathsf{succ}(v,X)$ will always be zero and we will end up with 
+% $\mathsf{minnz}(a)=b_k$ as expected. Note that the expression depends on the normalization of $a_k$, 
+% and would not be possible if we didn't have $a_k$ from the PALU algorithm.
+% \thomas{The following feels like cheating. Feels like I'm kind of using $f_{>0}$ not directly. Maybe it is better if we just state that if we have $f_{>0}$ we can do $e_{L^{-1}P}$ and thus $e_{\mathsf{U}}(A)=e_{L^{-1}P}(A)\cdot A$.}
+% So we define
+% \[
+% \mathsf{minnz}(a)=\begin{cases}
+%                \mathbf{0}, \text{ if } v_{min}^T\left[ e_{U}(A)\right]v_{min}=0 \\
+%                e_{\mathsf{minnz}}(a), \text{ if not}
+%             \end{cases}
+% \]
+% Thus we can compute $\mathsf{minnz}$ if and only if we can compute $e_{L^{-1}P}$.
+
+% If we have $f_{>0}$ we can define 
+% $$\mathsf{minnz}(a)=\ffor{v}{X}\left( 1-e_{\ones}(v)^TX \right) \times f_{>0}(v^Ta)\times v.
+% $$
+% Here, we sum $v$ only when the corresponding entry is nonzero and there is not a vector stored in $X$.
+% So, for any matrix, if we have $f_{>0}$, we can compute its gaussian elimitation by defining
+% $$
+% e_{\mathsf{U}}(V) :=  e_{L^{-1}P}(V) \cdot V.
+% $$
+% Note that the matrix that performs the gaussian elimination is $e_{L^{-1}P}(V)$, and it dependes on $f_{>0}$.
