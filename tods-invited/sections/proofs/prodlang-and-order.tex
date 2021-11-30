@@ -1,0 +1,33 @@
+% !TeX spellcheck = en_US
+%!TEX root = ../main.tex
+
+We now verify that \langmprod, extended with order and $f_{>0}$, 
+can perform matrix inversion and compute the determinant. To this aim, we verify that all order
+predicates in Section \ref{sec:formatlang:design} can be derived using $\ssum$, $\sprod$, $f_{>0}$ and 
+$e_{S_{<}}$. Given this, it suffices to observe that Csanky's algorithm, as shown in Section~\ref{sec:queries:inverse}, only relies on expressions using $\ssum$ and $\sprod$ and order information on canonical vectors and $f_/$.
+As consequence, our fragment can perform matrix inversion and compute the determinant.
+
+
+It remains to show that if we have $e_{S_{<}}$, using $\ssum$ and $\sprod$ and $f_{>0}$ we can
+can define all order predicates from Section~\ref{sec:formatlang:design}. We note that due to the restricted for-loops
+in $\ssum$ and $\sprod$, we do not have access to the intermediate
+result in the iterations and as such, it is unclear whether order information can be computed. This is why
+we assume access to $e_{S_<}$.
+
+We first remark that if we have $e_{S_{<}}$, we can also obtain
+ $e_{S_{\leq}}$ by adding $e_{\mathsf{Id}}$. Hence,
+we can compute $\mathsf{succ}$ and $\mathsf{succ}^+$ as well. Furthermore, 
+\begin{align*}
+  e_{\mathsf{min}}&:=\ssum v. \left[ \sprod w. \mathsf{succ}(w,v)\right] \times v. \\
+  e_{\mathsf{max}}&:=\ssum v. \left[ \sprod w. \left( 1-\mathsf{succ}(w,v) \right) \right] \times v.
+\end{align*}
+Both expressions are only using $\ssum$ and $\sprod$ and $\mathsf{succ}$, so are in our fragment.
+Furthermore, if we have $f_{>0}$ then we can define
+$$
+e_{\mathsf{Pred}}:= e_{S_{<}}- f_{>0}(e_{S_{<}}^2)
+$$
+Also, recall that  $e_{\mathsf{Next}}:=e_{\mathsf{Pred}}^T$. As a consequence, 
+we can now define $\mathsf{prev}(v)$ and $\mathsf{next}(v)$ as in \ref{sec:formatlang:design}. Similarly,
+it is readily verified that also $e_{\mathsf{getPrevMatrix}}(V)$,
+$e_{\mathsf{getNextMatrix}}(V)$, $e_{\mathsf{min}+i}$ and $e_{\mathsf{max}+i}$ can be expressed
+in our fragment.

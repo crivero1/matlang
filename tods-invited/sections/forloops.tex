@@ -89,7 +89,7 @@ For any collection of functions $\Fun$,
 $\langf{\Fun}$ is properly subsumed by $\langforf{\Fun}$.
 \end{proposition} 
 
-\subsection{Design decisions behind \langfor}
+\subsection{Design decisions behind \langfor}\label{sec:formatlang:design}
 \noindent\textbf{Loop Initialization.} As the reader may have observed, in the semantics of for-loops we 
 always initialize $A_0$ to the zero matrix~$\mathbf{0}$ (of appropriate dimensions). It is often convenient
 to start the iteration given some concrete matrix  originating from the result of evaluation a \langfor\ expression $e_0$. To make this explicit, we write $\initf{e_0}{v}{X}{e}$ and its semantics is defined as above
@@ -157,6 +157,8 @@ It should be clear that if we can compute $S_{\leq}$ using $e_{\leq}$, then we c
 	\item $e_{\mathsf{min}}$ and $e_{\mathsf{max}}$ such that $\sem{e_{\mathsf{min}}}{\I}=b_1^n$ and 
 	$\sem{e_{\mathsf{max}}}{\I}=b_n^n$, respectively.
 \end{itemize}
-We refer to the full version~\cite{geerts2020expressive} for details.
 
-Having order information available results in \langfor to be quite expressive. We heavily rely on order information in the next sections to compute the inverse of matrices and more generally to simulate low complexity Turing machines and arithmetic circuits.
+\input{./sections/definitions/order-predicates.tex}
+
+Having order information available results in \langfor to be quite expressive.
+We heavily rely on order information in the next sections to compute the inverse of matrices and more generally to simulate low complexity Turing machines and arithmetic circuits.

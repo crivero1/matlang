@@ -1,0 +1,67 @@
+% !TeX spellcheck = en_US
+%!TEX root = ../main.tex
+
+Let $\cR$ be binary relational schema. For each $R\in \cR$ we associate a matrix variable 
+$V_R$ such that, if $R$ is a binary relational signature, then $V_R$ represents a (square) matrix, 
+if $R$ is unary, then $V_R$ represents a vector and if $|R|=0$ then $V_R$ represents a constant. Formally, 
+fix a symbol $\alpha \in \DD \setminus \{1\}$. Let $\text{Mat}(\cR)$ denote the \lang \ schema
+$(\Mnam_\cR,\size_\cR)$ such that $\Mnam_\cR = \{ V_R \mid R \in \cR\}$ and $\size_\cR(V_R) = (\alpha, \alpha)$ 
+whenever $|R| = 2$, $\size_\cR(V_R) = (\alpha, 1)$ whenever $|R|=1$ and $\size_\cR(V_R) = (1, 1)$ whenever $|R|=0$. 
+Let $\cJ$ be the $K$-instance of $\cR$ and suppose that $\adom(\cJ) = \{d_1, \ldots, d_n\}$ is 
+the active domain (with arbitrary order) of $\cJ$. 
+Define the matrix instance $\text{Mat}(\cJ) = (\dom_\cJ,\conc_\cJ)$ such 
+that $\dom_\cJ(\alpha) = n$, $\conc_\cJ(V_R)_{i,j} = R^{\cJ}((d_i, d_j))$ whenever $|R|=2$, $\conc_\cJ(V_R)_{i} = R^{\cJ}((d_i))$ 
+whenever $|R|=1$, 
+\floris{This case relates to nullary relations. What does $R^{\cJ}$ mean?}
+and $\conc_\cJ(V_R)_{1,1} = R^{\cJ}$ whenever $|R|=0$. 
+Note that we consider the active domain of the whole $K$-instance.
+
+\newcommand{\earae}{e_{\arae}}
+
+We next translate \rak expressions in to \langsum expressions over an extended schema. More specifically, for each attribute $A \in \att$ we define a vector variable $v_A$ of type $(\alpha,1)$. Then for each \rak expression $\arae$ with attributes $A_1, \ldots, A_k$ we define a \langsum expression $\earae(v_{A_1}, \ldots, v_{A_k})$ of type $(1,1)$ such that the following inductive hypothesis holds:
+$$
+\sem{\earae}{\text{Mat}(\cJ)[v_{A_1} \gets b_{i_1},\ldots, v_{A_k} \gets b_{i_k}]} = 
+\ssem{\arae}{\cJ}(t) \ \ \ \ \ \ \  (*)
+$$
+where $t(A_s)=i_s$ for $s=1,\ldots, k$. The proof of this claim follows by induction on the structure of expressions:
+\begin{itemize} \itemsep3mm
+	\item If $\arae=R$, then $\earae:=v_{A_1}^T \cdot V_R \cdot v_{A_2}$ if $\mathcal{R}(R)=\{A_1,A_2\}$ with $A_1<A_2$; 
+	$\earae:=V_R^T \cdot v_A$ if $\mathcal{R}(R)=\{A\}$; and 
+	$\earae:=V_R$ if $\mathcal{R}(R)=\{\}$.
+	\item If $\arae=\arae_1\cup \arae_2$ then
+	$\earae:=e_{\arae_1} + e_{\arae_2}$.
+	\item If $\arae=\pi_{Y}(\arae_1)$ for $Y\subseteq \mathcal{R}(\arae_1)$ and $\{B_1, \ldots, B_l\} = \mathcal{R}(\arae_1) \setminus Y$ then
+	$$
+	\earae:= \Sigma v_{B_1}. \ \Sigma v_{B_2}. \ \ldots \Sigma v_{B_l}. \ e_{\arae_1}
+	$$
+	\item If $\arae=\sigma_{Y}(\arae_1)$ with $Y\subseteq\mathcal{R}(\arae_1)$ then
+	$$
+	\earae:=e_{\arae_1}\cdot \prod_{A,B\in Y} (v_{A}^T \cdot v_{B}).
+	$$
+	Here $\Pi$ is the matrix multiplication of expressions of type $(1,1)$.
+	\item If $\arae=\rho_{X\mapsto Y}(\arae_1)$ then
+	$$\earae:=e_{\arae_1}[v_B\gets v_A\mid A\in X, B\in Y, A\mapsto B].$$
+	In other words, we rename variable $v_B$ with variable $v_B$ in all the expression $e_{\arae_1}$. 
+	\item If $\arae=\arae_1\bowtie \arae_2$ then
+	$\earae:=e_{\arae_1} \cdot e_{\arae_1}$ where the product is over expression of type $(1,1)$.
+\end{itemize}
+One can check, by induction over the construction, that the inductive hypothesis $(*)$ holds in each case.
+Now we can prove proposition \ref{prop:ara_to_sum}.
+
+\begin{proof}
+As a consequence of the previous discussion above, when $\arae$ is a \rak expression 
+such that $\mathcal{R}(\arae)=\{A_1,A_2\}$ with $A_1<A_2$ then we define
+$$
+\Psi(\arae) \ = \ \Sigma v_{A_1}. \ \Sigma v_{A_2}. \ \earae \cdot (v_{A_1} \cdot v_{A_2}^T). 
+$$
+Instead, when $\mathcal{R}(\arae)=\{A\}$ we have
+$$
+\Psi(\arae) \ = \ \Sigma v_{A}. \  (v_{A} \cdot \earae). 
+$$
+And when $\mathcal{R}(\arae)=\{\}$ we have
+$$
+\Psi(\arae) \ = \ \earae.
+$$
+By using the inductive hypothesis $(*)$ one can check that $\Psi(\arae)$ works in each case as expected. 
+\end{proof}
+ 

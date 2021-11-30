@@ -9,6 +9,33 @@ computed by \langfor as well. When it comes to specific linear algebra algorithm
 can often be avoided. Indeed, in this section we illustrate that \langfor is able to
 compute LU decompositions of matrices. These decompositions form the basis of many other algorithms, such as solving linear systems of equations. We further show that \langfor is expressive enough to compute matrix inversion and the determinant. We recall that matrix inversion and determinant need to be explicitly added as separate operators in \lang~\cite{matlang-journal} and that the LARA language is unable to invert matrices under usual complexity-theoretic assumptions~\cite{BarceloH0S20}.
 
+\subsection{Function Application Simplifications}\label{sec:queries:simp}
+
+When showing results based on induction of expressions in \langfor, it is often convenient to assume that function applications $f(e_1,\ldots,e_k)$ for $f\in\Fun_k$ are restricted to
+the case when all expressions $e_1,\ldots,e_k$ have type $1\times 1$. This does not loose generality. Indeed,
+for general function applications $f(e_1,\ldots,e_k)$, if we have $\ssum$, scalar product and function application on scalars (here denoted by $f_{1\times 1}$), we can simulate full function application, as follows:
+ $$
+f(e_1,\ldots, e_k) :=\Sigma v_i \Sigma v_j. f_{1\times 1}(v_i^T\cdot e_1\cdot v_j, \ldots ,v_i^T\cdot e_k\cdot v_j) \times v_i\cdot v_j^T.
+$$
+
+Furthermore, it also convenient at times to use the pointwise functions
+$f_\odot^k:\RR^k\mapsto \RR:(x_1,\ldots,x_k)\mapsto x_1\times\cdots \cdot x_k$ and 
+$f_\oplus^k:\RR^k\mapsto \RR:(x_1,\ldots,x_k)\mapsto x_1+\cdots + x_k$. In fact, it is readily observed that adding these functions does not extend the expressive power of \langfor:
+\begin{lemma}
+\label{lm-prod-sum}
+We have that $\langforf{\emptyset} \equiv \langforf{\{f_\odot^k,f_\oplus^k \ | \ k\in \mathbf{N}\}}$.
+\end{lemma}
+In fact, this lemma also holds for the smaller fragments we consider.
+%
+We also observe that having $f_\odot^2:\RR^2\to\RR$ allows us to define scalar multiplication:
+$$
+e_1\times e_2 :=f_{\kprod}(\ones(e_2)^T\cdot e_1 \cdot \ones(e_2)^T, e_2).
+$$
+Conversely, $f_\odot^k$ can be expressed using scalar multiplication, as can be seen from our simulation of general function applications by pointwise function application on scalars.
+
+Finally, a notational simplification is that, when using scalars $a\in\RR$ in our expressions, we write sometimes
+$a$ instead of $[a]$. For example,  $(1-e_{\ones}(v)^T\cdot v)$ stands for  $([1]-e_{\ones}(v)^T\cdot v)$.
+
 \subsection{LU decomposition}
 A lower-upper (LU) decomposition factors a matrix $A$ as the product of a lower triangular matrix $L$ and upper triangular matrix $U$.  
 This decomposition, and more generally LU decomposition with row pivoting (PLU),  underlies many linear algebra algorithms and 
@@ -56,23 +83,33 @@ $A$. We may thus conclude the following.
 \begin{proposition}\label{prop:gauss}
 There exists $\langforf{f_/}$ expressions $e_L(V)$ and $e_U(V)$ such that
 $\sem{e_L}{\I}=L$ and $\sem{e_U}{\I}=U$ form an LU-decomposition of $A$,
-where $\conc(V)=A$ and $A$ is LU-factorizable.\qed
+where $\conc(V)=A$ and $A$ is LU-factorizable.
 \end{proposition}
+
+\input{./sections/proofs/gauss.tex}
+
 We remark that the proposition holds when division is added as a function in $\Fun$
-in \langfor. When row pivoting is needed, we can also obtain a permutation matrix
+in \langfor.
+
+\smallskip
+
+When row pivoting is needed, we can also obtain a permutation matrix
 $P$ such that $P\cdot A=L\cdot U$ holds by means of an expression in \langfor, provided
 that we additionally allow the function $f_{>0}$, 
 where $f_{>0}:\RR\to\RR$ is such that $f_{>0}(x):=1$ if $x>0$ and $f_{>0}(x):=0$ otherwise.
 
 \begin{proposition}\label{prop:palu}
 There exists expressions $e_{L^{-1}P}(M)$ and $e_U(M)$ in $\langforf{f_/,f_{>0}}$  such that
-$L^{-1}\cdot P=\sem{e_{L^{-1}P}}{\I}$ and $U=\sem{e_U}{\I}$, satisfy $L^{-1}\cdot P\cdot A=U$.\qed
+$L^{-1}\cdot P=\sem{e_{L^{-1}P}}{\I}$ and $U=\sem{e_U}{\I}$, satisfy $L^{-1}\cdot P\cdot A=U$.
 \end{proposition}
+
+\input{sections/proofs/palu.tex}
+
 Intuitively, by allowing $f_{>0}$ a limited form of \texttt{if-then-else} is introduced in \langfor, which is needed
 to continue reducing columns only when the right pivot has been found.
 
 
-\subsection{Determinant and inverse}
+\subsection{Determinant and inverse}\label{sec:queries:inverse}
 Other key linear algebra operations include the computation of the determinant and
 the inverse of a matrix (if the matrix is invertible). As a consequence of the expressibility
 in $\langforf{f_/,f_{>0}}$ of LU-decompositions with pivoting, it can be shown that the determinant
@@ -109,7 +146,7 @@ S_3\\
 S_n\\
 \end{matrix}\right),
 $$
-with $S_i=\mathsf{tr}(A^i)$. We can construct all ingredients of this system of equations in $\langforf{f_/}$. We refer to~\cite{geerts2020expressive} for details. By observing that the matrix $S$ is a lower triangular matrix with non-zero elements on its diagonal, we can write it in the form $D_S+(S-D_{S})=D_S\cdot(I+D_S^{-1}\cdot (S-D_S))$ with $D_S$ the diagonal matrix consisting of the diagonal entries of $S$.
+with $S_i=\mathsf{tr}(A^i)$. We can construct all ingredients of this system of equations in $\langforf{f_/}$. By observing that the matrix $S$ is a lower triangular matrix with non-zero elements on its diagonal, we can write it in the form $D_S+(S-D_{S})=D_S\cdot(I+D_S^{-1}\cdot (S-D_S))$ with $D_S$ the diagonal matrix consisting of the diagonal entries of $S$.
 Hence $S^{-1}=(I+D_{S}^{-1}\cdot(S-D_{S}))^{-1}\cdot D_S^{-1}$. 
 We remark $D_S^{-1}$ can simply be obtained by inverting the (non-zero) elements on the diagonal by means of $f_/$ in $\langforf{f_/}$. Furthermore, we observe that $(I+D_S^{-1}(S-D_S))^{-1}=\sum_{i=0}^{n}(D_S^{-1}(S-D_S))^i$ which is something
 we can compute in $\langforf{f_/}$ as well. Hence, we can invert $S$ and obtain the vector $(c_1,\ldots,c_n)^T$ as $S^{-1}\cdot s$. To compute $A^{-1}$ it now suffices to compute
@@ -117,9 +154,10 @@ $\frac{-1}{\phantom{-1}c_n}\sum_{i=0}^{n-1}c_i A^{n-1-i}$. To find the determina
 we compute $(-1)^nc_n$. All this can be done in $\langforf{f_/}$.
 We may thus conclude:
 \begin{proposition}\label{prop:inverse}
-There are $\langforf{f_/}$ expressions $e_{\mathsf{det}}(V)$ and $e_{\mathsf{inv}}(V)$ such that
-$\sem{e_{\mathsf{det}}}{\I}=\mathsf{det}(A)$, and  
-$\sem{e_{\mathsf{inv}}}{\I}=A^{-1}$ when $\I$ assigns $V$
-to $A$ and $A$ is invertible.
-\qed
+    There are $\langforf{f_/}$ expressions $e_{\mathsf{det}}(V)$ and $e_{\mathsf{inv}}(V)$ such that
+    $\sem{e_{\mathsf{det}}}{\I}=\mathsf{det}(A)$, and  
+    $\sem{e_{\mathsf{inv}}}{\I}=A^{-1}$ when $\I$ assigns $V$
+    to $A$ and $A$ is invertible.
 \end{proposition}
+
+\input{sections/proofs/inverse.tex}
