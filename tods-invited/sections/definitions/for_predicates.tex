@@ -1,0 +1,40 @@
+\textit{Syntactic Sugar.} We sometimes will want to iterate over $k$ canonical vectors. We define the following shorthand notation:
+
+\begin{align*}
+  \ffor{v_1,\ldots, v_k}{X}{e(X,v_1,\ldots, v_n)}:= &\ffor{v_1}{X_1}{X_1 +} \\
+  &\hspace{1em}\initf{X_1}{v_2}{X_2}{X_2 + } \\
+  &\hspace{2em}\initf{X_2}{v_3}{X_3}{X_3 + } \\
+  &\hspace{8em}\ddots \\
+  &\hspace{4em}\initf{X_{k-1}}{v_k}{X_k}{ e(X_k,v_1,\ldots, v_k)}.
+\end{align*}
+
+To reference $\ell$ different vector variables $X_1,\ldots,X_\ell$ in every iteration and update them in different ways we define:
+\begin{multline*}
+\ffor{v}{X_1,\ldots, X_\ell}{\left( e_1(X_1,v), e_2(X_2,v), \ldots, e_l(X_\ell,v) \right)} := \\
+\ffor{v}{X}{e_1(X\cdot e_{\mathsf{min}},v)\cdot (e_{\diag}(e_{\ones}(X^T))\cdot e_{\mathsf{min}})^T +\\ e_2(X\cdot e_{\mathsf{min} + 1},v)\cdot (e_{\diag}(e_{\ones}(X^T))\cdot e_{\mathsf{min} + 2})^T + \ldots \\
++ e_\ell(X\cdot e_{\mathsf{max}},v)\cdot (e_{\diag}(e_{\ones}(X^T))\cdot e_{\mathsf{max}})^T} \\
+\end{multline*}
+
+We note that for the latter expression to be semantically correct $v$ has to be of type $\gamma\times 1$, 
+both $X_i$ and $e_i$ for $ i=1,\ldots,\ell$ have to be of type $\alpha\times 1$, 
+and $X$ has to be of type $\alpha\times\beta$, where $\dom(\beta)=\ell$. Here
+we use $e_{\diag}(e_{\ones}(X^T))$ to compute the $\beta\times\beta$ identity and ensure the typing of the
+$e_{\mathsf{min} + i}$.
+When evaluated on an instance $\I$,
+$e_{\mathsf{min}}, e_{\mathsf{min} + i}$ evaluate to $b_1^{\dom(\beta)}$ and $b_{1+i}^{\dom(\beta)}$, 
+respectively, and we show their defining expressions in section \ref{sec:formatlang:design}.
+Similarly for $e_{\mathsf{max}}=b_n^{\dom(\beta)}$.
+The combinations of both previous operators results in:
+
+\begin{align*}
+    \texttt{for}\, v_1,\ldots, v_k,X_1,\ldots, X_\ell \texttt{.}\, \Big( &e_1(X_1,v_1,\ldots, v_k), \\
+    &\hspace{1em}e_2(X_2,v_1,\ldots, v_k), \ldots, e_\ell(X_\ell,v_1,\ldots, v_k) \Big) := \\
+    &\hspace{8em}\ffor{v_1,\ldots, v_k}{X}{e'(X,v_1,\ldots, v_k)} \\
+\end{align*}
+where 
+\begin{align*}
+e'(X,v_1,\ldots,v_k):=&e_1(X\cdot e_{\mathsf{min}},v_1,\ldots,v_k)\cdot (e_{\diag}(e_{\ones}(X^T))\cdot e_{\mathsf{min}})^T \\
+&+ e_2(X\cdot e_{\mathsf{min} + 1},v_1,\ldots,v_k)\cdot (e_{\diag}(e_{\ones}(X^T))\cdot e_{\mathsf{min} + 1})^T \\
+&+ \ldots + e_\ell(X\cdot e_{\mathsf{max}},v_1,\ldots,v_k)\cdot (e_{\diag}(e_{\ones}(X^T))\cdot e_{\mathsf{max}})^T
+\end{align*}
+It is clear that this expression iterates over $k$ canonical vectors and references $\ell$ independent vectors updating each of them in their particular way.

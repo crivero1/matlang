@@ -99,6 +99,8 @@ We are now ready to state the first connection between \langsum and $\mathsf{RA}
 	$\text{Rel}(\Sch)(\Phi(e))=\{\}$, respectively.
 \end{proposition}
 
+\input{sections/proofs/sum-to-ara.tex}
+
 We now move to the other direction.
 To translate $\mathsf{RA}_{K}^+$  into \langsum, we must restrict our comparison to $\mathsf{RA}_{K}^+$  over $K$-relations with at most two attributes. Given that linear algebra works over vector and matrices, it is reasonable to restrict to unary or binary relations as input. Note that this is only a restriction on the input relations and not on intermediate relations, namely, expressions can create relation signatures of arbitrary size from the binary input relations. 
 Thus, from now we say that a relational schema $\cR$ is binary if $|R| \leq 2$ for every $R \in \cR$. We also make the assumption that there is an (arbitrary) order, denoted by $<$, on the attributes in $\att$. 
@@ -116,7 +118,9 @@ $\mathsf{RA}_{K}^+$ expressions, we obtain the following result.
 	\ssem{\arae}{\cJ}((d_i, d_j))=\sem{\Psi(\arae)}{\text{Mat}(\cJ)}_{i,j}.
 	$$
 	Similarly for when $|\cR(\arae)| = 1$, or $|\cR(\arae)| = 0$ respectively.
-\end{proposition} 
+\end{proposition}
+
+\input{sections/proofs/ara-to-sum.tex}
 
 It is important to remark that the expression $\arae$ of the previous result can have intermediate expressions that are not necessarily binary, given that the proposition only restricts that the input relation and the schema of $\arae$ must have arity at most two. We recall from~\cite{brijder2019matrices} that \lang\ corresponds to $\mathsf{RA}_{K}^+$ where intermediate expressions are at most ternary, and this underlies, e.g., the inability of \lang\ to check for $4$-cliques. In \langsum, we can deal with intermediate relations of arbitrary arity. In fact, each new attribute can be seen to correspond to an application of the $\Sigma$ operator. For example, in the $4$-clique expression, four $\Sigma$ operators are needed, in analogy to how
 $4$-clique is expressed in $\mathsf{RA}_{K}^+$.
@@ -212,7 +216,7 @@ Weighted logics over $\Gamma$ and \langprod over $\Sch$ have the same expressive
 \end{itemize}	
 \end{proposition}
 
-
+\input{sections/proofs/sp-wl.tex}
 
 \subsection{Matrix multiplication as a quantifier}\label{subsec:langlinear}
 In a similar way, we can consider a fragment in which sum and the usual product of matrices can be used
@@ -227,6 +231,8 @@ are processed.
 \begin{proposition}
 	Every expression in \langprod can be defined in \langmprod. Moreover, there exists an expression that uses the $\sprod v$ quantifier that cannot be defined in \langprod.
 \end{proposition}
+
+\input{sections/proofs/prodlang-and-order.tex}
 
 What is interesting is that \langsum extended with $\sprod v$ suffices to compute the transitive closure,
  provided that we allow for the $f_{>0}$ function. Indeed, one can use the expression $e_{\mathsf{TC}}(V):=f_{>0}\bigl(\sprod v.\, (e_{\mathsf{Id}}+V)\bigr)$ for this purpose because
