@@ -37,6 +37,8 @@ $\ttype(v)= (\gamma,1)$, and $\ttype(e) = (\alpha,\beta)$ and $n := \dom(\gamma)
 For better understanding how \langfor  works, we next provide some  examples.
 We start by showing that the one-vector and $\diag$ operators are redundant
 in \langfor.
+
+\cristian{Idea: We could add a figure to these examples, showing how the computation is performed. }
 \begin{example}\label{ex:onevec}
 We first show how the one-vector operator $\ones(e)$ can be expressed using \texttt{for} loops.
 It suffices to consider the expression
@@ -65,6 +67,7 @@ Similarly as for \lang, we write $\langforf{\Fun}$ for some set $\Fun$ of functi
 As a final example, we show that we can compute whether a graph contains a 4-$\textsf{clique}$ using \langfor.
 \begin{example}\label{ex:fourcliques}
 To test for $4$-cliques it suffices to consider the following expression with for-loops nested four times:
+\cristian{TODO: Center this formula.}
 \begin{tabbing}
 \texttt{for\,}\=$u,\,X_1.\ \ X_1 \ + $\\
 \> \texttt{for\,}\=$v,\,X_2.\ \ X_2 \ +$ \\
@@ -112,6 +115,7 @@ As an illustration, we consider the Floyd-Warshall algorithm given in the Introd
 
 \begin{example}\label{ex:floyd}
 Consider the following expression:
+\cristian{TODO: center this formula.}
 \begin{tabbing}
 $e_{FW} := $ \texttt{for\,}\=$v_k,\, X_1\!=\!A.\ \ X_1 \ + $\\
 \> \texttt{for\,}\=$v_i, \, X_2.\ \ X_2 \ +$ \\
@@ -123,7 +127,9 @@ The expression $e_{FW}$ simulates the Floyd-Warshall algorithm by updating the m
 \end{example}
 
 
-\noindent\textbf{Order.} By introducing for-loops we not only extend \lang\ with bounded recursion, we also introduce order information. Indeed, the semantics of the \texttt{for} operator assumes that the canonical vectors $b_1,b_2,\ldots$
+\noindent\textbf{Order.} 
+\cristian{TODO: This subsection has the presentation of $S_{\leq}$ and other operators. It must be rewritten to include the presentation of other operators (before it was in the appendix).}
+By introducing for-loops we not only extend \lang\ with bounded recursion, we also introduce order information. Indeed, the semantics of the \texttt{for} operator assumes that the canonical vectors $b_1,b_2,\ldots$
 are accessed in this order. It implies, among other things, that \langfor\ expressions are not permutation-invariant.
 We can, for example, return the bottom right-most entry in a matrix. Indeed, consider the expression $e_{\mathsf{max}} := \ffor{v}{X}{v}$ which, for it to be well-typed, requires both $v$ and $X$ to be of type $(\alpha,1)$. Then, $\sem{e_{\mathsf{max}}}{\I}=b_n^n$, for $n=\dom(\alpha)$, simply because initially, $X=\mathbf{0}$, but $X$ will be overwritten by $b_1^n,b_2^n,\ldots,b_n^n$, in this order. Hence, at the end of the evaluation $b_n^n$ is returned.
 To extract the bottom right-most entry from a matrix, we now simply use $e_{\mathsf{max}}^T\cdot V\cdot e_{\mathsf{max}}$.
@@ -158,6 +164,7 @@ It should be clear that if we can compute $S_{\leq}$ using $e_{\leq}$, then we c
 	$\sem{e_{\mathsf{max}}}{\I}=b_n^n$, respectively.
 \end{itemize}
 
+\cristian{Here starts the new material that was before in the appendix.}
 \input{./sections/definitions/order-predicates.tex}
 
 Having order information available results in \langfor to be quite expressive.
