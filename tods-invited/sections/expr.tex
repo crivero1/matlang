@@ -412,29 +412,57 @@ first we assume that is $n$ is large enough such that we have specific bounds fo
 and depth of $\Phi_n$; second we deal with small $n$.
 
 \paragraph{$\rhd$  Large $n$.}
-    To simulate the two stacks $\cG$ and $\cV$ we keep a matrix $X$ of dimensions $n \times n$.
-
+ To simulate the two stacks $\cG$ and $\cV$ we use a matrix $X$ of dimensions $n \times n$, where
     \begin{itemize}
-        \item Column $n$ will store a canonical vector that marks the top of stack $V$ (values).
-        \item Column $n-1$ will store a canonical vector that marks the top of stack $G$ (gates).
-        \item Column $n-2$ is the stack of values where $X[1, n-2]$ is the bottom of the stack.
-        \item Columns $1$ to $n-3$ are the stack of gates.
+        \item Columns $1$ to $n-3$ contain binary identifiers of the gates in the stack $\cG$;
+        \item Column $n-2$ is the stack of values where $X[1, n-2]$ is the bottom of the stack;
+        \item Column $n-1$ will store a canonical vector that marks the top of stack $\cG$;
+        \item Column $n$ will store a canonical vector that marks the top of stack $\cV$.
     \end{itemize}
-
-
-  
-    If we have $j$ gates in the stack and currently $\getsize{\cG}=\getsize{\cV}$ then $X$ would look like:
-
-    \[
-    X = \begin{bmatrix}
+\begin{example}
+The matrix $X$ encoding $\cG$ and $\cV$ thus takes the forms
+    %
+    % If we have $j$ gates in the stack and currently $\getsize{\cG}=\getsize{\cV}$ then $X$ would look like:
+$$ \underbrace{\left[\begin{smallmatrix}
         \texttt{id}_1 & v_1 & 0 & 0 \\
         \texttt{id}_2 & v_2 & 0 & 0 \\
         \vdots & \vdots & \vdots & \vdots \\
+        \texttt{id}_{j-1} & v_{j-1} & 0 & 0 \\
         \texttt{id}_j & v_j & 1 & 1 \\
         0 & 0 & 0 & 0 \\
         \vdots & \vdots & \vdots & \vdots \\
         0 & 0 & 0 & 0
-    \end{bmatrix}. X = \begin{bmatrix}
+    \end{smallmatrix}\right]}_{X}\, \underbrace{\left[\begin{smallmatrix}
+        \vphantom{\texttt{id}_1}v_1  \\
+        \vphantom{\texttt{id}_1}v_2 \\
+        \vdots   \\
+       \vphantom{\texttt{id}_1} v_{j-1} \\
+      \vphantom{\texttt{id}_1}  v_j \\
+        0 \\
+        \vdots \\
+        0 
+    \end{smallmatrix}\right]}_{V}, 
+    \underbrace{\left[\begin{smallmatrix}
+        \vphantom{\texttt{id}_1}0  \\
+       \vphantom{\texttt{id}_1} 0 \\
+        \vdots   \\
+       \vphantom{\texttt{id}_1} 0 \\
+       \vphantom{\texttt{id}_1} 1 \\
+       \vphantom{\texttt{id}_1} 0 \\
+        \vdots \\
+       \vphantom{\texttt{id}_1} 0 
+    \end{smallmatrix}\right]}_{G_{\textsl{top}}}, 
+     \underbrace{\left[\begin{smallmatrix}
+        \vphantom{\texttt{id}_1} 0  \\
+         \vphantom{\texttt{id}_1}0 \\
+        \vdots   \\
+        \vphantom{\texttt{id}_1} 0 \\
+         \vphantom{\texttt{id}_1} 1 \\
+         \vphantom{\texttt{id}_1}0 \\
+        \vdots \\
+        \vphantom{\texttt{id}_1} 0 
+    \end{smallmatrix}\right]}_{V_{\textsl{top}}} \text{ or }
+	 X = \left[\begin{smallmatrix}
         \texttt{id}_1 & v_1 & 0 & 0 \\
         \texttt{id}_2 & v_2 & 0 & 0 \\
         \vdots & \vdots & \vdots & \vdots \\
@@ -443,9 +471,11 @@ and depth of $\Phi_n$; second we deal with small $n$.
         0 & 0 & 0 & 0 \\
         \vdots & \vdots & \vdots & \vdots \\
         0 & 0 & 0 & 0
-    \end{bmatrix},
-    \]
-
+    \end{smallmatrix}\right]
+   $$
+ when $\getsize{\cG} = \getsize{\cV}$ and  when $\getsize{\cG} = \getsize{\cV}+1$, respectively. Here $\texttt{id}_j$ consist of
+ $n-3$ zero/one entries representing the ids of gates.\qed
+\end{example}
     Since $n\geq n_0$, $(\star)$ holds and thus we never use more than $n-3$ bits to encode an $\texttt{id}$. Also, $j\leq n$ given that we never keep more gates than the depth of the tree. As a consequence, we never keep more than $n$ values either.
 
  Let $n_0\in\mathbb{N}$ be big enough for ($\star$) to hold and let $n\geq k$. Hence, the number of gates (values) is bounded by $n^k$ and we need $k\log (n)$ bits to encode the id of each gate.
