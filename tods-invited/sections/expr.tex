@@ -420,7 +420,10 @@ and depth of $\Phi_n$; second we deal with small $n$.
         \item Column $n$ will store a canonical vector that marks the top of stack $\cV$.
     \end{itemize}
 \begin{example}
-The matrix $X$ encoding $\cG$ and $\cV$ thus takes the forms
+We illustrate the matrix $X$ encoding $\cG$ and $\cV$ in case that
+$\getsize{\cG} = \getsize{\cV}$ (matrices below on the left) and  when $\getsize{\cG} = \getsize{\cV}+1$ (matrices below on the right), respectively. We also depict vector $V$, $G_{\textsl{top}}$ and $V_{\textsl{top}}$
+representing the contents of the value stack $\cV$ and the positions of the
+top elements in the gate stack $\cG$ and value stack $\cV$, respectively.
     %
     % If we have $j$ gates in the stack and currently $\getsize{\cG}=\getsize{\cV}$ then $X$ would look like:
 $$ \underbrace{\left[\begin{smallmatrix}
@@ -432,7 +435,7 @@ $$ \underbrace{\left[\begin{smallmatrix}
         0 & 0 & 0 & 0 \\
         \vdots & \vdots & \vdots & \vdots \\
         0 & 0 & 0 & 0
-    \end{smallmatrix}\right]}_{X}\, \underbrace{\left[\begin{smallmatrix}
+    \end{smallmatrix}\right]}_{X}, \underbrace{\left[\begin{smallmatrix}
         \vphantom{\texttt{id}_1}v_1  \\
         \vphantom{\texttt{id}_1}v_2 \\
         \vdots   \\
@@ -462,7 +465,7 @@ $$ \underbrace{\left[\begin{smallmatrix}
         \vdots \\
         \vphantom{\texttt{id}_1} 0 
     \end{smallmatrix}\right]}_{V_{\textsl{top}}} \text{ or }
-	 X = \left[\begin{smallmatrix}
+	 \underbrace{\left[\begin{smallmatrix}
         \texttt{id}_1 & v_1 & 0 & 0 \\
         \texttt{id}_2 & v_2 & 0 & 0 \\
         \vdots & \vdots & \vdots & \vdots \\
@@ -471,9 +474,38 @@ $$ \underbrace{\left[\begin{smallmatrix}
         0 & 0 & 0 & 0 \\
         \vdots & \vdots & \vdots & \vdots \\
         0 & 0 & 0 & 0
-    \end{smallmatrix}\right]
+    \end{smallmatrix}\right]}_{X}\underbrace{\left[\begin{smallmatrix}
+        \vphantom{\texttt{id}_1}v_1  \\
+        \vphantom{\texttt{id}_1}v_2 \\
+        \vdots   \\
+       \vphantom{\texttt{id}_1} v_{j-1} \\
+      \vphantom{\texttt{id}_1}  0 \\
+        0 \\
+        \vdots \\
+        0 
+    \end{smallmatrix}\right]}_{V}, 
+    \underbrace{\left[\begin{smallmatrix}
+        \vphantom{\texttt{id}_1}0  \\
+       \vphantom{\texttt{id}_1} 0 \\
+        \vdots   \\
+       \vphantom{\texttt{id}_1} 0 \\
+       \vphantom{\texttt{id}_1} 1 \\
+       \vphantom{\texttt{id}_1} 0 \\
+        \vdots \\
+       \vphantom{\texttt{id}_1} 0 
+    \end{smallmatrix}\right]}_{G_{\textsl{top}}}, 
+     \underbrace{\left[\begin{smallmatrix}
+        \vphantom{\texttt{id}_1} 0  \\
+         \vphantom{\texttt{id}_1}0 \\
+        \vdots   \\
+        \vphantom{\texttt{id}_1} 1 \\
+         \vphantom{\texttt{id}_1} 0 \\
+         \vphantom{\texttt{id}_1}0 \\
+        \vdots \\
+        \vphantom{\texttt{id}_1} 0 
+    \end{smallmatrix}\right]}_{V_{\textsl{top}}} 
    $$
- when $\getsize{\cG} = \getsize{\cV}$ and  when $\getsize{\cG} = \getsize{\cV}+1$, respectively. Here $\texttt{id}_j$ consist of
+We remark that $\texttt{id}_j$ consist of
  $n-3$ zero/one entries representing the ids of gates.\qed
 \end{example}
     Since $n\geq n_0$, $(\star)$ holds and thus we never use more than $n-3$ bits to encode an $\texttt{id}$. Also, $j\leq n$ given that we never keep more gates than the depth of the tree. As a consequence, we never keep more than $n$ values either.
@@ -617,20 +649,20 @@ $$ \underbrace{\left[\begin{smallmatrix}
         G &:= \Iden{G_{top}}\cdot X \cdot \Iden{e_{\mathsf{max}-3}}
     \end{align*}
 
-    For example, if we are in a step where $\getsize{\cG}=\getsize{\cV} + 1$ then
-
-    \[
-    X = \begin{bmatrix}
-        \texttt{id}_1 & v_1 & 0 & 0 \\
-        \texttt{id}_2 & v_2 & 0 & 0 \\
-        \vdots & \vdots & \vdots & \vdots \\
-        \texttt{id}_{j-1} & v_{j-1} & 0 & 1 \\
-        \texttt{id}_j & 0 & 1 & 0 \\
-        0 & 0 & 0 & 0 \\
-        \vdots & \vdots & \vdots & \vdots \\
-        0 & 0 & 0 & 0
-    \end{bmatrix}, 
-    G = \begin{bmatrix}
+    % For example, if we are in a step where $\getsize{\cG}=\getsize{\cV} + 1$ then
+    %
+    % \[
+    % X = \begin{bmatrix}
+    %     \texttt{id}_1 & v_1 & 0 & 0 \\
+    %     \texttt{id}_2 & v_2 & 0 & 0 \\
+    %     \vdots & \vdots & \vdots & \vdots \\
+    %     \texttt{id}_{j-1} & v_{j-1} & 0 & 1 \\
+    %     \texttt{id}_j & 0 & 1 & 0 \\
+    %     0 & 0 & 0 & 0 \\
+    %     \vdots & \vdots & \vdots & \vdots \\
+    %     0 & 0 & 0 & 0
+    % \end{bmatrix},
+   $$ G = \begin{bmatrix}
         \texttt{id}_1 & 0 & 0 & 0 \\
         \texttt{id}_2 & 0 & 0 & 0\\
         \vdots & \vdots & \vdots & \vdots  \\
@@ -639,38 +671,38 @@ $$ \underbrace{\left[\begin{smallmatrix}
         0 & 0 & 0 & 0 \\
         \vdots & \vdots & \vdots & \vdots \\
         0 & 0 & 0 & 0
-    \end{bmatrix}, 
-    V = \begin{bmatrix}
-        v_1  \\
-        v_2 \\
-        \vdots   \\
-        v_{j-1} \\
-        0 \\
-        0 \\
-        \vdots \\
-        0 
-    \end{bmatrix}, 
-    G_{top} = \begin{bmatrix}
-        0  \\
-        0 \\
-        \vdots   \\
-        0 \\
-        1 \\
-        0 \\
-        \vdots \\
-        0 
-    \end{bmatrix}, 
-    V_{top} = \begin{bmatrix}
-        0  \\
-        0 \\
-        \vdots   \\
-        1 \\
-        0 \\
-        0 \\
-        \vdots \\
-        0 
-    \end{bmatrix}
-    \]
+    \end{bmatrix},$$
+$$ % V = \begin{bmatrix}
+    %     v_1  \\
+    %     v_2 \\
+    %     \vdots   \\
+    %     v_{j-1} \\
+    %     0 \\
+    %     0 \\
+    %     \vdots \\
+    %     0
+    % \end{bmatrix},
+    % G_{top} = \begin{bmatrix}
+    %     0  \\
+    %     0 \\
+    %     \vdots   \\
+    %     0 \\
+    %     1 \\
+    %     0 \\
+    %     \vdots \\
+    %     0
+    % \end{bmatrix},
+    % V_{top} = \begin{bmatrix}
+    %     0  \\
+    %     0 \\
+    %     \vdots   \\
+    %     1 \\
+    %     0 \\
+    %     0 \\
+    %     \vdots \\
+    %     0
+    % \end{bmatrix}
+    % \]
 
     Here, $V$ is a vector encoding the stack of values in $X$ and $G$ is a matrix encoding the stack of gates in $X$.
     Note that what is \textit{over} the top of the stacks is always set to zero due to $\Iden{G_{top}}$ and $\Iden{V_{top}}$.
