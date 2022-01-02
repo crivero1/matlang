@@ -38,8 +38,7 @@ children, and
 the \textit{out-degree} to its number of parents. We will not assume any restriction on the in-degree of a gate, and will thus consider circuits with unbounded fan-in. Gates with in-degree $0$ are called \textit{input gates}
 and are labeled by either a variable in $X$ or a constant $0$ or $1$. All other gates
 are labeled by either $+$ or $\times$, and are referred to as \textit{sum gates} or \textit{product gates}, respectively.
-Gates with out-degree $0$ are called \textit{output gates}. When talking about arithmetic circuits, one usually focuses on circuits with $n$ input gates and a single output gate.
-
+Gates with out-degree $0$ are called \textit{output gates}. When talking about arithmetic circuits, one usually focuses on circuits with $n$ input gates and a single output gate. We denote by $\mathsf{wires}(\Phi)$ the number of wires in $\Phi$ and by $\mathsf{gates}(\Phi)$ the number of gates in $\Phi$.
 The \textit{size} of $\Phi$, denoted by $|\Phi|$, is its number of gates and wires. The \textit{depth} of $\Phi$, denoted
 by $\mathsf{depth}(\Phi)$, is the length of the longest directed path from any of its output gates to any of the input gates. The \textit{degree} of a gate is defined inductively: an input gate has degree~1, a sum gate has a degree equal to the maximum of degrees of its children, and a product gate has a degree equal to the sum of the degrees of its children. When $\Phi$ has a single output gate, the \textit{degree} of $\Phi$, denoted by $\mathsf{degree}(\Phi)$, is defined as the degree of its output gate. If $\Phi$ has a single output gate and its input gates take values from $\RR$, then $\Phi$ corresponds to a polynomial in $\RR[X]$ in a natural way. In this case, the {degree} of $\Phi$ equals the degree of the polynomial corresponding to $\Phi$. Furthermore, if $a_1,\ldots ,a_n$ are values in $\RR$, then 
 the \textit{result of the circuit} on this input is the value computed by the corresponding polynomial, denoted by $\Phi(a_1,\ldots ,a_n)$.
@@ -421,9 +420,10 @@ and depth of $\Phi_n$; second we deal with small $n$.
     \end{itemize}
 \begin{example}
 We illustrate the matrix $X$ encoding $\cG$ and $\cV$ in case that
-$\getsize{\cG} = \getsize{\cV}$ (matrices below on the left) and  when $\getsize{\cG} = \getsize{\cV}+1$ (matrices below on the right), respectively. We also depict vector $V$, $G_{\textsl{top}}$ and $V_{\textsl{top}}$
+$\getsize{\cG} = \getsize{\cV}$ (matrices below on the left) and  when $\getsize{\cG} = \getsize{\cV}+1$ (matrices below on the right), respectively. We also depict vectors $V$, $G_{\textsl{top}}$ and $V_{\textsl{top}}$
 representing the contents of the value stack $\cV$ and the positions of the
-top elements in the gate stack $\cG$ and value stack $\cV$, respectively.
+top elements in the gate stack $\cG$ and value stack $\cV$, respectively. The matrix
+$G$ (shown on the right) has the same dimensions as $X$ and encodes the stack $\cG$.
     %
     % If we have $j$ gates in the stack and currently $\getsize{\cG}=\getsize{\cV}$ then $X$ would look like:
 $$ \underbrace{\left[\begin{smallmatrix}
@@ -504,88 +504,118 @@ $$ \underbrace{\left[\begin{smallmatrix}
         \vdots \\
         \vphantom{\texttt{id}_1} 0 
     \end{smallmatrix}\right]}_{V_{\textsl{top}}} 
+		\text{ and } \underbrace{\left[\begin{smallmatrix}
+	        \texttt{id}_1 & 0 & 0 & 0 \\
+	        \texttt{id}_2 & 0 & 0 & 0\\
+	        \vdots & \vdots & \vdots & \vdots  \\
+	        \texttt{id}_{j-1} & 0 & 0 & 0\\
+	        \texttt{id}_j & 0 & 0 & 0\\
+	        0 & 0 & 0 & 0 \\
+	        \vdots & \vdots & \vdots & \vdots \\
+	        0 & 0 & 0 & 0
+	    \end{smallmatrix}\right]}_{G},
    $$
-We remark that $\texttt{id}_j$ consist of
- $n-3$ zero/one entries representing the ids of gates.\qed
+Here, the gate identifiers $\texttt{id}_j$ consist of
+ $n-3$ zero/one entries, so they take up $n-3$ columns.\qed
 \end{example}
-    Since $n\geq n_0$, $(\star)$ holds and thus we never use more than $n-3$ bits to encode an $\texttt{id}$. Also, $j\leq n$ given that we never keep more gates than the depth of the tree. As a consequence, we never keep more than $n$ values either.
 
- Let $n_0\in\mathbb{N}$ be big enough for ($\star$) to hold and let $n\geq k$. Hence, the number of gates (values) is bounded by $n^k$ and we need $k\log (n)$ bits to encode the id of each gate.
+In order to ensure that the $n\times n$ matrix $X$ is large enough to simulate $\textsc{Evaluate}(\cG,\cV,A)$, we consider large enough $n$, i.e. $n\geq n_0$, such that there exists constants $k,k'\in\mathbb{N}$ satisfying: for any $n\geq n_0$ the circuits $\Phi_n$ satisfy the following:
+$$        \mathsf{gates}(\Phi_n) \leq n^k-3 \quad  \mathsf{depth}(\Phi_n)\leq k' \ceil{\log(n)} \leq n       
+		% \leq k \ceil{\log (n)} \leq n-3
+		 \text{ and }
+   2\mathsf{wires}(\Phi_n)\leq n^k  
+$$
+The first two conditions imply that we need at most $k\log (n)$ bits to store the $id$ of a gate and that we have sufficiently many rows to
+represent the stacks (which are of size at most the depth of the circuit). The third condition ensures that $n^k$ is an upper bound on the number
+of steps required to run $\textsc{Evaluate}(\cG,\cV,A)$, since during its execution maximally $2\mathsf{wire}(\Phi_n)$ will be traversed.
+We note that
+$n_0$, $k$ and $k'$ exist because $\{\Phi_n\mid n=1,2, \}$ is  uniform arithmetic circuit family of logarithmic depth. From now on, we assume
+that $n\geq n_0$. 
 
- 
 
-    An important detail is that the $\texttt{ids}$ of the gates are encoded as $\texttt{id}_r000$ for it to have dimension $n$, where $\texttt{id}_r$ is the corresponding binary number in reverse.
-
- Let $n^k$ be a polynomial such that the number of wires, $W(n)$ is smaller than $n^k$ for $n$ big enough. Furthermore, we assume that $2W(n)\leq n^k$. We need this because the \langfor simulation of the circuit is in a depth first search way, so $2W(n)$ wires will be traversed.
-    Then we have that:
-    \begin{itemize}
-        \item the number of gates is bounded by $n^k$.
-        \item we need at most $k\log (n)$ bits to store the $id$ of a gate.
-        \item the depth of the circuit is at most $k'\log (n)$ for some $k'$.
-    \end{itemize}
-
-    So, let $n_0$ and $k$ such that $\forall n\geq n_0:$
-
-    \begin{align*}[right=\empheqrbrace (\star)]
-        2W(n)&\leq n^k \\
-        k \ceil{\log (n)} &\leq n-3 \\
-        k' \ceil{\log(n)} &\leq n
-    \end{align*}
-
-    We know $n_0$ and $k$ exist. Let $n\geq n_0$. 
-	% Towards the end, we will deal with the case when $n<n_0$.
+% %
+% % $$
+% % we need at most $k\log (n)$ bits to store the $id$ of a gate.
+% % $$
+% % we assume that the circuits $\Phi_n$ we consider
+% % are we have constants $k$ and $k'$ such that
+% %
+% %
+% %     Since $n\geq n_0$, $(\star)$ holds and thus we never use more than $n-3$ bits to encode an $\texttt{id}$. Also, $j\leq n$ given that we never keep more gates than the depth of the tree. As a consequence, we never keep more than $n$ values either.
+% %
+% %  Let $n_0\in\mathbb{N}$ be big enough for ($\star$) to hold and let $n\geq k$. Hence, the number of gates (values) is bounded by $n^k$ and we need $k\log (n)$ bits to encode the id of each gate.
+% %
+% %
+% %
+% %     An important detail is that the $\texttt{ids}$ of the gates are encoded as $\texttt{id}_r000$ for it to have dimension $n$, where $\texttt{id}_r$ is the corresponding binary number in reverse.
+% %
+% %  Let $n^k$ be a polynomial such that the number of wires, $W(n)$ is smaller than $n^k$ for $n$ big enough. Furthermore, we assume that $2W(n)\leq n^k$. We need this because the \langfor simulation of the circuit is in a depth first search way, so $2W(n)$ wires will be traversed.
+% %     Then we have that:
+%     \begin{itemize}
+%         \item the number of gates is bounded by $n^k$.
+%         \item we need at most $k\log (n)$ bits to store the $id$ of a gate.
+%         \item the depth of the circuit is at most $k'\log (n)$ for some $k'$.
+%     \end{itemize}
 %
-%     Let $g$ be a gate. The children of $g$ are denoted by $g_1,\ldots, g_l$.
-%% \begin{center}
-%     \begin{tikzpicture}[level distance=1.5cm,
-%     level 1/.style={sibling distance=1.5cm},
-%     every node/.style = {
-%         shape=circle,
-%         draw,
-%         align=center,
-%         top color=white,
-%         bottom color=white
-%         }]
-%     \node {\( g \)}
-%         child {node { \( g_1 \) }}
-%         child {node { \( \cdots \) }}
-%         child {node { \( g_l \) }};
-%     \end{tikzpicture}
-%     \end{center}
-%
-%     For example, a circuit that encodes the function $f(a_1,a_2,a_3,a_4)=a_1a_2 +a_3a_4$ is
-%
-%     \begin{center}
-%     \begin{tikzpicture}[level distance=1.5cm,
-%     level 1/.style={sibling distance=3cm},
-%     level 2/.style={sibling distance=1.5cm},
-%     every node/.style = {
-%         shape=circle,
-%         draw,
-%         align=center,
-%         top color=white,
-%         bottom color=white
-%         }
-%     ]
-%     \node { \( + \) }
-%         child { node { \( \times \) }
-%         child { node { \( a_1 \) } }
-%         child {node { \( a_2 \) } }
-%         }
-%         child { node { \( \times \) }
-%         child { node { \( a_3 \) } }
-%         child { node { \( a_4 \) } }
-%         };
-%     \end{tikzpicture}
-%     \end{center}
-%
-%     We can simulate the polynomial $x^2+xy$ by doing $f(A)$ where $A=[x \hspace{1ex} x \hspace{1ex} x \hspace{1ex} y]^T$. The main idea is to traverse the circuit top down in a depth first search way and store visited gates in a stack and its corresponding current values in another stack, and aggregate in the iterations according to the gate type.
+%     So, let $n_0$ and $k$ such that $\forall n\geq n_0:$
 
+    % \begin{align*}[right=\empheqrbrace (\star)]
+    % \end{align*}
 
-    Next, we show how to encode this algorithm in $\langfor$.
-
-    We make a series of definitions to make the notation more clear. Refer to section \ref{sec:formatlang:design} for more information
-    about these expressions.
+%     We know $n_0$ and $k$ exist. Let $n\geq n_0$.
+% 	% Towards the end, we will deal with the case when $n<n_0$.
+% %
+% %     Let $g$ be a gate. The children of $g$ are denoted by $g_1,\ldots, g_l$.
+% %% \begin{center}
+% %     \begin{tikzpicture}[level distance=1.5cm,
+% %     level 1/.style={sibling distance=1.5cm},
+% %     every node/.style = {
+% %         shape=circle,
+% %         draw,
+% %         align=center,
+% %         top color=white,
+% %         bottom color=white
+% %         }]
+% %     \node {\( g \)}
+% %         child {node { \( g_1 \) }}
+% %         child {node { \( \cdots \) }}
+% %         child {node { \( g_l \) }};
+% %     \end{tikzpicture}
+% %     \end{center}
+% %
+% %     For example, a circuit that encodes the function $f(a_1,a_2,a_3,a_4)=a_1a_2 +a_3a_4$ is
+% %
+% %     \begin{center}
+% %     \begin{tikzpicture}[level distance=1.5cm,
+% %     level 1/.style={sibling distance=3cm},
+% %     level 2/.style={sibling distance=1.5cm},
+% %     every node/.style = {
+% %         shape=circle,
+% %         draw,
+% %         align=center,
+% %         top color=white,
+% %         bottom color=white
+% %         }
+% %     ]
+% %     \node { \( + \) }
+% %         child { node { \( \times \) }
+% %         child { node { \( a_1 \) } }
+% %         child {node { \( a_2 \) } }
+% %         }
+% %         child { node { \( \times \) }
+% %         child { node { \( a_3 \) } }
+% %         child { node { \( a_4 \) } }
+% %         };
+% %     \end{tikzpicture}
+% %     \end{center}
+% %
+% %     We can simulate the polynomial $x^2+xy$ by doing $f(A)$ where $A=[x \hspace{1ex} x \hspace{1ex} x \hspace{1ex} y]^T$. The main idea is to traverse the circuit top down in a depth first search way and store visited gates in a stack and its corresponding current values in another stack, and aggregate in the iterations according to the gate type.
+%
+%
+%     Next, we show how to encode this algorithm in $\langfor$.
+    %
+    % We make a series of definitions to make the notation more clear. Refer to section \ref{sec:formatlang:design} for more information
+    % about these expressions.
     %
     % Let $b_i$ be the $i$-th canonical vector. $\mathsf{Next}$ and $\mathsf{Prev}$ denote the successor and predecessor matrices respectively, such that
     %
@@ -633,87 +663,124 @@ We remark that $\texttt{id}_j$ consist of
     % \]
     %
     % When used in $\langfor$ these functions output $[0]$ and $[1]$.
+	
+We are now ready to start simulating $\textsc{Evaluate}(\cG,\cV,A)$. Intuitively, we will iterate over $k$ canonical vectors and perform
+$n^k$ iterative updates to the matrix $X$, starting from the initial matrix $X$ only storing the output gate id and value $1$ in column $n-1$
+(indicating the top of the stack $\cG$). After performing the updates, we end up with a matrix $X$ such that $X[1,n-2]$ holds the desired
+evaluation of $\Phi_n$ on $A$. As stated in Theorem~\ref{th-circuits-ml}, we use the vector variable $v$ to encode the input values in $A$, i.e. we consider
+an instance satisfying $\conc(v) = [a_1 \ldots a_n]^T$. The resulting \langfor expressions $e_\Phi$ relies on several other expressions. Indeed, alongside
+the expressions that extract gate information (see Proposition~\ref{prop:transducer2} above), we also use \langfor expressions that leverage the order on canonical vectors, as explained in Section~\ref{sec:formatlang:design}. 
 
-    Now 
-    \begin{align*}
-        e_{V}&:=e_{\mathsf{max}-2} \\
-        e_{G_{top}}&:=e_{\mathsf{max}-1} \\
-        e_{V_{top}}&:=e_{\mathsf{max}}
-    \end{align*}
+In particular, we use  $e_{\mathsf{min}+\mathsf{i}}$ and  $e_{\mathsf{max}+\mathsf{i}}$, for $i=0,\ldots,n-1$,
+to obtain the $i$th and $(n-i)$th canonical vector, respectively, and also $\mathsf{Next}$ and $\mathsf{Prev}$, expressions that return matrices that allow to
+move from one canonical vector to the next, respectively, previous, one. In addition, $\mathsf{min}$, $\mathsf{max}$ and $\mathsf{succ}$ are expressions returning
+$1$ when their input vectors are the first canonical vector, the last canonical vectors, and consecutive canonical vectors, respectively. Given these, we use
+the following shorthand notations:
+\begin{gather*}\allowdisplaybreaks
+   e_{V}:=e_{\mathsf{max}-2} \quad e_{G_{top}}:=e_{\mathsf{max}-1} \quad     e_{V_{top}}:=e_{\mathsf{max}} \\
+   \Iden{b_i}:=\ssum v. \mathsf{succ}(v,b_i)\cdot (v\cdot v^T)  \quad   V_{top}:= X\cdot e_{V_{top}} \\
+        V:= \Iden{V_{top}} \cdot X \cdot e_V \quad
+        G_{top} :=X\cdot e_{G_{top}} \text{ and }
+        G := \Iden{G_{top}}\cdot X \cdot \Iden{e_{\mathsf{max}-3}}
+ \end{gather*}
 
-    For a canonical vector, let $$\Iden{b_i}:=\ssum v. \mathsf{succ}(v,b_i)\cdot (v\cdot v^T).$$ This matrix has ones in the diagonal up to position $i$ marked by $e_{i}$. We define the following sub-matrices of $X$:
-    \begin{align*}
-        V_{top} &:= X\cdot e_{V_{top}} \\
-        V &:= \Iden{V_{top}} \cdot X \cdot e_V \\
-        G_{top} &:=X\cdot e_{G_{top}} \\
-        G &:= \Iden{G_{top}}\cdot X \cdot \Iden{e_{\mathsf{max}-3}}
-    \end{align*}
+    % For a canonical vector, let $$.$$ This matrix has ones in the diagonal up to position $i$ marked by $e_{i}$. We define the following sub-matrices of $X$:
+%     \begin{align*}
+%
+%     \end{align*}
+%
+%     % For example, if we are in a step where $\getsize{\cG}=\getsize{\cV} + 1$ then
+%     %
+%     % \[
+%     % X = \begin{bmatrix}
+%     %     \texttt{id}_1 & v_1 & 0 & 0 \\
+%     %     \texttt{id}_2 & v_2 & 0 & 0 \\
+%     %     \vdots & \vdots & \vdots & \vdots \\
+%     %     \texttt{id}_{j-1} & v_{j-1} & 0 & 1 \\
+%     %     \texttt{id}_j & 0 & 1 & 0 \\
+%     %     0 & 0 & 0 & 0 \\
+%     %     \vdots & \vdots & \vdots & \vdots \\
+%     %     0 & 0 & 0 & 0
+%     % \end{bmatrix},
+%    $$ G = \begin{bmatrix}
+%         \texttt{id}_1 & 0 & 0 & 0 \\
+%         \texttt{id}_2 & 0 & 0 & 0\\
+%         \vdots & \vdots & \vdots & \vdots  \\
+%         \texttt{id}_{j-1} & 0 & 0 & 0\\
+%         \texttt{id}_j & 0 & 0 & 0\\
+%         0 & 0 & 0 & 0 \\
+%         \vdots & \vdots & \vdots & \vdots \\
+%         0 & 0 & 0 & 0
+%     \end{bmatrix},$$
+% $$ % V = \begin{bmatrix}
+%     %     v_1  \\
+%     %     v_2 \\
+%     %     \vdots   \\
+%     %     v_{j-1} \\
+%     %     0 \\
+%     %     0 \\
+%     %     \vdots \\
+%     %     0
+%     % \end{bmatrix},
+%     % G_{top} = \begin{bmatrix}
+%     %     0  \\
+%     %     0 \\
+%     %     \vdots   \\
+%     %     0 \\
+%     %     1 \\
+%     %     0 \\
+%     %     \vdots \\
+%     %     0
+%     % \end{bmatrix},
+%     % V_{top} = \begin{bmatrix}
+%     %     0  \\
+%     %     0 \\
+%     %     \vdots   \\
+%     %     1 \\
+%     %     0 \\
+%     %     0 \\
+%     %     \vdots \\
+%     %     0
+%     % \end{bmatrix}
+%     % \]
 
-    % For example, if we are in a step where $\getsize{\cG}=\getsize{\cV} + 1$ then
+    % Here, $V$ is a vector encoding the stack of values in $X$ and $G$ is a matrix encoding the stack of gates in $X$.
+    % Note that what is \textit{over} the top of the stacks is always set to zero due to $\Iden{G_{top}}$ and $\Iden{V_{top}}$.
+    % Also, note that $G$ is of the same size as $X$. We sometimes omit the zeroes due to simplicity.
+
     %
-    % \[
-    % X = \begin{bmatrix}
-    %     \texttt{id}_1 & v_1 & 0 & 0 \\
-    %     \texttt{id}_2 & v_2 & 0 & 0 \\
-    %     \vdots & \vdots & \vdots & \vdots \\
-    %     \texttt{id}_{j-1} & v_{j-1} & 0 & 1 \\
-    %     \texttt{id}_j & 0 & 1 & 0 \\
-    %     0 & 0 & 0 & 0 \\
-    %     \vdots & \vdots & \vdots & \vdots \\
-    %     0 & 0 & 0 & 0
-    % \end{bmatrix},
-   $$ G = \begin{bmatrix}
-        \texttt{id}_1 & 0 & 0 & 0 \\
-        \texttt{id}_2 & 0 & 0 & 0\\
-        \vdots & \vdots & \vdots & \vdots  \\
-        \texttt{id}_{j-1} & 0 & 0 & 0\\
-        \texttt{id}_j & 0 & 0 & 0\\
-        0 & 0 & 0 & 0 \\
-        \vdots & \vdots & \vdots & \vdots \\
-        0 & 0 & 0 & 0
-    \end{bmatrix},$$
-$$ % V = \begin{bmatrix}
-    %     v_1  \\
-    %     v_2 \\
-    %     \vdots   \\
-    %     v_{j-1} \\
-    %     0 \\
-    %     0 \\
-    %     \vdots \\
-    %     0
-    % \end{bmatrix},
-    % G_{top} = \begin{bmatrix}
-    %     0  \\
-    %     0 \\
-    %     \vdots   \\
-    %     0 \\
-    %     1 \\
-    %     0 \\
-    %     \vdots \\
-    %     0
-    % \end{bmatrix},
-    % V_{top} = \begin{bmatrix}
-    %     0  \\
-    %     0 \\
-    %     \vdots   \\
-    %     1 \\
-    %     0 \\
-    %     0 \\
-    %     \vdots \\
-    %     0
-    % \end{bmatrix}
-    % \]
+    % The $Evaluate$ method (algorithm \ref{alg:eval_code}) is defined as follows:
 
-    Here, $V$ is a vector encoding the stack of values in $X$ and $G$ is a matrix encoding the stack of gates in $X$.
-    Note that what is \textit{over} the top of the stacks is always set to zero due to $\Iden{G_{top}}$ and $\Iden{V_{top}}$.
-    Also, note that $G$ is of the same size as $X$. We sometimes omit the zeroes due to simplicity.
+We simulate $\textsc{Evaluate}(\cG,\cV,A)$ by the expression
+$e_{\Phi}:= e_{\mathsf{min}}^T\cdot e_{\mathsf{iterate}}\cdot e_{\max -2}$ with
+    \begin{align*}\allowdisplaybreaks
+		e_{\mathsf{iterate}}&:= \ffor{v_1, \ldots, v_k}{X} \Biggl(\Bigl(\bigl( \sprod_{i=1}^k \mathsf{min}(v_i)\bigr) \times e_{\mathsf{start}}\Bigr) + 
+        \biggl( \bigl(1- \sprod_{i=1}^k \mathsf{min}(v_i)\bigr)\times{}\\
+        &\hspace{0.3em} \biggl( \bigl(1 -\mathsf{min}(G_{\mathsf{top}})\cdot \mathsf{min}(V_{\mathsf{top}})\bigr) \times \Bigl(\bigl( 1 - G_{\mathsf{top}}^T\cdot V_{\mathsf{top}}\bigr) \times e_{\mathsf{extend}} + 
+        \bigl(G_{\mathsf{top}}^T\cdot V_{\mathsf{top}}\bigr) \times e_{\mathsf{aggregate}}\Bigl)  \\
+        &\hspace{0.5em}+\bigl(\mathsf{min}(G_{\mathsf{top}})\cdot \mathsf{min}(V_{\mathsf{top}})\bigr)\times X\biggr)\Biggr).
+	   \end{align*}
+Initially, when all $v_1,\ldots,v_k$ are equal to $b_1$, we are at ``timestamp'' $0$ and start the evaluation by 
+calling expression $e_{\mathsf{start}}$ which encodes line 3 of the algorithm. This case is determined by the indicator function
+$ \sprod_{i=1}^k \mathsf{min}(v_i)$. For all subsequent assignments of $v_1,\ldots,v_k$, when $1- \sprod_{i=1}^k \mathsf{min}(v_i)$ is equal to $1$, and thus all
+later timestamps, we check whether or not we reach the end of the algorithm. This happens with both $G_{\mathsf{top}}$ and $V_{\mathsf{top}}$ are equal to $b_1$
+and thus $\size(\cG)=\size(\cV)=1$. This is checked by $G_{\mathsf{top}}^T\cdot V_{\mathsf{top}}$.
+In that case, we stop updating $X$ (last summand in expression $e_{\mathsf{iterate}}$). Otherwise, when $1-G_{\mathsf{top}}^T\cdot V_{\mathsf{top}}$ is $1$, we check whether $\size(\cG)=\size(\cV)$ or $\size(\cG)\neq \size(\cV)$. In the former case, we call expression $e_{\mathsf{aggregate}}$, which encodes the function $\textsc{Aggregate}(\cG,\cV)$, in the latter case we call expression $e_{\mathsf{extend}}$, which encodes function $\textsc{Extend}(\cG,\cV,A)$. These two cases are checked by the indicator functions $G_{\mathsf{top}}^T\cdot V_{\mathsf{top}}$ and  $1 - G_{\mathsf{top}}^T\cdot V_{\mathsf{top}}$, respectively. As mentioned before, $e_\Phi$ retrieves entry $X[1,\max-2]$ from the value stack column in $X$. 
+
+It now remains us to explain the expressions $e_{\mathsf{start}}$, $e_{\mathsf{extend}}$ and $e_{\mathsf{aggregate}}$.
+
+
+
+
+
+    Note that the $ \texttt{for}$-expression does the evaluation. The final output is in $X[1,max-2]$, we extract this value by multiplying the final result as $e_{\mathsf{min}}^T\cdot [\texttt{for}(\ldots )]\cdot e_{V}$.
 
     To set the initial state (algorithm \ref{alg:eval_code} line 2) we define the $\langfor$ expression: $$\text{START}:= e_{\mathsf{min}}\cdot \getroot^T + e_{\mathsf{min}}\cdot e_{G_{top}}^T.$$
     For the initialize step, we define the $\langfor$ expressions: INIT${\_}$PLUS (algorithm \ref{alg:init_code}, lines 2, 3, 4), INIT${\_}$PROD (algorithm \ref{alg:init_code}, lines 5, 6, 7), CONST (algorithm \ref{alg:init_code}, lines 8, 9) and INPUT (algorithm \ref{alg:init_code}, lines 10, 11):
 
-    \begin{align*}
-        \text{INIT{\_}PLUS} &:= \isplus{G^T\cdot G_{top}}\times \Big[ G + \\
-        &\hspace{2em}(\mathsf{Next}\cdot G_{top}) \cdot \getfirst{G^T\cdot G_{top}}^T  + \\
+    \begin{align*}\allowdisplaybreaks
+        \text{INIT{\_}PLUS} &:= \isplus{G^T\cdot G_{top}}\times \Big[ G + 
+       (\mathsf{Next}\cdot G_{top}) \cdot \getfirst{G^T\cdot G_{top}}^T  + \\
         &\hspace{4em}\mathsf{Next}\cdot G_{top}\cdot e_{G_{top}}^T +V\cdot e_{V}^T + \mathsf{Next}\cdot V_{top}\cdot e_{V_{top}}^T \Big] \\
         \text{INIT{\_}PROD} &:= \isprod{G^T\cdot G_{top}}\times \Big[ G + \\
         &\hspace{2em}(\mathsf{Next}\cdot G_{top}) \cdot \getfirst{G^T\cdot G_{top}}^T + \\
@@ -795,19 +862,7 @@ $$ % V = \begin{bmatrix}
 
     The $\langfor$ expression equivalent to algorithm \ref{alg:agg_code} is $$\text{AGG}:=\text{POP} + \text{AGG{\_}PLUS}+\text{AGG{\_}PROD}+\text{IS{\_}NOT{\_}LAST}+\text{IS{\_}LAST}.$$
 
-    The $Evaluate$ method (algorithm \ref{alg:eval_code}) is defined as follows:
-
-    \begin{align*}
-        &\text{EVAL}[v]= \\
-        &e_{\mathsf{min}}^T \cdot \big\lbrace \ffor{X}{v_1, \ldots, v_k}: \\
-        &\hspace{2em}\left( \sprod_{i=1}^k \mathsf{min}(v_i)\right) \times START + \\
-        &\hspace{4em}\left( 1- \sprod_{i=1}^k \mathsf{min}(v_i)\right) \times \bigg( \left(1 - \mathsf{min}(G_{top})\cdot \mathsf{min}(V_{top}) \right) \times \Big[ \left( 1 - G_{top}^T\cdot V_{top} \right) \times \text{INIT} \\
-        &\hspace{6em}+ \left(  G_{top}^T\cdot V_{top} \right) \times \text{AGG} \Big] + \\
-        &\hspace{8em}\mathsf{min}(G_{top})\times \mathsf{min}(V_{top})\times X\bigg) \\ 
-        &\big\rbrace\cdot e_{V}
-    \end{align*}
-
-    Note that the $ \texttt{for}$-expression does the evaluation. The final output is in $X[1,max-2]$, we extract this value by multiplying the final result as $e_{\mathsf{min}}^T\cdot [\texttt{for}(\ldots )]\cdot e_{V}$.
+  
 
 \paragraph{$\rhd$  Small $n$.}
 
