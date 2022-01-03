@@ -2,7 +2,7 @@
 
 \usepackage{enumitem}
 \usepackage{balance}
-
+\usepackage{subdepth}
 \input{./extras/macros}
 
 \input{./extras/title_authors}
@@ -10,7 +10,10 @@
 %%%%%%%%%%%%%%%%%%%
 %% Document body %%
 %%%%%%%%%%%%%%%%%%%
-
+% \let\mathsf\relax    % just to avoid a message in the log file
+% \DeclareRobustCommand{\mathsf}[1]{\text{\normalfont\sffamily#1}}
+% \DeclareMathAlphabet{\mathsf}
+\DeclareMathAlphabet{\mathsf}{OT1}{\sfdefault}{m}{n}
 \begin{document} 
 
 \input{./extras/abstract}
@@ -59,6 +62,10 @@
 \input{sections/definitions/for_predicates.tex}
 %
 \input{sections/proofs/linear-space-functions.tex}
+
+
+\input{sections/proofs/lang-in-ac.tex}
+\input{sections/proofs/undecidability.tex}
 
 
 \end{document}
