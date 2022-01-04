@@ -435,16 +435,16 @@ first we assume that is $n$ is large enough such that we have specific bounds fo
 and depth of $\Phi_n$; second we deal with small $n$.
 
 \paragraph{$\rhd$  Large $n$.}
- To simulate the two stacks $\cG$ and $\cV$ we use a matrix $X$ of dimensions $n \times n$, where
+ To simulate the two stacks $\cG$ and $\cV$ we use a matrix variable $X$ that will be instantiated by a matrix (also referred to by $X$) of dimensions $n \times n$, where
     \begin{itemize}
-        \item Columns $1$ to $n-3$ contain binary identifiers of the gates in the stack $\cG$;
-        \item Column $n-2$ is the stack of values where $X[1, n-2]$ is the bottom of the stack;
-        \item Column $n-1$ will store a canonical vector that marks the top of stack $\cG$;
-        \item Column $n$ will store a canonical vector that marks the top of stack $\cV$.
+        \item columns $1$ to $n-3$ contain binary identifiers of the gates in the stack $\cG$;
+        \item column $n-2$ is the stack of values where $X[1, n-2]$ is the bottom of the stack;
+        \item column $n-1$ will store a canonical vector that marks the top of stack $\cG$; and finally,
+        \item column $n$ will store a canonical vector that marks the top of stack $\cV$.
     \end{itemize}
 \begin{example}
-We illustrate the matrix $X$ encoding $\cG$ and $\cV$ in case that
-$\getsize{\cG} = \getsize{\cV}$ (matrices below on the left) and  when $\getsize{\cG} = \getsize{\cV}+1$ (matrices below on the right), respectively. We also depict vectors $V$, $G_{\textsl{top}}$ and $V_{\textsl{top}}$
+We illustrate how the matrix $X$ encoding $\cG$ and $\cV$ looks like in case that
+$\getsize{\cG} = \getsize{\cV}$ (matrix $X$ below on the left) and  when $\getsize{\cG} = \getsize{\cV}+1$ (matrix $X$ below on the right), respectively. We also depict vectors $V$, $G_{\textsl{top}}$ and $V_{\textsl{top}}$
 representing the contents of the value stack $\cV$ and the positions of the
 top elements in the gate stack $\cG$ and value stack $\cV$, respectively. The matrix
 $G$ (shown on the right) has the same dimensions as $X$ and encodes the stack $\cG$.
@@ -478,7 +478,7 @@ $$ \underbrace{\left[\begin{smallmatrix}
        \vphantom{\texttt{id}_1} 0 \\
        \vphantom{\int\limits^x}\smash{\vdots} \\
        \vphantom{\texttt{id}_1} 0 
-    \end{smallmatrix}\right]}_{G_{\textsl{top}}}, 
+    \end{smallmatrix}\right]}_{G_{\mathsf{top}}}, 
      \underbrace{\left[\begin{smallmatrix}
         \vphantom{\texttt{id}_1} 0  \\
          \vphantom{\texttt{id}_1}0 \\
@@ -488,7 +488,7 @@ $$ \underbrace{\left[\begin{smallmatrix}
          \vphantom{\texttt{id}_1}0 \\
          \vphantom{\int\limits^x}\smash{\vdots} \\
         \vphantom{\texttt{id}_1} 0 
-    \end{smallmatrix}\right]}_{V_{\textsl{top}}} \text{ or }
+    \end{smallmatrix}\right]}_{V_{\mathsf{top}}} \text{ or }
 	 \underbrace{\left[\begin{smallmatrix}
         \texttt{id}_1 & v_1 & 0 & 0 \\
         \texttt{id}_2 & v_2 & 0 & 0 \\
@@ -517,7 +517,7 @@ $$ \underbrace{\left[\begin{smallmatrix}
        \vphantom{\texttt{id}_1} 0 \\
         \vphantom{\int\limits^x}\smash{\vdots} \\
        \vphantom{\texttt{id}_1} 0 
-    \end{smallmatrix}\right]}_{G_{\textsl{top}}}, 
+    \end{smallmatrix}\right]}_{G_{\mathsf{top}}}, 
      \underbrace{\left[\begin{smallmatrix}
         \vphantom{\texttt{id}_1} 0  \\
          \vphantom{\texttt{id}_1}0 \\
@@ -527,7 +527,7 @@ $$ \underbrace{\left[\begin{smallmatrix}
          \vphantom{\texttt{id}_1}0 \\
          \vphantom{\int\limits^x}\smash{\vdots} \\
         \vphantom{\texttt{id}_1} 0 
-    \end{smallmatrix}\right]}_{V_{\textsl{top}}} 
+    \end{smallmatrix}\right]}_{V_{\mathsf{top}}} 
 		\text{ and } \underbrace{\left[\begin{smallmatrix}
 	        \texttt{id}_1 & 0 & 0 & 0 \\
 	        \texttt{id}_2 & 0 & 0 & 0\\
@@ -701,12 +701,20 @@ move from one canonical vector to the next, respectively, previous, one. In addi
 $1$ when their input vectors are the first canonical vector, the last canonical vectors, and consecutive canonical vectors, respectively. Given these, we use
 the following shorthand notations:
 \begin{gather*}\allowdisplaybreaks
-   e_{V}:=e_{\mathsf{max}-2} \quad e_{G_{top}}:=e_{\mathsf{max}-1} \quad     e_{V_{top}}:=e_{\mathsf{max}} \\
-   \Iden{b_i}:=\ssum v. \mathsf{succ}(v,b_i)\cdot (v\cdot v^T)  \quad   V_{top}:= X\cdot e_{V_{top}} \\
-        V:= \Iden{V_{top}} \cdot X \cdot e_V \quad
-        G_{top} :=X\cdot e_{G_{top}} \text{ and }
-        G := \Iden{G_{top}}\cdot X \cdot \Iden{e_{\mathsf{max}-3}}
+   e_{V}:=e_{\mathsf{max}-2} \quad e_{G_{\mathsf{top}}}:=e_{\mathsf{max}-1} \quad     e_{V_{\mathsf{top}}}:=e_{\mathsf{max}} \quad 
+  V_{\mathsf{top}}:= X\cdot e_{V_{\mathsf{top}}} \quad  G_{\mathsf{top}} :=X\cdot e_{G_{\mathsf{top}}}\\
+   \Iden{b_i}:=\ssum v. \mathsf{succ}(v,b_i)\cdot v\cdot v^T  \\
+\pondIden{b_i}{c}=\ssum v. \bigl(c\cdot v^T\cdot b_i + (1- v^T\cdot b_i)\bigr)\cdot v\cdot v^T \\
+           V:= \Iden{V_{\mathsf{top}}} \cdot X \cdot e_V \quad
+        G := \Iden{G_{\mathsf{top}}}\cdot X \cdot \Iden{e_{\mathsf{max}-3}},
  \end{gather*}
+where $V_{\mathsf{top}}$, $G_{\mathsf{top}}$, $V$ and $G$ evaluate to
+the vectors and matrix shown in the previous example. Indeed, for $V_{\mathsf{top}}$
+we just select the $n$th column from $X$, and for $G_{\mathsf{top}}$ the $(n-1)$th column. The expression $\Iden{b_i}$ is the diagonal matrix with diagonal entries $1$
+up to position $(i,i)$ and zero otherwise. Hence, for $V$, we first make $X$ zero below
+the row corresponding to the canonical vector $V_{\mathsf{top}}$ and then extract the
+$(n-2)$th column. Similarly, for $G$ we make $X$ zero below the row corresponding to
+$G_{\mathsf{top}}$ and also after column $n-3$. The expression $\pondIden{b_i}{c}$ will be used later on and creates the identity matrix with value $c$ on position $(i,i)$.
 
     % For a canonical vector, let $$.$$ This matrix has ones in the diagonal up to position $i$ marked by $e_{i}$. We define the following sub-matrices of $X$:
 %     \begin{align*}
@@ -1000,7 +1008,7 @@ Here, $G^T\cdot G_{top}$ is to get the current id in the top of the stack. In IN
 	% $$\text{AGG}:=\text{POP} + \text{AGG{\_}PLUS}+\text{AGG{\_}PROD}+\text{IS{\_}NOT{\_}LAST}+\text{IS{\_}LAST}.$$
 	%
 	%
-	%     For the aggregate expression (algorithm \ref{alg:agg_code}) we do the following. Let $$\pondIden{b_i}{c}=\ssum v. (v^T\cdot b_i)\cdot c\cdot v\cdot v^T + (1-v^T\cdot b_i)\cdot v \cdot v^T,$$ namely, it is the identity with $c$ in position $(i,i)$.
+	%     For the aggregate expression (algorithm \ref{alg:agg_code}) we do the following. Let cdot v \cdot v^T,$$ namely, it is the identity with $c$ in position $(i,i)$.
 	%
 	%     We define the expressions: AGG${\_}$PLUS (algorithm \ref{alg:agg_code}, lines 4, 5), AGG${\_}$PROD (algorithm \ref{alg:agg_code}, lines 6, 7),  IS${\_}$NOT${\_}$LAST (algorithm \ref{alg:agg_code}, lines 8, 9), IS${\_}$LAST and POP:
 where
