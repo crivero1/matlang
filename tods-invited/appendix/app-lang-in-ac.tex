@@ -1,7 +1,11 @@
+%!TEX root = ../../main.tex
+
 % We connect MATLANG with arithmetic circuits as follows.
 
 % We first show that for every MATLANG expression $e$ we can associate a uniform arithmetic circuit family $\{\Phi_n^e\mid n=1,2,\ldots\}$ such that when $I$ is matrix instance of dimension $n$ (or $n\times n$), we can obtain $e(I)$ by evaluating $\Phi_n$ on $I$. \floris{The connection between the dimensions of instances etc and the ``$n$'' in the arithmetic circuits needs to be made precise. E.g., if we have $n^2$ matrices, we need more than $n$ variables...}
 
+
+We here show how to convert \langfor expressions to arithmetic circuits over matrices.
 We consider circuits over matrices (multiple output gates). We will write 
 $\Phi(A_1,\ldots ,A_k)$, where $\Phi$ is an arithmetic circuit with multiple output gates, and each 
 $A_i$ is a matrix of dimensions $\alpha_i\times \beta_i$, with $\alpha_i,\beta_i \in \{n,1\}$ to denote 

@@ -1,14 +1,17 @@
-
-We consider circuits over matrices (multiple output gates). We will write 
-$\Phi(A_1,\ldots ,A_k)$, where $\Phi$ is an arithmetic circuit with multiple output gates, and each 
-$A_i$ is a matrix of dimensions $\alpha_i\times \beta_i$, with $\alpha_i,\beta_i \in \{n,1\}$ to denote 
-the input matrices for a circuit $\Phi$. We will also write $\ttype(\Phi)=(\alpha,\beta)$, with 
-$\alpha,\beta\in \{n,1\}$, to denote the size of the output matrix for $\Phi$. 
+%!TEX root = ../main.tex
+We here show how to convert \langfor expressions to arithmetic circuits over matrices.
+We denote such circuits by $\Phi(A_1,\ldots ,A_k)$, where $\Phi$ is an arithmetic circuit 
+with multiple output gates, and each  $A_i$ is a matrix of dimensions $\alpha_i\times \beta_i$, 
+with $\alpha_i,\beta_i \in \{n,1\}$ to denote the input matrices for a circuit $\Phi$. 
 When $\{\Phi_n\mid n=1,2,\ldots\}$ is a uniform family of 
 arithmetic circuits over matrices, we will assume that the Turing machine for generating $\Phi_n$ also 
 gives us the information about how to access a position of each input matrix, and how to access the 
 positions of the output matrix, as is usually done when handling matrices with arithmetic 
-circuits \cite{Raz02}. The notion of degree is extended to be the sum of the degrees of all 
+circuits \cite{Raz02}. 
+
+We will also write $\ttype(\Phi)=(\alpha,\beta)$, with 
+$\alpha,\beta\in \{n,1\}$, to denote the size of the output matrix for $\Phi$. 
+The notion of degree is extended to be the sum of the degrees of all 
 the output gates. The former will be denoted as $\Phi_{n}[i,j]$ when $\ttype(\Phi)=(n,n)$, 
 $\Phi_{n}[i,1]$ when $\ttype(\Phi)=(n,1)$, $\Phi_{n}[1,j]$ when $\ttype(\Phi)=(1,n)$ and 
 $\Phi_{n}$ when $\ttype(\Phi)=(1,1)$. Also, when we write $a \oplus b$ we mean 
@@ -48,37 +51,42 @@ When we write $\bigoplus_{l=1}^n a_l$ we mean
 \end{center}
 Same with $\otimes$. Now we prove the statement.
 
-\begin{proof}
 
-Let $e$ be a \langfor expression. 
-
-If $e=V$ then $\Phi_n^e:=\Phi(A)$, and we have that
+Let $e$ be a \langfor expression. We define the circuit $\Phi_n^e$ and its type $\ttype(\Phi_n^e)$ inductively on the structure of $e$.
+In the following, the indices $i$ and $j$ always range over $\{1,2,\ldots,n\}$.
 \begin{itemize}
-	\item If $\ttype(V)=(1,1)$ then $\ttype(\Phi^e_n)=(1,1)$ and $\Phi^e_n$ has the one input/output gate.
+	\item
+	If $e=V$ then $\Phi_n^e$ consists of an input matrix $A$.
+\begin{itemize}
+	\item If $\ttype(V)=(1,1)$ then $\ttype(\Phi^e_n)=(1,1)$ and $\Phi_n^e$ consists of single input gate, which is also
+	the output gate.
+	% $\Phi^e_n[1,1]$ has  one input/output gate.
 	\item If $\ttype(V)=(1,\alpha)$ then $\ttype(\Phi^e_n)=(1,n)$ and $\Phi^e_n$ has $n$ input/output gates.
   \item If $\ttype(V)=(\alpha,1)$ then $\ttype(\Phi^e_n)=(n,1)$ and $\Phi^e_n$ has $n$ input/output gates.
 	\item If $\ttype(V)=(\alpha,\alpha)$ then $\ttype(\Phi^e_n)=(n,n)$ and $\Phi^e_n$ has $n^2$ input/output gates. 
 \end{itemize}
-
-If $e=e'^T$ then $\Phi^e_n=\Phi^{e'}_n$. 
+\item
+If $e=e'^T$ then $\Phi^e_n=\Phi^{e'}_n$ we only need to rearrange the output gates of $\Phi_n^{e'}$, as follows.
 \begin{itemize}
-	\item If $\ttype(\Phi^{e'}_n)=(1, 1)$ then $\Phi^e_n=\Phi^{e'}_n$ and $\type(\Phi^e_n)=(1,1)$.
+	\item If $\ttype(\Phi^{e'}_n)=(1, 1)$ then and $\type(\Phi^e_n)=(1,1)$.
 	\item If $\ttype(\Phi^{e'}_n)=(1, n)$ then $\type(\Phi^e_n)=(n,1)$ and $\Phi^e_n[i,1]:=\Phi^{e'}_n[1,i]$. 
   \item If $\ttype(\Phi^{e'}_n)=(n, 1)$ then $\type(\Phi^e_n)=(1,n)$ and $\Phi^e_n[1,j]:=\Phi^{e'}_n[j,1]$. 
   \item If $\ttype(\Phi^{e'}_n)=(n, n)$ then $\type(\Phi^e_n)=(n,n)$ and $\Phi^e_n[i,j]:=\Phi^{e'}_n[j,i]$. 
 \end{itemize}
-
-If $e={\ones}(e')$ where $\ttype(\Phi^{e'}_n)=(\alpha,\beta)$ then $\ttype(\Phi^{e}_n)=(\alpha,1)$ and $\Phi^e_n[i,1]:=1$.
-
-If $e=e_1 + e_2$ we have
-
+\item
+If $e={\ones}(e')$ with $\ttype(\Phi^{e'}_n)=(\alpha,\beta)$ then $\ttype(\Phi^{e}_n)=(\alpha,1)$ and we just
+create a circuit with only $1$-gates, which are also the output gates. That is,
+$\Phi^e_n[i,1]:=1$.
+\item
+If $e=e_1 + e_2$ then $\Phi_n^e$ consists of $\Phi_n^{e_1}$ and $\Phi_n^{e_2}$, together with  a new layer connecting the output gates of $\Phi_n^{e_1}$ and $\Phi_n^{e_2}$ by means
+of $+$-gates, that also serve as the output gates of $\Phi_n^e$, as follows.
 \begin{itemize}
-	\item When $\ttype(\Phi^{e_1}_n)=\ttype(\Phi^{e_2}_n)=(1, 1)$  then $\ttype(\Phi^{e}_n)=(1, 1)$ and $\Phi^e_n:=\Phi^{e_1}_n \oplus \Phi^{e_2}_n$.
-  \item When $\ttype(\Phi^{e_1}_n)=\ttype(\Phi^{e_2}_n)=(1, n)$  then $\ttype(\Phi^{e}_n)=(1, n)$ and $\Phi^e_n[1,j]:=\Phi^{e_1}_n[1,j] \oplus \Phi^{e_2}_n[1,j]$.
-  \item When $\ttype(\Phi^{e_1}_n)=\ttype(\Phi^{e_2}_n)=(n, 1)$  then $\ttype(\Phi^{e}_n)=(n, 1)$ and $\Phi^e_n[i,1]:=\Phi^{e_1}_n[i,1] \oplus \Phi^{e_2}_n[i,1]$.
-  \item When $\ttype(\Phi^{e_1}_n)=\ttype(\Phi^{e_2}_n)=(n, n)$  then $\ttype(\Phi^{e}_n)=(n, n)$ and $\Phi^e_n[i,j]:=\Phi^{e_1}_n[i,j] \oplus \Phi^{e_2}_n[i,j]$.
+	\item If $\ttype(\Phi^{e_1}_n)=\ttype(\Phi^{e_2}_n)=(1, 1)$  then $\ttype(\Phi^{e}_n)=(1, 1)$ and $\Phi^e_n[1,1]:=\Phi^{e_1}_n[1,1] \oplus \Phi^{e_2}_n[1,1]$.
+  \item If $\ttype(\Phi^{e_1}_n)=\ttype(\Phi^{e_2}_n)=(1, n)$  then $\ttype(\Phi^{e}_n)=(1, n)$ and $\Phi^e_n[1,j]:=\Phi^{e_1}_n[1,j] \oplus \Phi^{e_2}_n[1,j]$.
+  \item If $\ttype(\Phi^{e_1}_n)=\ttype(\Phi^{e_2}_n)=(n, 1)$  then $\ttype(\Phi^{e}_n)=(n, 1)$ and $\Phi^e_n[i,1]:=\Phi^{e_1}_n[i,1] \oplus \Phi^{e_2}_n[i,1]$.
+  \item If $\ttype(\Phi^{e_1}_n)=\ttype(\Phi^{e_2}_n)=(n, n)$  then $\ttype(\Phi^{e}_n)=(n, n)$ and $\Phi^e_n[i,j]:=\Phi^{e_1}_n[i,j] \oplus \Phi^{e_2}_n[i,j]$.
 \end{itemize}
-
+\end{itemize}
 If $e=f(e_1, \ldots, e_k)$ we have two cases
 
 \begin{itemize}
