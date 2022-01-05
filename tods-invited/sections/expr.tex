@@ -20,7 +20,7 @@ To handle inputs of different sizes, we thus consider a notion of uniform famili
 circuits, defined -- as usual -- via a Turing machine generating a description of the circuit for 
 each input size $n$.
 %
-The main result of this section is that any function $f$ which operates on matrices, and is computed 
+The main result of this section (Theorem~\ref{th-equivalence}) is that any function $f$ which operates on matrices, and is computed 
 by a uniform family of arithmetic circuits of bounded degree, can also be computed by 
 a \langfor expression, and vice versa.
 
@@ -31,11 +31,13 @@ Our results hold without these restrictions as well, however.
 In what follows, we write $\langfor$ to denote $\langforf{\emptyset}$, i.e. the fragment of 
 our language with no additional pointwise functions. 
 %
+
 We begin by defining circuits in Section~\ref{subsect:ac}, and then show how circuit families can be
-simulated by $\langfor$ in Section~\ref{subsec:actoformatlang}. In Section~\ref{subsec:formatlangtoac} 
-we associate circuits to $\langfor$ expressions. We consider extensions of $\langfor$ with additional
+simulated in $\langfor$ in Section~\ref{subsec:actoformatlang}. In Section~\ref{subsec:formatlangtoac} 
+we associate circuits to $\langfor$ expressions. Our main result can be found in Section~\ref{subsec:poldegree}
+where we characterize the expressive power of \langfor expressions of polynomial degree in terms of circuits.
+Finally, we consider extensions of $\langfor$ with additional
 operators, and the division operator in particular, in Section~\ref{subsec:additionalop}.
-\textcolor{red}{Added some more subsec..to be filled in.}
 
 \subsection{Arithmetic circuits}\label{subsect:ac}
 We first recall the definition of arithmetic circuits~\cite{allender}. 
@@ -44,7 +46,9 @@ An \textit{arithmetic circuit} $\Phi$ over a set $X=\{x_1,\ldots,x_n\}$ of input
 is a directed acyclic labeled graph. The vertices of $\Phi$ are called \textit{gates} and 
 denoted by $g_1,\ldots,g_m$; the edges in $\Phi$ are called \textit{wires}. We denote by 
 $\mathsf{gates}(\Phi)$ the number of gates in $\Phi$ and by $\mathsf{wires}(\Phi)$ the number
-of wires in $\Phi$.
+of wires in $\Phi$. The \textit{size} of $\Phi$
+%, denoted by $|\Phi|$, 
+is its number of gates and wires. 
 %
 The \textit{children} of a gate $g$ correspond to all gates $g'$ such that $(g,g')$ is a wire. 
 The \textit{parents} of $g$ correspond to all gates $g'$ such that $(g',g)$ is a wire. The
@@ -56,7 +60,8 @@ in $X$ or a constant $0$ or $1$. All other gates are labeled by either $+$ or $\
 are referred to as \textit{sum gates} or \textit{product gates}, respectively.
 Gates with out-degree $0$ are called \textit{output gates}.
  % When talking about arithmetic circuits, one usually focuses on circuits with $n$ input gates and a single output gate.
-The \textit{size} of $\Phi$, denoted by $|\Phi|$, is its number of gates and wires. 
+
+
 %
 The \textit{depth} of $\Phi$, denoted
 by $\mathsf{depth}(\Phi)$, is the length of the longest directed path from any of its output 
@@ -79,7 +84,7 @@ Another important parameter is the circuit depth. A circuit family is of \textit
 
 
 \subsection{From arithmetic circuits to \langfor}\label{subsec:actoformatlang}
-This section is dedicated to showing how \langfor expressions can be connected to arithmetic circuits, as formalized
+This section is dedicated to showing how \langfor expressions can be associated to arithmetic circuits, as formalized
 in the following theorem.
 
 \begin{theorem}
@@ -95,24 +100,25 @@ The proof of Theorem~\ref{th-circuits-ml} goes as follows: First, in
 Section~\ref{subsubsec:eval}, we describe a stack-based evaluation algorithm, \textsc{Evaluate}, for arithmetic circuits $\Phi$. We then show how to simulate  \textsc{Evaluate} by an expression $e_\Phi$ in \langfor in Section~\ref{subsubsec:simulate}. 
 
 \subsubsection{Evaluation algorithm for arithmetic circuits}\label{subsubsec:eval}
-We start by describing a stack-based evaluation algorithm for arithmetic circuits based on a depth-first top-down traversal of the circuit. As we will see later on, this algorithm lends itself well to be simulated in \langfor. 
+We start by describing a stack-based evaluation algorithm, \textsc{Evaluate}, for arithmetic circuits based on a depth-first top-down traversal of the circuit. As we will see later on, this algorithm lends itself well to be simulated in \langfor. 
 
 Let $\Phi_n$ be a circuit with $n$ input gates. We assume an ordering on the children of gates and that there are only variable input gates or input gates with value $1$ ($1$-gates). Indeed, we can prune away input gates with value $0$ in a preprocessing step. We store the values of the input gates in an $n\times 1$ vector $A$, where $A[i]$ denotes the value
-of the $i$th input gate. To evaluate $\Phi_n$ on $A$ we will maintain two stacks: A \textit{gate stack}
- $\cG$ and a \textit{value stack} $\cV$. For a stack $S$, we have the standard operations: $\push{S}{s}$: pushes $s$ onto $S$,
-$\pop{S}$: pops the top element,  $\getsize{S}$: returns the length of the stack, and
-$\gettop{S}$: returns the top element in the stack. We refer to the $i$th element on $S$ by $S[i]$.
+of the $i$th input gate. To evaluate $\Phi_n$ on $A$ we  maintain two stacks: A \textit{gate stack}
+ $\cG$ and a \textit{value stack} $\cV$. In general, for a stack $\mathcal S$ we have standard operations: $\push{\mathcal S}{s}$: pushes $s$ onto $\mathcal S$;
+$\pop{\mathcal S}$: pops the top element;  $\getsize{\mathcal S}$: returns the length of the stack; and
+$\gettop{\mathcal S}$: returns the top element in the stack. We refer to the $i$th element on $\mathcal S$ by $\mathcal S[i]$.
 
+\smallskip
 The evaluation algorithm \textsc{Evaluate} works for any arithmetic circuit. The logarithmic depth assumption in Theorem~\ref{th-circuits-ml} is only needed for its simulation in \langfor.
 
 Algorithm~\ref{alg:eval_code} depicts the evaluation algorithm, consisting of three functions:
 \begin{itemize}
 \item $\textsc{Evaluate}(\Phi_n,A)$, the main algorithm; 
-\item $\textsc{Extend}(\cG,\cV,A)$, in charge of creating paths from input gates to the output gate; and 
+\item $\textsc{Extend}(\cG,\cV,A)$, in charge of creating paths to input gates from the output gate; and 
 \item $\textsc{Aggregate}(\cG,\cV)$, in charge of computing a partial of evaluation of $\Phi_n$ based on the paths considered so far and in charge of initiating the exploration of the next path during the traversal of $\Phi_n$.
 \end{itemize}
 The algorithm, during its execution, ensures that 
-$\cG$ always contains a path from a gate in $\Phi_n$ to the output gate and that all paths are visited in a depth-first left-to-right traversal of $\Phi_n$. Moreover, $\cV$ will hold values of gates stored in $\cG$ based on the paths explored so far.
+$\cG$ always contains a path to a gate in $\Phi_n$ from the output gate and that all paths are visited in a depth-first left-to-right traversal of $\Phi_n$. Moreover, $\cV$ will hold values of gates stored in $\cG$ based on the paths explored so far.
 
 
 More precisely, $\textsc{Evaluate}(\Phi_n,A)$ starts with empty stacks $\cG$ and $\cV$ (line 2) and then pushes the output
@@ -403,7 +409,7 @@ As we have seen in Algorithm~\ref{alg:eval_code}, \textsc{Evaluate} use a number
 $\isplus{g}$, $\isprod{g}$, $\isone{g}$, $\isinput{g}$, $\getfirst{g}$, $\getinput{g}$, $\isnotlast{g_1}{g_2}$,
 \allowbreak $\nextgate{g_1}{g_2}$ and $\getroot$, all of which are explained in Algorithm~\ref{alg:eval_code}. 
 We need to simulate these functions in \langfor. Instead of writing specific \langfor expressions for each of these
-functions, we rely on a more general simulation result (Proposition~\ref{prop:transducer2} below) relating to general
+functions, we rely on a more general simulation result (Proposition~\ref{prop:transducer2} below) concerning general
 functions computable over identifiers in $\{0,1\}^n$.
 
 Indeed, using the identifiers of gates, we can regard the circuit-related functions as functions $f_n:(\lbrace 0,1 \rbrace^{n})^\ell\rightarrow\lbrace 0,1 \rbrace^n$, in case they return some gate (identifier) or $f_n:(\lbrace 0,1 \rbrace^{n})^\ell\rightarrow\lbrace 0,1 \rbrace$,
@@ -425,11 +431,11 @@ $\I=(\mathcal{D},\textsf{mat})$ over $\mathcal{S}$ with $\mathcal{D}(\alpha)=n$ 
 $\mathsf{mat}(I_i)=\mathsf{vec}(w_i)\in \mathbb{R}^n$,  for $i\in[\ell]$ and words $w_1,\ldots,w_\ell\in\Sigma^n$, and such that $\mathsf{vec}(w_i)$ is the $n\times 1$-vector 
 encoding the word $w_i$, we have that  $\mathsf{mat}(O)=\mathsf{vec}(f_n(w_1,\ldots,w_\ell))\in\mathbb{R}^n$ 
 after evaluating $e_f$ on $\I$. Similarly, if $f=\bigcup_{n\geq 0}f_n:(\{0,1\}^n)^\ell\to \{0,1\}$, then we have
-such an expression $e_f$ such that $\mathsf{mat}(O)=f(w_1,\ldots,w_\ell)\in \mathbb{R}$ where $O$ is now of size $1\times 1$.\qed
+ an expression $e_f$ such that $\mathsf{mat}(O)=f_n(w_1,\ldots,w_\ell)\in \mathbb{R}$ where $O$ is now of size $1\times 1$.\qed
 \end{proposition}
 
-In other words, when we represent the binary identifiers of gates as $n\times 1$ vectors, all of the above-mentioned circuit-related functions have a \langfor counterpart that either return again an $n\times 1$ vector, representing a gate, or a value $0$ or $1$, representing true or false. In what follows, we  abuse notation and identify the functions with their \langfor counterparts. For example, $\getfirst{}$ expects an $n\times 1$ binary vector $b$ as input and returns an $n\times 1$ binary vector encoding the \texttt{id} of the first child of the gate with $b$ as identifier.
-
+In other words, when we represent the binary identifiers of gates as $n\times 1$ vectors, all of the above-mentioned circuit-related functions have a \langfor counterpart that either return again an $n\times 1$ vector, representing a gate, or values $0$ or $1$, representing true and false, respectively. In what follows, we  abuse notation and identify the circuit functions with their \langfor counterparts. For example, $\getfirst{}$ is now a \langfor expression taking an $n\times 1$ binary vector $b$ as input and returning an $n\times 1$ binary vector encoding the \texttt{id} of the first child of the gate with $b$ as identifier.
+\looseness=-1
 %
 % The previous functions are all definable by an $L$-transducer and can be defined from the $L$-transducer of $f$. Then, by proposition \ref{prop:transducer}, for each of these functions there is a \langfor expression that simulates them.
 %
@@ -455,7 +461,7 @@ and depth of $\Phi_n$; \textbf{(b)}~second we deal with small $n$; and \textbf{(
     \end{itemize}
 \begin{example}\label{ex:matrixX}
 We illustrate how the matrix $X$ encoding $\cG$ and $\cV$ looks like in case that
-$\getsize{\cG} = \getsize{\cV}$ (leftmost matrix $X$ below) and  when $\getsize{\cG} = \getsize{\cV}+1$ (rightmost matrix $X$ below), respectively. We also depict vectors $V$, $G_{\mathsf{top}}$ and $V_{\mathsf{top}}$
+$\getsize{\cG} = \getsize{\cV}$ (leftmost matrix $X$ below) and  when $\getsize{\cG} = \getsize{\cV}+1$ (rightmost matrix $X$ below). We also depict vectors $V$, $G_{\mathsf{top}}$ and $V_{\mathsf{top}}$
 representing the contents of the value stack $\cV$ and the positions of the
 top elements in the gate stack $\cG$ and value stack $\cV$, respectively. The matrix
 $G$ (shown on the right below) has the same dimensions as $X$ and encodes the stack $\cG$.
@@ -554,8 +560,8 @@ Here, the gate identifiers $\texttt{id}_j$ consist of
  $n-3$ zero/one entries, so they take up $n-3$ columns.\qed
 \end{example}
 
-In order to ensure that the $n\times n$ matrix $X$ is large enough to simulate $\textsc{Evaluate}(\cG,\cV,A)$, we consider large enough $n$, i.e. $n\geq n_0$, such that there exists constants $k,k'\in\mathbb{N}$ satisfying: for any $n\geq n_0$ the circuits $\Phi_n$ satisfy the following:
-$$        \log(\mathsf{gates}(\Phi_n)) \leq k\lceil\log(n)\rceil\leq n-3 \quad  \mathsf{depth}(\Phi_n)\leq k' \ceil{\log(n)} \leq n       
+In order to ensure that the $n\times n$ matrix $X$ is large enough to simulate $\textsc{Evaluate}(\Phi_n,A)$, we consider large enough $n$, i.e. $n\geq n_0$, such that there exists constants $k,k'\in\mathbb{N}$ satisfying: for any $n\geq n_0$ the circuits $\Phi_n$ satisfy the following:
+$$        \log(\mathsf{gates}(\Phi_n)) \leq k\lceil\log(n)\rceil\leq n-3, \quad  \mathsf{depth}(\Phi_n)\leq k' \ceil{\log(n)} \leq n       
 		% \leq k \ceil{\log (n)} \leq n-3
 		 \text{ and }
    2\times\mathsf{wires}(\Phi_n)\leq n^k.  
@@ -563,10 +569,11 @@ $$
 The first condition implies that we need at most $k\log (n)$ bits to store the \texttt{id} of a gate and that $n-3$ columns suffice to do so.
 The second condition implies that we have sufficiently many rows ($n$) to
 represent the stacks (which are of size at most the depth of the circuit). The third condition ensures that $n^k$ is an upper bound on the number
-of steps required to run $\textsc{Evaluate}(\cG,\cV,A)$, since during its execution maximally $2\times\mathsf{wires}(\Phi_n)$ will be traversed.
-This will be important later on since we will use $k$ nested \texttt{for} loops over vector variables of dimension $n\times 1$ to executes $n^k$ steps.
+of steps required to run $\textsc{Evaluate}(\Phi_n,A)$, since during its execution maximally $2\times\mathsf{wires}(\Phi_n)$ will be traversed.
+% This will be important later on since we will use $k$ nested \texttt{for} loops over vector variables of dimension $n\times 1$ to executes $n^k$ steps.
 We note that
-$n_0$, $k$ and $k'$ exist because $\{\Phi_n\mid n=1,2, \}$ is  uniform arithmetic circuit family of logarithmic depth. From now on, we assume
+$n_0$, $k$ and $k'$ exist because $\{\Phi_n\mid n=1,2, \}$ is  uniform arithmetic circuit family of logarithmic depth. 
+From now on, we assume
 that $n\geq n_0$. 
 
 
@@ -702,13 +709,12 @@ that $n\geq n_0$.
     % When used in $\langfor$ these functions output $[0]$ and $[1]$.
 
 \medskip
-We now start simulating $\textsc{Evaluate}(\cG,\cV,A)$. In a nutshell, we will iterate over $k$ vectors and perform
+We start simulating $\textsc{Evaluate}(\Phi_n,A)$. In a nutshell, we will iterate over $k$ vectors and perform
 $n^k$ iterative updates to the matrix $X$, starting from the matrix $X$ only storing the output gate id and value $1$ in column $n-1$
 (indicating the top of the stack $\cG$). After performing the updates, we end up with a matrix $X$ such that $X[1,n-2]$ holds the desired
 evaluation of $\Phi_n$ on $A$. As stated in Theorem~\ref{th-circuits-ml}, we use the vector variable $v$ to encode the input values in $A$, i.e. we consider
 an instance satisfying $\conc(v) = [a_1 \ldots a_n]^T$.  We first describe
-some auxiliary \langfor expressions needed in the simulation before delving into the details of how \textsc{Evaluate}, \textsc{Extend} and \textsc{Aggregate}
-are simulated.
+some auxiliary \langfor expressions needed in the simulation before delving into the details of simulating \textsc{Evaluate}, \textsc{Extend} and \textsc{Aggregate}.
 
 \paragraph{$\blacktriangleright$ Some auxiliary expressions.} 
 The desired \langfor expression $e_\Phi$ relies on several other expressions. Indeed, alongside
@@ -722,14 +728,14 @@ $1$ when their input vector(s) are the first canonical vector, the last canonica
    e_{V}:=e_{\mathsf{max}-2} \quad e_{G_{\mathsf{top}}}:=e_{\mathsf{max}-1} \quad     e_{V_{\mathsf{top}}}:=e_{\mathsf{max}} \quad 
   V_{\mathsf{top}}:= X\cdot e_{V_{\mathsf{top}}} \quad  G_{\mathsf{top}} :=X\cdot e_{G_{\mathsf{top}}}\\
    \Iden{b_i}:=\ssum v. \mathsf{succ}(v,b_i)\cdot v\cdot v^T  \\
-\pondIden{b_i}{c}=\ssum v. \bigl(c\cdot v^T\cdot b_i + (1- v^T\cdot b_i)\bigr)\cdot v\cdot v^T \\
+\pondIden{b_i}{c}:=\ssum v. \bigl(c\cdot v^T\cdot b_i + (1- v^T\cdot b_i)\bigr)\cdot v\cdot v^T \\
            V:= \Iden{V_{\mathsf{top}}} \cdot X \cdot e_V \quad
         G := \Iden{G_{\mathsf{top}}}\cdot X \cdot \Iden{e_{\mathsf{max}-3}}.
  \end{gather*}
 Here, $e_V$, $e_{G_{\mathsf{top}}}$ and $e_{V_{\mathsf{top}}}$ return the canonical vectors identifying the columns in $X$ for the value stack (column $n-2$) and columns holding the positions of the top elements in the the gates stack (column $n-1$) and value stack (column $n$), respectively. Moreover, 
  $V_{\mathsf{top}}$, $G_{\mathsf{top}}$, $V$ and $G$ evaluate to
-the vectors and matrix shown in Example~\ref{ex:matrixX}. Indeed,  $V_{\mathsf{top}}$
-selects the $n$th column from $X$, and  $G_{\mathsf{top}}$ selects the $(n-1)$th column. The expression $\Iden{b_i}$ evaluates to the diagonal matrix with diagonal entries $1$ up to position $(i,i)$ and zero otherwise. Hence, for $V$, we first make $X$ zero below
+the vectors and matrix shown in Example~\ref{ex:matrixX}. Here,  $V_{\mathsf{top}}$
+selects the $n$th column from $X$, and  $G_{\mathsf{top}}$ selects the $(n-1)$th column. Moreover, the expression $\Iden{b_i}$ evaluates to the diagonal matrix with diagonal entries $1$ up to position $(i,i)$ and zero otherwise. Hence, for $V$, we first make $X$ zero below
 the row corresponding to the canonical vector $V_{\mathsf{top}}$ and then extract its
 $(n-2)$th column. Similarly, for $G$ we make $X$ zero below the row corresponding to
 $G_{\mathsf{top}}$ and also after column $n-3$. The expression $\pondIden{b_i}{c}$ will be used later on and creates the identity matrix with value $c$ on position $(i,i)$. In what follows, although gate ids only require $n-3$ values, we represent them in reverse binary notation, followed by three zeroes.
@@ -803,7 +809,7 @@ These three trailing zeroes do not change what gate ids represent. In this way, 
     % The $Evaluate$ method (algorithm \ref{alg:eval_code}) is defined as follows:
 
 \paragraph{$\blacktriangleright$ The overall expression encoding {\normalfont \textsc{Evaluate}} for $n\geq n_0$}
-We simulate $\textsc{Evaluate}(\cG,\cV,A)$ on inputs $n\geq n_0$ by the expression
+We simulate $\textsc{Evaluate}(\Phi_n,A)$ for $n\geq n_0$ by the expression
 $e_{\Phi}^{\geq n_0}:= e_{\mathsf{min}}^T\cdot e_{\mathsf{iterate}}\cdot e_{\max -2}$ with
     \begin{align*}\allowdisplaybreaks
 		e_{\mathsf{iterate}}&:= \ffor{v_1}{X} X+\\
@@ -934,7 +940,7 @@ It now remains us to explain the expressions $e_{\mathsf{start}}$, $e_{\mathsf{e
     % Note that the $ \texttt{for}$-expression does the evaluation. The final output is in $X[1,max-2]$, we extract this value by multiplying the final result as $e_{\mathsf{min}}^T\cdot [\texttt{for}(\ldots )]\cdot e_{V}$.
 
 \paragraph{$\blacktriangleright$ The initialization expression $e_{\mathsf{start}}$}
-Expression $e_{\mathsf{start}}$ is used to set to matrix $X$ in the initial state, conform to line 3 in Algorithm~\ref{alg:eval_code}. More precisely,
+Expression $e_{\mathsf{start}}$ is used to set the matrix $X$ in the initial state, conform to line 3 in Algorithm~\ref{alg:eval_code}. More precisely,
     % To set the initial state (algorithm \ref{alg:eval_code} line 2) we define the $\langfor$ expressio
 $$e_{\mathsf{start}}:=e_{\mathsf{min}}\cdot \getroot^T + e_{\mathsf{min}}\cdot e_{G_{\mathsf{top}}}^T.$$
 In other words, it will put the \texttt{id} of the output gate on the first row of $X$ and also sets the $(n-1)$th entry  of the first row to $1$,
@@ -945,7 +951,7 @@ To simulate $\textsc{Extend}$ we define
 $$
 e_{\mathsf{extend}}:=e_{\mathsf{ext\_plus}}+e_{\mathsf{ext\_prod}}+e_{\mathsf{ext\_one}}+e_{\mathsf{ext\_input}},
 $$
-where  $e_{\mathsf{ext\_plus}}$, $e_{\mathsf{ext\_prod}}$, $e_{\mathsf{ext\_one}}$ and $e_{\mathsf{ext\_input}}$ correspond to the different cases in \textsc{Extend} (lines 11--13, 14--16, 17--18, and 19-20 in Algorithm~\ref{alg:eval_code}, respectively). More precisely, we define:
+where  $e_{\mathsf{ext\_plus}}$, $e_{\mathsf{ext\_prod}}$, $e_{\mathsf{ext\_one}}$ and $e_{\mathsf{ext\_input}}$ correspond to the different cases in \textsc{Extend} (lines 11--13, 14--16, 17--18, and 19--20 in Algorithm~\ref{alg:eval_code}, respectively). More precisely, we define:
     \begin{align*}\allowdisplaybreaks
       e_{\mathsf{ext\_plus}}&:= \texttt{isplus}\bigl(G^T\cdot G_{\mathsf{top}}\bigr)\times \Bigl( G + 
        \mathsf{Next}\cdot G_{\mathsf{top}} \cdot \texttt{getfirst}\bigl(G^T\cdot G_{\mathsf{top}}\bigr)^T  +{} \\
@@ -961,7 +967,7 @@ where  $e_{\mathsf{ext\_plus}}$, $e_{\mathsf{ext\_prod}}$, $e_{\mathsf{ext\_one}
 We depict the effect of these expressions on the matrix $X$ in Figure~\ref{fig:langforevalalg1}. In these expressions, $G^T\cdot G_{\mathsf{top}}$ evaluates to the
 current \texttt{id} on the top of the gate stack and is used to determine which case of \textsc{Extend} to consider. For example,
 $\texttt{isplus}\bigl(G^T\cdot G_{\mathsf{top}}\bigr)$ is $1$ if that gate is a $+$-gate, and is $0$ otherwise. So,
-$e_{\mathsf{ext\_plus}}$ has only effect when the top gate is indeed a $+$-gate. We use similar check in all other expressions. Then, the matrix $G$ (holding the ids on the current gate stack) is additively updated. For example, for a $+$-gate we place the first child's gate \texttt{id} on row $\mathsf{Next}\cdot G_{\mathsf{top}}$, move the position of the $1$ indicating the top elements one row below using $\mathsf{Next}\cdot G_{\mathsf{top}}\cdot e_{G_{\mathsf{top}}}^T$ and $\mathsf{Next}\cdot V_{\mathsf{top}}\cdot e_{V_{\mathsf{top}}}^T$ and copy the value stack by means of $V\cdot e_V^t$. For a $\times$-gate, the only difference is that we need to put $1$ in the value stack by means of $(V+\mathsf{Next}\cdot V_{\mathsf{top}})\cdot e_V^T$. For $1$-gates, the difference is that we do not need to advance the $1$ for the gate stack. Finally, input gates are treated as $1$-gates, except that the corresponding value in $v$ needs to be added to the value stack, which is done using 
+$e_{\mathsf{ext\_plus}}$ has only effect when the top gate is indeed a $+$-gate. We use similar checks in all other expressions. Then, the matrix $G$ (holding the ids on the current gate stack) is additively updated. For example, for a $+$-gate we place the first child's gate \texttt{id} on row $\mathsf{Next}\cdot G_{\mathsf{top}}$, move the position of the $1$ indicating the top elements in the two stacks one row below using $\mathsf{Next}\cdot G_{\mathsf{top}}\cdot e_{G_{\mathsf{top}}}^T$ and $\mathsf{Next}\cdot V_{\mathsf{top}}\cdot e_{V_{\mathsf{top}}}^T$ and copy the value stack by means of $V\cdot e_V^t$. For a $\times$-gate, the only difference is that we need to put $1$ in the value stack by means of $(V+\mathsf{Next}\cdot V_{\mathsf{top}})\cdot e_V^T$. For $1$-gates, the difference is that we do not need to advance the $1$ for the gate stack. Finally, input gates are treated as $1$-gates, except that the corresponding value in $v$ needs to be added to the value stack, which is done using 
 $\Bigl(V + \bigl( v^T \cdot \mathsf{Next}\cdot V_{\mathsf{top}} \cdot \texttt{getinput}\bigl(G^T\cdot G_{\mathsf{top}}\bigr)^T\Bigr)\cdot e_V^T$.
  %
  % of the stack. In INIT${\_}$PLUS we get the current stack $G$, we add $\mathsf{Next}\cdot G_{top} \cdot \getfirst{G^T\cdot G_{top}}^T$ which is an $n\times n$ matrix with the first child of $G^T\cdot G_{top}$ in the next row. Then $\mathsf{Next}\cdot G_{top}\cdot e_{G_{top}}^T$ adds $\mathsf{Next}\cdot G_{top}$ to the $n-1$ column to mark the gate we added as the top. Next, we do the same with the values by adding $V\cdot e_{V} + \mathsf{Next}\cdot V_{top}\cdot e_{V_{top}}^T$.
@@ -1056,9 +1062,9 @@ We depict the effect of these expressions (always in combination with $e_{\maths
 For starters, $e_{\mathsf{pop}}$ copies the id stack up position $\mathsf{Prev}\cdot G_{\mathsf{top}}$ (so pops
 the gate stack) and already moves up the $1$ indicating where the top element of the value stack will be. All other
 entries will be zero. Then, similarly as before, the gate ids stored in $G^T\cdot\mathsf{Prev}\cdot G_{\mathsf{top}}$ and $G^T\cdot G_{\mathsf{top}}$ are used to distinguish between the different cases. The expressions $e_{\mathsf{agg\_plus}}$ and $e_{\mathsf{agg\_prod}}$ copy the popped value stack (using $\Iden{\mathsf{Prev}\cdot V_{\mathsf{top}}} \cdot V$) and
-updates it additively and multiplicatively, respectively, with the value $V^T \cdot V_{\mathsf{top}}$. Finally, $e_{\mathsf{agg\_not\_last}}$ and $e_{\mathsf{agg\_last}}$ update the top position of the gate stack. That is,
-if we met the last child gate of $G^T\cdot G_{\mathsf{top}}$, we simply move up the $1$, indicating the top element in the gate stack, by means of $\mathsf{Prev}\cdot G_{\mathsf{top}} \cdot e_{G_{\mathsf{top}}}^T$. Otherwise, $e_{\mathsf{agg\_not\_last}}$ reinstates $G_{\mathsf{top}}\cdot e_{G_{\mathsf{top}}}^T$ (the stack remains of the same size)
-and add the next gate's id to $G$ in the row identified by $G_{\mathsf{top}}$.
+update it additively and multiplicatively, respectively, with the value $V^T \cdot V_{\mathsf{top}}$. Finally, $e_{\mathsf{agg\_not\_last}}$ and $e_{\mathsf{agg\_last}}$ update the top position of the gate stack. That is,
+if we dealt with the last child gate of $G^T\cdot G_{\mathsf{top}}$, we simply move up the $1$, indicating the top element in the gate stack, by means of $\mathsf{Prev}\cdot G_{\mathsf{top}} \cdot e_{G_{\mathsf{top}}}^T$. Otherwise, $e_{\mathsf{agg\_not\_last}}$ reinstates $G_{\mathsf{top}}\cdot e_{G_{\mathsf{top}}}^T$ (the stack remains of the same size)
+and adds the next gate's id to $G$ in the row identified by $G_{\mathsf{top}}$.
    
   
 \begin{figure}
@@ -1161,12 +1167,13 @@ $$ \underbrace{\left[\begin{smallmatrix}
 \medskip
 \noindent
 \underline{\textbf{(b)} Small $n$.}
-We next consider the case when $n<n_0$. To this aim we simply use the (finite) number of possible values
+We next consider the case when $n<n_0$. To this aim we  use the (finite) number of possible values
 $\Phi_i(a_1,\ldots,a_i)$ can have, for $i=1,\ldots,n$. More precisely,
 we simply define
 $$
-e_\Phi^{<n_0}:=\sum_{i=0}^{n_0-2} \Phi_{i+1}(a_1,\ldots,a_i)\times\bigl(e_{\mathsf{min}+\mathsf{i}}^T\cdot e_{\mathsf{max}}\bigr).
+e_\Phi^{<n_0}:=\sum_{i=0}^{n_0-2} \Phi_{i+1}(a_1,\ldots,a_i)\times\bigl(e_{\mathsf{min}+\mathsf{i}}^T\cdot e_{\mathsf{max}}\bigr),
 $$
+such that the right value of $\Phi$ is returned depending on the input size.
     %
     % Finally, we need to take care of all $n<n_0$, where $(\star)$ does not necessarily hold. For any $i$, let: $$\text{Eval}[i,A]:= \text{ the } 1\times 1 \text{ matrix with the value of the polynomial } \Phi_n(A) \text{ when } n=i.$$
 
@@ -1179,6 +1186,7 @@ $e_\Phi$. We do this, as follows:
 $$
 e_\Phi:=e_\Phi^{< n_0} + \Bigl(1 - \sum_{i=0}^{n_0-2} \bigl(e_{\mathsf{min}+\mathsf{i}}^T\cdot e_{\mathsf{max}}\bigr)\Bigr)\cdot e_{\Phi}^{\geq n_0}.
 $$
+such that either $e_{\Phi}^{<n_0}$ or $e_{\Phi}^{\geq n_0}$ is used depending on the input size.
 This concludes the proof of Theorem~\ref{th-circuits-ml}.
     % Then we define:
     % $$
@@ -1195,21 +1203,25 @@ This concludes the proof of Theorem~\ref{th-circuits-ml}.
 
 Now that we know that arithmetic circuits can be simulated using \langfor expressions, it is natural to ask whether the same holds in the other direction. That is, we are asking whether for each \langfor expression $e$ over some schema $\Sch$ there is a uniform family of arithmetic circuits computing precisely the same result depending on the input size. 
 
-In order to handle  \langfor\ expressions which can produce any matrix, and not just a single value, as their output, we need to consider circuits with multiple output gates. Similarly, we need to encode matrix inputs of a \langfor\ expression in our circuits. We will write $\Phi(A_1,\ldots ,A_k)$, where $\Phi$ is an arithmetic circuit with multiple output gates, and each $A_i$ is a matrix of dimensions $\alpha_i\times \beta_i$, with $\alpha_i,\beta_i \in \{n,1\}$ to denote the input matrices for a circuit $\Phi$. We will also write $\texttt{type}(\Phi)=(\alpha,\beta)$, with $\alpha,\beta\in \{n,1\}$, to denote the size of the output matrix for $\Phi$. We call such circuits \textit{arithmetic circuits over matrices}. When $\{\Phi_n\mid n=1,2,\ldots\}$ is a uniform family of arithmetic circuits over matrices, we will assume that the Turing machine for generating $\Phi_n$ also gives us the information about how to access a position of each input matrix, and how to access the positions of the output matrix, as is usually done when handling matrices with arithmetic circuits \cite{Raz02}. 
+In order to handle  \langfor\ expressions which can produce any matrix, and not just a single value, as their output, we need to consider circuits with multiple output gates. Similarly, we need to encode matrix inputs of a \langfor\ expression in our circuits. We will write $\Phi(A_1,\ldots ,A_k)$, where $\Phi$ is an arithmetic circuit with multiple output gates, and each $A_i$ is a matrix of dimensions $\alpha_i\times \beta_i$, with $\alpha_i,\beta_i \in \{n,1\}$ to denote the input matrices for a circuit $\Phi$. 
+% We will also write $\texttt{type}(\Phi)=(\alpha,\beta)$, with $\alpha,\beta\in \{n,1\}$, to denote the size of the output matrix for $\Phi$.
+We call such circuits \textit{arithmetic circuits over matrices}. When $\{\Phi_n\mid n=1,2,\ldots\}$ is a uniform family of arithmetic circuits over matrices, we will assume that the \logspace-Turing machine for generating $\Phi_n$ also gives us the information about how to access a position of each input matrix, and how to access the positions of the output matrix, as is common when handling matrices with arithmetic circuits \cite{Raz02}. 
+\looseness=-1
 
 % The notion of degree is extended to be the sum of the degrees of all the output gates. With this  at hand, we can now show the following result.
 
 \begin{theorem}
 \label{th-ml-to-circuits}
-Let $e$ be a \langfor expression over a schema $\Sch$, and let $V_1,\ldots ,V_k$ be the variables of $e$ such that $\ttype(V_i)\in \{(\alpha,\alpha), (\alpha,1), (1,\alpha), (1,1)\}$. Then there exists a uniform arithmetic circuit family over matrices $\Phi_n^e(A_1,\ldots ,A_k)$ such that:
+Let $e$ be a \langfor expression over a schema $\Sch$, and let $V_1,\ldots ,V_k$ be the variables of $e$ such that $\ttype(V_i)\in \{(\alpha,\alpha), (\alpha,1), (1,\alpha), (1,1)\}$. Then there exists a uniform arithmetic circuit family over matrices $\{\Phi_n^e(A_1,\ldots ,A_k)\mid n=1,2,\ldots\}$ such that:
 \begin{itemize}
 \item For any instance $\I = (\dom,\conc)$ such that $\dom(\alpha) = n$ and $\conc(V_i) = A_i$ it holds that:
 \item $\sem{e}{\I} = \Phi_n^e(A_1,\ldots ,A_k)$.
 \end{itemize}
 \end{theorem}
 \begin{proof}
-The proof is by a rather straightforward induction on the structure of \langfor expressions and is deferred to the appendix. Worth pointing out are the following two observations. First, all \langfor constructs, except for iterations, increase the depth of the obtained circuits by a constant. Although iterations add a factor of $n$, the overall depth of the obtained circuit is still polynomial. Second, uniformity of the constructed circuits is guaranteed in the same way as how closure of 
-\logspace\ functions under composition is shown~\cite{aroraB2009}.
+The proof is by a rather straightforward induction on the structure of \langfor expressions and is deferred to the appendix. Whilst inductively 
+creating the circuits, we need to ensure uniformity. Only the case when $e=\ffor{X}{v}e_1(X, v)$ requires a bit of care since it requires the
+composition of circuits. Nevertheless, uniformity can be shown in the same was as closure of the class of \logspace-functions under composition is shown~\cite{aroraB2009}.
 \end{proof}
 
 We remark that Theorem~\ref{th-ml-to-circuits} does not guarantee that uniform arithmetic circuit family over matrices of logarithmic depth are generated. Indeed, the construction
@@ -1218,7 +1230,7 @@ of the power of \langfor. We next identify a large class of \langfor for which a
 
 
 
-\subsection{Characterization of the power of \langfor expressions of polynomial degree}
+\subsection{Characterization of the power of \langfor expressions of polynomial degree}\label{subsec:poldegree}
 % \input{sections/proofs/circuit-simulation.tex}
 %
 % \textit{Proof sketch.} The proof of this Theorem, which is the deepest technical result of the paper, depends crucially on two facts: (i) that any polynomial time Turing machine working within linear space and producing linear size output, can be simulated via a \langfor\ expression; and (ii) that evaluating an arithmetic circuit $\Phi_n$ can be done using two stacks of  depth $n$.
@@ -1231,16 +1243,16 @@ of the power of \langfor. We next identify a large class of \langfor for which a
 %
 % This matrix is then updated in the same way as the two-stack algorithm. It processes gates one by one, and using the successor relation for canonical vectors determines whether we have more elements on the gates stack. In this case, a new value is added to the values stack ($0$ if the gate is a sum gate, and $1$ otherwise), and the process continues. Information about the next child, last child, or input value, are obtained using the expression which simulates the Turing machine generating this data about the circuit (the machines used never produce an output longer than their input). Given that the size of the circuit is polynomial, say $n^k$, we can initialize the matrix with the output gate only, and run the simulation of the two-stack algorithm for $n^k$ steps (by iterating $k$ times over size $n$ canonical vectors). After this, the value in position  $(1,n-2)$ (the top of the values stack) holds the final results.
 
-In order to obtain a complete characterization of the power of \langfor in terms or circuits, we will focus on \langfor expressions of polynomial degree.
+In order to obtain a characterization of the power of \langfor in terms of circuits, we will focus on \langfor expressions of polynomial degree.
 This class is motivated by results of Valiant et al.~\cite{valiant1981fast} and Allender et al. \cite{AllenderJMV98} in which uniform circuit families of logarithmic depth are tied to circuit families of polynomial degree.
 
 
-A circuit family $\{\Phi_n\mid n=1,2,\ldots\}$ is said to be of \textit{polynomial degree} if $\mathsf{degree}(\Phi_n)\in O(p(n))$, for some polynomial $p(n)$. Note that polynomial size circuit families are not necessarily of polynomial degree. Now, Valiant et al.~\cite{valiant1981fast} and Allender et al. \cite{AllenderJMV98} showed that any function computed by a uniform circuit family of polynomial degree (and polynomial depth), can also be computed by a uniform circuit family of logarithmic depth. Here, we say that  a circuit family $\{\Phi_n\mid n=1,2,\ldots\}$ computes a function $f:\bigcup_{n\geq 1} \mathbb{R}^n\mapsto\mathbb{R}$, if for any $a_1,\ldots a_n\in \mathbb{R}$ it holds that $\Phi_n(a_1,\ldots ,a_n) = f(a_1,\ldots ,a_n)$. 
+A circuit family $\{\Phi_n\mid n=1,2,\ldots\}$ is said to be of \textit{polynomial degree} if $\mathsf{degree}(\Phi_n)\in \mathcal O(p(n))$, for some polynomial $p(n)$. Note that polynomial size circuit families are not necessarily of polynomial degree. Now, Valiant et al.~\cite{valiant1981fast} and Allender et al. \cite{AllenderJMV98} showed that any function computed by a uniform circuit family of polynomial degree (and polynomial depth), can also be computed by a uniform circuit family of logarithmic depth. Here, we say that  a circuit family $\{\Phi_n\mid n=1,2,\ldots\}$ computes a function $f:\bigcup_{n\geq 1} \mathbb{R}^n\mapsto\mathbb{R}$, if for any $a_1,\ldots a_n\in \mathbb{R}$ it holds that $\Phi_n(a_1,\ldots ,a_n) = f(a_1,\ldots ,a_n)$. 
 
 
 % While Theorem \ref{th-circuits-ml} gives us an idea on how to simulate arithmetic circuits, it does not tell us which classes of functions over real numbers can be computed by \langfor expressions. In order to answer this question, we note that arithmetic circuits can be used to compute functions over real numbers. Formally,To make the connection with \langfor\!, we need to look at circuit families of bounded degree.
 
-An easy corollary of Theorem \ref{th-circuits-ml} tells us that all functions computed by uniform family of circuits of polynomial degree and logarithmic depth can be simulated using \langfor expressions. However, in view of the above results for arithmetic circuits, we can actually drop the restriction on circuit depth.
+An easy corollary of Theorem \ref{th-circuits-ml} is that all functions computed by uniform family of circuits of polynomial degree and logarithmic depth can be simulated using \langfor expressions. However, in view of the above results for arithmetic circuits, we can actually drop the restriction on circuit depth.
 We thus obtain:
 % Using this fact, we can conclude the following:
 
@@ -1254,40 +1266,51 @@ Note that there is nothing special about circuits that have a single output, and
 It is also  not difficult to see that the proof of Theorem \ref{th-circuits-ml} can also be extended to support arithmetic circuits over matrices. Corollary \ref{cor-circ-ml} thus remains to hold when $f$ is a function from matrices to matrices.
 
 
-So far, we just rephrased  Theorem \ref{th-circuits-ml} in terms of functions  computed by a uniform family of arithmetic circuits of polynomial degree.
-We now shift our attention to the opposite direction (Theorem~\ref{th-ml-to-circuits}) and here focus on \textit{\langfor expressions of polynomial degree}.
+So far, we just rephrased  Theorem \ref{th-circuits-ml} in terms of functions computed by a uniform family of arithmetic circuits of polynomial degree.
+Conversely, we can now consider the class of \textit{\langfor expressions of polynomial degree}, that is,  \langfor expressions that are equivalent to circuit family for $e$ of a polynomial degree.  All \langfor expressions seen so far have polynomial degree. This results in the following characterization.
+% Co
+% %
+% % the question what functions computed by \langfor expressions, we need to impose one final restriction: than on the degree of an expression.
+% % In particular, we will be interested in \langfor expressions of polynomial degree.
 %
-% the question what functions computed by \langfor expressions, we need to impose one final restriction: than on the degree of an expression.
-% In particular, we will be interested in \langfor expressions of polynomial degree.
+% Formally, a \langfor expression $e$ is of polynomial degree, whenever there is an equivalent circuit family for $e$ of a polynomial degree.
+% For example, all \langfor expressions seen so far have polynomial degree.
+% With this definition, we can now identify the class of functions for which arithmetic circuits and \langfor formulas are equivalent. This is the main technical contribution of the paper.
 
-Formally, a \langfor expression $e$ is of polynomial degree, whenever there is an equivalent circuit family for $e$ of a polynomial degree.  
-For example, all \langfor expressions seen so far have polynomial degree. 
-With this definition, we can now identify the class of functions for which arithmetic circuits and \langfor formulas are equivalent. This is the main technical contribution of the paper. 
 
-\begin{corollary}
+\begin{theorem}
 \label{th-equivalence}
 Let $f$ be a function with input matrices $A_1,\ldots ,A_k$ of dimensions $\alpha\times \beta$, with $\alpha,\beta \in \{n,1\}$. Then, $f$ is computed by a uniform circuit family over matrices of polynomial degree if and only if there is a \langfor expression of polynomial degree for $f$. 
-\end{corollary}
+\end{theorem}
 
 Note that this result crucially depends on the fact that expressions in \langfor are of polynomial degree.
-Some \langfor expressions are easily seen to produce results which are not polynomial.
+Some \langfor expressions, however, are easily seen to produce results which are not polynomial.
 An example of such an expression is, for instance, $e_{\texttt{exp}} = \ffor{v}{X=A}{X\cdot X}$, over a schema $\Sch$ with $\ttype(v)= (\gamma,1)$, and $\ttype(X)=(1,1)$.
 Over an instance which assigns $n$ to $\gamma$ this expression computes the function $a^{2^n}$, for $A=[a]$.
 Therefore, a natural question to ask then is whether we can determine the degree of a \langfor expression.
 Unfortunately, as we show in the following proposition this question is in fact undecidable.
 
-Let $e$ be a \langfor expression over a matrix schema $\mathcal{S}=(\mathcal{M},\textsf{size})$ and let $V_1,\ldots, V_k$ be
-the variables of $e$, each of type $(\alpha,\alpha)$, $(1,\alpha)$, $(\alpha,1)$ or $(1,1)$. We know from Theorem~\ref{th-ml-to-circuits}
-that there exists a uniform arithmetic circuit family $\{\Phi_n \mid n=1,2,\ldots\}$
-such that $\sem{e}{\I}=\Phi_n(A_1,\ldots,A_k)$ for any instance $\I$ such that
-$\mathcal{D}(\alpha)=n$ and $\conc(V_i)=A_i$ for $i=1,\ldots,k$. We are interested in deciding
-whether there exists such a  uniform arithmetic circuit family $\{\Phi_n \mid n=1,2,\ldots\}$
-of polynomial degree, i.e., such that $\mathsf{degree}(\Phi_n)=\mathcal{O}(p(n))$ for some polynomial $p(x)$. If such a circuit family exists, we call $e$ of polynomial degree.
+% Let $e$ be a \langfor expression over a matrix schema $\mathcal{S}=(\mathcal{M},\textsf{size})$ and let $V_1,\ldots, V_k$ be
+% the variables of $e$, each of type $(\alpha,\alpha)$, $(1,\alpha)$, $(\alpha,1)$ or $(1,1)$. We know from Theorem~\ref{th-ml-to-circuits}
+% that there exists a uniform arithmetic circuit family $\{\Phi_n \mid n=1,2,\ldots\}$
+% such that $\sem{e}{\I}=\Phi_n(A_1,\ldots,A_k)$ for any instance $\I$ such that
+% $\mathcal{D}(\alpha)=n$ and $\conc(V_i)=A_i$ for $i=1,\ldots,k$. We are interested in deciding
+% whether there exists such a  uniform arithmetic circuit family $\{\Phi_n \mid n=1,2,\ldots\}$
+% of polynomial degree, i.e., such that $\mathsf{degree}(\Phi_n)=\mathcal{O}(p(n))$ for some polynomial $p(x)$. If such a circuit family exists, we call $e$ of polynomial degree.
 
 \begin{proposition}
 \label{prop-undec}
-Given a \langfor expression $e$ over a schema $\Sch$, it is undecidable to check whether $e$ is of polynomial degree.
+Given a \langfor expression $e$, %over a schema $\Sch$,
+ it is undecidable to check whether $e$ is of polynomial degree.
 \end{proposition}
+
+\begin{proof}
+	The proof is by reduction to the halting problem of Turing machines, whose runs we limit to a linear ($n$) number of steps.
+This allows us to use Proposition~\ref{prop:transducer2} to simulate such Turing machines in \langfor. In combination 
+with the expression $e_{\mathsf{exp}}$, given above, we can then ensure that in case the Turing machine halts in $n$ steps, an equivalent constant degree
+``zero'' circuit exists, and otherwise, any equivalent circuit needs to compute $n^{2^n}$, which is impossible using polynomial degree circuits.
+We defer the details to the appendix.
+\end{proof}
 
 
 Of course, one might wonder whether it is possible to define a syntactic subclass of \langfor expressions that are of polynomial degree and can still express many important linear algebra algorithms. We identify one such class in Section \ref{ss:sumML}, called \langsum, and in fact show that this class is powerful enough to capture relational algebra on (binary) $K$-relations. 
@@ -1297,9 +1320,9 @@ Of course, one might wonder whether it is possible to define a syntactic subclas
 The equivalence of \langfor and arithmetic circuits we proved above assumes that circuits can only use the sum and product gates 
 % (note that even without the sum and the product function, \langfor\ can simulate these operations via matrix sum/product).
 However, both arithmetic circuits and expressions in $\langfor$ can be allowed to use a multitude of functions over $\RR$. The most natural addition to the set of functions is the division operator ($f_/$), which is crucially needed in many linear algebra algorithms, such as, for instance, Gaussian elimination, or $LU$ decomposition (recall Proposition \ref{prop:gauss}).
-Interestingly, Corollary~\ref{th-equivalence} remains to hold when division is considered, mainly due to a surprising result which shows that (almost all) divisions can in fact be removed for arithmetic circuits which allow sum, product, and division gates \cite{allender}.
+Interestingly, Theorem~\ref{th-equivalence} remains to hold when division is considered, mainly due to a surprising result which shows that (almost all) divisions can in fact be removed for arithmetic circuits which allow sum, product, and division gates \cite{allender}.
 
-More precisely, in \cite{strassen1973vermeidung,borodin1982fast,kaltofen1988greatest} it was shown that for any function of the form $f = g/h$, where $g$ and $h$ are relatively prime polynomials of degree $d$, if $f$ is computed by an arithmetic circuit of size $s$, then both $g$ and $h$ can be computed by a circuit whose size is polynomial in $s + d$. Furthermore, one can postpone the division without affecting the final result, and this, in essence, tells us that division can be eliminated (pushed to the top of the circuit), and we can work with sum-product circuits instead. The degree of a circuit for $f$, can then be defined as the maximum of degrees of circuits for $g$ and $h$. Given this fact, we can again use the depth reduction procedure of \cite{AllenderJMV98}, and extend Corollary~\ref{th-equivalence} to circuits with division.
+More precisely, in \cite{strassen1973vermeidung,borodin1982fast,kaltofen1988greatest} it was shown that for any function of the form $f = g/h$, where $g$ and $h$ are relatively prime polynomials of degree $d$, if $f$ is computed by an arithmetic circuit of size $s$, then both $g$ and $h$ can be computed by a circuit whose size is polynomial in $s + d$. Furthermore, one can postpone the division without affecting the final result, and this, in essence, tells us that division can be eliminated (pushed to the top of the circuit), and we can work with sum-product circuits instead. The degree of a circuit for $f$, can then be defined as the maximum of degrees of circuits for $g$ and $h$. Given this fact, we can again use the depth reduction procedure of \cite{AllenderJMV98}, and extend Theorem~\ref{th-equivalence} to circuits with division.
 \begin{corollary}
 \label{cor-division}
 Let $f$ be a function taking as its input matrices $A_1,\ldots ,A_k$ of dimensions $\alpha\times \beta$, with $\alpha,\beta \in \{n,1\}$. Then, $f$ is computed by a uniform circuit family over matrices of polynomial degree that allows divisions, if and only if there is a $\langforf{f_/}$ expression of polynomial degree for $f$.
