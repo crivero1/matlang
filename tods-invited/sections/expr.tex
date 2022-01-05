@@ -812,21 +812,21 @@ These three trailing zeroes do not change what gate ids represent. In this way, 
 We simulate $\textsc{Evaluate}(\Phi_n,A)$ for $n\geq n_0$ by the expression
 $e_{\Phi}^{\geq n_0}:= e_{\mathsf{min}}^T\cdot e_{\mathsf{iterate}}\cdot e_{\max -2}$ with
     \begin{align*}\allowdisplaybreaks
-		e_{\mathsf{iterate}}&:= \ffor{v_1}{X} X+\\
-		& \qquad\ffor{v_2}{X_2=X} X_2+ \\
-		& \qquad \quad \ffor{v_3}{X_3=X_2} X_3+ \cdots\\
+		e_{\mathsf{iterate}}&:= \ffor{v_1}{X_1} \\
+		& \qquad\ffor{v_2}{X_2=X_1}  \\
+		& \qquad \quad \ffor{v_3}{X_3=X_2}  \cdots\\
 		& \qquad \qquad\quad \ffor{v_k}{X_{k}=X_{k-1}} \Biggl(\Bigl(\bigl( \sprod_{i=1}^k \mathsf{min}(v_i)\bigr) \times e_{\mathsf{start}}\Bigr) + 
         \biggl( \bigl(1- \sprod_{i=1}^k \mathsf{min}(v_i)\bigr)\times{}\\
         &\hspace{0.3em} \biggl( \bigl(1 -\mathsf{min}(G_{\mathsf{top}})\cdot \mathsf{min}(V_{\mathsf{top}})\bigr) \times \Bigl(\bigl( 1 - G_{\mathsf{top}}^T\cdot V_{\mathsf{top}}\bigr) \times e_{\mathsf{extend}} + 
         \bigl(G_{\mathsf{top}}^T\cdot V_{\mathsf{top}}\bigr) \times e_{\mathsf{aggregate}}\Bigl)  \\
-        &\hspace{8cm}+\bigl(\mathsf{min}(G_{\mathsf{top}})\cdot \mathsf{min}(V_{\mathsf{top}})\bigr)\times X\biggr)\Biggr).
+        &\hspace{8cm}+\bigl(\mathsf{min}(G_{\mathsf{top}})\cdot \mathsf{min}(V_{\mathsf{top}})\bigr)\times X_k\biggr)\Biggr),
 	   \end{align*}
-In the expression $e_{\mathsf{iterate}}$, when all $v_1,\ldots,v_k$ are initially equal to $b_1$, we are at ``timestamp'' $0$ and start the evaluation by 
-calling expression $e_{\mathsf{start}}$ which encodes line 3 of the algorithm. This case is determined by the indicator function
-$ \sprod_{i=1}^k \mathsf{min}(v_i)$. For all subsequent assignments of $v_1,\ldots,v_k$, when $1- \sprod_{i=1}^k \mathsf{min}(v_i)$ is equal to $1$, and thus all
-later timestamps, we check whether or not we reach the end of the algorithm. This happens with both $G_{\mathsf{top}}$ and $V_{\mathsf{top}}$ are equal to $b_1$
-and thus $\size(\cG)=\size(\cV)=1$. This is checked by $G_{\mathsf{top}}^T\cdot V_{\mathsf{top}}$.
-In that case, we stop updating $X$ (last summand in expression $e_{\mathsf{iterate}}$). Otherwise, when $1-G_{\mathsf{top}}^T\cdot V_{\mathsf{top}}$ is $1$, we check whether $\size(\cG)=\size(\cV)$ or $\size(\cG)\neq \size(\cV)$. In the former case, we call expression $e_{\mathsf{aggregate}}$, which encodes the function $\textsc{Aggregate}(\cG,\cV)$, in the latter case we call expression $e_{\mathsf{extend}}$, which encodes function $\textsc{Extend}(\cG,\cV,A)$. These two cases are checked by the indicator functions $G_{\mathsf{top}}^T\cdot V_{\mathsf{top}}$ and  $1 - G_{\mathsf{top}}^T\cdot V_{\mathsf{top}}$, respectively. As mentioned before, $e_\Phi$ retrieves entry $X[1,\max-2]$ from the value stack column in $X$. 
+In the expression $e_{\mathsf{iterate}}$, we basically perform $n^k$ updates to matrix variable $X_k$ (which takes the role of the variable $X$ mentioned before).
+When all $v_1,\ldots,v_k$ are initially equal to $b_1$, we are at ``timestamp'' $0$ and start the evaluation by 
+calling expression $e_{\mathsf{start}}$ which encodes line 3 of  Algorithm~\ref{alg:eval_code}. This case is determined by the indicator function
+$ \sprod_{i=1}^k \mathsf{min}(v_i)$. For all subsequent assignments of $v_1,\ldots,v_k$, i.e. when $1- \sprod_{i=1}^k \mathsf{min}(v_i)$ is equal to $1$, and thus all later ``timestamps'', we check whether or not we reach the end of the algorithm. This happens with both $G_{\mathsf{top}}$ and $V_{\mathsf{top}}$ are equal to $b_1$
+and thus $\size(\cG)=\size(\cV)=1$. This is checked by $\mathsf{min}(G_{\mathsf{top}})\cdot \mathsf{min}(V_{\mathsf{top}})$.
+In that case, we stop updating $X_k$ (last summand in expression $e_{\mathsf{iterate}}$). Otherwise, when $1-\mathsf{min}(G_{\mathsf{top}})\cdot \mathsf{min}(V_{\mathsf{top}})$ is $1$, we check whether $\size(\cG)=\size(\cV)$ or $\size(\cG)\neq \size(\cV)$. In the former case, we call expression $e_{\mathsf{aggregate}}$, which encodes the function $\textsc{Aggregate}(\cG,\cV)$, in the latter case we call expression $e_{\mathsf{extend}}$, which encodes function $\textsc{Extend}(\cG,\cV,A)$. These two cases are checked by the indicator functions $G_{\mathsf{top}}^T\cdot V_{\mathsf{top}}$ and  $1 - G_{\mathsf{top}}^T\cdot V_{\mathsf{top}}$, respectively. After performing $n^k$ iterations, $e_\Phi$ retrieves entry $(1,\max-2)$ from the value stack column returned by $e_{\mathsf{iterate}}$. 
 \begin{figure}
 	$$
 \underbrace{\left[\begin{smallmatrix}
