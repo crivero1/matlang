@@ -102,7 +102,9 @@ Section~\ref{subsubsec:eval}, we describe a stack-based evaluation algorithm, \t
 \subsubsection{Evaluation algorithm for arithmetic circuits}\label{subsubsec:eval}
 We start by describing a stack-based evaluation algorithm, \textsc{Evaluate}, for arithmetic circuits based on a depth-first top-down traversal of the circuit. As we will see later on, this algorithm lends itself well to be simulated in \langfor. 
 
-Let $\Phi_n$ be a circuit with $n$ input gates. We assume an ordering on the children of gates and that there are only variable input gates or input gates with value $1$ ($1$-gates). Indeed, we can prune away input gates with value $0$ in a preprocessing step. We store the values of the input gates in an $n\times 1$ vector $A$, where $A[i]$ denotes the value
+Let $\Phi_n$ be a circuit with $n$ input gates. We assume an ordering on the children of gates
+ % and that there are only variable input gates or input gates with value $1$ ($1$-gates). Indeed, we can prune away input gates with value $0$ in a preprocessing step.
+and store the values of the input gates in an $n\times 1$ vector $A$, where $A[i]$ denotes the value
 of the $i$th input gate. To evaluate $\Phi_n$ on $A$ we  maintain two stacks: A \textit{gate stack}
  $\cG$ and a \textit{value stack} $\cV$. In general, for a stack $\mathcal S$ we have standard operations: $\push{\mathcal S}{s}$: pushes $s$ onto $\mathcal S$;
 $\pop{\mathcal S}$: pops the top element;  $\getsize{\mathcal S}$: returns the length of the stack; and
@@ -177,7 +179,8 @@ the following invariant is preserved: if $\getsize{\cG} = \getsize{\cV}+1$ then
 $\cV[i]$ corresponds to the value of gate $\cG[i+1]$ computed so far.
 
 However, when $\textsc{Extend}(\cG,\cV,A)$ detects a $1$-gate (lines 17--18) or an input gate (lines 19-20), it ensures  $\getsize{\cG} = \getsize{\cV}$
-by pushing the value of the input gate to $\cV$. As such, the following invariant is preserved: if  $\getsize{\cG} = \getsize{\cV}$ then  $\cV[i]$ holds the value of $\cG[i]$ computed so far. Importantly, after detecting an input gate, $\getsize{\cG} = \getsize{\cV}$ results in that $\textsc{Evaluate}(\Phi_n,A)$ switches to $\textsc{Aggregate}(\cG,\cV)$ (line 7). 
+by pushing the value of the input gate to $\cV$. We do not need to check for $0$-gates. Indeed, their effect would be $\push{\cV,0}$ (similarly as on line 18)
+but the value $0$ is already present in value stack column (by default). Overall, the following invariant is preserved: if  $\getsize{\cG} = \getsize{\cV}$ then  $\cV[i]$ holds the value of $\cG[i]$ computed so far. Importantly, after detecting an input gate, $\getsize{\cG} = \getsize{\cV}$ results in that $\textsc{Evaluate}(\Phi_n,A)$ switches to $\textsc{Aggregate}(\cG,\cV)$ (line 7). 
 
 The function $\textsc{Aggregate}(\cG,\cV)$ 
 will pop both stacks (lines 23--24) retrieving gate $g$ and value $v$. Recall that $v$ is the value of gate $g$ computed so far (since  $\getsize{\cG} = \getsize{\cV}$) and we now need to pass $v$ to the value $v'$ of the parent  $g'$ of $g$ in the current path. We remark that $g'$ and $v'$  are  the top elements in the stacks.

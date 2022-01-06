@@ -304,35 +304,36 @@ minimal simplifications for functions  $f=\bigcup_{n\geq 0}f_n:(\Sigma^n)^\ell\t
     Since we represent the work tape by $s$ vectors $W_1,\ldots,W_s$ we need to ensure that only one 
     of the head vectors $H_{W_i}$ has a non-zero value and that by moving left or right, we need to 
     appropriately update the correct head vector. We do this as follows. We first consider the work tapes 
-    $W_i$ for $i\neq 1,s$ and define
+    $W_i$ for $i\neq 1,s$ and define $    \mathsf{move\_work}^i_{\mathsf{d}}$ as
     $$
-    \mathsf{move\_work}^i_{\mathsf{d}}:=
     \begin{cases}
-        -\mathsf{min}(H_{W_i})\times H_{W_i} + \bigl(1-\mathsf{min}(H_{W_i})\bigr)\times \mathsf{Prev}\cdot H_{W_i} + \mathsf{min}(H_{W_{i+1}})\times e_{\mathsf{max}} & \!\!\!\!\text{if $\mathsf{d}=\leftarrow$}\\
-            -\mathsf{max}(H_{W_i})\times H_{W_i} + \bigl(1-\mathsf{max}(H_{W_i})\bigr)\times \mathsf{Next}\cdot H_{W_i} + \mathsf{max}(H_{W_{i-1}})\times e_{\mathsf{min}} &\!\!\!\! \text{if $\mathsf{d}=\rightarrow$}\\
-        H_{W_i} &\!\!\!\! \text{if $\mathsf{d}=\sqcup$}. 	
+        \mathsf{min}(H_{W_i})\times (H_{W_i}-e_{\mathsf{min}}) + \bigl(1-\mathsf{min}(H_{W_i})\bigr)\times \mathsf{Prev}\cdot H_{W_i} 
+		+ \mathsf{min}(H_{W_{i+1}})\times e_{\mathsf{max}} & \text{if $\mathsf{d}=\leftarrow$}\\
+            \mathsf{max}(H_{W_i})\times (H_{W_i}-e_{\mathsf{max}}) + \bigl(1-\mathsf{max}(H_{W_i})\bigr)\times \mathsf{Next}\cdot H_{W_i}
+			+ \mathsf{max}(H_{W_{i-1}})\times e_{\mathsf{min}} & \text{if $\mathsf{d}=\rightarrow$}\\
+        H_{W_i} & \text{if $\mathsf{d}=\sqcup$}. 	
     \end{cases}
     $$
     In other words, we set the $H_{W_i}$ to zero when a move brings us to either $W_{i-1}$ or $W_{i+1}$, we
     move the successor or predecessor when staying within $W_i$, or initialise $H_{W_i}$ with the first or 
     last canonical vector when moving from $W_{i-1}$ to $W_i$ (right move) or from $W_{i+1}$ to $W_i$ (left move).
-    For $i=s$ we can ignore the parts in the previous expression that involve $W_{s+1}$ (which does not exist):
+    For $i=s$ we can ignore the parts in the previous expression that involve $W_{s+1}$ (which does not exist)
+	and define $\mathsf{move\_work}^s_{\mathsf{d}}$ as
     $$
-    \mathsf{move\_work}^s_{\mathsf{d}}:=
-    \begin{cases}
-        -\mathsf{min}(H_{W_s})\times H_{W_i} + \bigl(1-\mathsf{min}(H_{W_s})\bigr)\times \mathsf{Prev}\cdot H_{W_s}  &\!\!\!\! \text{if $\mathsf{d}=\leftarrow$}\\
-            -\mathsf{max}(H_{W_s}) \times H_{W_s} + \bigl(1-\mathsf{max}(H_{W_s})\bigr)\times \mathsf{Next}\cdot H_{W_s} + \mathsf{max}(H_{W_{s-1}})\times e_{\mathsf{min}} & \!\!\!\!\text{if $\mathsf{d}=\rightarrow$}\\
-        H_{W_s} & \!\!\!\!\text{if $\mathsf{d}=\sqcup$}. 	
+     \begin{cases}
+        \mathsf{min}(H_{W_s})\times (H_{W_s}-e_{\mathsf{min}}) + \bigl(1-\mathsf{min}(H_{W_s})\bigr)\times \mathsf{Prev}\cdot H_{W_s} & \text{if $\mathsf{d}=\leftarrow$}\\
+            \mathsf{max}(H_{W_s}) \times (H_{W_s}-e_{\mathsf{max}})  + \bigl(1-\mathsf{max}(H_{W_s})\bigr)\times \mathsf{Next}\cdot H_{W_s}
+		+ \mathsf{max}(H_{W_{s-1}})\times e_{\mathsf{min}} & \text{if $\mathsf{d}=\rightarrow$}\\
+        H_{W_s} & \text{if $\mathsf{d}=\sqcup$}. 	
     \end{cases}
     $$
     For $i=1$, we can ignore the part involving $W_{0}$ (which does not exist) but have to take $\rhd$ 
-    into account:
+    into account and define $  \mathsf{move\_work}^1_{\mathsf{d}}$ as
     $$
-    \mathsf{move\_work}^1_{\mathsf{d}}:=
-    \begin{cases}
-        \bigl(2\cdot \mathsf{min}(H_{W_1})\bigr)\times H_{W_i} + \bigl(1-\mathsf{min}(H_{W_1})\bigr)\times \mathsf{Prev}\cdot H_{W_1} + \mathsf{min}(H_{W_{2}})\times e_{\mathsf{max}} & \!\!\!\!\text{if $\mathsf{d}=\leftarrow$}\\
-            \bigl(1/2\cdot\mathsf{min}(1/2\times H_{W_1})\bigr)\times H_{W_1} + \bigl(1-\mathsf{max}(1/2\times H_{W_1})\bigr)\times \mathsf{Next}\cdot H_{W_1}  & \!\!\!\!\text{if $\mathsf{d}=\rightarrow$}\\
-        H_{W_1} & \!\!\!\!\text{if $\mathsf{d}=\sqcup$}. 	
+      \begin{cases}
+        \bigl(2\cdot \mathsf{min}(H_{W_1})\bigr)\times H_{W_i} + \bigl(1-\mathsf{min}(H_{W_1})\bigr)\times \mathsf{Prev}\cdot H_{W_1} + \mathsf{min}(H_{W_{2}})\times e_{\mathsf{max}} & \text{if $\mathsf{d}=\leftarrow$}\\
+            \bigl(1/2\cdot\mathsf{min}(1/2\times H_{W_1})\bigr)\times H_{W_1} + \bigl(1-\mathsf{max}(1/2\times H_{W_1})\bigr)\times \mathsf{Next}\cdot H_{W_1}  &\text{if $\mathsf{d}=\rightarrow$}\\
+        H_{W_1} & \text{if $\mathsf{d}=\sqcup$}. 	
     \end{cases}
     $$
     A final ingredient are expressions which update the work and output tape.
@@ -470,43 +471,78 @@ $n\geq n_0$ and to $0$ otherwise.
 \end{proof}
 
 \subsubsection{Generalized iteration mechanism}\label{subsubsec:generalloop}
- We sometimes will want to iterate over $k$ canonical vectors. We define the following shorthand notation:
-
+The expression $e_f^{\geq n_0}$ is given in terms of an expression of the form 
 \begin{align*}
-  \ffor{v_1,\ldots, v_k}{X}{e(X,v_1,\ldots, v_n)}:= &\ffor{v_1}{X_1}{X_1 +} \\
-  &\hspace{1em}\initf{X_1}{v_2}{X_2}{X_2 + } \\
-  &\hspace{2em}\initf{X_2}{v_3}{X_3}{X_3 + } \\
+    \texttt{for}\, v_1,\ldots, v_k,X_1,\ldots, X_\ell \texttt{.}\, \Big( &e_1(X_1,\ldots,X_\ell,v_1,\ldots, v_k), \\
+    &\hspace{1em}e_2(X_1,\ldots, X_\ell,v_1,\ldots, v_k), \ldots, e_\ell(X_1,\ldots,X_\ell,v_1,\ldots, v_k) \Big),
+\end{align*}
+where $X_1,X_2,\ldots,X_\ell$ are vector variables. Intuitively, each $X_i$ is updated according to expression $e_i$.
+We now give the formal semantics by defining it as a \langfor expression, for which we defined the precise semantics.
+More precisely, the expression above is defined by the
+\begin{align*}
+  \ffor{v_1,\ldots, v_k}{X}{e'(X,v_1,\ldots, v_n)}:= &\ffor{v_1}{X_1}{} \\
+  &\hspace{1em}\initf{X_1}{v_2}{X_2}{} \\
+  &\hspace{2em}\initf{X_2}{v_3}{X_3}{} \\
   &\hspace{8em}\ddots \\
-  &\hspace{4em}\initf{X_{k-1}}{v_k}{X_k}{ e(X_k,v_1,\ldots, v_k)}.
+  &\hspace{4em}\initf{X_{k-1}}{v_k}{X_k}{ e'(X_k,v_1,\ldots, v_k)}
 \end{align*}
-
-To reference $\ell$ different vector variables $X_1,\ldots,X_\ell$ in every iteration and update them in different ways we define:
-\begin{multline*}
-\ffor{v}{X_1,\ldots, X_\ell}{\left( e_1(X_1,v), e_2(X_2,v), \ldots, e_l(X_\ell,v) \right)} := \\
-\ffor{v}{X}{e_1(X\cdot e_{\mathsf{min}},v)\cdot (e_{\diag}(e_{\ones}(X^T))\cdot e_{\mathsf{min}})^T +\\ e_2(X\cdot e_{\mathsf{min} + 1},v)\cdot (e_{\diag}(e_{\ones}(X^T))\cdot e_{\mathsf{min} + 2})^T + \ldots \\
-+ e_\ell(X\cdot e_{\mathsf{max}},v)\cdot (e_{\diag}(e_{\ones}(X^T))\cdot e_{\mathsf{max}})^T} \\
-\end{multline*}
-
-We note that for the latter expression to be semantically correct $v$ has to be of type $\gamma\times 1$, 
-both $X_i$ and $e_i$ for $ i=1,\ldots,\ell$ have to be of type $\alpha\times 1$, 
-and $X$ has to be of type $\alpha\times\beta$, where $\dom(\beta)=\ell$. Here
-we use $e_{\diag}(e_{\ones}(X^T))$ to compute the $\beta\times\beta$ identity and ensure the typing of the
-$e_{\mathsf{min} + i}$.
-When evaluated on an instance $\I$,
-$e_{\mathsf{min}}, e_{\mathsf{min} + i}$ evaluate to $b_1^{\dom(\beta)}$ and $b_{1+i}^{\dom(\beta)}$, 
-respectively, and we show their defining expressions in section \ref{sec:formatlang:design}.
-Similarly for $e_{\mathsf{max}}=b_n^{\dom(\beta)}$.
-The combinations of both previous operators results in:
-
-\begin{align*}
-    \texttt{for}\, v_1,\ldots, v_k,X_1,\ldots, X_\ell \texttt{.}\, \Big( &e_1(X_1,v_1,\ldots, v_k), \\
-    &\hspace{1em}e_2(X_2,v_1,\ldots, v_k), \ldots, e_\ell(X_\ell,v_1,\ldots, v_k) \Big) := \\
-    &\hspace{8em}\ffor{v_1,\ldots, v_k}{X}{e'(X,v_1,\ldots, v_k)} \\
-\end{align*}
-where 
-\begin{align*}
-e'(X,v_1,\ldots,v_k):=&e_1(X\cdot e_{\mathsf{min}},v_1,\ldots,v_k)\cdot (e_{\diag}(e_{\ones}(X^T))\cdot e_{\mathsf{min}})^T \\
-&+ e_2(X\cdot e_{\mathsf{min} + 1},v_1,\ldots,v_k)\cdot (e_{\diag}(e_{\ones}(X^T))\cdot e_{\mathsf{min} + 1})^T \\
-&+ \ldots + e_\ell(X\cdot e_{\mathsf{max}},v_1,\ldots,v_k)\cdot (e_{\diag}(e_{\ones}(X^T))\cdot e_{\mathsf{max}})^T
-\end{align*}
-It is clear that this expression iterates over $k$ canonical vectors and references $\ell$ independent vectors updating each of them in their particular way.
+with $e'(X,v_1,\ldots,v_k)$ the expression
+$$
+\sum_{i=1}^{\ell} e_i(X\cdot e_{\min}, X\cdot e_{\mathsf{min}+1},\ldots,X\cdot e_{\mathsf{min}+(\ell-1)},v_1,\ldots,v_k)\cdot \bigl(
+e_{\mathsf{diag}}(e_{\mathbf{1}}(X^T))\cdot e_{\mathsf{min}+(i-1)}\bigr)^T,
+%
+% e_1(X\cdot e_{\mathsf{min}},v_1,\ldots,v_k)\cdot (e_{\diag}(e_{\ones}(X^T))\cdot e_{\mathsf{min}})^T \\
+% &+ e_2(X\cdot e_{\mathsf{min} + 1},v_1,\ldots,v_k)\cdot (e_{\diag}(e_{\ones}(X^T))\cdot e_{\mathsf{min} + 1})^T \\
+% &+ \ldots + e_\ell(X\cdot e_{\mathsf{max}},v_1,\ldots,v_k)\cdot (e_{\diag}(e_{\ones}(X^T))\cdot e_{\mathsf{max}})^T
+$$
+where $e_{\mathsf{min}+\mathsf{i}}$, for $i=0,1,\ldots,n-1$ returns the $(i+1)$th canonical vector. If the $v_i$ have
+type $\alpha\times 1$ then $X$ has type
+$\alpha\times\beta$ and we assume on instances that $\dom(\beta)=\ell$. The $i$th column of  $X$ thus corresponds to the vector
+variable $X_i$ and to evaluate $e_i$ we thus first extract all columns separately, by means of $X\cdot e_{\mathsf{min}+\mathsf{i}}$.
+We remark that the canonical vector used is $b_{1+i}^{\dom(\beta)}$, i.e. of dimension $\ell\times 1$.
+After evaluating $e_i$, we place the resulting column vector back on the $i$the column of $X$ by multiplying with the appropriate
+row vector corresponding to column $i$. In the expression above, $e_{\mathsf{diag}}(e_{\mathbf{1}}(X^T))$ is added to ensure that
+$e_{\mathsf{min} + \mathsf{i}}$ again evaluates to canonical vectors $b_{1+i}^{\dom(\beta)}$.
+% %
+% %
+% %
+% %  We sometimes will want to iterate over $k$ canonical vectors. We define the following shorthand notation:
+% %
+% % \begin{align*}
+% %   \ffor{v_1,\ldots, v_k}{X}{e(X,v_1,\ldots, v_n)}:= &\ffor{v_1}{X_1}{X_1 +} \\
+% %   &\hspace{1em}\initf{X_1}{v_2}{X_2}{X_2 + } \\
+% %   &\hspace{2em}\initf{X_2}{v_3}{X_3}{X_3 + } \\
+% %   &\hspace{8em}\ddots \\
+% %   &\hspace{4em}\initf{X_{k-1}}{v_k}{X_k}{ e(X_k,v_1,\ldots, v_k)}.
+% % \end{align*}
+% %
+% % To reference $\ell$ different vector variables $X_1,\ldots,X_\ell$ in every iteration and update them in different ways we define:
+% % \begin{multline*}
+% % \ffor{v}{X_1,\ldots, X_\ell}{\left( e_1(X_1,v), e_2(X_2,v), \ldots, e_l(X_\ell,v) \right)} := \\
+% % \ffor{v}{X}{e_1(X\cdot e_{\mathsf{min}},v)\cdot (e_{\diag}(e_{\ones}(X^T))\cdot e_{\mathsf{min}})^T +\\ e_2(X\cdot e_{\mathsf{min} + 1},v)\cdot (e_{\diag}(e_{\ones}(X^T))\cdot e_{\mathsf{min} + 2})^T + \ldots \\
+% % + e_\ell(X\cdot e_{\mathsf{max}},v)\cdot (e_{\diag}(e_{\ones}(X^T))\cdot e_{\mathsf{max}})^T} \\
+% % \end{multline*}
+%
+% We note that for the latter expression to be semantically correct $v$ has to be of type $\gamma\times 1$,
+% both $X_i$ and $e_i$ for $ i=1,\ldots,\ell$ have to be of type $\alpha\times 1$,
+% and $X$ has to be of type $\alpha\times\beta$, where $\dom(\beta)=\ell$. Here
+% we use $e_{\diag}(e_{\ones}(X^T))$ to compute the $\beta\times\beta$ identity and ensure the typing of the
+% $e_{\mathsf{min} + i}$.
+% When evaluated on an instance $\I$,
+% $e_{\mathsf{min}}, e_{\mathsf{min} + i}$ evaluate to $b_1^{\dom(\beta)}$ and $b_{1+i}^{\dom(\beta)}$,
+% respectively, and we show their defining expressions in section \ref{sec:formatlang:design}.
+% Similarly for $e_{\mathsf{max}}=b_n^{\dom(\beta)}$.
+% The combinations of both previous operators results in:
+%
+% \begin{align*}
+%     \texttt{for}\, v_1,\ldots, v_k,X_1,\ldots, X_\ell \texttt{.}\, \Big( &e_1(X_1,v_1,\ldots, v_k), \\
+%     &\hspace{1em}e_2(X_2,v_1,\ldots, v_k), \ldots, e_\ell(X_\ell,v_1,\ldots, v_k) \Big) := \\
+%     &\hspace{8em}\ffor{v_1,\ldots, v_k}{X}{e'(X,v_1,\ldots, v_k)} \\
+% \end{align*}
+% where
+% \begin{align*}
+% e'(X,v_1,\ldots,v_k):=&e_1(X\cdot e_{\mathsf{min}},v_1,\ldots,v_k)\cdot (e_{\diag}(e_{\ones}(X^T))\cdot e_{\mathsf{min}})^T \\
+% &+ e_2(X\cdot e_{\mathsf{min} + 1},v_1,\ldots,v_k)\cdot (e_{\diag}(e_{\ones}(X^T))\cdot e_{\mathsf{min} + 1})^T \\
+% &+ \ldots + e_\ell(X\cdot e_{\mathsf{max}},v_1,\ldots,v_k)\cdot (e_{\diag}(e_{\ones}(X^T))\cdot e_{\mathsf{max}})^T
+% \end{align*}
+% It is clear that this expression iterates over $k$ canonical vectors and references $\ell$ independent vectors updating each of them in their particular way.

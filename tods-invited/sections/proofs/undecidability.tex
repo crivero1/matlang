@@ -17,7 +17,7 @@ We show undecidability based on the following undecidable language:
     of the tape.  When an instance $\I$ assigns $n$ to $\alpha$, we have a tape of length $n$ at our disposal. This suffices if we let $M$ run for $n$ steps. We further observe that all vector variables can be assumed to be zero, initially.
     This is because $M$ we do not have any input. 
 	
-	So, let $\I_n^0$ denote the instance which assigns the vector variables to the $n$-dimensional zero vector.  Furthermore, by contrast to the linear space TM simulation, we use a single vector $v$ (instead of $k$ such vectors) to simulate $n$ steps of $M$. Finally, we modify the expression given in the proof of Proposition~\ref{prop:transducer} such $\sem{e_M}{\I_n^0}$  returns $1$ if $M$
+	So, let $\I_n^0$ denote the instance which assigns the vector variables to the $n$-dimensional zero vector.  Furthermore, by contrast to the linear space TM simulation, we use a single vector $v$ (instead of $k$ such vectors) to simulate $n$ steps of $M$. Finally, we modify the expression given in the proof of Proposition~\ref{prop:transducer2} such $\sem{e_M}{\I_n^0}$  returns $1$ if $M$
     halts in at most $n$ steps, and $0$ if $M$ did not halt yet after $n$ steps.
 
     As a consequence, when $M$ does not halt, $\sem{e_M}{\I_n^0}=0$ for all $n\geq 0$. When $M$ halts, there will be an $n$ such that $\sem{e_M}{\I_n^0}=1$ It now suffices to consider the \langfor expression
