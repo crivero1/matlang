@@ -33,7 +33,7 @@ $\bigoplus_{g\in I} \Phi[g]$ as the circuit consisting a $+$-gate with children
 $\Phi(g)$, for $g\in I$. Similarly, $\bigotimes_{g\in I} \Phi(g)$ is a circuit
 consisting of a $\times$-gate with children $\Phi(g)$, for $g\in I$. When 
 we write $\Phi[g]=\Phi_1[g_1]\oplus \Phi_2[g_2]$ we mean that the output gate
-$g$ in $\Phi$ is the top-most $+$-gate in the circuit $\Phi_1[g_1]\oplus \Phi_2[g_2]$,
+$g$ in $\Phi$ is the top-most $+$-gate in the circuit $\Phi_1[g_1]\oplus \Phi_2[g_2]$, and 
 similarly for $\Phi[g]=\Phi_1[g_1]\otimes \Phi_2[g_2]$.
 
 
@@ -79,6 +79,7 @@ similarly for $\Phi[g]=\Phi_1[g_1]\otimes \Phi_2[g_2]$.
 % Same with $\otimes$. Now we prove the statement.
 %
 
+\medskip
 Let $e$ be a \langfor expression. We define the circuit $\Phi_n^e$ and its type $\ttype(\Phi_n^e)$ inductively on the structure of $e$.
 
 \begin{itemize}
@@ -102,7 +103,7 @@ If $e=e_1^T$ then $\Phi^e_n$ is $\Phi^{e_1}_n$ but in which the output gates of 
 \end{itemize}
 \item
 If $e={\ones}(e_1)$ with $\ttype(\Phi^{e_1}_n)=(\alpha,\beta)$ then $\ttype(\Phi^{e}_n)=(\alpha,1)$ and we just
-create a circuit consisting of $\alpha$ $1$-gates, which are also the output gates. That is,
+create a circuit consisting of $\alpha$ $1$-gates, which are also the output gates. We write this as
 $\Phi^e_n[i,1]:=1$.
 \item
 If $e=e_1 + e_2$ then $\Phi_n^e$ consists of $\Phi_n^{e_1}$ and $\Phi_n^{e_2}$ with a new layer connecting the output gates of $\Phi_n^{e_1}$ and $\Phi_n^{e_2}$ by means
@@ -174,7 +175,7 @@ as the ``zero matrix circuit'' of type  $\ttype(\Phi^{\mathbf{0}})=(1,1)$ if $\t
 $\ttype(\Phi^{\mathbf{0}})=(n,n)$ if $\ttype(\Phi^{e_1}_n)=(n,n)$.  This circuit consists entirely out of $0$-gates,
 that is, $\Phi^{\mathbf{0}}:=0$ if $\ttype(\Phi^{\mathbf{0}})=(1,1)$ and
 $\Phi^{\mathbf{0}}[i,j]:=0$ if $\ttype(\Phi^{\mathbf{0}})=(n,n)$.
-Furthermore, for each $i=1,\ldots, n$, we define a ``canonical vector circuit'' $\Phi^{v_i}$ as the circuit such that $\ttype(\Phi^{v_i})=(n,1)$ and $\Phi^{v_i}[i,1]:=1$ and zero otherwise. So, $\Phi^{v_i}$ consists of a single $1$-gates and $n-1$ $0$-gates.
+Furthermore, for each $i=1,\ldots, n$, we define a ``canonical vector circuit'' $\Phi^{v_i}$ as the circuit such that $\ttype(\Phi^{v_i})=(n,1)$ and $\Phi^{v_i}[i,1]:=1$ and zero otherwise. So, $\Phi^{v_i}$ consists of a single $1$-gate and $n-1$ $0$-gates.
 The circuit $\Phi_n^e$ now simply corresponds to the following composition of circuits:
 $$\Phi^{e}_n:=\Phi^{e_1}_n\left( \Phi^{e_1}_n \left( \cdots \left( \Phi^{e_1}_n\left( \Phi^{\mathbf{0}}, \Phi^{v_1}\right), \Phi^{v_2}\right)\cdots, \Phi^{v_{n-1}} \right), \Phi^{v_n} \right).$$
 Here $\Phi_n^{e_1}$ is a circuit, inductively computed, that takes a matrix $A$ and canonical vector $b$ as input, and returns a matrix $\Phi_n^{e_1}(A,b)$ of the same type as $A$. In the expression above we initially replace $\Phi_n^{e_1}$ by substituting $A$ and $b$ by $\Phi^{\mathbf{0}}$ and $\Phi^{v_1}$, resulting in the circuit 
@@ -185,16 +186,16 @@ $\Phi^{v_2}$, and so on, until the last canonical vector circuit $\Phi^{v_n}$ is
 The correctness of  $\Phi_n^e$ should be clear from the construction. That is, let $e$ be a \langfor expression over  a schema $\Sch$, and  let $V_1,\ldots ,V_k$ be the variables of $e$ such that $\ttype(V_i)\in \{(\alpha,\alpha),\allowbreak (\alpha,1), (1,\alpha), (1,1)\}$. Then 
 for any instance $\I = (\dom,\conc)$ such that $\dom(\alpha) = n$ and $\conc(V_i) = A_i$ it holds that $\sem{e}{\I} = \Phi_n^e(A_1,\ldots ,A_k)$.
 
-\floris{There was some remark before about the polynomial depth of the obtained circuits (see commented latex). Is this needed?
-The description below is a bit high-level, not sure whether more details are needed. Please check.}
+% \floris{There was some remark before about the polynomial depth of the obtained circuits (see commented latex). Is this needed?
+% The description below is a bit high-level, not sure whether more details are needed. Please check.}
  % Note that every circuit adds a constant number of layers except when $e=\ffor{X}{v}e'(\cI, X, v)$. This means that the depth still is polynomial. When $e=\ffor{X}{v}e'(\cI, X, v)$ we have that the depth of the circuit is $n\cdot p(n)$, where the depth of $e'(\cI, X, v)$ is $p(n)$, so it also remains polynomial.
 %
 Theorem~\ref{th-ml-to-circuits} also requires showing that $\{\Phi_n^e \mid n=1,2,\ldots\}$ is a uniform arithmetic circuit family over matrices.
-We do not provide the precise \logspace\ Turning machines that describe these circuits and that provide information about how to access a position of each input matrix, and how to access the positions of the output matrix. We remark that the inductive construction of the circuits only depends on $e$ and $n$ and,
+We do not provide the precise \logspace-Turing machines that describe these circuits which also need to provide information about how to access a position of each input matrix, and how to access the positions of the output matrix. We remark that the inductive construction of the circuits only depends on $e$ and $n$ and,
 except for  $e=\ffor{X}{v}e_1(X, v)$, only simple modifications are made to the previously constructed circuits (at most two additional layers of gates are added).
-Corresponding  \logspace\ Turning machines can be devised easily. For  $e=\ffor{X}{v}e_1(X, v)$, we compose circuits and to see that uniformity is preserved by such compositions, a proof analogous to the standard proof that the composition of \logspace\ functions is again a \logspace\ function  \cite{aroraB2009} can be used. It is important to observe that for $e=\ffor{X}{v}e_1(X, v)$, we only need to keep track of where we are in the evaluation (i.e. which $v_i$ we are processing), and not of all the previous results, given that the resulting matrix is updated in a fixed order.
+The corresponding  \logspace-Turing machines can be devised easily. For  $e=\ffor{X}{v}e_1(X, v)$, we compose circuits and to see that uniformity is preserved by such compositions, a proof analogous to the standard proof that the composition of \logspace-functions is again a \logspace-function  \cite{aroraB2009} can be used. It is important to observe that for $e=\ffor{X}{v}e_1(X, v)$, we only need to keep track of where we are in the evaluation (i.e. which $v_i$ we are processing), and not of all the previous results, given that the resulting matrix is updated in a fixed order.
 
-A final comment is that we extend the above construction even when \langfor expressions using function applications $f$ are considered. We only need to extend
+A final comment is that we can extend the above construction even when \langfor expressions using function applications $f$ are considered. We only need to extend
 the notion of circuits such that ``$f$-gates'' can be used, where the semantics of $f$-gates is the application of the function $f$ on the values of circuits
 corresponding the $f$-gate's children.
 

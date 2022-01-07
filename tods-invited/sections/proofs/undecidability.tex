@@ -8,7 +8,7 @@ We show undecidability based on the following undecidable language:
     with $Q=\{q_1,\ldots,q_m\}$ its states, $q_1$ being the initial state and $q_m$ being
     the halting state, $\Gamma$ is the tape alphabet, and $\Delta$ is a transition function
     from $Q\times \Gamma\to Q\times\Gamma\times \{\leftarrow,\sqcup,\rightarrow\}$. The simulation
-    of linear space TMs in \langfor, as given in the proof of Proposition~\ref{prop:transducer}, can be easily modified to
+    of linear space TMs in \langfor, as given in the proof of Proposition~\ref{prop:transducer2}, can be easily modified to
     any TM $M$ provided that we limit the execution of $M$ to exactly $n$ steps. Let $e_M$ denote this expression. 
 	
 	Similarly
@@ -19,12 +19,11 @@ We show undecidability based on the following undecidable language:
 	
 	So, let $\I_n^0$ denote the instance which assigns the vector variables to the $n$-dimensional zero vector.  Furthermore, by contrast to the linear space TM simulation, we use a single vector $v$ (instead of $k$ such vectors) to simulate $n$ steps of $M$. Finally, we modify the expression given in the proof of Proposition~\ref{prop:transducer2} such $\sem{e_M}{\I_n^0}$  returns $1$ if $M$
     halts in at most $n$ steps, and $0$ if $M$ did not halt yet after $n$ steps.
-
-    As a consequence, when $M$ does not halt, $\sem{e_M}{\I_n^0}=0$ for all $n\geq 0$. When $M$ halts, there will be an $n$ such that $\sem{e_M}{\I_n^0}=1$ It now suffices to consider the \langfor expression
+    As a consequence, when $M$ does not halt, $\sem{e_M}{\I_n^0}=0$ for all $n\geq 0$. When $M$ halts, there will be an $n$ such that $\sem{e_M}{\I_n^0}=1$. It now suffices to consider the \langfor expression
     $$
     d_M:=e_M\cdot e_{\mathsf{exp}}
     $$
-    where $e_{\texttt{exp}} = \ffor{v}{X=\ones(X)^T\cdot\ones(X)}{X\cdot X}$ such that
-    $e_{\texttt{exp}}(\I_n^0)=n^{2^n}$. Then, when $M$ does not halt we can clearly compute $d_M$ with a constant degree circuit ``0''
+    where $e_{\texttt{exp}} = \ffor{v}{X=e_{\mathbf{1}}(X)^T\cdot e_{\mathbf{1}}(X)}{X\cdot X}$ such that
+    $e_{\texttt{exp}}(\I_n^0)=n^{2^n}$. Then, when $M$ does not halt we can clearly compute $\sem{d_M}{\I_n^0}$ with a constant degree circuit ``0''
     for any $n$, otherwise, the circuit needed will be of exponential degree
-    for at least one $n$, simply because no polynomial degree uniform  circuit family can compute $n^{2^n}$. In other words, deciding whether $d_M$ has polynomial degree coincides with deciding whether $M$ halts.
+    for at least one $n$, simply because no polynomial degree uniform  circuit family can compute $\sem{d_M}{\I_n^0}=n^{2^n}$. In other words, deciding whether $d_M$ has polynomial degree coincides with deciding whether $M$ halts.

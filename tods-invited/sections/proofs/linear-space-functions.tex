@@ -1,11 +1,12 @@
 %!TEX root = ../../main.tex
 \subsection{Proof of Proposition~\ref{prop:transducer2}}
-A crucial ingredient for the translation of arithmetic circuits in \langfor is that \langfor
+A crucial ingredient for translating arithmetic circuits in \langfor is that \langfor
 can express a number of circuit-related functions, as described in Section~\ref{subsubsec:simulate}.
-To this aim, we here show a more general result which, roughly speaking, says that any 
+We here show a more general result which, roughly speaking, says that any 
 polynomial time Turing machine, working within linear space and producing linear space output, also
 referred to as \textit{linear space machines}, 
-can be simulated in \langfor. 
+can be simulated in \langfor. The circuit-related functions used in the evaluation algorithm in Section~\ref{subsec:actoformatlang}
+are all of this form when considering arithmetic circuit families of logarithmic depth.
 
 
 \subsubsection{Linear space machines}\label{subsubsec:linearspace}
@@ -29,7 +30,7 @@ We assume that $\Delta$ is defined such that it ensures that on none of the tape
 the leftmost marker $\rhd$. Furthermore, the tapes $R_1,\ldots,R_\ell$ are treated as read-only and the heads 
 on these tapes cannot move beyond the end marker $\lhd$ on each of the input tapes. Similarly, $\Delta$ ensures that the output tape $O$ 
 is write-only, i.e. its head cannot move to the left.  We also assume that $\Delta$ does not change the 
-occurrences of $\rhd$ or writes $\lhd$ on the work and output tape. (Recall that $\lhd$ on marks the end
+occurrences of $\rhd$ or writes $\lhd$ on the work and output tape. (Recall that $\lhd$ only marks the end
 of input tapes.)
 
 A \textit{configuration of} $T$ is defined in the usual way. That is, a configuration of the input tapes is of the form
@@ -49,10 +50,10 @@ $\bigl(\rhd q_m w_1\lhd,\rhd q_m w_2\lhd,\ldots, \rhd q_m w_\ell\lhd,\rhd q_m,\r
 $w\in\Sigma^*$. We say that $T$ \textit{computes the function} $f:(\Sigma^*)^{\ell}\to\Sigma^*$ if for every
 $w_1,\ldots,w_\ell\in\Sigma^*$, the initial configuration yields (transitively) an accepting 
 configuration such that the configuration on the output tape is
-given by $\rhd q_m f(w_1,\ldots,w_\ell)$. Similarly for functions $f:(\Sigma^*)^\ell\to\Sigma$.
+given by $\rhd q_m f(w_1,\ldots,w_\ell)$. 
 
 We assume that once $T$ reaches an accepting configuration it stays indefinitely in that configuration 
-(i.e., it loops). We further assume that $T$ only reaches an accepting configuration when all its input
+(i.e. it loops). We further assume that $T$ only reaches an accepting configuration when all its input
 words have the same size. Furthermore, when all inputs have the same size, we assume that $T$ will reach an accepting 
 configuration. 
 
@@ -69,24 +70,23 @@ $f_n(w_1,\ldots,w_\ell)$ on its the output tape when (necessarily) reaching an a
 We have similar notions in place for functions of the form $f=\bigcup_{n\geq 0} f_n:(\Sigma^n)^\ell\to\Sigma$.
 
 \subsubsection{Proof of Proposition~\ref{prop:transducer2}}
-We are now ready to formulate  Proposition~\ref{prop:transducer2} more precisely.
+We are now ready to precisely formulate  Proposition~\ref{prop:transducer2}.
 
 \begin{proposition}
 Let $f=\bigcup_{n\geq 0}f_n:(\Sigma^n)^\ell\to \Sigma^n$ be a linear space input-ouput function 
 computed by a linear space  machine $T$ with $m$ states, $\ell$ input tapes, which consumes 
 $\mathcal{O}(n)$ space and runs in $\mathcal{O}(n^{k-1})$ time on inputs of size $n$. 
-There exists (i)~a $\mathsf{MATLANG}$ 
-schema $\mathcal{S}=(\mathcal{M},\textsf{size})$ where $\mathcal{M}$ consists matrix 
+Then there exists (i)~a \langfor 
+schema $\mathcal{S}=(\mathcal{M},\textsf{size})$ where $\mathcal{M}$ contains matrix 
 variables
 % \footnote{We also need a finite number of auxiliary variables, these will be specified
 % in the proof.}
 $Q_1,\ldots,Q_m,R_1,\ldots,R_\ell,H_1,\ldots,H_\ell,W_1,\ldots,W_s,H_{W_1},\ldots,H_{W_s},O,H_O, v_1,\ldots,\allowbreak v_{k}$ 
-with $\mathsf{size}(V)=\alpha\times 1$ for all $V\in\mathcal{M}$; and (ii)~a $\mathsf{MATLANG}$ 
+with $\mathsf{size}(V)=\alpha\times 1$ for all $V\in\mathcal{M}$; and (ii)~a \langfor 
 expression $e_f$ over $\mathcal{S}$ such that for the instance 
 $\I=(\mathcal{D},\textsf{mat})$ over $\mathcal{S}$ with $\mathcal{D}(\alpha)=n$ and 
-$\mathsf{mat}(R_i)=\mathsf{vec}(w_i)\in \mathbb{R}^n$, for $i\in[\ell]$, and all other matrix variables instantiated with the zero vector in $\mathbb{R}^n$,
-for words $w_1,\ldots,w_\ell\in\Sigma^n$ and such that $\mathsf{vec}(w_i)$ is the $n\times 1$-vector 
-encoding the word $w_i$, we have that  $\mathsf{mat}(O)=\mathsf{vec}(f_n(w_1,\ldots,w_\ell))\in\mathbb{R}^n$ 
+$\mathsf{mat}(R_i)=\mathsf{vec}(w_i)\in \mathbb{R}^n$, for $i\in[\ell]$, such that $\mathsf{vec}(w_i)$ is the $n\times 1$-vector 
+encoding the word $w_i\in\Sigma^n$, and all other matrix variables instantiated with the zero vector in $\mathbb{R}^n$,  we have that  $\mathsf{mat}(O)=\mathsf{vec}(f_n(w_1,\ldots,w_\ell))\in\mathbb{R}^n$ 
 after evaluating $e_f$ on $\I$. We have a similar result for functions $f=\bigcup_{n\geq 0}f_n:(\Sigma^n)^\ell\to \Sigma$
 but where $O$ is now a $1\times 1$-vector such that $\mathsf{mat}(O)=\mathsf{vec}(f_n(w_1,\ldots,w_\ell))\in\mathbb{R}$. 
 \end{proposition}
@@ -94,13 +94,20 @@ but where $O$ is now a $1\times 1$-vector such that $\mathsf{mat}(O)=\mathsf{vec
 % For this proof only, we will denote the canonical vectors as
 % $\mathbf{e}_1, \ldots, \mathbf{e}_n$, since $b$ will be used to represent a value on a position of a tape.
 We only consider functions $f=\bigcup_{n\geq 0}f_n:(\Sigma^n)^\ell\to \Sigma^n$. The proof only requires
-minimal simplifications for functions  $f=\bigcup_{n\geq 0}f_n:(\Sigma^n)^\ell\to \Sigma$.
+minimal modifications for functions  $f=\bigcup_{n\geq 0}f_n:(\Sigma^n)^\ell\to \Sigma$.
 
 \begin{proof}
 	The expression $e_f$ we construct will simulate the TM $T$. To have some more control on the space 
 	and time consumption of $T$, let us first assume that $n$ is large enough, say larger than $n\geq n_0$, 
 	such that $T$ runs in $sn$ space and $cn^{k-1}\leq n^k$ time for constants $s$ and $c$. We deal with $n<n_0$ separately.
-
+ We split up the construction of $e_f$ in three
+	parts: \textbf{(a)}~an expression $e_f^{\geq n_0}$, for dealing with $n\geq n_0$; \textbf{(b)}~an expression
+	$e_f^{<n_0}$, for dealing with $n<n_0$; and finally \textbf{(c)}~the expression $e_f$ combining both these expressions. 
+	
+\medskip
+\noindent
+\underline{\textbf{(a)} Large $n$, i.e. $n\geq n_0$.}
+    Let us first define $e_f^{\geq n_0}$. 
     To simulate $T$ we need to encode states, tapes and head positions. The matrix variables in 
     $\mathcal{M}$ mentioned in the proposition will take these roles. More specifically, the variables 
     $R_1,\ldots,R_\ell$ will hold the input vectors, $W_1,\ldots,W_s$ will hold the contents of the work
@@ -121,11 +128,11 @@ minimal simplifications for functions  $f=\bigcup_{n\geq 0}f_n:(\Sigma^n)^\ell\t
     these border cases separately
     because we only have $n$ positions available to store the input words, whereas the actual input tapes 
     consist of $n+2$ symbols because of $\rhd$ and $\lhd$. So when, for example, $H_1$ has a $1$ in its first
-    entry, we interpret it as the head is pointing to the first symbol of the input word $w_1$. When $H_1$
-    has a $2$ in its first position, we interpret it as the head pointing to $\rhd$. The end marker $\lhd$ is
+    entry, we interpret it as if the head is pointing to the first symbol of the input word $w_1$. When $H_1$
+    has a $2$ in its first position, we interpret it as if the head pointing to $\rhd$. The end marker $\lhd$ is
     dealt with in the same way, by using value $1$ or $2$ in the last position of $H_1$. We use this encoding
     for all input tapes, and also for the work tape $W_1$ and output tape $O$ with the exception that no end 
-    marker $\lhd$ is present.
+    marker $\lhd$ is present, so only $\rhd$ needs a special treatment.
 
 
     To encode the states, we use the variables $Q_1,\ldots,Q_m$. We will ensure that when $T$ is in state 
@@ -134,14 +141,11 @@ minimal simplifications for functions  $f=\bigcup_{n\geq 0}f_n:(\Sigma^n)^\ell\t
     vector in $\mathbb{R}^n$.	
 
     Finally, the variables $v_1,\ldots,v_{k}$ represent $k$ canonical vectors  which are used to iterate 
-    in for-loops. By iterating over then, we can perform $n^{k}$ iterations, 
+    in for-loops. By iterating over them, we can perform $n^{k}$ iterations, 
     which suffices for simulating the $\mathcal{O}(n^{k-1})$ steps used by $T$ to reach an accepting configuration.
 
 \smallskip
-
-    With these matrix variables in place, we start by defining $e_f$. We split up the construction of $e_f$ in three
-	parts: \textbf{(a)}~an expression $e_f^{\geq n_0}$, for dealing with $n\geq n_0$; \textbf{(b)}~an expression
-	$e_f^{<n_0}$, for dealing with $n<n_0$; and finally \textbf{(c)}~the expression $e_f$ combining both these expressions. 
+    With these matrix variables in place, we start by defining $e_f^{\geq n_0}$.
 	% We explain the expression
 %     $e_f^{\geq N}$ first.
 
@@ -149,8 +153,8 @@ minimal simplifications for functions  $f=\bigcup_{n\geq 0}f_n:(\Sigma^n)^\ell\t
 
     We will use several expressions related to ordering information of canonical vectors, as explained in Section \ref{sec:formatlang:design}.
 	In particular, we use $\mathsf{min}$ and $\mathsf{max}$, to test whether their input vector is the first, respectively, last canonical
-	vector, $e_{\mathsf{min}}$ and $e_{\mathsf{max}}$, which return the first and last canonical vector, respectively, and $\mathsf{Next}$
-	and $\mathsf{Prev}$, matrices that, when multiplied with a canonical vector, return the next, respectively previous, canonical vector.
+	vector, expressions $e_{\mathsf{min}}$ and $e_{\mathsf{max}}$, which return the first and last canonical vector, respectively, and expressions $\mathsf{Next}$
+	and $\mathsf{Prev}$, which return matrices that, when multiplied with a canonical vector, return the next, respectively previous, canonical vector.
 	  % In our  expressions we use subexpressions which we defined before in . These subexpression
 	  %     require some auxiliary variables, as detailed below. As a consequence, $e_f$ will be an expressions
 	  %     defined over an extended schema $\mathcal{S}'$. Hence, the instance $\I$ in the statement of the Proposition
@@ -216,10 +220,7 @@ minimal simplifications for functions  $f=\bigcup_{n\geq 0}f_n:(\Sigma^n)^\ell\t
 	  %     of $e_f$.
 	  %
 
-\medskip
-\noindent
-\underline{\textbf{(a)} Large $n$, i.e. $n\geq n_0$.}
-    Let us first define $e_f^{\geq n_0}$. Since we want to simulate $T$ we need to be able to check which 
+Since we want to simulate $T$ we need to be able to check which 
     transitions of $T$ can be applied based on a current configuration. More precisely,
     suppose that we want to check whether $\Delta(q_i,(a_1,\ldots,a_{\ell},b,c))$ is applicable, then we 
     need to check whether $T$ is in state $q_i$, we can do this by checking 
@@ -261,19 +262,18 @@ minimal simplifications for functions  $f=\bigcup_{n\geq 0}f_n:(\Sigma^n)^\ell\t
     \cdot\left(\sum_{j=1}^s \mathsf{test\_work}_b^j\right)\cdot \mathsf{test\_out}_{c}.
     $$
     This expression will return $1$ if and only if the vectors representing the tapes, 
-    head positions and states are such that $\mathsf{Q_i}$ is the first canonical vector 
+    head positions and states are such that $Q_i$ is the first canonical vector 
     (and thus $T$ is in state $q_i$), the heads point to entries in the tape vectors storing 
     the symbols $a_1,\ldots,a_{\ell}, b,c$ or they point to the first (or last for input tapes) 
     positions but have value $2$ (when the symbols are $\rhd$ or $\lhd$). 
 
-    To ensure that at the beginning of the simulation of $T$ by $e_f^{\geq N}$ we correctly encode 
+    To ensure that at the beginning of the simulation of $T$ by $e_f^{\geq n_0}$ we correctly encode 
     that we are in the initial configuration, we thus need to initialize all vectors 
     $$\mathsf{mat}(H_1),\mathsf{mat}(H_2),\ldots, \mathsf{mat}(H_\ell), \mathsf{mat}(H_{W_1}),\mathsf{mat}(H_O)$$
     with the vector $(2,0,0,\ldots,0)\in\mathbb{R}$ since all heads read the symbol $\rhd$. Similarly, 
-    we have to initialize $\mathsf{Q_1}$ with the first canonical vector since $T$ is in the initial state $q_1$.
+    we have to initialize $Q_1$ with the first canonical vector since $T$ is in the initial state $q_1$.
 
-    We furthermore need to be able to correctly adjust head positions. We do this by means of $\mathsf{Prev}$ and $\mathsf{Next}$
-	described earlier.
+    We furthermore need to be able to correctly adjust head positions. We do this by means of the expressions $\mathsf{Prev}$ and $\mathsf{Next}$	described earlier.
     A consequence of our encoding is that we need to treat the border cases (corresponding to $\rhd$ and 
     $\lhd$) differently. More specifically, for the input tapes $R_i$ and heads $H_i$ we define 
     $$
@@ -315,7 +315,7 @@ minimal simplifications for functions  $f=\bigcup_{n\geq 0}f_n:(\Sigma^n)^\ell\t
     \end{cases}
     $$
     In other words, we set the $H_{W_i}$ to zero when a move brings us to either $W_{i-1}$ or $W_{i+1}$, we
-    move the successor or predecessor when staying within $W_i$, or initialise $H_{W_i}$ with the first or 
+    move to the  successor or predecessor when staying within $W_i$, or initialise $H_{W_i}$ with the first or 
     last canonical vector when moving from $W_{i-1}$ to $W_i$ (right move) or from $W_{i+1}$ to $W_i$ (left move).
     For $i=s$ we can ignore the parts in the previous expression that involve $W_{s+1}$ (which does not exist)
 	and define $\mathsf{move\_work}^s_{\mathsf{d}}$ as
@@ -353,10 +353,11 @@ minimal simplifications for functions  $f=\bigcup_{n\geq 0}f_n:(\Sigma^n)^\ell\t
     (1-W_i^T\cdot H_{W_i})\times (W_i+H_{W_i}) + (W_i^T\cdot H_{W_i})\times W_i &\text{if $b=1$},
     \end{cases}
     $$
-    and for  $W_1$ we have to take care again of the begin marker:
+    and for  $W_1$ we have to take care again of the begin marker and we define
+	$    \mathsf{write\_work}_b^1
+$ as
     $$
-    \mathsf{write\_work}_b^1:=\begin{cases}
-    \mathsf{min}(1/2\times H_{W_1})\times W_1 & \text{if $b=\rhd$}\\
+   \begin{cases} \mathsf{min}(1/2\times H_{W_1})\times W_1 & \text{if $b=\rhd$}\\
     (1-\mathsf{min}(1/2\times H_{W_1}))\times\left((1-W_1^T\cdot H_{W_1})\times W_1 + (W_1^T\cdot H_{W_1})\times (W_1-H_{W_1})\right) &\text{if $b=0$}\\
     (1-\mathsf{min}(1/2\times H_{W_1}))\times\left((1-W_1^T\cdot H_{W_1})\times (W_1+H_{W_1}) + (W_1^T\cdot H_{W_1})\times W_1\right) &\text{if $b=1$}.
     \end{cases}
@@ -373,10 +374,10 @@ minimal simplifications for functions  $f=\bigcup_{n\geq 0}f_n:(\Sigma^n)^\ell\t
     \end{multline*}
 	We provide the precise semantics of this expression in Section~\ref{subsubsec:generalloop} by casting it as a \langfor expression.
 	Intuitively, each possible assignment of $v_1,\ldots,v_k$ to canonical vectors $b_{i_1}^n,\ldots, b_{i_k}^n$ corresponds to an index $\mathbf{i}=(i_1,\ldots,i_k)\in\{1,\ldots,n\}^k$
-	and the order in which canonical vectors are considered imposes an ordering on these indices as well. We can regard these indices as ``timestamps''
+	and the order in which canonical vectors are considered imposes an ordering on these indices. We can regard these indices as ``timestamps''
 	with $(1,1,\ldots,1)$ being the initial timestamp, and $(n,n,\ldots,n)$ the last timestamp.
 		If we denote by $Q_j^{\mathbf{i}}$, for $j\in[m]$, $H_j^{\mathbf{i}}$, for $j\in[\ell]$, $W_j^{\mathbf{i}}$ and $H_{W_j}^{\mathbf{i}}$, for $j\in[s]$, and 
-	$O^{\mathbf{i}}$ and $H_O^{\mathbf{i}}$ the values of these vector variables at timestamp $\mathbf{i}$ during the evaluation of $e_f^{\geq n_0}$, then if $\mathbf{i}'$ is the next timestamp, we have that    
+	$O^{\mathbf{i}}$ and $H_O^{\mathbf{i}}$ the values of these vector variables at timestamp $\mathbf{i}$ during the evaluation of $e_f^{\geq n_0}$, then if $\mathbf{i}'$ is the next timestamp, we want to update them as follows:
 	\begin{align*}
 		Q_j^{\mathbf{i}'}&:=e_{Q_j}(Q_1^{\mathbf{i}},\ldots Q_m^{\mathbf{i}},H_1^{\mathbf{i}},\ldots,H_\ell^{\mathbf{i}},W_1^{\mathbf{i}},\ldots,W_s^{\mathbf{i}},H_{W_1}^{\mathbf{i}},\ldots,H_{W_s}^{\mathbf{i}},O^{\mathbf{i}},H_O^{\mathbf{i}},b_{i_1'}^n,\ldots,b_{i_k'}^n)\\
 		H_j^{\mathbf{i}'}&:=e_{H_j}(Q_1^{\mathbf{i}},\ldots Q_m^{\mathbf{i}},H_1^{\mathbf{i}},\ldots,H_\ell^{\mathbf{i}},W_1^{\mathbf{i}},\ldots,W_s^{\mathbf{i}},H_{W_1}^{\mathbf{i}},\ldots,H_{W_s}^{\mathbf{i}},O^{\mathbf{i}},H_O^{\mathbf{i}},b_{i_1'}^n,\ldots,b_{i_k'}^n)\\
@@ -385,14 +386,14 @@ minimal simplifications for functions  $f=\bigcup_{n\geq 0}f_n:(\Sigma^n)^\ell\t
 O^{\mathbf{i}'}&:=e_{O}(Q_1^{\mathbf{i}},\ldots Q_m^{\mathbf{i}},H_1^{\mathbf{i}},\ldots,H_\ell^{\mathbf{i}},W_1^{\mathbf{i}},\ldots,W_s^{\mathbf{i}},H_{W_1}^{\mathbf{i}},\ldots,H_{W_s}^{\mathbf{i}},O^{\mathbf{i}},H_O^{\mathbf{i}},b_{i_1'}^n,\ldots,b_{i_k'}^n)\\
 H_{O}^{\mathbf{i}'}&:=e_{H_O}(Q_1^{\mathbf{i}},\ldots Q_m^{\mathbf{i}},H_1^{\mathbf{i}},\ldots,H_\ell^{\mathbf{i}},W_1^{\mathbf{i}},\ldots,W_s^{\mathbf{i}},H_{W_1}^{\mathbf{i}},\ldots,H_{W_s}^{\mathbf{i}},O^{\mathbf{i}},H_O^{\mathbf{i}},b_{i_1'}^n,\ldots,b_{i_k'}^n).
 	\end{align*}
-We thus need ensure that  $O^{(n,n,\ldots,n)}$ is such that it encodes the result $f_n(w_1,\ldots,w_\ell)$. We recall that we
+And this precisely what $e_f^{\geq n_0}$ does. Furthermore,	it ensures that  $O^{(n,n,\ldots,n)}$ is such that it encodes the result $f_n(w_1,\ldots,w_\ell)$. We remark that we
 always perform $n^k$ iterations which is fine because we assume that once the Turing machine ends in an accepting configuration,
 it stays there (it loops). We also recall that we assume that an accepting configuration is always reached. It remains to
 explain the expressions used to do the updates. We do this by using all expressions defined earlier, for moving heads and updating
 tapes, in combination with a check of what configuration is currently present. Furthermore, we need to ensure that at the initial timestamp,
 when each vector variable $v_i$ is assigned to $b_1^n$, we initialize states and heads correctly. As such, we include a check
 $\prod_{j=1}^{k} \textsf{min}(v_i)$ to detect whether or not we are at the initial timestamp. More precisely, the update expressions
-are given as follows, where we use $\star$ below to mark irrelevant information in the transitions: 
+are given as follows, where we use $\star$ to mark irrelevant information in the transitions: 
     \begin{align*}   
         e_{Q_1}&:=\left(\prod_{j=1}^{k} \textsf{min}(v_i)\right)\times e_{\mathsf{min}}
         + \sum_{\substack{(q_i,a_1,\ldots,a_\ell,b,c)\\
@@ -402,15 +403,15 @@ are given as follows, where we use $\star$ below to mark irrelevant information 
         \quad \text{for $j\neq 1$}\displaybreak\\
         e_{H_i}&:=2\left(\prod_{j=1}^{k} \textsf{min}(v_i)\right)\times e_{\mathsf{min}}
         +\sum_{\substack{(q,a_1,\ldots,a_\ell,b,d)   \Delta(q,a_1,\ldots,a_\ell,b,c)=(\star,\mathsf{d_i},\star)}}\!\!\!\!\!\!\!\!\! \mathsf{isconf}_{q,a_1,\ldots,a_\ell,b,c}\times\mathsf{move\_inp}^i_{\mathsf{d}_i}\\
+		\end{align*}
+	    \begin{align*}
         e_{H_{W_i}}&:=2\left(\prod_{j=1}^{k} \textsf{min}(v_i)\right)\times e_{\mathsf{min}}
     +\sum_{\substack{(q,a_1,\ldots,a_\ell,b,d)\displaybreak\\
     \Delta(q,a_1,\ldots,a_\ell,b,c)=(\star,\mathsf{d_{\ell+1}},\star)}}\!\!\!\!\!\!\!\!\! \mathsf{isconf}_{q,a_1,\ldots,a_\ell,b,c}\times\mathsf{move\_work}_{\mathsf{d}_{\ell+1}}^i\\
      e_{H_O}&:=2\left(\prod_{j=1}^{k} \textsf{min}(v_i)\right)\times e_{\mathsf{min}}
     +\sum_{\substack{(q,a_1,\ldots,a_\ell,b,d)
     \Delta(q,a_1,\ldots,a_\ell,b,c)=(\star,\mathsf{d}_{\ell+2})}}\!\!\!\!\!\!\!\!\! \mathsf{isconf}_{q,a_1,\ldots,a_\ell,b,c}\times\mathsf{move\_outp}_{\mathsf{d}_{\ell+2}}\\
-	\end{align*}
-    \begin{align*}   
-	           e_{W_i}&:=\sum_{\substack{(q,a_1,\ldots,a_\ell,b,d)\displaybreak\\
+ 	           e_{W_i}&:=\sum_{\substack{(q,a_1,\ldots,a_\ell,b,d)\displaybreak\\
         \Delta(q,a_1,\ldots,a_\ell,b,c)=(\star,b',c',\star)}}\!\!\!\!\!\!\!\!\! \mathsf{isconf}_{q,a_1,\ldots,a_\ell,b,c}\times\mathsf{write\_work}_{b'}^i\\
         e_{O}&:=\sum_{\substack{(q,a_1,\ldots,a_\ell,b,d)\\
         \Delta(q,a_1,\ldots,a_\ell,b,c)=(\star,b',c',\star)}}\!\!\!\!\!\!\!\!\! \mathsf{isconf}_{q,a_1,\ldots,a_\ell,b,c}\times\mathsf{write\_outp}_{c'}.
@@ -456,7 +457,7 @@ to take a further disjunction for $n=0,\ldots, n_0-1$. That is,
     e_f^{<n_0}:=\sum_{n=0}^{n_0-1} e_n
     $.
     Since every possible input is covered and only a unique expression 
-    $e_{n,w_1,\ldots,w_\ell,f_n(w_1,\ldots,w_\ell)}$ will be triggered $e_f^{<n_0}$ will correctly
+    $e_{n,w_1,\ldots,w_\ell,f_n(w_1,\ldots,w_\ell)}$ will be triggered, $e_f^{<n_0}$ will correctly
     evaluate $f$ on input words smaller than $n_0$.
 
 \medskip
@@ -470,17 +471,17 @@ where we note that $e_{\ones}(R_1)^T\cdot\underbrace{\mathsf{Next}\cdot\cdots\cd
 $n\geq n_0$ and to $0$ otherwise.
 \end{proof}
 
-\subsubsection{Generalized iteration mechanism}\label{subsubsec:generalloop}
+\subsubsection{Generalized iteration expressions}\label{subsubsec:generalloop}
 The expression $e_f^{\geq n_0}$ is given in terms of an expression of the form 
 \begin{align*}
     \texttt{for}\, v_1,\ldots, v_k,X_1,\ldots, X_\ell \texttt{.}\, \Big( &e_1(X_1,\ldots,X_\ell,v_1,\ldots, v_k), \\
     &\hspace{1em}e_2(X_1,\ldots, X_\ell,v_1,\ldots, v_k), \ldots, e_\ell(X_1,\ldots,X_\ell,v_1,\ldots, v_k) \Big),
 \end{align*}
 where $X_1,X_2,\ldots,X_\ell$ are vector variables. Intuitively, each $X_i$ is updated according to expression $e_i$.
-We now give the formal semantics by defining it as a \langfor expression, for which we defined the precise semantics.
-More precisely, the expression above is defined by the
+We now give the formal semantics of such expressions by defining it as a \langfor expression, for which we have defined the precise semantics in Section~\ref{sec:formatlang}.
+More precisely, the expression above is simply a shorthand notation for the \langfor expression
 \begin{align*}
-  \ffor{v_1,\ldots, v_k}{X}{e'(X,v_1,\ldots, v_n)}:= &\ffor{v_1}{X_1}{} \\
+  &\ffor{v_1}{X_1}{} \\
   &\hspace{1em}\initf{X_1}{v_2}{X_2}{} \\
   &\hspace{2em}\initf{X_2}{v_3}{X_3}{} \\
   &\hspace{8em}\ddots \\
@@ -495,14 +496,14 @@ e_{\mathsf{diag}}(e_{\mathbf{1}}(X^T))\cdot e_{\mathsf{min}+(i-1)}\bigr)^T,
 % &+ e_2(X\cdot e_{\mathsf{min} + 1},v_1,\ldots,v_k)\cdot (e_{\diag}(e_{\ones}(X^T))\cdot e_{\mathsf{min} + 1})^T \\
 % &+ \ldots + e_\ell(X\cdot e_{\mathsf{max}},v_1,\ldots,v_k)\cdot (e_{\diag}(e_{\ones}(X^T))\cdot e_{\mathsf{max}})^T
 $$
-where $e_{\mathsf{min}+\mathsf{i}}$, for $i=0,1,\ldots,n-1$ returns the $(i+1)$th canonical vector. If the $v_i$ have
-type $\alpha\times 1$ then $X$ has type
+where $e_{\mathsf{min}+\mathsf{i}}$, for $i=0,1,\ldots,n-1$ returns the $(i+1)$th canonical vector. Here, if the $v_i$'s have
+size $\alpha\times 1$ then $X$ has size
 $\alpha\times\beta$ and we assume on instances that $\dom(\beta)=\ell$. The $i$th column of  $X$ thus corresponds to the vector
-variable $X_i$ and to evaluate $e_i$ we thus first extract all columns separately, by means of $X\cdot e_{\mathsf{min}+\mathsf{i}}$.
-We remark that the canonical vector used is $b_{1+i}^{\dom(\beta)}$, i.e. of dimension $\ell\times 1$.
-After evaluating $e_i$, we place the resulting column vector back on the $i$the column of $X$ by multiplying with the appropriate
-row vector corresponding to column $i$. In the expression above, $e_{\mathsf{diag}}(e_{\mathbf{1}}(X^T))$ is added to ensure that
-$e_{\mathsf{min} + \mathsf{i}}$ again evaluates to canonical vectors $b_{1+i}^{\dom(\beta)}$.
+variable $X_i$ and to evaluate $e_i$ we thus first extract all columns separately, by means of $X\cdot e_{\mathsf{min}+\mathsf{i}}$, and feed all of these into $e_i$.
+We remark that the canonical vectors used are $b_{j}^{\dom(\beta)}$, i.e. of dimension $\ell\times 1$.
+After evaluating $e_i$, which returns a vector of size $\alpha\times 1$, we place this vector back in the $i$the column of $X$ by multiplying with the appropriate
+row vector corresponding to column $i$. This is done by the last factor in the expression $e'$. Furthermore, $e_{\mathsf{diag}}(e_{\mathbf{1}}(X^T))$ is included to ensure that
+$e_{\mathsf{min} + \mathsf{(i-1)}}$ again evaluates to the canonical vector $b_{i}^{\dom(\beta)}$ of dimension $\ell\times 1$.
 % %
 % %
 % %
