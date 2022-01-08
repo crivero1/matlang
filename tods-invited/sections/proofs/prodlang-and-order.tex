@@ -1,8 +1,12 @@
 % !TeX spellcheck = en_US
-%!TEX root = ../main.tex
+%!TEX root = ../../main.tex
 
+\cristian{TODO: Check this proof.}
+\begin{proof}
 We now verify that \langmprod, extended with order and $f_{>0}$, 
-can perform matrix inversion and compute the determinant. To this aim, we verify that all order
+can perform matrix inversion and compute the determinant. 
+\cristian{Important: if constructions from Section 3 are removed, this discussion here must be updated.}
+To this aim, we verify that all order
 predicates in Section \ref{sec:formatlang:design} can be derived using $\ssum$, $\sprod$, $f_{>0}$ and 
 $e_{S_{<}}$. Given this, it suffices to observe that Csanky's algorithm, as shown in Section~\ref{sec:queries:inverse}, only relies on expressions using $\ssum$ and $\sprod$ and order information on canonical vectors and $f_/$.
 As consequence, our fragment can perform matrix inversion and compute the determinant.
@@ -31,3 +35,4 @@ we can now define $\mathsf{prev}(v)$ and $\mathsf{next}(v)$ as in \ref{sec:forma
 it is readily verified that also $e_{\mathsf{getPrevMatrix}}(V)$,
 $e_{\mathsf{getNextMatrix}}(V)$, $e_{\mathsf{min}+i}$ and $e_{\mathsf{max}+i}$ can be expressed
 in our fragment.
+\end{proof}

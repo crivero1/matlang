@@ -2,7 +2,7 @@
 % !TeX spellcheck = en_US
 We conclude the paper by zooming in on some special fragments of \langfor and in which matrices can take values from an arbitrary (commutative) semiring $K$. In particular, we first consider \langsum, in which iterations can only perform
 additive updates, and show that it is equivalent in expressive power to the (positive)
-relational algebra on $K$-relations. We then extend \langsum such that also updates involving pointwise-multiplication (Hadamard product) are allowed. The resulting fragment, \langprod, is shown to be equivalent in expressive power to weighted logics. Finally, we consider the fragment \langmprod in which updates involving sum and matrix multiplication, and possibly order information, is allowed. From the results in Section~\ref{sec:queries}, we infer that the latter fragment suffices to compute matrix inversion. An overview of the fragments and their relationships are depicted in Figure~\ref{thefigure}.
+relational algebra on $K$-relations. We then extend \langsum such that also updates involving pointwise-multiplication (called Hadamard product) are allowed. The resulting fragment, \langprod, is shown to be equivalent in expressive power to weighted logics. Finally, we consider the fragment \langmprod in which updates involving sum and matrix multiplication, and possibly order information, is allowed. From the results in Section~\ref{sec:queries}, we infer that the latter fragment suffices to compute matrix inversion. An overview of the fragments and their relationships are depicted in Figure~\ref{thefigure}.
 
 \subsection{Summation \lang and relational algebra}
 \label{ss:sumML}
@@ -12,6 +12,7 @@ $$\Sigma v. e := \ffor{v}{X}{X + e}.$$
 Here, $e=e(v)$. We define the subfragment of \langfor, called \langsum, to consist of the $\Sigma$ operator plus the ``core'' operators in \lang, namely, transposition, matrix multiplication and addition, scalar multiplication, and pointwise function applications.
 
 One property of \langsum is that it only allows expressions of polynomial degree. Indeed, one can easily show that \langsum can only create matrix entries that are polynomial in the dimension $n$ of the expression. More precisely, we can show the following:
+\cristian{Check if this is used. Otherwise, just say it without proposition.}
 \begin{proposition}\label{prop:poly}
 Every expression in \langsum is of polynomial degree.
 \end{proposition}
@@ -30,11 +31,11 @@ are equally expressive over binary schemas.
 To make this equivalence precise, we next give the 
 definition of $\mathsf{RA}_{K}^+$~\cite{GreenKT07} and then show how to connect both formalisms.
 
+A semiring $(K, \ksum, \kprod, \kzero, \kone)$ is an algebraic structure where $K$ is a non-empty set, $\ksum$ and $\kprod$ are binary operations over $K$, and $\kzero, \kone \in K$. Furthermore,  $\ksum$ and $\kprod$ are associative operations, $\kzero$ and $\kone$ are the identities of $\ksum$ and $\kprod$ respectively, $\ksum$ is a commutative operation, $\kprod$ distributes over $\ksum$, and $\kzero$ annihilates $K$ (i.e. $\kzero \kprod k = k \kprod \kzero = \kzero$). As usual, we assume that all semirings in this paper are commutative, namely, $\kprod$ is also commutative. We use $\bigksum_X$ or $\bigkprod_X$ for the $\ksum$- or $\kprod$-operation over all elements in $X$, respectively. Typical examples of semirings are the reals $(\RR, +, \times, 0,1)$, the natural numbers $(\NN, +, \times, 0,1)$, and the boolean semiring $(\{0,1\}, \vee, \wedge, 0, 1)$. 
+
 Let $\ddom$ be a data domain and $\att$ a set of attributes. A relational signature is a finite subset of $\att$. A relational schema is a function $\cR$ on finite set of symbols $\fdom(\cR)$ such that $\cR(R)$ is a relation signature for each $R \in \fdom(\cR)$. To simplify the notation, from now on we write $R$ to denote both the symbol $R$ and the relational signature $\cR(R)$.
 Furthermore, we write $R \in \cR$ to say that $R$ is a symbol of $\cR$. 
 For $R \in \cR$, an $R$-tuple is a function $t: R \rightarrow \ddom$. We denote by $\tuples(R)$ the set of all $R$-tuples. Given $X \subseteq R$, we denote by $t[X]$ the restriction of $t$ to the set $X$.
-
-A semiring $(K, \ksum, \kprod, \kzero, \kone)$ is an algebraic structure where $K$ is a non-empty set, $\ksum$ and $\kprod$ are binary operations over $K$, and $\kzero, \kone \in K$. Furthermore,  $\ksum$ and $\kprod$ are associative operations, $\kzero$ and $\kone$ are the identities of $\ksum$ and $\kprod$ respectively, $\ksum$ is a commutative operation, $\kprod$ distributes over $\ksum$, and $\kzero$ annihilates $K$ (i.e. $\kzero \kprod k = k \kprod \kzero = \kzero$). As usual, we assume that all semirings in this paper are commutative, namely, $\kprod$ is also commutative. We use $\bigksum_X$ or $\bigkprod_X$ for the $\ksum$- or $\kprod$-operation over all elements in $X$, respectively. Typical examples of semirings are the reals $(\RR, +, \times, 0,1)$, the natural numbers $(\NN, +, \times, 0,1)$, and the boolean semiring $(\{0,1\}, \vee, \wedge, 0, 1)$. 
 
 Fix a semiring $(K, \ksum, \kprod, \kzero, \kone)$ and a relational schema $\cR$. A $K$-relation of $R \in \cR$ is a function $r: \tuples(R) \rightarrow K$ such that the support  $\supp(r) = \{t \in \tuples(R) \mid r(t) \neq \kzero\}$ is finite. 
 A $K$-instance $\cJ$ of $\cR$ is a function that assigns relational signatures of $\cR$ to $K$-relations. Given $R \in \cR$, we denote by $R^\cJ$ the $K$-relation associated to $R$. Recall that $R^\cJ$ is a function and hence  $R^\cJ(t)$ is the value in $K$ assigned to $t$. 
@@ -61,15 +62,15 @@ $$
 \!\!\!\text{if $\arae = \rho_f(\arae')$, then} & \ssem{\arae}{\cJ}(t) = 
 \ssem{\arae'}{\cJ}(t \circ f)  
 \\
-\!\!\!\text{if $\arae = \arae_1 \bowtie \arae_2$, then} & \ssem{\arae}{\cJ}(t) =  \ssem{\arae_1}{\cJ}(t[Y]) \kprod  \ssem{\arae_2}{\cJ}(t[Z]),
+\!\!\!\text{if $\arae = \arae_1 \bowtie \arae_2$, then} & \ssem{\arae}{\cJ}(t) =  \ssem{\arae_1}{\cJ}(t[Y]) \kprod  \ssem{\arae_2}{\cJ}(t[Z])
 \end{array}
 $$
 where $Y = \cR(\arae_1)$ and $Z = \cR(\arae_2)$. It is important to note that the $\bigksum$-operation in the semantics of $\pi_X(\arae')$ is well-defined given that the support of $\ssem{\arae'}{\cJ}$ is always finite. 
 
-We are now ready for comparing \langsum with $\mathsf{RA}_{K}^+$ . First of all, we need to extend \langsum from $\RR$ to any semiring. Let $\mtr{K}$ denote the set of all $K$-matrices. 
+We are now ready for comparing \langsum with $\mathsf{RA}_{K}^+$. For a fair comparison, we need to extend \langsum from $\RR$ to any semiring. Let $\mtr{K}$ denote the set of all $K$-matrices. 
 Similarly as for \lang\ over $\RR$, given a \lang\ schema $\Sch$, a $K$-instance $\I$ over $\Sch$ is a pair $\I = (\dom,\conc)$, where $\dom : \DD \mapsto \NN$ assigns a value to each size symbol, and $\conc : \Mnam \mapsto \mtr{K}$ assigns a concrete $K$-matrix to each matrix variable. Then it is straightforward to extend the semantics of \lang, \langfor, and \langsum from $(\RR, +, \times, 0, 1)$ to $(K, \ksum, \kprod, \kzero, \kone)$ by switching $+$ with $\ksum$ and $\times$ with $\kprod$. 
 
-The next step to compare \langsum with $\mathsf{RA}_{K}^+$  is to represent $K$-matrices as $K$-relations.
+The next step for comparing \langsum with $\mathsf{RA}_{K}^+$  is to encode $K$-matrices as $K$-relations.
 Let $\Sch=(\Mnam,\size)$ be a \lang\ schema. On the relational side
 we have for each size symbol $\alpha\in\DD\setminus\{1\}$, attributes $\alpha$, $\row_\alpha$, and $\col_\alpha$ in $\att$. Furthermore, for each $V\in\Mnam$ and $\alpha \in \DD$ we denote
 by $R_V$ and $R_\alpha$ its corresponding relation name, respectively. Then, given $\Sch$ we define the relational schema $\text{Rel}(\Sch)$ such that $\fdom(\text{Rel}(\Sch)) =  \{R_\alpha \mid \alpha\in\DD\} \cup \{R_V \mid V \in \Mnam\}$ where $\text{Rel}(\Sch)(R_\alpha) = \{\alpha\}$ and:
@@ -87,7 +88,7 @@ Let $V\in\Mnam$ with $\size(V)=(\alpha,\beta)$ and let $\conc(V)$ be its corresp
 To encode $\I$ as a $K$-instance in $\mathsf{RA}_{K}^+$, we use as data domain $\ddom = \mathbb{N} \setminus \{0\}$. Then we construct the $K$-instance $\text{Rel}(\I)$ such that for each $V\in\Mnam$ we define 
 $R_V^{\text{Rel}(\I)}(t):=\conc(V)_{ij}$ whenever $t(\row_\alpha) = i \leq \dom(\alpha)$ and $t(\col_\beta) = j \leq \dom(\beta)$, and $\kzero$ otherwise. Furthermore, for each $\alpha \in \DD$ we define $R_\alpha^{\text{Rel}(\I)}(t):=\kone$ whenever $t(\alpha) \leq \dom(\alpha)$, and $\kzero$ otherwise. In other words, $R_\alpha$ and $R_\beta$ encodes the active domain of a matrix variable $V$ with $\size(V)=(\alpha,\beta)$. Given that the $\mathsf{RA}_{K}^+$ framework of \cite{GreenKT07} represents the ``absence'' of a tuple in the relation with $\kzero$, we need to separately encode the indexes in a matrix.
 This is where $R_\alpha^{\text{Rel}(\I)}$ and $R_\beta^{\text{Rel}(\I)}$ are used for.
-We are now ready to state the first connection between \langsum and $\mathsf{RA}_{K}^+$  by using the previous encoding. The proof of the proposition below is by induction on the structure of expressions.
+We are now ready to state the first connection between \langsum and $\mathsf{RA}_{K}^+$  by using the previous encoding. 
 \begin{proposition}\label{prop:sum_to_ara} 
 	For each \langsum expression $e$ over schema $\Sch$ such that $\Sch(e)=(\alpha,\beta)$ with $\alpha\neq 1\neq\beta$, there exists an $\mathsf{RA}_{K}^+$  expression $\Phi(e)$ over relational schema $\text{Rel}(\Sch)$ such that $\text{Rel}(\Sch)(\Phi(e))=\{\row_\alpha,\row_\beta\}$ and 
 	such that for any instance $\I$ over~$\Sch$,
@@ -138,13 +139,13 @@ Hence, \langsum cannot express the order predicates mentioned in Section~\ref{se
 
 
 \subsection{Hadamard product and weighted logics}\label{subsec:langprod}
-Similarly to using sum, we can use other operations to update $X$ in the for-loop. The next natural choice is to consider products of matrices. In contrast to matrix sum, we have two options: either we can choose to use matrix product or to use the pointwise matrix product, also called the Hadamard product. We treat  matrix product in the next subsection and first explain here the connection of sum and Hadamard product operators to weighted logics.
+Similarly to using sum, we can use other operations to update $X$ in the for-loop. The next natural choice is to consider products of matrices. In contrast to matrix sum, we have two options: either we can choose to use matrix product or to use the pointwise matrix product, also called the Hadamard product. We treat  matrix product in the next subsection and first explain here the connection of sum and Hadamard product operators to weighted logics~\cite{DrosteG05}.
 
-For the rest of this section, fix a semiring $(K, \ksum, \kprod, \kzero, \kone)$. The Hadamard product over $K$-matrices can be defined as the pointwise application of $\kprod$ between two matrices of the same size. Formally, we define the expression $e \hadprod e'$ where $e, e'$ are expressions with respect to $\cS$ and $\ttype(e) = \ttype(e')$ for some schema $\Sch=(\Mnam,\size)$. Then the semantics of $e \hadprod e'$ is the pointwise application of $\kprod$, namely, $\sem{e \hadprod e'}{\I}_{ij} = \sem{e}{\I}_{ij} \kprod \sem{e'}{\I}_{ij}$ for any instance $\I$ of $\cS$. This enables us to define, similar as for  $\Sigma v$, the  pointwise-product quantifier $\qhadprod v$ as follows:
+For the rest of this section, fix a semiring $(K, \ksum, \kprod, \kzero, \kone)$. The Hadamard product over $K$-matrices can be defined as the pointwise application of $\kprod$ between two matrices of the same size. Formally, we define the expression $e \hadprod e'$ where $e, e'$ are expressions with respect to $\cS$ and $\ttype(e) = \ttype(e')$ for some schema $\Sch=(\Mnam,\size)$. Then the semantics of $e \hadprod e'$ is the pointwise application of $\kprod$, namely, $\sem{e \hadprod e'}{\I}_{ij} = \sem{e}{\I}_{ij} \kprod \sem{e'}{\I}_{ij}$ for any instance $\I$ of $\cS$. This enables us to define, similar as for the operator $\Sigma v$, the  pointwise-product quantifier $\qhadprod v$ as follows:
 $$
 \qhadprod v. \  e := \ffor{v}{X\!=\!e_{\kone}}{X \circ e}.
 $$
-where $e_\kone$ is the (easily definable) \langfor expression for the matrix with the same type as $X$ and all entries equal to the $\kone$-element of $K$ (i.e., we need to initialize $X$ accordingly with the $\kprod$-operator).
+where $e_\kone$ is the \langfor expression for the matrix with the same type as $X$ and all entries equal to the $\kone$-element of $K$ (i.e., we need to initialize $X$ accordingly with the $\kprod$-operator).
 We call \langprod  the subfragment of \langfor that consists of \langsum \ extended with $\qhadprod v$.
 
 \begin{example}
@@ -158,7 +159,7 @@ We call \langprod  the subfragment of \langfor that consists of \langsum \ exten
 Clearly, the inclusion of this new operator extends the expressive power to \langsum. For example,  $\sem{e_{\mathsf{dp}}}{\I}$ can be an exponentially large number in the dimension $n$ of the input.
 By contrast, one can easily show that all expressions in \langsum can only return numbers polynomial in  $n$. That is, \langprod is more expressive than \langsum and $\mathsf{RA}_{K}^+$. 
 
-To measure the expressive power of \langprod, we use weighted logics~\cite{DrosteG05} (WL) as a yardstick. Weighted logics extend monadic second-order logic from the boolean semiring to any semiring $K$. Furthermore, it has been used extensively to characterize the expressive power of weighted automata in terms of logic~\cite{droste2009handbook}. We use here the first-order subfragment of weighted logics to suit our purpose and, moreover, we extend its semantics over weighted structures (similar as in~\cite{GradelV17}).
+To measure the expressive power of \langprod, we use weighted logics~\cite{DrosteG05} (WL) as a yardstick. Weighted logics extend monadic second-order logic from the boolean semiring to any semiring~$K$. Furthermore, it has been used extensively to characterize the expressive power of weighted automata in terms of logic~\cite{droste2009handbook}. We use here the first-order subfragment of weighted logics to suit our purpose and, moreover, we extend its semantics over weighted structures (similar as in~\cite{GradelV17}).
 
 A relational vocabulary $\Gamma$ is a finite collection of relation symbols such that each $R \in \Gamma$ has an associated arity, denoted by $\arity(R)$.
 A $K$-weighted structure over $\Gamma$ (or just structure) is a pair $\cA = (A, \{R^\cA\}_{R \in \Gamma})$ such that $A$ is a non-empty finite set (i.e. the domain) and, for each $R \in \Gamma$, $R^\cA: A^{\arity(R)} \rightarrow K$ is a function that associates to each tuple in $A^{\arity(R)}$ a weight in $K$.
@@ -172,7 +173,7 @@ $$
 where $x, y \in X$, $R \in \Gamma$, and $\bar{x} = x_1, \ldots, x_k$ is a sequence of variables in $X$ such that $k=\arity(R)$. As usual, we say that $x$ is a free variable of $\varphi$, if $x$ is not below $\Sigma x$ or $\Pi x$ quantifiers (e.g. $x$ is free in $\Sigma y. R(x,y)$ but $y$ is not). 
 Given that $K$ is fixed, from now on we talk about structures and formulas without mentioning $K$ explicitly.  
 
-An assignment $\sigma$ over a structure $\cA = (A, \{R^\cA\}_{R \in \Gamma})$ is a function $\sigma: X \rightarrow A$. Given $x \in X$ and $a \in A$, we denote by $\sigma[x \mapsto a]$ a new assignment such that $\sigma[x \mapsto a](y) = a$ whenever $x = y$ and $\sigma[x \mapsto a](y) = \sigma(y)$ otherwise. For $\bar{x} = x_1, \ldots, x_k$,  we write $\sigma(\bar{x})$ to say $\sigma(x_1),\ldots, \sigma(x_k)$. Given a structure $\cA = (A, \{R^\cA\}_{R \in \Gamma})$ and an assignment $\sigma$, we define the semantics $\ssem{\varphi}{\cA}(\sigma)$ of $\varphi$ as follows:
+An assignment $\sigma$ over a structure $\cA = (A, \{R^\cA\}_{R \in \Gamma})$ is a function $\sigma: X \rightarrow A$. Given $x \in X$ and $a \in A$, we denote by $\sigma[x \mapsto a]$ a new assignment such that $\sigma[x \mapsto a](y) = a$ whenever $x = y$ and $\sigma[x \mapsto a](y) = \sigma(y)$ otherwise. For $\bar{x} = x_1, \ldots, x_k$,  we write $\sigma(\bar{x})$ to say $\sigma(x_1),\ldots, \sigma(x_k)$. Given a structure $\cA = (A, \{R^\cA\}_{R \in \Gamma})$ and an assignment $\sigma$, we define the semantics $\ssem{\varphi}{\cA}(\sigma)$ of $\varphi$:
 $$
 \begin{array}{ll}
 \text{if $\varphi := x = y$, then} & \ssem{\varphi}{\cA}(\sigma) = 
@@ -200,6 +201,8 @@ Then given a matrix instance $\I = (\dom,\conc)$ over $\Sch$ define the structur
 To encode weighted structures into matrices and vectors, the story is similar as for $\mathsf{RA}_K^+$. Let $\Gamma$ be a relational vocabulary where $\arity(R) \leq 2$. 
 Define $\text{Mat}(\Gamma) = (\Mnam_\Gamma,\size_\Gamma)$ such that $\Mnam_\Gamma = \{ V_{R} \mid R \in \Gamma\}$ and $\size_\Gamma(V_{R})$ is equal to $(\alpha, \alpha), (\alpha, 1)$, or $(1,1)$ if $\arity(R)=2$, $\arity(R)=1$, or $\arity(R)=0$, respectively, for some $\alpha \in \DD$. Similarly, let $\cA = (A, \{R^{\cA}\}_{R \in \Gamma})$ be a structure with $A = \{a_1, \ldots, a_n\}$, ordered arbitrarily.
 Then we define the matrix instance $\text{Mat}(\cA) = (\dom,\conc)$ such that $\dom(\alpha) = n$, $\conc(V_{R})_{i,j} = R^{\cA}(a_i, a_j)$ if $\arity(R)=2$, $\conc(V_{R})_{i} = R^{\cA}(a_i)$ if $\arity(R)=1$, and $\conc(V_{R}) = R^{\cA}$ otherwise.
+
+\cristian{TODO: divide this into two proposition.}
 
 Let $\Sch$ be a \lang\ schema of square matrices and $\Gamma$ a relational vocabulary of relational symbols of arity at most $2$. We can then show the equivalence of \langprod and WL as follows. 
 \begin{proposition} \label{prop:wl}

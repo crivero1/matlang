@@ -1,44 +1,46 @@
 % !TeX spellcheck = en_US
-%!TEX root = ../main.tex
+%!TEX root = ../../main.tex
 
+\cristian{TODO: Review this proof.}
 \begin{proof}
-We start from a matrix schema $\Sch=(\Mnam,\size)$, where $\Mnam\subset \Mvar$ is a finite set of matrix variables, 
-and $\size: \Mvar \mapsto \DD\times \DD$ is a function that maps each matrix variable to a pair of size symbols. 
-On the relational side we have for each size symbol $\alpha\in\DD\setminus\{1\}$, attributes $\alpha$, $\row_\alpha$, 
-and $\col_\alpha$ in $\att$. We also reserve some special attributes $\gamma_1,\gamma_2,\ldots$ whose role will become clear shortly.
-For each $V\in\Mnam$ and $\alpha \in \DD$ we denote
-by $R_V$ and $R_\alpha$ its corresponding relation name, respectively. 
-
-Then, given $\Sch$ we define the relational 
-schema $\text{Rel}(\Sch)$ such that $\fdom(\text{Rel}(\Sch)) =  \{R_\alpha \mid \alpha\in\DD\} \cup \{R_V \mid V \in \Mnam\}$
-
-where $\text{Rel}(\Sch)(R_\alpha) = \{\alpha\}$ and for all $V\in\Mnam$:
-\[
-\text{Rel}(\Sch)(R_V) = \begin{cases}
-\lbrace\row_\alpha,\col_\beta \rbrace & \text{ if $ \size(V)=(\alpha,\beta)$} \\
-\lbrace\row_\alpha \rbrace & \text{ if $ \size(V)=(\alpha,1)$} \\
-\lbrace\col_\beta \rbrace  &
-\text{ if $ \size(V)=(1,\beta)$} \\
-\lbrace\rbrace & \text{ if $\size(V)=(1,1)$}.
-\end{cases}
-\]
-
-Next, for a matrix instance $\I = (\dom,\conc)$ over $\Sch$,
-let $V\in\Mnam$ with $\size(V)=(\alpha,\beta)$ and let $\conc(V)$ be its corresponding $K$-matrix of dimension $\dom(\alpha)\times \dom(\beta)$.
-The $K$-instance in $\mathsf{RA}_{K}^+$ according to $\I$ is $\text{Rel}(\I)$ with data domain $\ddom = \mathbb{N} \setminus \{0\}$. For each $V\in\Mnam$ we define 
-$R_V^{\text{Rel}(\I)}(t):=\conc(V)_{ij}$ whenever $t(\row_\alpha) = i \leq \dom(\alpha)$ and $t(\col_\beta) = j \leq \dom(\beta)$, and $\kzero$ otherwise. 
-Also, for each $\alpha \in \DD$ we define $R_\alpha^{\text{Rel}(\I)}(t):=\kone$ whenever $t(\alpha) \leq \dom(\alpha)$, and $\kzero$ otherwise.
-If $\size(V)=(\alpha,1)$ then $R_V^{\text{Rel}(\I)}(t):=\conc(V)_{i1}$ whenever $t(\row_\alpha) = i \leq \dom(\alpha)$ and $\kzero$ otherwise.
-Similarly, if $\size(V)=(1,\beta)$ then $R_V^{\text{Rel}(\I)}(t):=\conc(V)_{1j}$ whenever $t(\col_\beta) = j \leq \dom(\beta)$ and $\kzero$ otherwise.
-If $\size(V)=(1,1)$ then $R_V^{\text{Rel}(\I)}(()):=\conc(V)_{11}$.
-
-
+The proof of the proposition is by induction on the structure of expressions.
+%
+%We start from a matrix schema $\Sch=(\Mnam,\size)$, where $\Mnam\subset \Mvar$ is a finite set of matrix variables, 
+%and $\size: \Mvar \mapsto \DD\times \DD$ is a function that maps each matrix variable to a pair of size symbols. 
+%On the relational side we have for each size symbol $\alpha\in\DD\setminus\{1\}$, attributes $\alpha$, $\row_\alpha$, 
+%and $\col_\alpha$ in $\att$. We also reserve some special attributes $\gamma_1,\gamma_2,\ldots$ whose role will become clear shortly.
+%For each $V\in\Mnam$ and $\alpha \in \DD$ we denote
+%by $R_V$ and $R_\alpha$ its corresponding relation name, respectively. 
+%
+%Then, given $\Sch$ we define the relational 
+%schema $\text{Rel}(\Sch)$ such that $\fdom(\text{Rel}(\Sch)) =  \{R_\alpha \mid \alpha\in\DD\} \cup \{R_V \mid V \in \Mnam\}$
+%where $\text{Rel}(\Sch)(R_\alpha) = \{\alpha\}$ and for all $V\in\Mnam$:
+%\[
+%\text{Rel}(\Sch)(R_V) = \begin{cases}
+%\lbrace\row_\alpha,\col_\beta \rbrace & \text{ if $ \size(V)=(\alpha,\beta)$} \\
+%\lbrace\row_\alpha \rbrace & \text{ if $ \size(V)=(\alpha,1)$} \\
+%\lbrace\col_\beta \rbrace  &
+%\text{ if $ \size(V)=(1,\beta)$} \\
+%\lbrace\rbrace & \text{ if $\size(V)=(1,1)$}.
+%\end{cases}
+%\]
+%
+%Next, for a matrix instance $\I = (\dom,\conc)$ over $\Sch$,
+%let $V\in\Mnam$ with $\size(V)=(\alpha,\beta)$ and let $\conc(V)$ be its corresponding $K$-matrix of dimension $\dom(\alpha)\times \dom(\beta)$.
+%The $K$-instance in $\mathsf{RA}_{K}^+$ according to $\I$ is $\text{Rel}(\I)$ with data domain $\ddom = \mathbb{N} \setminus \{0\}$. For each $V\in\Mnam$ we define 
+%$R_V^{\text{Rel}(\I)}(t):=\conc(V)_{ij}$ whenever $t(\row_\alpha) = i \leq \dom(\alpha)$ and $t(\col_\beta) = j \leq \dom(\beta)$, and $\kzero$ otherwise. 
+%Also, for each $\alpha \in \DD$ we define $R_\alpha^{\text{Rel}(\I)}(t):=\kone$ whenever $t(\alpha) \leq \dom(\alpha)$, and $\kzero$ otherwise.
+%If $\size(V)=(\alpha,1)$ then $R_V^{\text{Rel}(\I)}(t):=\conc(V)_{i1}$ whenever $t(\row_\alpha) = i \leq \dom(\alpha)$ and $\kzero$ otherwise.
+%Similarly, if $\size(V)=(1,\beta)$ then $R_V^{\text{Rel}(\I)}(t):=\conc(V)_{1j}$ whenever $t(\col_\beta) = j \leq \dom(\beta)$ and $\kzero$ otherwise.
+%If $\size(V)=(1,1)$ then $R_V^{\text{Rel}(\I)}(()):=\conc(V)_{11}$.
+%
+%
 Let $e$ be a \langsum expression. In the following we need to distinguish between matrix variables $v$
 that occur in $e$ as part of a sub-expression $\ssum v. (\cdot)$, i.e., those variables that will be used to iterate over by means of canonical vectors, and those that are not. To make this distinction clear, we use $v_1,v_2,\ldots$ for those ``iterator'' variables, and capital $V$ for the other variables occurring in $e$. For simplicity, we assume that each occurrence of $\ssum$ has its own iterator variable associated with it. 
 
-We define free (iterator) variables, as follows.
+We define free (iterator) variables, as follows:
 $\mathsf{free}(V):=\emptyset$, $\mathsf{free}(v):=\{v\}$, $\mathsf{free}(e^T):=\mathsf{free}(e)$, $\mathsf{free}(e_1+e_2):=\mathsf{free}(e_1)\cup \mathsf{free}(e_2)$, $\mathsf{free}(e_1\cdot e_2):=\mathsf{free}(e_1)\cup \mathsf{free}(e_2)$,
- $\mathsf{free}(f_\odot(e_1,\ldots,e_k)):=\mathsf{free}(e_1)\cup\cdots \cup \mathsf{free}(e_k)$, and $\mathsf{free}(e=\ssum V. e_1)=\mathsf{free}(e_1)\setminus\{v\}$. We will explicitly denote the free variables in an expression $e$ by writing $e(v_1,\ldots,v_k)$.
+ $\mathsf{free}(f_\odot(e_1,\ldots,e_k)):=\mathsf{free}(e_1)\cup\cdots \cup \mathsf{free}(e_k)$, and $\mathsf{free}(\ssum v. e_1)=\mathsf{free}(e_1)\setminus\{v\}$. We will explicitly denote the free variables in an expression $e$ by writing $e(v_1,\ldots,v_k)$.
 
 We now use the following induction hypotheses:
 \begin{itemize}

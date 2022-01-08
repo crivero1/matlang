@@ -1,6 +1,7 @@
 % !TeX spellcheck = en_US
-%!TEX root = ../main.tex
-
+%!TEX root = ../../main.tex
+\cristian{TODO: review this proof.}
+\begin{proof}	
 Let $\cR$ be binary relational schema. For each $R\in \cR$ we associate a matrix variable 
 $V_R$ such that, if $R$ is a binary relational signature, then $V_R$ represents a (square) matrix, 
 if $R$ is unary, then $V_R$ represents a vector and if $|R|=0$ then $V_R$ represents a constant. Formally, 
@@ -47,8 +48,7 @@ where $t(A_s)=i_s$ for $s=1,\ldots, k$. The proof of this claim follows by induc
 \end{itemize}
 One can check, by induction over the construction, that the inductive hypothesis $(*)$ holds in each case.
 Now we can prove proposition \ref{prop:ara_to_sum}.
-
-\begin{proof}
+	
 As a consequence of the previous discussion above, when $\arae$ is a \rak expression 
 such that $\mathcal{R}(\arae)=\{A_1,A_2\}$ with $A_1<A_2$ then we define
 $$
