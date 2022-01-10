@@ -2,68 +2,52 @@
 
 \cristian{TODO: decide if we keep this section or not.}
 
-One of our main motivations to introduce for-loops is to be able
-to express classical linear algebra algorithms in a natural way. We have seen that \langfor is
+One of our main motivations to introduce for-loops is to be able to express classical linear algebra algorithms in a natural way. We have seen that \langfor is
 quite expressive as it can check for cliques, compute the transitive closure, and can even
 leverage a successor relation on canonical vectors. The big question is how expressive \langfor
-actually is. We will answer this in the next section by connecting \langfor with 
-arithmetic circuits of polynomial degree. Through this connection, one can move back and forth between \langfor and arithmetic circuits, and as a consequence, anything computable by such a circuit can be
-computed by \langfor as well. When it comes to specific linear algebra algorithms, the detour via circuits
-can often be avoided. Indeed, in this section we illustrate that \langfor is able to
+actually is. We will answer this question more formally in Section \ref{sec:circuits}, where we compare \langfor with 
+arithmetic circuits of polynomial degree.
+%We will answer this in the next section by connecting \langfor with 
+%arithmetic circuits of polynomial degree. Through this connection, one can move back and forth between \langfor and arithmetic circuits, and as a consequence, anything computable by such a circuit can be
+%computed by \langfor as well. When it comes to specific linear algebra algorithms, the detour via circuits
+%can often be avoided. 
+Before doing so, in this section we will illustrate that \langfor is capable of expressing many classical linear algebra algorithms in a natural way. More precisely, we start by showing how  \langfor is able to
 compute LU decompositions of matrices. These decompositions form the basis of many other algorithms, such as solving linear systems of equations. We further show that \langfor is expressive enough to compute matrix inversion and the determinant. We recall that matrix inversion and determinant need to be explicitly added as separate operators in \lang~\cite{matlang-journal} and that the LARA language is unable to invert matrices under usual complexity-theoretic assumptions~\cite{BarceloH0S20}.
 
-\subsection{Function Application Simplifications}\label{sec:queries:simp}
-
-When showing results based on induction of expressions in \langfor, it is often convenient to assume that function applications $f(e_1,\ldots,e_k)$ for $f\in\Fun_k$ are restricted to
-the case when all expressions $e_1,\ldots,e_k$ have type $1\times 1$. This does not loose generality. Indeed,
-for general function applications $f(e_1,\ldots,e_k)$, if we have $\ssum$, scalar product and function application on scalars (here denoted by $f_{1\times 1}$), we can simulate full function application, as follows:
- $$
-f(e_1,\ldots, e_k) :=\Sigma v_i \Sigma v_j. f_{1\times 1}(v_i^T\cdot e_1\cdot v_j, \ldots ,v_i^T\cdot e_k\cdot v_j) \times v_i\cdot v_j^T.
-$$
-
-Furthermore, it also convenient at times to use the pointwise functions
-$f_\odot^k:\RR^k\mapsto \RR:(x_1,\ldots,x_k)\mapsto x_1\times\cdots \cdot x_k$ and 
-$f_\oplus^k:\RR^k\mapsto \RR:(x_1,\ldots,x_k)\mapsto x_1+\cdots + x_k$. In fact, it is readily observed that adding these functions does not extend the expressive power of \langfor:
-\begin{lemma}
-\label{lm-prod-sum}
-We have that $\langforf{\emptyset} \equiv \langforf{\{f_\odot^k,f_\oplus^k \ | \ k\in \mathbf{N}\}}$.
-\end{lemma}
-In fact, this lemma also holds for the smaller fragments we consider.
-%
-We also observe that having $f_\odot^2:\RR^2\to\RR$ allows us to define scalar multiplication:
-$$
-e_1\times e_2 :=f_{\kprod}(\ones(e_2)^T\cdot e_1 \cdot \ones(e_2)^T, e_2).
-$$
-Conversely, $f_\odot^k$ can be expressed using scalar multiplication, as can be seen from our simulation of general function applications by pointwise function application on scalars.
-
-Finally, a notational simplification is that, when using scalars $a\in\RR$ in our expressions, we write sometimes
-$a$ instead of $[a]$. For example,  $(1-e_{\ones}(v)^T\cdot v)$ stands for  $([1]-e_{\ones}(v)^T\cdot v)$.
 
 \subsection{LU decomposition}
 A lower-upper (LU) decomposition factors a matrix $A$ as the product of a lower triangular matrix $L$ and upper triangular matrix $U$.  
 This decomposition, and more generally LU decomposition with row pivoting (PLU),  underlies many linear algebra algorithms and 
 we next show that \langfor can compute these decompositions.
 
-\smallskip
-\noindent
-\textbf{LU decomposition by Gaussian elimination.} LU decomposition can be seen as a matrix form of Gaussian elimination in which the columns of $A$
+%\smallskip
+%\noindent
+%\textbf{LU decomposition by Gaussian elimination.} 
+LU decomposition can be seen as a matrix form of Gaussian elimination in which the columns of $A$
 are reduced, one by one, to obtain the matrix $U$. The reduction of columns of $A$ is achieved
 as follows. Consider the first column $[A_{11},\ldots,A_{n1}]^T$ of $A$ and  define 
 $c_1 := [0, \alpha_{21},\ldots, \alpha_{n1}]^T$ 
 with $\alpha_{j1} := -\frac{A_{j1}}{A_{11}}$. Let $T_1:=I+ c_1\cdot b_1^T$ and consider
 $T_1\cdot A$. That is, the $j$th row of $T_1\cdot A$ is obtained by multiplying the first row of $A$ by $\alpha_{j1}$ and adding it to the $j$th row of $A$. As a result, the first column of $T_1\cdot A$ is equal to $[A_{11},0,\ldots,0]^T$, i.e., 
-all of its entries below the diagonal are zero.  One then iteratively performs a similar computation, using a matrix $T_i:=I+c_i\cdot b_i^T$, where $c_i$ now depends on the $i$th column in $T_{i-1}\cdots T_1\cdot A$. As a consequence, $T_i\cdot T_{i-1}\cdots T_1\cdot A$ is upper triangular
+all of its entries below the diagonal are zero.  One then iteratively performs a similar computation, using the matrix $T_i:=I+c_i\cdot b_i^T$, where $c_i$ now depends on the $i$th column in $T_{i-1}\cdots T_1\cdot A$. As a consequence, $T_i\cdot T_{i-1}\cdots T_1\cdot A$ is upper triangular
 in its first $i$ columns. At the end of this process, $T_n\cdots T_1\cdot A=U$ where $U$ is the desired upper triangular matrix.
 Furthermore, it is easily verified that each $T_i$ is invertible and by defining $L:=T_1^{-1}\cdot\cdots\cdot T_n^{-1}$ one obtains a lower triangular matrix satisfying $A=L\cdot U$. The above procedure is only successful when the denominators used in the definition of the vectors $c_i$ are non-zero. When this is the case we call a matrix $A$ \textit{LU-factorizable}. 
 
 In case when such a denominator is zero in one of the reduction steps, one can remedy this situation by \textit{row pivoting}. That is, when the $i$th entry of the
 $i$th row in $T_{i-1}\cdots T_1\cdot A$ is zero, one replaces the $i$th row by  $j$th row in this matrix, with $j>i$, provided that the $i$th entry of the $j$th row is non-zero. If no such row exists, this implies that all elements below the diagonal are zero already in column $i$ and one can proceed with the next column. One can formulate this in matrix terms by stating that there exists a permutation matrix $P$, which pivots rows, such that $P\cdot A=L\cdot U$. Any matrix $A$ is LU-factorizable \textit{with pivoting}.
 
-\smallskip
-\noindent
-\textbf{Implementing LU decomposition in \langfor.} 
-We first assume that the input matrices are LU-factorizable. We deal with general matrices later on.
-To implement the above procedure, we need to compute the vector $c_i$ for each column $i$. We do this in two steps. First, we extract from our input matrix its $i$th column and set all its upper diagonal entries to zero
+%\smallskip
+%\noindent
+%\textbf{Implementing LU decomposition in \langfor.} 
+To implement the described procedure in \langfor, we first assume that the input matrices are LU-factorizable, and  deal with general matrices later on. The following result tells us how to do this in $\langforf{f_/}$; that is, in \langfor extended with the function  $f_/:\RR^2\to\RR$, which is defined by $f_/(x,y)=x/y$, for $y\neq 0$, and $f_/(x,y) = 0$, otherwise. %, given by $f_/(x,y) := x/y$, where we define division by zero to be equal zero.
+
+\begin{proposition}\label{prop:gauss}
+There exist $\langforf{f_/}$ expressions $e_L(V)$ and $e_U(V)$ such that
+$\sem{e_L}{\I}=L$ and $\sem{e_U}{\I}=U$ form an LU-decomposition of $A$,
+where $\conc(V)=A$ and $A$ is LU-factorizable.
+\end{proposition}
+\begin{proof}
+Assume $A$ to be an LU-factorizable matrix. To compute LU factorization of a matrix as described above, we need to compute the vector $c_i$ for each column $i$. We do this in two steps. First, we extract from our input matrix its $i$th column and set all its upper diagonal entries to zero
 by means of 
  the 
  expression:
@@ -72,7 +56,15 @@ Indeed, when $V$ is assigned to a matrix $A$ and $y$ to $b_i$, we have that $X$ 
 $A_0=\mathbf{0}$ and in consecutive iterations,  $A_j=A_{j-1}+ b_j^T\cdot A\cdot b_i$ if $j>i$ (because $\mathsf{succ}^+(b_i,b_j)=1$ if $j>i$) and $A_j=A_{j-1}$ otherwise (because $\mathsf{succ}^+(b_i,b_j)=0$ for $j\leq i$). The result of this evaluation is the desired column vector.
 Using $\ccol{V}{y}$, we can now compute $T_i$ by the following expression:
 $$\red{V}{y} := e_{\mathsf{Id}}+ f_/(\ccol{V}{y},-(y^T\cdot V\cdot y)\cdot \ones(y))\cdot y^T,$$
-where $f_/:\RR^2\to\RR:(x,y)\mapsto x/y$ is the division function\footnote{We set division by zero to zero.}. 
+where $f_/:\RR^2\to\RR$ is the division function defined by
+%$$
+%f_/(x,y) := 
+%\begin{cases}
+%x/y, \text{ if } y\neq 0 \\
+%0, \text{ otherwise}
+%\end{cases}.
+%$$  
+$f_/(x,y)=x/y$, if $y\neq 0$, and $f_/(x,y)=0$, otherwise. 
 When $V$ is assigned to $A$ and $y$ to $b_i$, $f_/(\ccol{A}{b_i},-(b_i^T\cdot A\cdot b_i)\cdot \ones(b_i))$ is equal to the vector $c_i$ used in the definition of $T_i$. To perform the reduction steps for all columns, we consider
 the expression:
 $$
@@ -80,19 +72,38 @@ e_{U}(V) :=  \left( \initf{e_{\mathsf{Id}}}{y}{X}{\red{X\cdot V}{y}\cdot X} \rig
 $$
 That is, when $V$ is assigned $A$, $X$ will be initially $A_0=e_{\mathsf{Id}}$, and then
 $A_i=\red{A_{i-1}\cdot A}{b_i}=T_i\cdot T_{i-1}\cdots T_1\cdot A$, as desired.
-One can show, see~\cite{geerts2020expressive} for details, that because we can obtain the matrices $T_i$ in \langfor and that these
-are easily invertible, we can also construct an expression $e_L(V)$ which evaluates to $L$ when $V$ is assigned to
-$A$. We may thus conclude the following.
-\begin{proposition}\label{prop:gauss}
-There exists $\langforf{f_/}$ expressions $e_L(V)$ and $e_U(V)$ such that
-$\sem{e_L}{\I}=L$ and $\sem{e_U}{\I}=U$ form an LU-decomposition of $A$,
-where $\conc(V)=A$ and $A$ is LU-factorizable.
-\end{proposition}
 
-\input{./sections/proofs/gauss.tex}
+In order to construct $e_L(V)$, we will use the fact that $e_U(A)=T_n\cdot\cdots\cdot T_1\cdot A$ with $L^{-1}=T_n\cdot\cdots\cdot T_1$, and that each $T_i$ can easily be inverted. For this, let
+    $$
+    e_{L^{-1}}(V) :=  \initf{e_{\mathsf{Id}}}{y}{X}{\red{X\cdot V}{y}\cdot X}.
+    $$
+    such that	$$
+        e_{\mathsf{U}}(V) :=  e_{L^{-1}}(V) \cdot V.
+        $$
 
-We remark that the proposition holds when division is added as a function in $\Fun$
-in \langfor.
+    It now suffices to observe that, since $T_n=I$,
+    \begin{align*}
+    L^{-1}&=(I-c_1\cdot b_1^T)\cdots (I-c_{n-1}\cdot  b_{n-1}^T) \\
+    &=I-c_1\cdot b_1^T-\cdots - c_{n-1}\cdot b_{n-1}^T.
+    \end{align*}
+    
+	Therefore,    
+    
+    \begin{align*}
+    L&=(I+c_1\cdot b_1^T)\cdots (I+c_{n-1}\cdot b_{n-1}^T) \\
+    &=I+c_1\cdot b_1^T+\cdots + c_{n-1}\cdot b_{n-1}^T.
+    \end{align*}
+    As a consequence, to obtain $L$ from $L^{-1}$ we just need to multiply every entry below the diagonal by $-1$. Since both  $L$ and $L^{-1}$ are lower triangular, this can done 
+    by computing $L=-1\times L^{-1} + 2\times I$. Translated into \langfor, this means that we can define
+    $$
+    e_{L}(V) :=  -1\times e_{L^{-1}}(V) + 2\times e_{\mathsf{Id}},
+    $$
+    which concludes the proof of the proposition.    
+\end{proof}
+
+
+%We remark that the proposition holds when division is added as a function in $\Fun$
+%in \langfor.
 
 \smallskip
 
@@ -100,6 +111,9 @@ When row pivoting is needed, we can also obtain a permutation matrix
 $P$ such that $P\cdot A=L\cdot U$ holds by means of an expression in \langfor, provided
 that we additionally allow the function $f_{>0}$, 
 where $f_{>0}:\RR\to\RR$ is such that $f_{>0}(x):=1$ if $x>0$ and $f_{>0}(x):=0$ otherwise.
+%Intuitively, by allowing $f_{>0}$, a limited form of \texttt{if-then-else} is introduced in \langfor, which is needed
+%to continue reducing columns only when the right pivot has been found.
+Intuitively, $f_{>0}$ introduces a limited form of \texttt{if-then-else} to \langfor, allowing to continue reducing columns only when the right pivot has been found.
 
 \begin{proposition}\label{prop:palu}
 There exists expressions $e_{L^{-1}P}(M)$ and $e_U(M)$ in $\langforf{f_/,f_{>0}}$  such that
@@ -107,9 +121,6 @@ $L^{-1}\cdot P=\sem{e_{L^{-1}P}}{\I}$ and $U=\sem{e_U}{\I}$, satisfy $L^{-1}\cdo
 \end{proposition}
 
 \input{sections/proofs/palu.tex}
-
-Intuitively, by allowing $f_{>0}$ a limited form of \texttt{if-then-else} is introduced in \langfor, which is needed
-to continue reducing columns only when the right pivot has been found.
 
 
 \subsection{Determinant and inverse}\label{sec:queries:inverse}

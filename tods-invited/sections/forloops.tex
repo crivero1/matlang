@@ -165,7 +165,35 @@ It should be clear that if we can compute $S_{\leq}$ using $e_{\leq}$, then we c
 \end{itemize}
 
 \cristian{Here starts the new material that was before in the appendix.}
+\domagoj{We also use the product operator in what follows. I suggest we should define it here, and then repeat the definition in Section 6. The other option would be to just say in the proof of next how product is defined, or replace it with for. It is also used in some proofs in Section 4, so defining all the fragments here might not be a bad idea.}
 \input{./sections/definitions/order-predicates.tex}
 
 Having order information available results in \langfor to be quite expressive.
 We heavily rely on order information in the next sections to compute the inverse of matrices and more generally to simulate low complexity Turing machines and arithmetic circuits.
+
+\subsection{Function Application Simplifications}\label{sec:queries:simp}
+
+When showing results based on induction of expressions in \langfor, it is often convenient to assume that function applications $f(e_1,\ldots,e_k)$ for $f\in\Fun_k$ are restricted to
+the case when all expressions $e_1,\ldots,e_k$ have type $1\times 1$. This does not loose generality. Indeed,
+for general function applications $f(e_1,\ldots,e_k)$, if we have $\ssum$, scalar product and function application on scalars (here denoted by $f_{1\times 1}$), we can simulate full function application, as follows:
+ $$
+f(e_1,\ldots, e_k) :=\Sigma v_i \Sigma v_j. f_{1\times 1}(v_i^T\cdot e_1\cdot v_j, \ldots ,v_i^T\cdot e_k\cdot v_j) \times v_i\cdot v_j^T.
+$$
+
+Furthermore, it also convenient at times to use the pointwise functions
+$f_\odot^k:\RR^k\mapsto \RR:(x_1,\ldots,x_k)\mapsto x_1\times\cdots \cdot x_k$ and 
+$f_\oplus^k:\RR^k\mapsto \RR:(x_1,\ldots,x_k)\mapsto x_1+\cdots + x_k$. In fact, it is readily observed that adding these functions does not extend the expressive power of \langfor:
+\begin{lemma}
+\label{lm-prod-sum}
+We have that $\langforf{\emptyset} \equiv \langforf{\{f_\odot^k,f_\oplus^k \ | \ k\in \mathbf{N}\}}$.
+\end{lemma}
+In fact, this lemma also holds for the smaller fragments we consider.
+%
+We also observe that having $f_\odot^2:\RR^2\to\RR$ allows us to define scalar multiplication:
+$$
+e_1\times e_2 :=f_{\kprod}(\ones(e_2)^T\cdot e_1 \cdot \ones(e_2)^T, e_2).
+$$
+Conversely, $f_\odot^k$ can be expressed using scalar multiplication, as can be seen from our simulation of general function applications by pointwise function application on scalars.
+
+Finally, a notational simplification is that, when using scalars $a\in\RR$ in our expressions, we write sometimes
+$a$ instead of $[a]$. For example,  $(1-e_{\ones}(v)^T\cdot v)$ stands for  $([1]-e_{\ones}(v)^T\cdot v)$.
