@@ -65,7 +65,7 @@ $$
 \!\!\!\text{if $\arae = \arae_1 \bowtie \arae_2$, then} & \ssem{\arae}{\cJ}(t) =  \ssem{\arae_1}{\cJ}(t[Y]) \kprod  \ssem{\arae_2}{\cJ}(t[Z])
 \end{array}
 $$
-where $Y = \cR(\arae_1)$ and $Z = \cR(\arae_2)$. It is important to note that the $\bigksum$-operation in the semantics of $\pi_X(\arae')$ is well-defined given that the support of $\ssem{\arae'}{\cJ}$ is always finite. 
+where $Y = \cR(\arae_1)$ and $Z = \cR(\arae_2)$. We note that the $\bigksum$-operation in the semantics of $\pi_X(\arae')$ is well-defined given that the support of $\ssem{\arae'}{\cJ}$ is always finite. 
 
 We are now ready for comparing \langsum with $\mathsf{RA}_{K}^+$. For a fair comparison, we need to extend \langsum from $\RR$ to any semiring. Let $\mtr{K}$ denote the set of all $K$-matrices. 
 Similarly as for \lang\ over $\RR$, given a \lang\ schema $\Sch$, a $K$-instance $\I$ over $\Sch$ is a pair $\I = (\dom,\conc)$, where $\dom : \DD \mapsto \NN$ assigns a value to each size symbol, and $\conc : \Mnam \mapsto \mtr{K}$ assigns a concrete $K$-matrix to each matrix variable. Then it is straightforward to extend the semantics of \lang, \langfor, and \langsum from $(\RR, +, \times, 0, 1)$ to $(K, \ksum, \kprod, \kzero, \kone)$ by switching $+$ with $\ksum$ and $\times$ with $\kprod$. 
@@ -91,28 +91,27 @@ This is where $R_\alpha^{\text{Rel}(\I)}$ and $R_\beta^{\text{Rel}(\I)}$ are use
 We are now ready to state the first connection between \langsum and $\mathsf{RA}_{K}^+$  by using the previous encoding. 
 \begin{proposition}\label{prop:sum_to_ara} 
 	For each \langsum expression $e$ over schema $\Sch$ such that $\Sch(e)=(\alpha,\beta)$ with $\alpha\neq 1\neq\beta$, there exists an $\mathsf{RA}_{K}^+$  expression $\Phi(e)$ over relational schema $\text{Rel}(\Sch)$ such that $\text{Rel}(\Sch)(\Phi(e))=\{\row_\alpha,\row_\beta\}$ and 
-	such that for any instance $\I$ over~$\Sch$,
+	such that, for any instance $\I$ over~$\Sch$,
 	$$
 	\sem{e}{\I}_{i,j}=\ssem{\Phi(e)}{\text{Rel}(\I)}(t)
 	$$
-	for tuple $t(\mathrm{row}_\alpha)=i$ and $t(\mathrm{col}_\beta)=j$. Similarly for when $e$ has schema $\Sch(e)=(\alpha,1)$, $\Sch(e)=(1,\beta)$ or $\Sch(e)=(1,1)$, then $\Phi(e)$ has schema $\text{Rel}(\Sch)(\Phi(e))=\{\mathrm{row}_\alpha\}$,
+	for tuple $t(\mathrm{row}_\alpha)=i$ and $t(\mathrm{col}_\beta)=j$. Similarly for $e$ when $e$ has schema $\Sch(e)=(\alpha,1)$, $\Sch(e)=(1,\beta)$ or $\Sch(e)=(1,1)$, then $\Phi(e)$ has schema $\text{Rel}(\Sch)(\Phi(e))=\{\mathrm{row}_\alpha\}$,
 	$\text{Rel}(\Sch)(\Phi(e))=\{\mathrm{col}_\alpha\}$, or
 	$\text{Rel}(\Sch)(\Phi(e))=\{\}$, respectively.
 \end{proposition}
 
 \input{sections/proofs/sum-to-ara.tex}
 
-We now move to the other direction.
+Now we move to the other direction.
 To translate $\mathsf{RA}_{K}^+$  into \langsum, we must restrict our comparison to $\mathsf{RA}_{K}^+$  over $K$-relations with at most two attributes. Given that linear algebra works over vector and matrices, it is reasonable to restrict to unary or binary relations as input. Note that this is only a restriction on the input relations and not on intermediate relations, namely, expressions can create relation signatures of arbitrary size from the binary input relations. 
-Thus, from now we say that a relational schema $\cR$ is binary if $|R| \leq 2$ for every $R \in \cR$. We also make the assumption that there is an (arbitrary) order, denoted by $<$, on the attributes in $\att$. 
+Thus, from now we say that a relational schema $\cR$ is binary if $|R| \leq 2$ for every $R \in \cR$. We also make the assumption that there is an arbitrary order, denoted by $<$, on the attributes in $\att$. 
 This is to identify which attributes correspond to rows and columns when moving to matrices. 
-Then, given that relations will be  either unary or binary and there is an order on the attributes, we write $t = (v)$ or $t = (u,v)$ to denote a tuple over a unary or binary relation $R$, respectively, where $u$ and $v$ is the value of the first and second attribute with respect to $<$.
+Then, given that relations will be  either unary or binary and there is an order on the attributes, we write $t = (d_1)$ or $t = (d_1,d_2)$ to denote a tuple over a unary or binary relation $R$, respectively, where $d_1$ and $d_2$ is the value of the first and second attribute with respect to $<$.
 
 Consider a binary relational schema $\cR$. With each $R\in \cR$ we associate a matrix variable $V_R$ such that, if $R$ is a binary relational signature, then $V_R$ represents a (square) matrix, and, if not (i.e. $R$ is unary), then $V_R$ represents a vector. Formally, fix a symbol $\alpha \in \DD \setminus \{1\}$. Let $\text{Mat}(\cR)$ denote the \lang \ schema
 $(\Mnam_\cR,\size_\cR)$ such that $\Mnam_\cR = \{ V_R \mid R \in \cR\}$ and $\size_\cR(V_R) = (\alpha, \alpha)$ whenever $|R| = 2$, and $\size_\cR(V_R) = (\alpha, 1)$ whenever $|R|=1$. 
-Take now a $K$-instance $\cJ$ of $\cR$ and suppose that $\adom(\cJ) = \{d_1, \ldots, d_n\}$ is the active domain of $\cJ$ (the order over $\adom(\cJ)$ is arbitrary). Then we define the matrix instance $\text{Mat}(\cJ) = (\dom_\cJ,\conc_\cJ)$ such that $\dom_\cJ(\alpha) = n$, $\conc_\cJ(V_R)_{i,j} = R^{\cJ}((d_i, d_j))$ whenever $|R|=2$, and $\conc_\cJ(V_R)_{i} = R^{\cJ}((d_i))$ whenever $|R|=1$. 
-Note that, although each $K$-relation can have a different active domain, we encode them as square matrices by considering the active domain of the $K$-instance. By again using an inductive proof on the structure of 
-$\mathsf{RA}_{K}^+$ expressions, we obtain the following result.
+Take now a $K$-instance $\cJ$ of $\cR$ and suppose that $\adom(\cJ) = \{d_1, \ldots, d_n\}$ is the active domain of $\cJ$ (the order $d_1, \ldots, d_n$ over $\adom(\cJ)$ is arbitrary). Then we define the matrix instance $\text{Mat}(\cJ) = (\dom_\cJ,\conc_\cJ)$ such that $\dom_\cJ(\alpha) = n$, $\conc_\cJ(V_R)_{i,j} = R^{\cJ}((d_i, d_j))$ whenever $|R|=2$,  $\conc_\cJ(V_R)_{i} = R^{\cJ}((d_i))$ whenever $|R|=1$, and $\conc_\cJ(V_R)_{1,1} = R^{\cJ}$ whenever $|R|=0$. 
+Note that, although each $K$-relation can have a different active domain, we encode them as square matrices by considering the active domain of the $K$-instance. %By again using an inductive proof on the structure of $\mathsf{RA}_{K}^+$ expressions, we obtain the following result.
 \begin{proposition}\label{prop:ara_to_sum} 
 	Let $\cR$ be a binary relational schema. For each $\mathsf{RA}_{K}^+$  expression $\arae$ over $\cR$  such that $|\cR(\arae)| = 2$, there exists a \langsum  expression $\Psi(\arae)$ over \lang \ schema $\text{Mat}(\cR)$ such that for any $K$-instance $\cJ$ with $\adom(\cJ) = \{d_1, \ldots, d_n\}$ over $\cR$,
 	$$
@@ -126,7 +125,7 @@ $\mathsf{RA}_{K}^+$ expressions, we obtain the following result.
 It is important to remark that the expression $\arae$ of the previous result can have intermediate expressions that are not necessarily binary, given that the proposition only restricts that the input relation and the schema of $\arae$ must have arity at most two. We recall from~\cite{brijder2019matrices} that \lang\ corresponds to $\mathsf{RA}_{K}^+$ where intermediate expressions are at most ternary, and this underlies, e.g., the inability of \lang\ to check for $4$-cliques. In \langsum, we can deal with intermediate relations of arbitrary arity. In fact, each new attribute can be seen to correspond to an application of the $\Sigma$ operator. For example, in the $4$-clique expression, four $\Sigma$ operators are needed, in analogy to how
 $4$-clique is expressed in $\mathsf{RA}_{K}^+$.
 
-Given the previous two propositions we derive the following conclusion which is the first characterization of relational algebra with a (sub)-fragment of linear algebra.
+Given the previous two propositions, we derive the following conclusion which is the first characterization of relational algebra with a (sub)-fragment of linear algebra.
 \begin{corollary}
 	\langsum and $\mathsf{RA}_{K}^+$  over binary relational schemas are equally expressive. 
 \end{corollary}
