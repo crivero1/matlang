@@ -12,7 +12,6 @@ $$\Sigma v. e := \ffor{v}{X}{X + e}.$$
 Here, $e=e(v)$. We define the subfragment of \langfor, called \langsum, to consist of the $\Sigma$ operator plus the ``core'' operators in \lang, namely, transposition, matrix multiplication and addition, scalar multiplication, and pointwise function applications.
 
 One property of \langsum is that it only allows expressions of polynomial degree. Indeed, one can easily show that \langsum can only create matrix entries that are polynomial in the dimension $n$ of the expression. More precisely, we can show the following:
-\cristian{Check if this is used. Otherwise, just say it without proposition.}
 \begin{proposition}\label{prop:poly}
 Every expression in \langsum is of polynomial degree.
 \end{proposition}
@@ -145,7 +144,7 @@ $$
 \qhadprod v. \  e := \ffor{v}{X\!=\!e_{\kone}}{X \circ e}.
 $$
 where $e_\kone$ is the \langfor expression for the matrix with the same type as $X$ and all entries equal to the $\kone$-element of $K$ (i.e., we need to initialize $X$ accordingly with the $\kprod$-operator).
-We call \langprod  the subfragment of \langfor that consists of \langsum \ extended with $\qhadprod v$.
+We call \langprod  (for ``sum-product \lang''`) the subfragment of \langfor that consists of \langsum \ extended with $\qhadprod v$.
 
 \begin{example}
 	Similar to the trace of a matrix, a useful function in linear algebra is to compute the product of the values on the diagonal. 
@@ -191,30 +190,28 @@ $$
 $$
 When $\varphi$ contains no free variables, we omit $\sigma$ and write $\ssem{\varphi}{\cA}$ instead of $\ssem{\varphi}{\cA}(\sigma)$.
 
-For comparing the expressive power of \langprod with WL, we have to show how to encode \lang\ instances into structures and vice versa. For this, we make two assumptions to put both languages at the same level: (1) we restrict structures to relation symbols of arity at most two and (2) we restrict instances to square matrices. The first assumption is for the same reasons as when comparing \langsum with $\mathsf{RA}_K^+$, and the second assumption is to have a crisp translation between both languages. Indeed, understanding the relation of \langprod with WL for non-square matrices is slightly more complicated and we leave this for future work. 
+For comparing the expressive power of \langprod with WL, we have to show how to encode \lang\ instances into structures and vice versa. For this, we make two assumptions to align both formalisms: (1) we restrict structures to relation symbols of arity at most two and (2) we restrict instances to square matrices. The first assumption is for the same reasons as when comparing \langsum with $\mathsf{RA}_K^+$, and the second assumption is to have a crisp translation between both languages. Indeed, understanding the relation of \langprod with WL for non-square matrices is slightly more complicated and we leave this for future work. 
 
 Let $\Sch=(\Mnam,\size)$ be a schema of square matrices, that is, there exists an $\alpha$ such that $\size(V) \in \{1, \alpha\} \times \{1,\alpha\}$ for every $V \in \Mnam$.
 Define the relational vocabulary $\text{WL}(\Sch) = \{R_V \mid V \in \Mnam\}$ such that $\arity(R_V) = 2$ if $\size(V) = (\alpha, \alpha)$, $\arity(R_V) = 1$ if $\size(V) \in \{(\alpha,1), (1,\alpha)\}$, and $\arity(R_V) = 0$ otherwise.
-Then given a matrix instance $\I = (\dom,\conc)$ over $\Sch$ define the structure $\text{WL}(\I) = (\{1, \ldots, n\}, \{R_V^{\I}\} )$ such that $\dom(\alpha) = n$ and $R_V^{\I}(i, j) = \conc(V)_{i,j}$ if $\size(V) = (\alpha, \alpha)$, $R_V^{\I}(i) = \conc(V)_{i}$ if $\size(V) \in \{(\alpha,1), (1,\alpha)\}$, and $R_V^{\I} = \conc(V)$ if $\size(V) = (1,1)$.
+Then given a matrix instance $\I = (\dom,\conc)$ over $\Sch$ define the structure $\text{WL}(\I) = (\{1, \ldots, n\}, \{R_V^{\I}\}_{V \in \Mnam} )$ such that $\dom(\alpha) = n$ and $R_V^{\I}(i, j) = \conc(V)_{i,j}$ if $\size(V) = (\alpha, \alpha)$, $R_V^{\I}(i) = \conc(V)_{i}$ if $\size(V) \in \{(\alpha,1), (1,\alpha)\}$, and $R_V^{\I} = \conc(V)$ if $\size(V) = (1,1)$.
 
 To encode weighted structures into matrices and vectors, the story is similar as for $\mathsf{RA}_K^+$. Let $\Gamma$ be a relational vocabulary where $\arity(R) \leq 2$. 
 Define $\text{Mat}(\Gamma) = (\Mnam_\Gamma,\size_\Gamma)$ such that $\Mnam_\Gamma = \{ V_{R} \mid R \in \Gamma\}$ and $\size_\Gamma(V_{R})$ is equal to $(\alpha, \alpha), (\alpha, 1)$, or $(1,1)$ if $\arity(R)=2$, $\arity(R)=1$, or $\arity(R)=0$, respectively, for some $\alpha \in \DD$. Similarly, let $\cA = (A, \{R^{\cA}\}_{R \in \Gamma})$ be a structure with $A = \{a_1, \ldots, a_n\}$, ordered arbitrarily.
 Then we define the matrix instance $\text{Mat}(\cA) = (\dom,\conc)$ such that $\dom(\alpha) = n$, $\conc(V_{R})_{i,j} = R^{\cA}(a_i, a_j)$ if $\arity(R)=2$, $\conc(V_{R})_{i} = R^{\cA}(a_i)$ if $\arity(R)=1$, and $\conc(V_{R}) = R^{\cA}$ otherwise.
 
-\cristian{TODO: divide this into two proposition.}
-
-Let $\Sch$ be a \lang\ schema of square matrices and $\Gamma$ a relational vocabulary of relational symbols of arity at most $2$. We can then show the equivalence of \langprod and WL as follows. 
+Let $\Sch$ be a \lang\ schema of square matrices and $\Gamma$ a relational vocabulary of relational symbols of arity at most $2$. We can show the equivalence of \langprod and WL as follows. 
 \begin{proposition} \label{prop:wl}
 Weighted logics over $\Gamma$ and \langprod over $\Sch$ have the same expressive power. More specifically,
 \begin{itemize}
-	\item for each \langprod expression $e$ over $\Sch$ such that $\Sch(e)=(1,1)$, there exists a WL-formula $\Phi(e)$ over $\text{WL}(\Sch)$ such that for every instance $\I$ of~$\Sch$, 
-	$
-	\sem{e}{\I} = \ssem{\Phi(e)}{\text{WL}(\I)}
-	$.
-	\item for each WL-formula $\varphi$ over $\Gamma$ without free variables, there exists a \langprod expression $\Psi(\varphi)$ such that for any structure $\cA$ over~$\text{Mat}(\Gamma)$,
-	$
-	\ssem{\varphi}{\cA}=\sem{\Psi(\varphi)}{\text{Mat}(\cA)}
-	$.
+	\item for each \langprod expression $e$ over $\Sch$ such that $\Sch(e)=(1,1)$, there exists a WL-formula $\Phi(e)$ over $\text{WL}(\Sch)$ such that for every instance $\I$ of~$\Sch$:
+	$$
+	\sem{e}{\I} \ = \ \ssem{\Phi(e)}{\text{WL}(\I)}.
+	$$
+	\item for each WL-formula $\varphi$ over $\Gamma$ without free variables, there exists a \langprod expression $\Psi(\varphi)$ such that for any structure $\cA$ over~$\text{Mat}(\Gamma)$:
+	$$
+	\ssem{\varphi}{\cA} \ = \ \sem{\Psi(\varphi)}{\text{Mat}(\cA)}.
+	$$
 \end{itemize}	
 \end{proposition}
 
