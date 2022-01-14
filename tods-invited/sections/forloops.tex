@@ -58,14 +58,14 @@ Indeed, it suffices to consider the expression
 $$e_{\mathsf{diag}}:=
 \ffor{v}{X}{X + (v^T\cdot e) \times v\cdot v^T},$$ where $e$ is a \langfor\  expression of type $(\alpha,1)$. For this expression to be well-typed, $v$ has to be a vector variable of type $\alpha\times 1$ and $X$ a matrix variable of type $(\alpha,\alpha)$. Then, $\sem{e_{\mathsf{diag}}}{\I}$ is defined as follows.
 Initially, $A_0$ is the zero matrix of dimension $n\times n$, where $n=\dom(\alpha)$. Then, in each iteration
-$i\in[1..n]$, $A_{i}:=A_{i-1}+  ((b_i^n)^T\cdot\sem{e}{\I})\times (b_i^n\cdot (b_i^n)^T)$. In other words, $A_i$ is obtained by adding the matrix with value $(\sem{e}{\I})_i$ on position $(i,i)$ to $A_{i-1}$. Hence, $\sem{e_{\mathsf{diag}}}{\I}:=A_n=\sem{\diag(e)}{\I}$.\qed
+$i\in[1..n]$, $A_{i}:=A_{i-1}+  ((b_i^n)^T\cdot\sem{e}{\I})\times (b_i^n\cdot (b_i^n)^T)$. In other words, $A_i$ is obtained by adding the matrix with value $(\sem{e}{\I})_i$ on position $(i,i)$ to $A_{i-1}$. Hence, $\sem{e_{\mathsf{diag}}}{\I}:=A_n=\sem{\diag(e)}{\I}$. When we want to make it explicit that $e_\mathsf{diag}$ is defined based on $e$, we will often write $e_\mathsf{diag}(e)$.\qed
  \end{example}
 
 These examples illustrate that we can limit \langfor to consist of the following ``core'' operators: transposition, matrix multiplication and addition, scalar multiplication, pointwise function application, and for-loops. More specific, \langfor is defined by the following simplified syntax:
 $$
 e ::= V \ \mid \ e^T \!\ \mid \ e_1 \cdot e_2 \ \mid \ e_1 + e_2 \ \mid \ e_1\times e_2  \ \mid \  f(e_1,\ldots ,e_k) \ \mid \ \ffor{v}{X}{e}
 $$
-Similarly as for \lang, we write $\langforf{\Fun}$ for some set $\Fun$ of functions when these are required for the task at hand.
+Similarly as for \lang, we write $\langforf{\Fun}$ for some set $\Fun$ of functions when these are required for the task at hand. Throughout the paper we will write $a$ instead of $[a]$ to denote a scalar $a\in\RR$ in our expressions. For example,  $(1-v^T\cdot v)$ stands for  $([1]-v^T\cdot v)$. %In general, we do not assume access to arbitrary constants, however, natural numbers can easily be constructed in \langfor.
 
 As a final example, we show that we can compute whether a graph contains a 4-$\textsf{clique}$ using \langfor.
 \begin{example}\label{ex:fourcliques}
@@ -111,7 +111,7 @@ to start the iteration given some concrete matrix  originating from the result o
 with the difference that $A_0:=\sem{e_0}{\I}$. We observe, however, that $\initf{e_0}{v}{X}{e}$ can already
 be expressed in \langfor. In other words, we do not loose generality by assuming an initialization of $A_0$ by $\mathbf{0}$.
 The key insight is that in \langfor\ we can check during evaluation whether or not
-the current canonical vector $b_i^n$ is equal to $b_1^n$ using the order predicate $\mmin{v}$, which, when evaluated on an instance, returns $1$ if its input vector is $b_1^n$, and returns $0$ for any other canonical vector\footnote{We explain in detail how $\mmin$, as well as many other operators which access the order of canonical vectors, can be defined in \langfor in the following subsection.}. Given $\mmin$, consider now the
+the current canonical vector $b_i^n$ is equal to $b_1^n$ using the order predicate $\mmin{v}$, which, when evaluated on an instance, returns $1$ if its input vector is $b_1^n$, and returns $0$ for any other canonical vector\footnote{We explain in detail how $\mmin$, as well as many other operators which access the order of canonical vectors, can be defined in \langfor in the following subsection. We also remark that natural numbers, such as 1, or more precisely, the matrix $[1]$, can be defined based on $\mmin$, e.g. by the expression $\ffor{v}{X} X + \mmin{v}\times v^T\cdot v$.}. Given $\mmin$, consider now the
 \langfor\ expression
  $$\ffor{v}{X}{\mmin{v}\cdot e(v,X/e_0) + (1-\mmin{v})\cdot e(v,X)},$$
  where we explicitly list $v$ and $X$ as matrix variables on which $e$ potentially depends on, and where
@@ -288,11 +288,31 @@ We heavily rely on order information in the next sections to compute the inverse
 
 \subsection{Useful shorthands and simplifications}\label{sec:queries:simp}
 
-\domagoj{Define sum and prod here first.}
+\paragraph{Iteration based on sum and product.} When defining $4$-cliques (Example \ref{ex:fourcliques}), the diagonal matrix (Example \ref{ex:diag}), or the ones vector algorithm (Example \ref{ex:onevec}), we 
+ only update $X$ by adding some matrix to it. This restricted form of for-loop will prove useful throughout the paper, and we therefore introduce it as a special operator. That is, we define:
+$$\Sigma v. e := \ffor{v}{X}{X + e}.$$
+Here, $e=e(v)$ is an expression that can depend on the matrix variable $v$. We define the subfragment of \langfor, called \langsum, to consist of the $\Sigma$ operator plus the ``core'' operators in \lang, namely, transposition, matrix multiplication and addition, scalar multiplication, and pointwise function applications. We will study this fragment of \langfor in detail in Section \ref{sec:restrict}.
 
-When showing results based on induction of expressions in \langfor, it is often convenient to assume that function applications $f(e_1,\ldots,e_k)$ for $f\in\Fun_k$ are restricted to
-the case when all expressions $e_1,\ldots,e_k$ have type $1\times 1$. This does not loose generality. Indeed,
-for general function applications $f(e_1,\ldots,e_k)$, if we have $\ssum$, scalar product and function application on scalars (here denoted by $f_{1\times 1}$), we can simulate full function application, as follows:
+Using this new notation, we can now define the ones-vector expression $e_1$ from Example \ref{ex:onevec}, and $e_\mathsf{Id}$ from Example \ref{ex:diag} as follows:
+\begin{align*}
+e_1 &:= \Sigma v. v\\
+e_\mathsf{Id} &:= \Sigma v. (v^T\cdot e)\times v\cdot v^T.
+\end{align*}
+
+\medskip
+
+In a similar way, we can consider an operator in which the for-loops can update the computed matrix only by taking the product with the value of the matrix in the previous iteration. Formally, for an expression $e$ we define the operator:
+$$
+\sprod v.\,  e=\ffor {v}{X = e_{\mathsf{Id}}}{X\cdot e}.
+$$
+where $e_{\mathsf{Id}}$ is the identity matrix and $e=e(v)$ is an expression that can depend on $v$. We call \langmprod the subfragment of \langfor that consists of \langsum extended with $\sprod v$, and study its expressive power in Section \ref{sec:restrict}. Using this operator it is now easy to define the product of the diagonal elements of a square matrix $A$ using the following expression $e$:
+$$
+e := \sprod v. v^T\cdot A \cdot v.
+$$
+
+\paragraph{Simplifying function application.} When showing results based on induction of expressions in \langfor, it is often convenient to assume that function applications $f(e_1,\ldots,e_k)$ for $f\in\Fun_k$ are restricted to
+the case when all expressions $e_1,\ldots,e_k$ have type $1\times 1$. This will not result in any loss of generality. Indeed,
+for general function applications $f(e_1,\ldots,e_k)$, over expressions of arbitrary type, if we have $\ssum$, scalar product and function application on scalars (here denoted by $f_{1\times 1}$), we can simulate full function application, as follows:
  $$
 f(e_1,\ldots, e_k) :=\Sigma v_i \Sigma v_j. f_{1\times 1}(v_i^T\cdot e_1\cdot v_j, \ldots ,v_i^T\cdot e_k\cdot v_j) \times v_i\cdot v_j^T.
 $$
@@ -312,5 +332,4 @@ e_1\times e_2 :=f_{\kprod}(\ones(e_2)^T\cdot e_1 \cdot \ones(e_2)^T, e_2).
 $$
 Conversely, $f_\odot^k$ can be expressed using scalar multiplication, as can be seen from our simulation of general function applications by pointwise function application on scalars.
 
-Finally, a notational simplification is that, when using scalars $a\in\RR$ in our expressions, we write sometimes
-$a$ instead of $[a]$. For example,  $(1-e_{\ones}(v)^T\cdot v)$ stands for  $([1]-e_{\ones}(v)^T\cdot v)$.
+%Finally, another notational simplification we will use is writing $a$ instead of $[a]$ to denote a scalar $a\in\RR$ in our expressions. For example,  $(1-e_{\ones}(v)^T\cdot v)$ stands for  $([1]-e_{\ones}(v)^T\cdot v)$.

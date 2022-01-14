@@ -6,10 +6,16 @@ relational algebra on $K$-relations. We then extend \langsum such that also upda
 
 \subsection{Summation \lang and relational algebra}
 \label{ss:sumML}
-When defining $4$-cliques and in several other expressions we have seen so far, we 
- only update $X$ by adding some matrix to it. This restricted form of for-loop proved useful throughout the paper, and we therefore introduce it as a special operator. That is, we define:
+%When defining $4$-cliques and in several other expressions we have seen so far, we 
+% only update $X$ by adding some matrix to it. This restricted form of for-loop proved useful throughout the paper, and we therefore introduce it as a special operator. That is, we define:
+%$$\Sigma v. e := \ffor{v}{X}{X + e}.$$
+%Here, $e=e(v)$. We define the subfragment of \langfor, called \langsum, to consist of the $\Sigma$ operator plus the ``core'' operators in \lang, namely, transposition, matrix multiplication and addition, scalar multiplication, and pointwise function applications.
+
+Recall from Section \ref{sec:formatlang} that we introduced a special version of the for-loop that only allows to update the computed matrix by adding to it the result of some expression which depends on the current canonical vector. 
+  That is, we defined the operator:
 $$\Sigma v. e := \ffor{v}{X}{X + e}.$$
-Here, $e=e(v)$. We define the subfragment of \langfor, called \langsum, to consist of the $\Sigma$ operator plus the ``core'' operators in \lang, namely, transposition, matrix multiplication and addition, scalar multiplication, and pointwise function applications.
+Here we have $e = e(v)$. We call \langsum the fragment of \langfor consisting of 
+ the $\Sigma$ operator plus the ``core'' operators in \lang, namely, transposition, matrix multiplication and addition, scalar multiplication, and pointwise function applications.
 
 One property of \langsum is that it only allows expressions of polynomial degree. Indeed, one can easily show that \langsum can only create matrix entries that are polynomial in the dimension $n$ of the expression. More precisely, we can show the following:
 \begin{proposition}\label{prop:poly}
@@ -219,7 +225,7 @@ Weighted logics over $\Gamma$ and \langprod over $\Sch$ have the same expressive
 
 \subsection{Matrix multiplication as a quantifier}\label{subsec:langlinear}
 In a similar way, we can consider a fragment in which sum and the usual product of matrices can be used
-in for-loops. Formally, for an expression $e$ we define the operator:
+in for-loops, as defined in Section \ref{sec:formatlang}. Recall that, for an expression $e$ we define the operator:
 $$
 \sprod v.\,  e=\ffor {v}{X = e_{\mathsf{Id}}}{X\cdot e}.
 $$
