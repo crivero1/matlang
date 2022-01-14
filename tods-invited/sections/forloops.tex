@@ -291,24 +291,28 @@ We heavily rely on order information in the next sections to compute the inverse
 \paragraph{Iteration based on sum and product.} When defining $4$-cliques (Example \ref{ex:fourcliques}), the diagonal matrix (Example \ref{ex:diag}), or the ones vector algorithm (Example \ref{ex:onevec}), we 
  only update $X$ by adding some matrix to it. This restricted form of for-loop will prove useful throughout the paper, and we therefore introduce it as a special operator. That is, we define:
 $$\Sigma v. e := \ffor{v}{X}{X + e}.$$
-Here, $e=e(v)$ is an expression that can depend on the matrix variable $v$. We define the subfragment of \langfor, called \langsum, to consist of the $\Sigma$ operator plus the ``core'' operators in \lang, namely, transposition, matrix multiplication and addition, scalar multiplication, and pointwise function applications. We will study this fragment of \langfor in detail in Section \ref{sec:restrict}.
-
+Here, $e=e(v)$ is an expression that can depend on the matrix variable $v$. 
+%We define the subfragment of \langfor, called \langsum, to consist of the $\Sigma$ operator plus the ``core'' operators in \lang, namely, transposition, matrix multiplication and addition, scalar multiplication, and pointwise function applications. We will study this fragment of \langfor in detail in Section \ref{sec:restrict}.
 Using this new notation, we can now define the ones-vector expression $e_1$ from Example \ref{ex:onevec}, and $e_\mathsf{Id}$ from Example \ref{ex:diag} as follows:
 \begin{align*}
 e_1 &:= \Sigma v. v\\
 e_\mathsf{Id} &:= \Sigma v. (v^T\cdot e)\times v\cdot v^T.
 \end{align*}
 
-\medskip
+%\medskip
 
 In a similar way, we can consider an operator in which the for-loops can update the computed matrix only by taking the product with the value of the matrix in the previous iteration. Formally, for an expression $e$ we define the operator:
 $$
 \sprod v.\,  e=\ffor {v}{X = e_{\mathsf{Id}}}{X\cdot e}.
 $$
-where $e_{\mathsf{Id}}$ is the identity matrix and $e=e(v)$ is an expression that can depend on $v$. We call \langmprod the subfragment of \langfor that consists of \langsum extended with $\sprod v$, and study its expressive power in Section \ref{sec:restrict}. Using this operator it is now easy to define the product of the diagonal elements of a square matrix $A$ using the following expression $e$:
+where $e_{\mathsf{Id}}$ is the identity matrix and $e=e(v)$ is an expression that can depend on $v$. Notice that when updating the computed matrix via products it makes little sense to start with the zero matrix (since the result would always be zero), so we initialize the matrix to be equal to identity. 
+%We call \langmprod the subfragment of \langfor that consists of \langsum extended with $\sprod v$, and study its expressive power in Section \ref{sec:restrict}. 
+Using this operator it is now easy to define the product of the diagonal elements of a square matrix $A$ using the following expression $e$:
 $$
 e := \sprod v. v^T\cdot A \cdot v.
 $$
+
+We will come back to these operators, and restrictions of \langfor which only use for-loops defined via $\ssum v.e$ and $\sprod v.e$, in Section \ref{sec:restrict}.
 
 \paragraph{Simplifying function application.} When showing results based on induction of expressions in \langfor, it is often convenient to assume that function applications $f(e_1,\ldots,e_k)$ for $f\in\Fun_k$ are restricted to
 the case when all expressions $e_1,\ldots,e_k$ have type $1\times 1$. This will not result in any loss of generality. Indeed,
