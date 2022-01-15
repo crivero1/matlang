@@ -305,7 +305,7 @@ In a similar way, we can consider an operator in which the for-loops can update 
 $$
 \sprod v.\,  e=\ffor {v}{X = e_{\mathsf{Id}}}{X\cdot e}.
 $$
-where $e_{\mathsf{Id}}$ is the identity matrix and $e=e(v)$ is an expression that can depend on $v$. Notice that when updating the computed matrix via products it makes little sense to start with the zero matrix (since the result would always be zero), so we initialize the matrix to be equal to identity. 
+where $e_{\mathsf{Id}}$ is the expression defining the identity matrix and $e=e(v)$ is an expression that can depend on $v$. Notice that when updating the computed matrix via products it makes little sense to start with the zero matrix (since the result would always be zero), so we initialize the matrix to be equal to identity. 
 %We call \langmprod the subfragment of \langfor that consists of \langsum extended with $\sprod v$, and study its expressive power in Section \ref{sec:restrict}. 
 Using this operator it is now easy to define the product of the diagonal elements of a square matrix $A$ using the following expression $e$:
 $$
