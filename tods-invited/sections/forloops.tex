@@ -238,7 +238,7 @@ S_{\leq} = \begin{bmatrix}
 \end{bmatrix} \quad\mathsf{Prev} = \begin{bmatrix}
     0 & 1 & \cdots &  0 \\
     0 & \ddots & \ddots & \vdots \\
-    \hdotsfor{3} & 1 \\
+    \vdots & \ddots & \ddots& 1 \\
     0 & \cdots & \cdots & 0
 \end{bmatrix},
 \quad \mathsf{Next} = \begin{bmatrix}
@@ -248,7 +248,7 @@ S_{\leq} = \begin{bmatrix}
     0 & \cdots & 1 & 0
 \end{bmatrix},
 \] 
-\caption{\langfor constructible matrices encoding order information.}\label{fig:ordermat}
+\caption{Matrices encoding order information which are computable in \langfor.}\label{fig:ordermat}
 \end{figure}
 
 The matrix 
@@ -294,7 +294,7 @@ e_{\mathsf{max}-i}:=\underbrace{\mathsf{prev}(\cdots \mathsf{prev}}_{i\text{ tim
 % e_{\mathsf{max}-i} &:= \underbrace{e_{\mathsf{getPrevMatrix}}(\ldots e_{\mathsf{getPrevMatrix}}}_{i \text{ times}}(e_{\mathsf{max}})).
 % \end{align*}
 
-Later on, in the proof of Proposition~\ref{prop:inverse}, we will need  matrix powers $\mathsf{Next}^i$ of $\mathsf{Next}$, where $i$ is specified as
+Finally, later on in the proof of Proposition~\ref{prop:inverse} we will need  matrix powers $\mathsf{Next}^i$ of $\mathsf{Next}$, where $i$ is specified as
 a canonical vector $b_i^n$. We can express this in \langfor by using
 % More generally,
 %
@@ -334,12 +334,10 @@ We heavily rely on order information in the next sections to compute the inverse
 $$\Sigma v. e := \ffor{v}{X}{X + e}.$$
 Here, $e=e(v)$ is an expression that can depend on the matrix variable $v$. 
 %We define the subfragment of \langfor, called \langsum, to consist of the $\Sigma$ operator plus the ``core'' operators in \lang, namely, transposition, matrix multiplication and addition, scalar multiplication, and pointwise function applications. We will study this fragment of \langfor in detail in Section \ref{sec:restrict}.
-Using this new notation, we can now define the ones-vector expression $e_1$ from Example \ref{ex:onevec}, and $e_\mathsf{Id}$ from Example \ref{ex:diag} as follows:
-\begin{align*}
-e_1 &:= \Sigma v. v\\
-e_\mathsf{Id} &:= \Sigma v. (v^T\cdot e)\times v\cdot v^T.
-\end{align*}
-
+Using this new notation, we can now define the ones-vector expression $e_{\ones}$ from Example \ref{ex:onevec}, and $e_\mathsf{Id}$ from Example \ref{ex:diag} as follows:
+\[ e_{\ones} := \Sigma v. v \text{ and }
+e_\mathsf{Id} := \Sigma v. (v^T\cdot e)\times v\cdot v^T.
+\]
 %\medskip
 
 In a similar way, we can consider an operator in which the for-loops can update the computed matrix only by taking the product with the value of the matrix in the previous iteration. Formally, for an expression $e$ we define the operator:
@@ -363,7 +361,7 @@ f(e_1,\ldots, e_k) :=\Sigma v_i \Sigma v_j. f_{1\times 1}(v_i^T\cdot e_1\cdot v_
 $$
 
 Furthermore, it also convenient at times to use the pointwise functions
-$f_\odot^k:\RR^k\mapsto \RR:(x_1,\ldots,x_k)\mapsto x_1\times\cdots \cdot x_k$ and 
+$f_\odot^k:\RR^k\mapsto \RR:(x_1,\ldots,x_k)\mapsto x_1\cdot\cdots \cdot x_k$ and 
 $f_\oplus^k:\RR^k\mapsto \RR:(x_1,\ldots,x_k)\mapsto x_1+\cdots + x_k$. In fact, it is readily observed that adding these functions does not extend the expressive power of \langfor:
 \begin{lemma}
 \label{lm-prod-sum}
