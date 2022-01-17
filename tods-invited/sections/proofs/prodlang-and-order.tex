@@ -4,18 +4,17 @@
 \cristian{IMPORTANT: if constructions from Section 3 are removed, this proof must be updated.}
 \domagoj{At this point all is there. These operators are also used in Section 4 and 5.}
 
-\floris{I am confused here. Does prod-matlang include order information ($S_<$) by default
-or not? Here it seems that it is, but then in the diagram it is explicitly added?}
-
-
+\begin{proposition}
+Matrix inversion and the determinant are expressible in  \langmprod\text{\normalfont +$S_{<}$} when functions
+$f_{>0}$ and $f_/$ are allowed.
+\end{proposition}
 \begin{proof}
-We now verify that \langmprod, extended with order and $f_{>0}$, 
+We show that \langmprod, extended with order and $f_{>0}$ and $f_/$, 
 can perform matrix inversion and compute the determinant. 
 To this aim, we verify that all order
 predicates in Section \ref{sec:formatlang:design} can be derived using $\ssum$, $\sprod$, $f_{>0}$ and 
 $e_{S_{<}}$. Given this, it suffices to observe that Csanky's algorithm, as shown in Section~\ref{sec:queries:inverse}, only relies on expressions using $\ssum$ and $\sprod$ and order information on canonical vectors and $f_/$.
-As consequence, our fragment can perform matrix inversion and compute the determinant.
-
+As consequence, the fragment can perform matrix inversion and compute the determinant.
 
 It remains to show that if we have $e_{S_{<}}$, using $\ssum$ and $\sprod$ and $f_{>0}$ we can
 can define all order predicates from Section~\ref{sec:formatlang:design}. We note that due to the restricted for-loops
@@ -37,7 +36,8 @@ e_{\mathsf{Pred}}:= e_{S_{<}}- f_{>0}(e_{S_{<}}^2)
 $$
 Also, recall that  $e_{\mathsf{Next}}:=e_{\mathsf{Pred}}^T$. As a consequence, 
 we can now define $\mathsf{prev}(v)$ and $\mathsf{next}(v)$ as in \ref{sec:formatlang:design}. Similarly,
-it is readily verified that also $e_{\mathsf{getPrevMatrix}}(V)$,
+it is readily verified that also 
+% $e_{\mathsf{getPrevMatrix}}(V)$,
 $e_{\mathsf{getNextMatrix}}(V)$, $e_{\mathsf{min}+i}$ and $e_{\mathsf{max}+i}$ can be expressed
-in our fragment.
+in this fragment.
 \end{proof}

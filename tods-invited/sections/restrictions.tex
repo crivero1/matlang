@@ -231,19 +231,22 @@ $$
 $$
 where $e_{\mathsf{Id}}$ is the identity matrix and $e=e(v)$. We call \langmprod the subfragment of \langfor that consists of \langsum extended with $\sprod v$. It is readily verified that  $\qhadprod v$ can be expressed in terms of $\sprod v$.
 Furthermore, by contrast to the Hadamard product, matrix multiplication is a non-commutative operator. As a consequence, one can formulate expressions that are not invariant under the order in which the canonical vectors
-are processed.
+are processed. 
 
 \begin{proposition}
-	Every expression in \langprod can be defined in \langmprod. Moreover, there exists an expression that uses the $\sprod v$ quantifier that cannot be defined in \langprod.
+	Every expression in \langprod can be defined in \langmprod. Moreover, there exists an expression that uses the $\sprod v$ quantifier that cannot be defined in \langprod. 
 \end{proposition}
+
+Furthermore, when allowing for the $f_{>0}$ function,  \langsum extended with $\sprod v$ suffices to compute the transitive closure.
+Indeed, one can use the expression $e_{\mathsf{TC}}(V):=f_{>0}\bigl(\sprod v.\, (e_{\mathsf{Id}}+V)\bigr)$ for this purpose because
+ $\sem{e_{\mathsf{TC}}}{\I}=f_{>0}\bigl((I+A)^n\bigr)$ when $\I$ assigns an $n\times n$ adjacency matrix $A$ to $V$, and non-zero entries in $(I+A)^n$ coincide with non-zero entries in  the transitive closure of $A$.
+Furthermore, if we additionally allow access to the matrix $S_{<}$, defining the (strict) order on canonical vectors, then Csanky's matrix inversion algorithm becomes expressible (if $f_/$ is allowed). We denote this fragment by \langmprod+$S_{<}$. 
 
 \input{sections/proofs/prodlang-and-order.tex}
 
-What is interesting is that \langsum extended with $\sprod v$ suffices to compute the transitive closure,
- provided that we allow for the $f_{>0}$ function. Indeed, one can use the expression $e_{\mathsf{TC}}(V):=f_{>0}\bigl(\sprod v.\, (e_{\mathsf{Id}}+V)\bigr)$ for this purpose because
- $\sem{e_{\mathsf{TC}}}{\I}=f_{>0}\bigl((I+A)^n\bigr)$ when $\I$ assigns an $n\times n$ adjacency matrix $A$ to $V$, and non-zero entries in $(I+A)^n$ coincide with non-zero entries in  the transitive closure of $A$.
-Furthermore, if we extend this fragment with access to the matrix $S_{<}$, defining the (strict) order on canonical vectors, then Csanky's matrix inversion algorithm becomes expressible (if $f_/$ is allowed). We do not know if the inversion and determinant algorithms are expressible in \langprod.
- We leave the study of \langmprod and, in particular, the relationship to full \langfor, for future work.
+% What is interesting is that
+%  provided that we allow for the $f_{>0}$ function.
+ We do not know if the inversion and determinant algorithms are expressible in \langmprod, without order information, or even  in  \langprod, with or without order information. We leave the study of \langmprod and, in particular, the relationship to full \langfor, for future work.
  
 Finally, in Figure~\ref{thefigure} we show a diagram of all the fragments of \langfor over square matrices introduced in this section and their corresponding equivalent formalisms.
 
