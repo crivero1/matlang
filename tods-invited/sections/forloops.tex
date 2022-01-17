@@ -12,13 +12,13 @@ To extend \lang\ with recursion, we take inspiration from classical linear algeb
 
 \medskip
 \noindent Intuitively, $X$ is a matrix variable which is iteratively updated according to the expression $e$. We simulate iterations of the form ``\texttt{for} $i\in [1..n]$'' by letting $v$ loop over the \textit{canonical vectors} $b_1^n,\ldots,b_n^n$ of dimension $n$. Here,
-$b_1^n = [1\ 0 \cdots 0]^T$, $b_2^n = [0\ 1\ 0 \cdots 0]^T$, etc. When $n$ is clear from the context we simply write $b_1,b_2,\ldots$. In addition, the expression $e$ in the rule above may depend on $v$. 
+$b_1^n = [1\ 0 \cdots 0]^T$, $b_2^n = [0\ 1\ 0 \cdots 0]^T$, etc. When $n$ is clear from the context we simply write $b_1,b_2,\ldots$. In addition, the expression $e$ in the rule above may depend on $v$ and $X$. 
 
 We next make the semantics precise and start by
 declaring the type of loop expressions.
 Given a schema $\Sch=(\Mnam,\size)$, the type of a \langfor expression $e$, denoted $\ttype(e)$, is defined inductively as in \lang but with following extra rule:
 \begin{itemize}
-\item $\ttype(\ffor{v}{X}{e}) := (\alpha,\beta)$, if \\
+\item $\ttype(\ffor{v}{X}{e}) := (\alpha,\beta)$, if 
 $\ttype(e)=\ttype(X) =(\alpha,\beta)$ and $\ttype(v) = (\gamma,1)$.
 \end{itemize}
 We note that $\Sch$ now necessarily includes $v$ and $X$ as variables and assigns size symbols to them.
@@ -113,7 +113,7 @@ be expressed in \langfor. In other words, we do not loose generality by assuming
 The key insight is that in \langfor\ we can check during evaluation whether or not
 the current canonical vector $b_i^n$ is equal to $b_1^n$ using the order predicate $\mmin{v}$, which, when evaluated on an instance, returns $1$ if its input vector is $b_1^n$, and returns $0$ for any other canonical vector\footnote{We explain in detail how $\mmin$, as well as many other operators which access the order of canonical vectors, can be defined in \langfor in the following subsection. We also remark that natural numbers, such as 1, or more precisely, the matrix $[1]$, can be defined based on $\mmin$, e.g. by the expression $\ffor{v}{X} X + \mmin{v}\times v^T\cdot v$.}. Given $\mmin$, consider now the
 \langfor\ expression
- $$\ffor{v}{X}{\mmin{v}\cdot e(v,X/e_0) + (1-\mmin{v})\cdot e(v,X)},$$
+ $$\ffor{v}{X}{\mmin{v}\times e(v,X/e_0) + (1-\mmin{v})\times e(v,X)},$$
  where we explicitly list $v$ and $X$ as matrix variables on which $e$ potentially depends on, and where
  $e(v,X/e_0)$ denotes the expression obtained by replacing every occurrence of $X$ in $e$ with $e_0$.
 When evaluating this expression on an instance $\I$, $A_0$ is initial set to the zero matrix, in the first iteration (when  $v=b_1^n$ and thus $\mmin{v}=1$)
@@ -158,16 +158,18 @@ $$
 which, for it to be well-typed, requires both $v$ and $X$ to be of type $(\alpha,1)$. Then, $\sem{e_{\mathsf{max}}}{\I}=b_n^n$, for $n=\dom(\alpha)$, simply because initially, $X=\mathbf{0}$, but $X$ will be overwritten by $b_1^n,b_2^n,\ldots,b_n^n$, in this order. Hence, at the end of the evaluation $b_n^n$ is returned.
 To extract the bottom right-most entry from a matrix, we now simply use $e_{\mathsf{max}}^T\cdot V\cdot e_{\mathsf{max}}$.
 
+
+
 Although the order is implicit in \langfor, we can explicitly use this order in \langfor expressions. More precisely, the order on canonical vectors is made accessible by
-using the matrix:
-\[
-S_{\leq} = \begin{bmatrix}
-1 & 1 & \cdots &  1 \\
-0 & 1 & \cdots & 1\\
-\vdots & \vdots & \ddots & 1 \\
-0 & 0 & \cdots & 1 
-\end{bmatrix}.
-\] 
+using the matrix $S_\leq$ shown in Fig.~\ref{fig:ordermat}.
+% \[
+% S_{\leq} = \begin{bmatrix}
+% 1 & 1 & \cdots &  1 \\
+% 0 & 1 & \cdots & 1\\
+% \vdots & \vdots & \ddots & 1 \\
+% 0 & 0 & \cdots & 1
+% \end{bmatrix}.
+% \]
 We observe that $S_{\leq}$ has the property that $b_i^T\cdot S_{\leq} \cdot b_j=1$, for two canonical vectors $b_i$ and $b_j$ of the same dimension, if and only if $i\leq j$. Otherwise, $b_i^T\cdot S_{\leq} \cdot b_j=0$. 
 Interestingly, we can build the matrix $S_{\leq}$ with the following \langfor expression:
 $$
@@ -213,17 +215,43 @@ $$
 $$
 Namely, we will have $\mathsf{max}(u)$ be equal 1 if and only if $u$ is $b_n^n$, and is 0 otherwise.
 
-Interestingly, we can also define the \textit{previous} relation between canonical vectors. 
-For this, we require the following matrix:
+Interestingly, we can also define the \textit{previous} relation between canonical vectors. For this, we need
+the matrix $\mathsf{Prev}$ shown in Fig.~\ref{fig:ordermat}.
+%
+% For this, we require the following matrix:
+% \[
+% \mathsf{Prev} = \begin{bmatrix}
+%     0 & 1 & \cdots &  0 \\
+%     0 & \ddots & \ddots & \vdots \\
+%     \hdotsfor{3} & 1 \\
+%     0 & \cdots & \cdots & 0
+% \end{bmatrix},
+% \]
+
+\begin{figure}
 \[
-\mathsf{Prev} = \begin{bmatrix}
+S_{\leq} = \begin{bmatrix}
+1 & 1 & \cdots &  1 \\
+0 & 1 & \cdots & 1\\
+\vdots & \vdots & \ddots & 1 \\
+0 & 0 & \cdots & 1 
+\end{bmatrix} \quad\mathsf{Prev} = \begin{bmatrix}
     0 & 1 & \cdots &  0 \\
     0 & \ddots & \ddots & \vdots \\
     \hdotsfor{3} & 1 \\
     0 & \cdots & \cdots & 0
 \end{bmatrix},
-\]
+\quad \mathsf{Next} = \begin{bmatrix}
+    0 & 0 & \cdots &  0 \\
+    1 & \ddots & \ddots & 0\\
+    \vdots & \ddots & \ddots &0 \\
+    0 & \cdots & 1 & 0
+\end{bmatrix},
+\] 
+\caption{\langfor constructible matrices encoding order information.}\label{fig:ordermat}
+\end{figure}
 
+The matrix 
 $\mathsf{Prev}$ can be defined using the following \langfor expression:
 $$e_{\mathsf{Prev}}:= \ffor{v}{X}{X + \bigl((1 - \mathsf{max}(v))\times v\cdot e_{\mathsf{max}}^T - (X\cdot e_{\mathsf{max}})\cdot e_{\mathsf{max}}^T + (X\cdot e_{\mathsf{max}})\cdot v^T\bigr)}.$$
 Here, $X$ is initialized as $\mathbf{0}$ and thus in the first iteration we put
@@ -242,7 +270,7 @@ $$e_{\mathsf{min}} := \ffor{v}{X}{X + \mathsf{min}(v)\times v}.$$
 
 
  
-Analogously, we can obtain the \textit{next} relation between canonical vectors by using $e_{\mathsf{Next}} = e_{\mathsf{Prev}}^T$. This defines the matrix $\mathsf{Next}= \mathsf{Prev}^T$, which, for a canonical vector $b_i^n$, satisfies:
+Analogously, we can obtain the \textit{next} relation between canonical vectors by using $e_{\mathsf{Next}} = e_{\mathsf{Prev}}^T$. This defines the matrix $\mathsf{Next}= \mathsf{Prev}^T$, shown in Fig.~\ref{fig:ordermat} which, for a canonical vector $b_i^n$, satisfies:
 \[
 {\mathsf{Next}}\cdot b_i^n=\begin{cases}
                b_{i+1}^n, \text{ if } i < n. \\
@@ -250,37 +278,50 @@ Analogously, we can obtain the \textit{next} relation between canonical vectors 
             \end{cases}
 \]
 In this way, we also can obtain the following operators for a canonical vector $v$: 
-$$\mathsf{prev}(v):=e_{\mathsf{Prev}}\cdot v$$
-$$\mathsf{next}(v):=e_{\mathsf{Next}}\cdot v$$
+$$\mathsf{prev}(v):=e_{\mathsf{Prev}}\cdot v \text{ and }
+\mathsf{next}(v):=e_{\mathsf{Next}}\cdot v$$
 which, when evaluated on a canonical vector $b_i^n$ return $b_{i-1}^n$, and $b_{i+1}^n$, respectively. 
+To access an arbitrary canonical vector by moving $i$ positions forward from the first canonical vector, or by moving $i$ positions backwards from the last canonical vector we define:
+\[
+e_{\mathsf{min}+i}:=\underbrace{\mathsf{next}(\cdots \mathsf{next}}_{i\text{ times}}(e_{\mathsf{min}}))
+\text{ and }
+e_{\mathsf{max}-i}:=\underbrace{\mathsf{prev}(\cdots \mathsf{prev}}_{i\text{ times}}(e_{\mathsf{max}})).
+\]
+%
+%  We can define this in \langfor as follows:
+% \begin{align*}
+% e_{\mathsf{min}+i} &:= \underbrace{e_{\mathsf{getNextMatrix}}(\ldots e_{\mathsf{getNextMatrix}}}_{i \text{ times}}(e_{\mathsf{min}}))\\
+% e_{\mathsf{max}-i} &:= \underbrace{e_{\mathsf{getPrevMatrix}}(\ldots e_{\mathsf{getPrevMatrix}}}_{i \text{ times}}(e_{\mathsf{max}})).
+% \end{align*}
 
-More generally, we might wish to find the $j$th predecessor, or the $j$th successor, of a canonical vector $b_i^n$. For this, we can use the matrix $\mathsf{Prev}^j$ (i.e. the matrix $\mathsf{Pred}$ multiplied by itself $j$ times), and the matrix $\mathsf{Next}^j$, respectively. These matrices have the property that:
-\[
-\mathsf{Prev}^j\cdot b_i^n=\begin{cases}
-               b_{i-j}^n, \text{ if } i > j \\
-              \mathbf{0}, \text{ if } i \leq j
-            \end{cases}
-\]
-and
-\[
-\mathsf{Next}^j\cdot b_i^n=\begin{cases}
-               b_{i+j}^n, \text{ if } i + j \leq n \\
-              \mathbf{0}, \text{ if } i + j > n
-            \end{cases}.
-\]
+Later on, in the proof of Proposition~\ref{prop:inverse}, we will need  matrix powers $\mathsf{Next}^i$ of $\mathsf{Next}$, where $i$ is specified as
+a canonical vector $b_i^n$. We can express this in \langfor by using
+% More generally,
+%
+% we might wish to find the $j$th predecessor, or the $j$th successor, of a canonical vector $b_i^n$. For this, we can use the matrix $\mathsf{Prev}^j$ (i.e. the matrix $\mathsf{Prev}$ multiplied by itself $j$ times), and the matrix $\mathsf{Next}^j$, respectively. These matrices have the property that:
+% \[
+% \mathsf{Prev}^j\cdot b_i^n=\begin{cases}
+%                b_{i-j}^n, \text{ if } i > j \\
+%               \mathbf{0}, \text{ if } i \leq j
+%             \end{cases}
+% \text{ and }
+% \mathsf{Next}^j\cdot b_i^n=\begin{cases}
+%                b_{i+j}^n, \text{ if } i + j \leq n \\
+%               \mathbf{0}, \text{ if } i + j > n
+%             \end{cases}.
+% \]
   
-To access these matrices in \langfor, we can use the following expressions: 
+% To access these matrices in \langfor, we can use the following expressions:
 \begin{align*}
-       e_{\mathsf{getPrevMatrix}}(v)&:=\ffor{w}{X = e_\mathsf{Id}}{ X \cdot \Big( \mathsf{succ}(w,v)\times e_{\mathsf{Prev}} + (1 - \mathsf{succ}(w,v))\times e_{\mathsf{Id}} \Big) }\\
+       % e_{\mathsf{getPrevMatrix}}(v)&:=\ffor{w}{X = e_\mathsf{Id}}{ X \cdot \Big( \mathsf{succ}(w,v)\times e_{\mathsf{Prev}} + (1 - \mathsf{succ}(w,v))\times e_{\mathsf{Id}} \Big) }\\
 e_{\mathsf{getNextMatrix}}(v)&:=\ffor{w}{X = e_\mathsf{Id}}{ X \cdot \Big( \mathsf{succ}(w,v)\times e_{\mathsf{Next}} + (1 - \mathsf{succ}(w,v))\times e_{\mathsf{Id}} \Big) }
 \end{align*}
-which, when $v$ is interpreted as canonical vector $b_i^n$, output $\mathsf{Prev}^i$ and $\mathsf{Next}^i$ respectively. Intuitively, in $e_{\mathsf{getPrevMatrix}}(b_i^n)$, we start the for loop by initializing $X$ to the identity via the expression $e_{\mathsf{Id}}$, as explained in Subsection \ref{ss:fML}. Following this, the matrix stored in $X$ is multiplied by $\mathsf{Prev}$ for the first $i$ canonical vectors (as specified by the subexpression $\mathsf{succ}(w,v)\times e_{\mathsf{Prev}}$), and by the identity matrix for the canonical vectors $b_{i+1}^n, \ldots , b_n^n$. The expression $e_{\mathsf{getNextMatrix}}(b_i^n)$ works analogously.
+which, when $v$ is interpreted as canonical vector $b_i^n$, output %$\mathsf{Prev}^i$ and 
+$\mathsf{Next}^i$ %respectively. 
+% Intuitively, in $e_{\mathsf{getPrevMatrix}}(b_i^n)$, we start the for loop by initializing $X$ to the identity via the expression $e_{\mathsf{Id}}$, as explained in Subsection \ref{ss:fML}. Following this, the matrix stored in $X$ is multiplied by $\mathsf{Prev}$ for the first $i$ canonical vectors (as specified by the subexpression $\mathsf{succ}(w,v)\times e_{\mathsf{Prev}}$), and by the identity matrix for the canonical vectors $b_{i+1}^n, \ldots , b_n^n$. The expression $e_{\mathsf{getNextMatrix}}(b_i^n)$ works analogously.
+Intuitively, in $e_{\mathsf{getNextMatrix}}(b_i^n)$, we start the for loop by initializing $X$ to the identity via the expression $e_{\mathsf{Id}}$, as explained in Subsection \ref{ss:fML}. Following this, the matrix stored in $X$ is multiplied by $\mathsf{Next}$ for the first $i$ canonical vectors (as specified by the subexpression $\mathsf{succ}(w,v)\times e_{\mathsf{Next}}$), and by the identity matrix for the canonical vectors $b_{i+1}^n, \ldots , b_n^n$. 
+% The expression $e_{\mathsf{getNextMatrix}}(b_i^n)$ works analogously.
 
-Finally, these expressions allow us to access an arbitrary canonical vector by moving $i$ positions forward from the first canonical vector, or by moving $i$ positions backwards from the last canonical vector. We can define this in \langfor as follows:  
-\begin{align*}
-e_{\mathsf{min}+i} &:= \underbrace{e_{\mathsf{getNextMatrix}}(\ldots e_{\mathsf{getNextMatrix}}}_{i \text{ times}}(e_{\mathsf{min}}))\\
-e_{\mathsf{max}-i} &:= \underbrace{e_{\mathsf{getPrevMatrix}}(\ldots e_{\mathsf{getPrevMatrix}}}_{i \text{ times}}(e_{\mathsf{max}})).
-\end{align*}
 
 Having order information available results in \langfor to be quite expressive.
 We heavily rely on order information in the next sections to compute the inverse of matrices and more generally to simulate low complexity Turing machines and arithmetic circuits.
