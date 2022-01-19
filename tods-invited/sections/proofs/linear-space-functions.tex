@@ -8,14 +8,13 @@ referred to as \textit{linear space machines},
 can be simulated in \langfor. The circuit-related functions used in the evaluation algorithm in Section~\ref{subsec:actoformatlang}
 are all of this form when considering arithmetic circuit families of logarithmic depth.
 
-
 \subsubsection{Linear space machines}\label{subsubsec:linearspace}
 We start by formally defining linear space machines. We consider  deterministic Turing Machines (TMs) $T$ 
 consisting of $\ell$ read-only input tapes, denoted by $R_1,\ldots,R_\ell$,
 a work tape, denoted by $W$, and a write-only output tape, denoted by $O$. The TM $T$ has a set 
 $Q$ of $m$ states, denoted by $q_1,\ldots,q_m$. We assume that $q_1$ is the initial state and $q_m$ is the accepting state.
 The input and tape alphabet are $\Sigma=\{0,1\}$ and $\Gamma=\Sigma\cup\{\rhd,\lhd\}$, respectively. The special 
-symbol $\rhd$ denotes the beginning of each of the tapes, the symbol $\lhd$ denotes the end of the $\ell$ input tapes. 
+symbols $\rhd$ and $\lhd$ denote the beginning and end, respectively, of each of the tapes.
 The transition function $\Delta$ of $T$ is defined as usual, i.e. 
 $\Delta:Q\times \Gamma^{\ell+2} \to Q\times \Gamma^{2}\times \{\leftarrow,\sqcup,\rightarrow\}^{\ell+2}$ 
 such that $\Delta(q,(a_1,\ldots,a_{\ell},b,c))=\bigl(q',(b',c'),(\mathsf{d}_1,\ldots,\mathsf{d}_{\ell+2})\bigr)$
@@ -25,6 +24,7 @@ writes $b',c'$ on the work and output tape, respectively, at the position to whi
 tape's heads points at, and finally moves the heads on the tapes according 
 $\mathsf{d}_1,\ldots,\mathsf{d}_{\ell+2}$. More specifically, $\leftarrow$  indicates a move to the left, 
 $\rightarrow$ a move to the right, and finally, $\sqcup$ indicates that the head does not move.
+\cristian{Why the output tape moves only to the right and it is write only? There is a mismatch here, because we say that it is write-only, but in the transition relation we read the symbol in the output tape. As far as I can see, we can make the output read/write and move to the two directions, if we assume that the output is of the same size as the input (which is what we are using). Another possibility is to say that the output is never read. I prefer the first option, because it is easy to extend from what we have and I am sure that it works.}
 
 We assume that $\Delta$ is defined such that it ensures that on none of the tapes, heads can move beyond 
 the leftmost marker $\rhd$. Furthermore, the tapes $R_1,\ldots,R_\ell$ are treated as read-only and the heads 
@@ -46,11 +46,11 @@ Given $\ell$ input words $w_1,\ldots,w_\ell\in\Sigma^*$, we assume that the init
 $T$ is given by
 $\bigl(q_1\rhd  w_1\lhd,q_1\rhd w_2\lhd,\ldots, q_1\rhd w_\ell\lhd,q_1\rhd, q_1\rhd \bigr)$ and an 
 accepting configuration is assumed to be of the form 
-$\bigl(\rhd q_m w_1\lhd,\rhd q_m w_2\lhd,\ldots, \rhd q_m w_\ell\lhd,\rhd q_m,\rhd q_m w\bigr)$ for some
+$\bigl(\rhd q_m w_1\lhd,\rhd q_m w_2\lhd,\ldots, \rhd q_m w_\ell\lhd,\rhd q_m,\rhd w q_m\bigr)$ for some
 $w\in\Sigma^*$. We say that $T$ \textit{computes the function} $f:(\Sigma^*)^{\ell}\to\Sigma^*$ if for every
 $w_1,\ldots,w_\ell\in\Sigma^*$, the initial configuration yields (transitively) an accepting 
 configuration such that the configuration on the output tape is
-given by $\rhd q_m f(w_1,\ldots,w_\ell)$. 
+given by $\rhd f(w_1,\ldots,w_\ell) q_m$. 
 
 We assume that once $T$ reaches an accepting configuration it stays indefinitely in that configuration 
 (i.e. it loops). We further assume that $T$ only reaches an accepting configuration when all its input
@@ -73,7 +73,7 @@ We have similar notions in place for functions of the form $f=\bigcup_{n\geq 0} 
 We are now ready to precisely formulate  Proposition~\ref{prop:transducer2}.
 
 \begin{proposition}
-Let $f=\bigcup_{n\geq 0}f_n:(\Sigma^n)^\ell\to \Sigma^n$ be a linear space input-ouput function 
+For $\Sigma = \{0,1\}$ let $f=\bigcup_{n\geq 0}f_n:(\Sigma^n)^\ell\to \Sigma^n$ be a linear space input-ouput function 
 computed by a linear space  machine $T$ with $m$ states, $\ell$ input tapes, which consumes 
 $\mathcal{O}(n)$ space and runs in $\mathcal{O}(n^{k-1})$ time on inputs of size $n$. 
 Then there exists (i)~a \langfor 
@@ -81,7 +81,7 @@ schema $\mathcal{S}=(\mathcal{M},\textsf{size})$ where $\mathcal{M}$ contains ma
 variables
 % \footnote{We also need a finite number of auxiliary variables, these will be specified
 % in the proof.}
-$Q_1,\ldots,Q_m,R_1,\ldots,R_\ell,H_1,\ldots,H_\ell,W_1,\ldots,W_s,H_{W_1},\ldots,H_{W_s},O,H_O, v_1,\ldots,\allowbreak v_{k}$ 
+$Q_1,\ldots,Q_m$, $R_1,\ldots,R_\ell$, $H_1,\ldots,H_\ell$, $W_1,\ldots,W_s$, $H_{W_1},\ldots,H_{W_s}$, $O$, $H_O$, $v_1,\ldots,v_{k}$  
 with $\mathsf{size}(V)=\alpha\times 1$ for all $V\in\mathcal{M}$; and (ii)~a \langfor 
 expression $e_f$ over $\mathcal{S}$ such that for the instance 
 $\I=(\mathcal{D},\textsf{mat})$ over $\mathcal{S}$ with $\mathcal{D}(\alpha)=n$ and 
@@ -90,6 +90,7 @@ encoding the word $w_i\in\Sigma^n$, and all other matrix variables instantiated 
 after evaluating $e_f$ on $\I$. We have a similar result for functions $f=\bigcup_{n\geq 0}f_n:(\Sigma^n)^\ell\to \Sigma$
 but where $O$ is now a $1\times 1$-vector such that $\mathsf{mat}(O)=\mathsf{vec}(f_n(w_1,\ldots,w_\ell))\in\mathbb{R}$. 
 \end{proposition}
+\cristian{The list of variables seems not necessary for the statement of the result. Remove if it is possible.}
 
 % For this proof only, we will denote the canonical vectors as
 % $\mathbf{e}_1, \ldots, \mathbf{e}_n$, since $b$ will be used to represent a value on a position of a tape.
@@ -143,13 +144,9 @@ minimal modifications for functions  $f=\bigcup_{n\geq 0}f_n:(\Sigma^n)^\ell\to 
     Finally, the variables $v_1,\ldots,v_{k}$ represent $k$ canonical vectors  which are used to iterate 
     in for-loops. By iterating over them, we can perform $n^{k}$ iterations, 
     which suffices for simulating the $\mathcal{O}(n^{k-1})$ steps used by $T$ to reach an accepting configuration.
-
-\smallskip
     With these matrix variables in place, we start by defining $e_f^{\geq n_0}$.
 	% We explain the expression
 %     $e_f^{\geq N}$ first.
-
-
 
     We will use several expressions related to ordering information of canonical vectors, as explained in Section \ref{sec:formatlang:design}.
 	In particular, we use $\mathsf{min}$ and $\mathsf{max}$, to test whether their input vector is the first, respectively, last canonical
@@ -238,7 +235,9 @@ Since we want to simulate $T$ we need to be able to check which
     which returns $1$ if and only if either $b\in\{0,1\}$ is the value in $\mathsf{mat}(R_i)$ at the 
     position encoded by $\mathsf{mat}(H_i)$, or when $b=\rhd$ and $\mathsf{mat}(H_i)$ is the vector 
     $(2,0,\ldots,0)\in\mathbb{R}^n$, or when $b=\lhd$ and $\mathsf{mat}(H_i)$ is the vector 
-    $(0,0,\ldots,2)\in\mathbb{R}^n$. Similarly, for the output tape we define
+    $(0,0,\ldots,2)\in\mathbb{R}^n$.
+    \cristian{This expression is wrong. The $\mathsf{min}$ and $\mathsf{max}$ functions (and all other functions for order) works for canonical vectors. If the input is not a canonical vector, it can output any number (not necessarily $0$ or $1$).} 
+    Similarly, for the output tape we define
     $$
     \mathsf{test\_out}_b:=\begin{cases}
     \bigl(1-\mathsf{min}(1/2\times H_O)\bigr)\cdot(1- O^T\cdot H_O) & \text{if $b=0$}\\
@@ -246,6 +245,7 @@ Since we want to simulate $T$ we need to be able to check which
     \mathsf{min}(1/2\times H_O) & \text{if $b=\rhd$},
     \end{cases}
     $$
+    \cristian{Similar here.}
     and for the work tapes $W_1,\ldots,W_s$ we define
     $$
     \mathsf{test\_work}^i_b:=\begin{cases}
@@ -254,6 +254,8 @@ Since we want to simulate $T$ we need to be able to check which
     \mathsf{min}(1/2\times H_{W_i}) & \text{if $b=\rhd$ and $i=1$}.
     \end{cases}
     $$
+    \cristian{and here.}
+    \cristian{To solve this issue with the borders, the safest solution is to have a special variables for the borders, which is true if, and only if, the head is in the border. This variable will work similar than the vector variables for states.}
     We then combine all these expressions into a single expression for $q_i\in Q$, 
     $a_1,\ldots,a_\ell,b,c\in\Gamma$:
     $$
