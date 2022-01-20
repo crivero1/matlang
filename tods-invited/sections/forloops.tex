@@ -49,7 +49,7 @@ Finally, $\sem{e_{\ones}(e)}{\I}:=A_n$ and this now clearly coincides with $\sem
 \qed
 \end{example}
 
-\domagoj{I introduced the $e_1(e)$ notation here. From now on when we write $e(v,V)$ this is syntactically correct, but a bit confusing. Namely, we might want to define the notion of free/bound variables and all that. I suggest to leave things as is since, I repeat, they are syntactically correct they way we use them. Will leave this as a reminder in case we want to change. Note that we often use $e_1(e)$ and $\ones{e}$. Also we often use $e(v,X)$, etc.}
+%\domagoj{I introduced the $e_1(e)$ notation here. From now on when we write $e(v,V)$ this is syntactically correct, but a bit confusing. Namely, we might want to define the notion of free/bound variables and all that. I suggest to leave things as is since, I repeat, they are syntactically correct they way we use them. Will leave this as a reminder in case we want to change. Note that we often use $e_1(e)$ and $\ones{e}$. Also we often use $e(v,X)$, etc.}
 
 \begin{example}\label{ex:diag}
 We next show that the $\diag(e)$ operator is redundant in \langfor.
@@ -77,8 +77,7 @@ To test for $4$-cliques it suffices to consider the following expression with fo
 \> \texttt{for\,}\=$v,\,X_2.\ \ X_2 \ +$ \\
 \>\>\texttt{for\,}\=$w,\,X_3.\ \ X_3 \ +$ \\
 \>\>\>\texttt{for\,}\=$x,\,X_4.\ \ X_4 \ +$ \\
-\>\>\>\>$u^T\cdot V\cdot v \cdot u^T\cdot V\cdot w\cdot u^T\cdot V\cdot x \cdot $\\
-\>\>\>\>$v^T\cdot V\cdot w \cdot v^T\cdot V\cdot x\cdot w^T\cdot V\cdot x \cdot g(u,v,w,x)$
+\>\>\>\>$(u^T\!\cdot\! V\!\cdot\! v) \!\cdot\! (u^T\!\cdot\! V\!\cdot\! w)\!\cdot\! (u^T\!\cdot\! V\!\cdot\! x) \!\cdot\! (v^T\!\cdot\! V\!\cdot\! w) \!\cdot\! (v^T\!\cdot\! V\!\cdot\! x)\!\cdot\! (w^T\!\cdot\! V\!\cdot\! x) \!\cdot\! g(u,v,w,x)$
 \end{tabbing}
 }
 \end{center}
@@ -193,7 +192,7 @@ the $(i-1)$-th column of $S_{\leq}$; and (ii)~the current canonical vector (via 
 %\domagoj{We also use the product operator in what follows. I suggest we should define it here, and then repeat the definition in Section 6. The other option would be to just say in the proof of next how product is defined, or replace it with for. It is also used in some proofs in Section 4, so defining all the fragments here might not be a bad idea.}
 %\input{./sections/definitions/order-predicates.tex}
 
-Using the matrix $S_\leq$, we can now define several other order-related operators which will be useful in the remainder of the paper. For instance, using the expression 
+Using the matrix $S_\leq$, we can now define several other order-related operators over canonical vectors which will be useful in the remainder of the paper. For instance, using the expression 
 $$
 \mathsf{succ}(u,v) := u^T\cdot S_{\leq} \cdot v,
 $$
@@ -214,6 +213,29 @@ $$
 $$
 Namely, we will have $\mathsf{max}(u)$ be equal 1 if and only if $u$ is $b_n^n$, and is 0 otherwise.
 
+\begin{figure}
+	\[
+	S_{\leq} = \begin{bmatrix}
+		1 & 1 & \cdots &  1 \\
+		0 & 1 & \cdots & 1\\
+		\vdots & \vdots & \ddots & 1 \\
+		0 & 0 & \cdots & 1 
+	\end{bmatrix} \quad\mathsf{Prev} = \begin{bmatrix}
+		0 & 1 & \cdots &  0 \\
+		0 & \ddots & \ddots & \vdots \\
+		\vdots & \ddots & \ddots& 1 \\
+		0 & \cdots & \cdots & 0
+	\end{bmatrix},
+	\quad \mathsf{Next} = \begin{bmatrix}
+		0 & 0 & \cdots &  0 \\
+		1 & \ddots & \ddots & 0\\
+		\vdots & \ddots & \ddots &0 \\
+		0 & \cdots & 1 & 0
+	\end{bmatrix},
+	\] 
+	\caption{Matrices encoding order information which are computable in \langfor.}\label{fig:ordermat}
+\end{figure}
+
 Interestingly, we can also define the \textit{previous} relation between canonical vectors. For this, we need
 the matrix $\mathsf{Prev}$ shown in Fig.~\ref{fig:ordermat}.
 %
@@ -226,30 +248,6 @@ the matrix $\mathsf{Prev}$ shown in Fig.~\ref{fig:ordermat}.
 %     0 & \cdots & \cdots & 0
 % \end{bmatrix},
 % \]
-
-\begin{figure}
-\[
-S_{\leq} = \begin{bmatrix}
-1 & 1 & \cdots &  1 \\
-0 & 1 & \cdots & 1\\
-\vdots & \vdots & \ddots & 1 \\
-0 & 0 & \cdots & 1 
-\end{bmatrix} \quad\mathsf{Prev} = \begin{bmatrix}
-    0 & 1 & \cdots &  0 \\
-    0 & \ddots & \ddots & \vdots \\
-    \vdots & \ddots & \ddots& 1 \\
-    0 & \cdots & \cdots & 0
-\end{bmatrix},
-\quad \mathsf{Next} = \begin{bmatrix}
-    0 & 0 & \cdots &  0 \\
-    1 & \ddots & \ddots & 0\\
-    \vdots & \ddots & \ddots &0 \\
-    0 & \cdots & 1 & 0
-\end{bmatrix},
-\] 
-\caption{Matrices encoding order information which are computable in \langfor.}\label{fig:ordermat}
-\end{figure}
-
 The matrix 
 $\mathsf{Prev}$ can be defined using the following \langfor expression:
 $$e_{\mathsf{Prev}}:= \ffor{v}{X}{X + \bigl((1 - \mathsf{max}(v))\times v\cdot e_{\mathsf{max}}^T - (X\cdot e_{\mathsf{max}})\cdot e_{\mathsf{max}}^T + (X\cdot e_{\mathsf{max}})\cdot v^T\bigr)}.$$
@@ -263,7 +261,7 @@ Using this matrix, we have that for a canonical vector $b_i^n$:
               \mathbf{0}, \text{ if } i = 1
             \end{cases},
 \]
-where $\mathbf{0}$ is a vector of zeros of the same type as $b_i$. Notice also that $\ones(u)^T\cdot \mathsf{Prev} \cdot u$ is equal to zero, for a canonical vector $u$, if and only if $u$ is the first canonical vector $b_1^n$, and is equal to one for any other canonical vector. This occurs since $\ones(u)^T\cdot \mathsf{Prev}$ equals to $[0\ 1\ \cdots\ 1]$, whenever $u$ is replaced by some canonical vector. Using this observation, the expression $\mathsf{min}(u)$, which evaluates to one on the first canonical vector, and to zero on any other canonical vector, can be  defined as $$\mathsf{min}(u) := 1 - \ones(u)^T\cdot \mathsf{Prev} \cdot u.$$% and, when evaluated over canonical vectors, will result in $1$ if and only if $u=b_1$ is the first canonical vector.
+where $\mathbf{0}$ is a vector of zeros of the same type as $b_i$. Notice also that $\ones(u)^T\cdot \mathsf{Prev} \cdot u$ is equal to zero, for a canonical vector $u$, if and only if $u$ is the first canonical vector $b_1^n$, and is equal to one for any other canonical vector. This occurs since $\ones(u)^T\cdot \mathsf{Prev}$ equals to $[0\ 1\ \cdots\ 1]$, whenever $u$ is replaced by some canonical vector. Using this observation, the expression $\mathsf{min}(u)$, which evaluates to one on the first canonical vector, and to zero on any other canonical vector, can be  defined as $$\mathsf{min}(u) := \ones(u) - \ones(u)^T\cdot \mathsf{Prev} \cdot u.$$% and, when evaluated over canonical vectors, will result in $1$ if and only if $u=b_1$ is the first canonical vector.
 Therefore, to access the first canonical vector in the order given by \texttt{for}, we can write:
 $$e_{\mathsf{min}} := \ffor{v}{X}{X + \mathsf{min}(v)\times v}.$$
 
@@ -316,9 +314,9 @@ a canonical vector $b_i^n$. We can express this in \langfor by using
 e_{\mathsf{getNextMatrix}}(v)&:=\ffor{w}{X = e_\mathsf{Id}}{ X \cdot \Big( \mathsf{succ}(w,v)\times e_{\mathsf{Next}} + (1 - \mathsf{succ}(w,v))\times e_{\mathsf{Id}} \Big) }
 \end{align*}
 which, when $v$ is interpreted as canonical vector $b_i^n$, output %$\mathsf{Prev}^i$ and 
-$\mathsf{Next}^i$ %respectively. 
+$\mathsf{Next}^i$. %respectively. 
 % Intuitively, in $e_{\mathsf{getPrevMatrix}}(b_i^n)$, we start the for loop by initializing $X$ to the identity via the expression $e_{\mathsf{Id}}$, as explained in Subsection \ref{ss:fML}. Following this, the matrix stored in $X$ is multiplied by $\mathsf{Prev}$ for the first $i$ canonical vectors (as specified by the subexpression $\mathsf{succ}(w,v)\times e_{\mathsf{Prev}}$), and by the identity matrix for the canonical vectors $b_{i+1}^n, \ldots , b_n^n$. The expression $e_{\mathsf{getNextMatrix}}(b_i^n)$ works analogously.
-Intuitively, in $e_{\mathsf{getNextMatrix}}(b_i^n)$, we start the for loop by initializing $X$ to the identity via the expression $e_{\mathsf{Id}}$, as explained in Subsection \ref{ss:fML}. Following this, the matrix stored in $X$ is multiplied by $\mathsf{Next}$ for the first $i$ canonical vectors (as specified by the subexpression $\mathsf{succ}(w,v)\times e_{\mathsf{Next}}$), and by the identity matrix for the canonical vectors $b_{i+1}^n, \ldots , b_n^n$. 
+Intuitively, in $e_{\mathsf{getNextMatrix}}(b_i^n)$, we start the for loop by initializing $X$ to the identity via the expression $e_{\mathsf{Id}}$, as explained in Subsection~\ref{ss:fML}. Following this, the matrix stored in $X$ is multiplied by $\mathsf{Next}$ for the first $i$ canonical vectors (as specified by the subexpression $\mathsf{succ}(w,v)\times e_{\mathsf{Next}}$), and by the identity matrix for the canonical vectors $b_{i+1}^n, \ldots , b_n^n$. 
 % The expression $e_{\mathsf{getNextMatrix}}(b_i^n)$ works analogously.
 
 
@@ -330,24 +328,24 @@ We heavily rely on order information in the next sections to compute the inverse
 
 \paragraph{Iteration based on sum and product.} When defining $4$-cliques (Example \ref{ex:fourcliques}), the diagonal matrix (Example \ref{ex:diag}), or the ones vector algorithm (Example \ref{ex:onevec}), we 
  only update $X$ by adding some matrix to it. This restricted form of for-loop will prove useful throughout the paper, and we therefore introduce it as a special operator. That is, we define:
-$$\Sigma v. e := \ffor{v}{X}{X + e}.$$
+$$\Sigma v. \, e := \ffor{v}{X}{X + e}.$$
 Here, $e=e(v)$ is an expression that can depend on the matrix variable $v$. 
 %We define the subfragment of \langfor, called \langsum, to consist of the $\Sigma$ operator plus the ``core'' operators in \lang, namely, transposition, matrix multiplication and addition, scalar multiplication, and pointwise function applications. We will study this fragment of \langfor in detail in Section \ref{sec:restrict}.
-Using this new notation, we can now define the ones-vector expression $e_{\ones}$ from Example \ref{ex:onevec}, and $e_\mathsf{Id}$ from Example \ref{ex:diag} as follows:
-\[ e_{\ones} := \Sigma v. v \text{ and }
-e_\mathsf{Id} := \Sigma v. (v^T\cdot e)\times v\cdot v^T.
+Using this new notation, we can now define the ones-vector expression $e_{\ones}$ from Example \ref{ex:onevec}, and $e_\mathsf{Id}$ from Example \ref{ex:diag} as:
+\[ e_{\ones} := \Sigma v. \, v \ \ \ \text{ and } \ \ \ 
+e_\mathsf{Id} := \Sigma v. \, (v^T\cdot e)\times v\cdot v^T.
 \]
 %\medskip
 
 In a similar way, we can consider an operator in which the for-loops can update the computed matrix only by taking the product with the value of the matrix in the previous iteration. Formally, for an expression $e$ we define the operator:
 $$
-\sprod v.\,  e=\ffor {v}{X = e_{\mathsf{Id}}}{X\cdot e}.
+\sprod v.\,  e :=\ffor {v}{X = e_{\mathsf{Id}}}{X\cdot e}.
 $$
 where $e_{\mathsf{Id}}$ is the expression defining the identity matrix and $e=e(v)$ is an expression that can depend on $v$. Notice that when updating the computed matrix via products it makes little sense to start with the zero matrix (since the result would always be zero), so we initialize the matrix to be equal to identity. 
 %We call \langmprod the subfragment of \langfor that consists of \langsum extended with $\sprod v$, and study its expressive power in Section \ref{sec:restrict}. 
-Using this operator it is now easy to define the product of the diagonal elements of a square matrix $A$ using the following expression $e$:
+As an example, using this operator it is easy to define the product of the diagonal elements of a square matrix $A$ using the following expression $e$:
 $$
-e := \sprod v. v^T\cdot A \cdot v.
+e := \sprod v. \, v^T\cdot A \cdot v.
 $$
 
 We will come back to these operators, and restrictions of \langfor which only use for-loops defined via $\ssum v.e$ and $\sprod v.e$, in Section \ref{sec:restrict}.
@@ -356,11 +354,11 @@ We will come back to these operators, and restrictions of \langfor which only us
 the case when all expressions $e_1,\ldots,e_k$ have type $1\times 1$. This will not result in any loss of generality. Indeed,
 for general function applications $f(e_1,\ldots,e_k)$, over expressions of arbitrary type, if we have $\ssum$, scalar product and function application on scalars (here denoted by $f_{1\times 1}$), we can simulate full function application, as follows:
  $$
-f(e_1,\ldots, e_k) :=\Sigma v_i \Sigma v_j. f_{1\times 1}(v_i^T\cdot e_1\cdot v_j, \ldots ,v_i^T\cdot e_k\cdot v_j) \times v_i\cdot v_j^T.
+f(e_1,\ldots, e_k) :=\Sigma v_i \Sigma v_j. \, f_{1\times 1}(v_i^T\cdot e_1\cdot v_j, \ldots ,v_i^T\cdot e_k\cdot v_j) \times v_i\cdot v_j^T.
 $$
 
 Furthermore, it also convenient at times to use the pointwise functions
-$f_\odot^k:\RR^k\mapsto \RR:(x_1,\ldots,x_k)\mapsto x_1\cdot\cdots \cdot x_k$ and 
+$f_\odot^k:\RR^k\mapsto \RR:(x_1,\ldots,x_k)\mapsto x_1\times \cdots \times x_k$ and 
 $f_\oplus^k:\RR^k\mapsto \RR:(x_1,\ldots,x_k)\mapsto x_1+\cdots + x_k$. In fact, it is readily observed that adding these functions does not extend the expressive power of \langfor:
 \begin{lemma}
 \label{lm-prod-sum}

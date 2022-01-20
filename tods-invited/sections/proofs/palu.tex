@@ -10,7 +10,7 @@
     to compute $T_k$ we need to perform $\red{P\cdot X\cdot A}{v}$ in this iteration,
     where $\red{\cdot}$ is the expression in \langfor reducing a column, as defined in the proof of Proposition \ref{prop:gauss}.
     Furthermore, we need to apply the permutation $P$ to the current result, resulting in the 
-    expression $\initf{I}{v}{X}{\red{P\cdot X\cdot A}{v}\cdot P\cdot X}$. We now remark that
+    expression $\initf{e_{\mathsf{Id}}}{v}{X}{\red{P\cdot X\cdot A}{v}\cdot P\cdot X}$. We now remark that
     $P$ is a permutation matrix of the  form $P = I - u\cdot u^T$ and it denotes an interchange (if multiplied by left) of rows $i$ and $j$ if $u=(b_{i}-b_{j})$. Note that we are performing a row interchange for column $k$ and thus $i=k$ and $j>k-1$. If no interchange is needed, $i=j=k$ and $P=I$.
     Also note that when $k=n$ no interchange takes place. Furthermore, if no suitable $b_j$ can
     be found, this implies that no interchange is required as well and we can move on to next column.
@@ -21,10 +21,8 @@
        \nneq{a}{u} := &\texttt{for}\, v,X \texttt{.}\, \left( 1-e_{\ones}(v)^T\cdot X \right) \times f_{>0}\left( ( v^T\cdot a )^2 \right)\times v \\
         &\hspace{4em}+ \mathsf{max}(v)\times\left( 1-e_{\ones}(v)^T\cdot X \right)\times \left( 1 - f_{>0}\left( ( v^T\cdot a )^2 \right) \right) \times u \\
     \end{align*}
-
-\domagoj{It took me a while to figure out what $e_1(v)$ is. We use this all over the paper, and do not really introduce it, apart from a comment in Example 3.1. Not sure if we should define all the expressions by specifying the variables so that it does not get lost.}
-
-    Here, $\nneq{a}{u}$ receives two $n$ dimensional vectors $a$ and $u$ and outputs a 
+where $e_{\ones}(v)$ is the expression for the $\diag(v)$ operator (see Example~\ref{ex:onevec}).
+Here, $\nneq{a}{u}$ receives two $n$ dimensional vectors $a$ and $u$ and outputs a 
     canonical vector $b_j$ such that $a_j$ is the first non-zero entry of $a$, or $u$ if such non-zero value does not exist in $a$. We check for $f_{>0}((v^T\cdot a)^2)$ 
     in case a negative number is tested. The above expression simply checks in each iteration
     whether $X$ already holds a canonical vector. If so, then $X$ is not updated. Otherwise,
@@ -42,14 +40,14 @@
     if no permutation is needed, or if such permutation does not exist (so we skip the current column). Also, we have to modify the $\red{V}{y}$ operator, resulting in $\redd{V}{y}$, as follows:
 
     \begin{align*}
-        &\redd{V}{y}:= e_{\mathsf{Id}}+ f_{>0}\left( ( y^T\cdot V\cdot y)^2 \right)\times f_/\Big(\ccol{V}{y}, \\
+        &\redd{V}{y}:= e_{\mathsf{Id}}+ f_{>0}\left( ( y^T\cdot V\cdot y)^2 \right)\times f_/\Big(\ccoleq{V}{y}, \\
         &\hspace{4em}\left[ -(y^T\cdot V\cdot y)\times e_{\ones}(y) + \left( 1 - f_{>0}\left( ( y^T\cdot V\cdot y)^2 \right) \right)\times e_{\ones}(y) \right]\Big)\cdot y^T. \\
     \end{align*}
 
-\domagoj{Should $\ccol{}{}$ be $\ccoleq{}{}$ here? Also, since we overload division by zero, it should not matter if it's zero, right? Below we treat this as important, but t should not be.}    
+%\domagoj{Should $\ccol{}{}$ be $\ccoleq{}{}$ here? Also, since we overload division by zero, it should not matter if it's zero, right? Below we treat this as important, but t should not be.}    
     
     So, when $V$ is interpreted by a matrix $B$ and $y=b_i$, it returns $I+c_ib_i^T$ if $B_{ii}$ is not zero. 
-    If $B_{ii}=0$ then we divide $\ccol{B}{b_i}$ by $e_{\ones}(b_i)$ (so we don't get \textit{undefined}), 
+    If $B_{ii}=0$ then we divide $\ccoleq{B}{b_i}$ by $e_{\ones}(b_i)$ (so we don't get \textit{undefined}), 
     but we don't add $c_ib_i^T$ precisely because $B_{ii}=0$, and return the identity so nothing happens. We check 
     for $f_{>0}((\cdot)^2)$ in case a negative number is tested.
 
@@ -70,5 +68,4 @@
     T_k\cdot P\cdot T_{k-1}\cdots T_1=T_k\cdot P\cdot T_{k-1}\cdot P^2\cdot T_{k-2}\cdot P^2\cdots P^2 \cdot T_1\cdot P^2=T_k\cdot (P\cdot T_{k-1}\cdot P)\cdots (P\cdot T_1\cdot P)\cdot P=\widehat{T}_{k-1}\cdots \widehat{T}_1\cdot P,
     $$
     and thus we may assume that $P$ occurs at the end. Hence, we obtain $L^{-1}\cdot P\cdot A=U$.
-
 \end{proof}

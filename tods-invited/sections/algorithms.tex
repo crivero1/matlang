@@ -1,8 +1,6 @@
 %!TEX root = ../main.tex
 
-\cristian{TODO: decide if we keep this section or not.}
-
-One of our main motivations to introduce for-loops is to be able to express classical linear algebra algorithms in a natural way. We have seen that \langfor is
+One of our main motivations to introduce for-loops is to be able to express classical linear algebra algorithms by a small set of core operators. We have seen that \langfor is
 quite expressive as it can check for cliques, compute the transitive closure, and can even
 leverage a successor relation on canonical vectors. The big question is how expressive \langfor
 actually is. We will answer this question more formally in Section \ref{sec:circuits}, where we compare \langfor with 
@@ -11,8 +9,8 @@ arithmetic circuits of polynomial degree.
 %arithmetic circuits of polynomial degree. Through this connection, one can move back and forth between \langfor and arithmetic circuits, and as a consequence, anything computable by such a circuit can be
 %computed by \langfor as well. When it comes to specific linear algebra algorithms, the detour via circuits
 %can often be avoided. 
-Before doing so, in this section we will illustrate that \langfor is capable of expressing many classical linear algebra algorithms in a natural way. More precisely, we start by showing how  \langfor is able to
-compute LU decompositions of matrices. These decompositions form the basis of many other algorithms, such as solving linear systems of equations. We further show that \langfor is expressive enough to compute matrix inversion and the determinant. We recall that matrix inversion and determinant need to be explicitly added as separate operators in \lang~\cite{matlang-journal} and that the LARA language is unable to invert matrices under usual complexity-theoretic assumptions~\cite{BarceloH0S20}.
+Before doing so, in this section we will illustrate that \langfor is capable of expressing many classical linear algebra algorithms. More precisely, we start by showing how  \langfor is able to
+compute LU decompositions of matrices. These decompositions form the basis of many other algorithms, such as solving linear systems of equations. We further show that \langfor is expressive enough to compute matrix inversion and the determinant. We recall that matrix inversion and determinant need to be explicitly added as ad-hoc operators in \lang~\cite{matlang-journal} and that the LARA language is unable to invert matrices under usual complexity-theoretic assumptions~\cite{BarceloH0S20}.
 
 
 \subsection{LU decomposition}
@@ -51,8 +49,8 @@ Assume $A$ to be an LU-factorizable matrix. To compute LU factorization of a mat
 by means of 
  the 
  expression:
-$$\ccol{V}{y} := \ffor{v}{X}{\mathsf{succ}^+(y,v)\cdot(v^T\cdot V \cdot y)\cdot v + X}.$$
-Indeed, when $V$ is assigned to a matrix $A$ and $y$ to $b_i$, we have that $X$ will be initially assigned
+$$\ccol{V}{y} := \Sigma v. \  \mathsf{succ}^+(y,v)\cdot(v^T\cdot V \cdot y)\cdot v.$$
+Indeed, when $V$ is assigned to a matrix $A$ and $y$ to $b_i$, we initially assigned
 $A_0=\mathbf{0}$ and in consecutive iterations,  $A_j=A_{j-1}+ b_j^T\cdot A\cdot b_i$ if $j>i$ (because $\mathsf{succ}^+(b_i,b_j)=1$ if $j>i$) and $A_j=A_{j-1}$ otherwise (because $\mathsf{succ}^+(b_i,b_j)=0$ for $j\leq i$). The result of this evaluation is the desired column vector.
 Using $\ccol{V}{y}$, we can now compute $T_i$ by the following expression:
 $$\red{V}{y} := e_{\mathsf{Id}}+ f_/(\ccol{V}{y},-(y^T\cdot V\cdot y)\cdot \ones(y))\cdot y^T,$$
@@ -88,7 +86,6 @@ In order to construct $e_L(V)$, we will use the fact that $e_U(A)=T_n\cdot\cdots
     \end{align*}
     
 	Therefore,    
-    
     \begin{align*}
     L&=(I+c_1\cdot b_1^T)\cdots (I+c_{n-1}\cdot b_{n-1}^T) \\
     &=I+c_1\cdot b_1^T+\cdots + c_{n-1}\cdot b_{n-1}^T.
