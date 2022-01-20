@@ -14,7 +14,7 @@ We show undecidability based on the following undecidable language:
 	Similarly
     as in the linear space TM simulation, we have vector variables $Q_1,\ldots,Q_m$ encoding the
     states, a single relation $T$ encoding the tape and relation $H_T$ encoding the position
-    of the tape.  When an instance $\I$ assigns $n$ to $\alpha$, we have a tape of length $n$ at our disposal. This suffices if we let $M$ run for $n$ steps. We further observe that all vector variables can be assumed to be zero, initially.
+    of the head.  When an instance $\I$ assigns $n$ to $\alpha$, we have a tape of length $n$ at our disposal. This suffices if we let $M$ run for $n$ steps. We further observe that all vector variables can be assumed to be zero, initially.
     This is because $M$ we do not have any input. 
 	
 	So, let $\I_n^0$ denote the instance which assigns the vector variables to the $n$-dimensional zero vector.  Furthermore, by contrast to the linear space TM simulation, we use a single vector $v$ (instead of $k$ such vectors) to simulate $n$ steps of $M$. Finally, we modify the expression given in the proof of Proposition~\ref{prop:transducer2} such $\sem{e_M}{\I_n^0}$  returns $1$ if $M$
