@@ -132,7 +132,7 @@ and inverse of a matrix can already be defined in $\langforf{f_/}$. So instead o
 
 More specifically, we rely on Csanky's algorithm for computing the inverse of a matrix~\cite{Csanky76}. This algorithm uses the characteristic
 polynomial $p_A(x)=\mathsf{det}(xI-A)$ of a matrix. When expanded as a polynomial
-$p_A(x)=\sum_{i=0}^{n} c_i x^i$ and it is known that $A^{-1}=\frac{-1}{\phantom{-1}c_n}\sum_{i=0}^{n-1}c_i A^{n-1-i}$
+$p_A(x)=\sum_{i=0}^{n} c_i x^i$, it is known that $A^{-1}=\frac{-1}{\phantom{-1}c_n}\sum_{i=0}^{n-1}c_i A^{n-1-i}$
 if $c_n\neq 0$. Furthermore, $c_0=1$, $c_n=(-1)^n\mathsf{det}(A)$ and the coefficients $c_i$ of $p_A(x)$
 are known to satisfy the system of equations $S\cdot c=s$ given by:
 $$
@@ -163,7 +163,7 @@ We remark $D_S^{-1}$ can simply be obtained by inverting the (non-zero) elements
 we can compute in $\langforf{f_/}$ as well. Hence, we can invert $S$ and obtain the vector $(c_1,\ldots,c_n)^T$ as $S^{-1}\cdot s$. To compute $A^{-1}$ it now suffices to compute
 $\frac{-1}{\phantom{-1}c_n}\sum_{i=0}^{n-1}c_i A^{n-1-i}$. To find the determinant,
 we compute $(-1)^nc_n$. All this can be done in $\langforf{f_/}$.
-We may thus conclude:
+%We may thus conclude:
 \begin{proposition}\label{prop:inverse}
     There are $\langforf{f_/}$ expressions $e_{\mathsf{det}}(V)$ and $e_{\mathsf{inv}}(V)$ such that
     $\sem{e_{\mathsf{det}}}{\I}=\mathsf{det}(A)$, and  

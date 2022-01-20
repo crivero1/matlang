@@ -1,11 +1,11 @@
 % !TeX spellcheck = en_US
-%!TEX root = ../main.tex
+%!TEX root = ../../main.tex
 
 To show the previous result we first show that it holds when considering non-singular lower or upper triangular matrices.
 \begin{lemma}\label{prop:upperlowerinverse}
 There are $\langforf{f_/}$ expressions $e_{\mathsf{upperDiagInv}}(V)$ and $e_{\mathsf{lowerDiagInv}}(V)$
 such that $\sem{e_{\mathsf{upperDiagInv}}}{\I}=A^{-1}$ when $\I$ assigns $V$
-to an invertible upper triangular matrix $A$ and $\sem{e_{\mathsf{lowerDiagInv}}}{\I}=A^{-1}$ when $\I$ assigns $V$
+to an invertible upper triangular matrix $A$ and, similarly, $\sem{e_{\mathsf{lowerDiagInv}}}{\I}=A^{-1}$ when $\I$ assigns $V$
 to an invertible lower triangular matrix $A$.
 \end{lemma}
 
@@ -39,9 +39,9 @@ to an invertible lower triangular matrix $A$.
     $$
     We now observe that $D_{A}^{-1}$ simply consists of the inverses of the elements on the diagonal. This can be expressed, as follows:
     $$
-    e_{\mathsf{diagInverse}}(V):=\ssum v. f_{/}(1,v^T\cdot V\cdot v)\times v\cdot v^T=\ssum v. f_{/}(1,v^T\cdot V\cdot v)\times v\cdot v^T,
+    e_{\mathsf{diagInverse}}(V):=\ssum v. f_{/}(1,v^T\cdot V\cdot v)\times v\cdot v^T
     $$
-    Where $f_{/}$ is the division function. In the last equality we take advantage of the fact that the diagonals of $A$ and $D_A$ are the same.
+    where $f_{/}$ is the division function. In the last equality we take advantage of the fact that the diagonals of $A$ and $D_A$ are the same.
 
     We now focus on the computation of $\left( I+D_A^{-1}\cdot T\right)^{-1}$. First, by construction, $D_A^{-1}\cdot T$ is strictly upper triangular and thus nilpotent, 
     such that $\left( D_A^{-1}\cdot T\right)^n=0$, where $n$ is the dimension of $A$.
@@ -79,10 +79,12 @@ to an invertible lower triangular matrix $A$.
     This concludes the proof of the lemma.
 \end{proof}
 
-We are now ready to prove proposition \ref{prop:inverse}.
+We are now ready to prove Proposition \ref{prop:inverse}.
 
 \begin{proof}
-    Let $A$ be an $n \times n$ matrix. As mentioned in the main body of the paper, we will implement Csanky's algorithm. Let $p_A(x):=\mathsf{det}(xI-A)$ denote  characteristic polynomial of $A$.  We write $p_A(x)=1 + \sum_{i=1}^n c_ix^i$ and let  $S_i:=\frac{1}{i+1}\mathsf{tr}(A^i)$ with $\mathsf{tr}(\cdot)$ the trace operator which sums up the diagonal elements of a matrix.
+    Let $A$ be an $n \times n$ matrix. As mentioned in the main body of the paper, we will implement Csanky's algorithm. Let $p_A(x):=\mathsf{det}(xI-A)$ denote  characteristic polynomial of $A$.  We write $p_A(x)=1 + \sum_{i=1}^n c_ix^i$ and let  $S_i:=\frac{1}{i+1}\mathsf{tr}(A^i)$ 
+    \cristian{In the body above, $S_i$ is defined as $S_i:=\mathsf{tr}(A^i)$. Which is the correct one? $S_i:=\frac{1}{i+1}\mathsf{tr}(A^i)$ or $S_i:=\mathsf{tr}(A^i)$?}
+    with $\mathsf{tr}(\cdot)$ the trace operator which sums up the diagonal elements of a matrix.
     Then, the coefficients $c_1,\ldots,c_n$ are known to satisfy\footnote{We use a slightly different, but equivalent, system of equations than the one mentioned in the paper.} 
     $$
     \underbrace{\left(\begin{matrix}
@@ -130,7 +132,7 @@ We are now ready to prove proposition \ref{prop:inverse}.
     $$
     We next construct the matrix $S$. We need to be able to \textit{shift} a vector $a$ in $k$ positions, i.e.,
     such that $(a_1,\ldots,a_n)\mapsto (0,\ldots,a_1,\ldots,a_{n-k})$. We use $e_{\mathsf{getNextMatrix}}$ 
-    defined in section \ref{sec:formatlang:design}, i.e., we define:
+    defined in Section~\ref{sec:formatlang:design}, i.e., we define:
     $$
     e_{\mathsf{shift}}(a,v):=\ssum w.(w^T\cdot a)\times(e_{\mathsf{getNextMatrix}}(v)\cdot w)
     $$
