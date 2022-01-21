@@ -1,7 +1,7 @@
 % !TeX spellcheck = en_US
 %!TEX root = ../../main.tex
 
-To show the previous result we first show that it holds when considering non-singular lower or upper triangular matrices.
+We begin by showing that the result holds in a special case when considering non-singular lower or upper triangular matrices.
 \begin{lemma}\label{prop:upperlowerinverse}
 There are $\langforf{f_/}$ expressions $e_{\mathsf{upperDiagInv}}(V)$ and $e_{\mathsf{lowerDiagInv}}(V)$
 such that $\sem{e_{\mathsf{upperDiagInv}}}{\I}=A^{-1}$ when $\I$ assigns $V$
@@ -79,13 +79,10 @@ to an invertible lower triangular matrix $A$.
     This concludes the proof of the lemma.
 \end{proof}
 
-We are now ready to prove Proposition \ref{prop:inverse}.
-
-\begin{proof}
-    Let $A$ be an $n \times n$ matrix. As mentioned in the main body of the paper, we will implement Csanky's algorithm. Let $p_A(x):=\mathsf{det}(xI-A)$ denote  characteristic polynomial of $A$.  We write $p_A(x)=1 + \sum_{i=1}^n c_ix^i$ and let  $S_i:=\frac{1}{i+1}\mathsf{tr}(A^i)$ 
-    \cristian{In the body above, $S_i$ is defined as $S_i:=\mathsf{tr}(A^i)$. Which is the correct one? $S_i:=\frac{1}{i+1}\mathsf{tr}(A^i)$ or $S_i:=\mathsf{tr}(A^i)$?}
-    with $\mathsf{tr}(\cdot)$ the trace operator which sums up the diagonal elements of a matrix.
-    Then, the coefficients $c_1,\ldots,c_n$ are known to satisfy\footnote{We use a slightly different, but equivalent, system of equations than the one mentioned in the paper.} 
+\medskip 
+\noindent{\textsc{Proof of Proposition \ref{prop:inverse}.}}
+With this result at hand, we are now ready to prove Proposition \ref{prop:inverse}. More specifically, we rely on Csanky's algorithm for computing the inverse of a matrix~\cite{Csanky76}. This algorithm uses the characteristic polynomial $p_A(x)=\mathsf{det}(xI-A)$ of a matrix. When expanded as a polynomial $p_A(x)=\sum_{i=0}^{n} c_i x^i$, it is known that
+$A^{-1}=\frac{1}{c_n}\sum_{i=0}^{n-1}c_i A^{n-1-i},$ if $c_n\neq 0$. It also holds that $c_n=(-1)^n\mathsf{det}(A)$, and   $c_0 = 1$. We can thus write We write $p_A(x)=1 + \sum_{i=1}^n c_ix^i$. Furthermore, the coefficients $c_1,\ldots,c_n$ are known to satisfy the system of equations $S\cdot \bar c=\bar s$ given by:
     $$
     \underbrace{\left(\begin{matrix}
     1 & 0 & 0 & \cdots & 0 & 0\\
@@ -106,13 +103,44 @@ We are now ready to prove Proposition \ref{prop:inverse}.
     S_3\\
     \vdots\\
     S_n\\
-    \end{matrix}\right)}_{\bar b}
+    \end{matrix}\right)}_{\bar s},
     $$
-    and furthermore, $c_n=(-1)^n\mathsf{det}(A)$ and if $c_{n}\neq 0$, then
-    $$
-    A^{-1}=\frac{1}{c_n}\sum_{i=0}^{n-1}c_i A^{n-1-i},
-    $$
-    with $c_0=1$. It is now easy to see that we can compute the $S_i's$ in $\langfor$. Indeed, for
+with $S_i:=\frac{1}{i+1}\mathsf{tr}(A^i)$, where $\mathsf{tr}(\cdot)$ is the trace operator that sums up the diagonal elements of a matrix. 
+%
+%\begin{proof}
+%    Let $A$ be an $n \times n$ matrix. As mentioned above, we will implement Csanky's algorithm. Let $p_A(x):=\mathsf{det}(xI-A)$ denote  characteristic polynomial of $A$.  We write $p_A(x)=1 + \sum_{i=1}^n c_ix^i$ and let  $S_i:=\frac{1}{i+1}\mathsf{tr}(A^i)$ 
+%    \cristian{In the body above, $S_i$ is defined as $S_i:=\mathsf{tr}(A^i)$. Which is the correct one? $S_i:=\frac{1}{i+1}\mathsf{tr}(A^i)$ or $S_i:=\mathsf{tr}(A^i)$?}
+%    with $\mathsf{tr}(\cdot)$ the trace operator which sums up the diagonal elements of a matrix.
+%    Then, the coefficients $c_1,\ldots,c_n$ are known to satisfy\footnote{We use a slightly different, but equivalent, system of equations than the one mentioned previously.} 
+%    $$
+%    \underbrace{\left(\begin{matrix}
+%    1 & 0 & 0 & \cdots & 0 & 0\\
+%    S_1 & 1 & 0 & \cdots  &0 & 0\\
+%    S_2 & S_1 & 1 & \cdots  &0 & 0\\
+%    \vdots & \vdots & \vdots & \vdots & \vdots & 0\\
+%    S_{n-1} & S_{n-2} & S_{n-3} & \cdots & S_1 & 1\\
+%    \end{matrix}\right)}_{S}\cdot
+%    \underbrace{\left(\begin{matrix}
+%    c_1\\
+%    c_2\\
+%    c_3\\
+%    \vdots\\
+%    c_n\\
+%    \end{matrix}\right)}_{\bar c}=\underbrace{\left(\begin{matrix}
+%    S_1\\
+%    S_2\\
+%    S_3\\
+%    \vdots\\
+%    S_n\\
+%    \end{matrix}\right)}_{\bar s}
+%    $$
+%    and furthermore, $c_n=(-1)^n\mathsf{det}(A)$ and if $c_{n}\neq 0$, then
+%    $$
+%    A^{-1}=\frac{1}{c_n}\sum_{i=0}^{n-1}c_i A^{n-1-i},
+%    $$
+%    with $c_0=1$. 
+  %  
+    We can now compute the $S_i's$ in $\langfor$ as follows. First, for
     $i=1,\ldots,n$ we can consider
     $$
     e_{\mathsf{powTr}}(V,v):=\ssum w. w^T\cdot\left(e_{\mathsf{pow}}(V,v)\cdot V\right)\cdot w
@@ -126,9 +154,9 @@ We are now ready to prove Proposition \ref{prop:inverse}.
     e_{S}(V,v):=f_{/}(1, 1 + \ssum w. \mathsf{succ}(w,v))\times e_{\mathsf{powTr}}(V,v).
     $$
     Here $e_{S}(A,b_i)=S_i$. Note that $i+1$ is computed summing up to the dimension indicated by $v$, and adding 1.
-    We can now easily construct the vector $\bar b$ used in the system of equations by means of the expression:
+    We can now easily construct the vector $\bar s$ used in the system of equations by means of the expression:
     $$
-    e_{\bar b}(V):=\ssum w.e_{S}(V,w)\times w.
+    e_{\bar s}(V):=\ssum w.e_{S}(V,w)\times w.
     $$
     We next construct the matrix $S$. We need to be able to \textit{shift} a vector $a$ in $k$ positions, i.e.,
     such that $(a_1,\ldots,a_n)\mapsto (0,\ldots,a_1,\ldots,a_{n-k})$. We use $e_{\mathsf{getNextMatrix}}$ 
@@ -139,13 +167,13 @@ We are now ready to prove Proposition \ref{prop:inverse}.
     performs the desired shift when $u$ is assigned a vector $a$ and $v$ is $b_k$. 
     The matrix $S$ is now obtained as follows:
     $$
-    S(V):= e_{\mathsf{Id}} + \ssum v. e_{\mathsf{shift}}(e_{\bar b}(V), v)\cdot v^T
+    S(V):= e_{\mathsf{Id}} + \ssum v. e_{\mathsf{shift}}(e_{\bar s}(V), v)\cdot v^T
     $$
     We now observe that $S$ is lower triangular with nonzero diagonal entries. So,
     Lemma~\ref{prop:upperlowerinverse} tells us that we can invert it, i.e.,
     $e_{\mathsf{lowerDiagInv}}(S)=S^{-1}$. As a consequence,
     $$
-    e_{\bar c}(V):=e_{\mathsf{lowerDiagInv}}(S(V))\cdot e_{\bar b}(V).
+    e_{\bar c}(V):=e_{\mathsf{lowerDiagInv}}(S(V))\cdot e_{\bar s}(V).
     $$
     outputs $\bar c$ when $V$ is interpreted as matrix $A$. Observe that we only use the division operator. We now have all coefficients of the characteristic polynomial of $A$.
 
@@ -180,8 +208,8 @@ We are now ready to prove Proposition \ref{prop:inverse}.
     $$
     e_{\mathsf{inv}}(V):= f_{/}(1, e_{\bar c}(V)^T\cdot e_{\mathsf{max}})\times e_{\mathsf{pow}}(V, e_{\mathsf{max}}) + \left[ \ssum v. f_{/}\left( e_{\bar c}(V)^T\cdot v, e_{\bar c}(V)^T\cdot e_{\mathsf{max}} \right)\times e_{\mathsf{invPow}}(V, v) \right],
     $$
-    an expression that, when $V$ is interpreted as any invertible matrix $A$, computes $A^{-1}$.
-\end{proof}
+    an expression that, when $V$ is interpreted as any invertible matrix $A$, computes $A^{-1}$. \qed
+%\end{proof}
 
 As an observation, here we only use operators $\ssum$ and $\sprod$ defined in section \ref{sec:restrict}. 
 We also assume access to order.

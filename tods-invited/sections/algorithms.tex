@@ -128,47 +128,87 @@ and inverse can be expressed as well.
 
 However, the results
 in the next section (connecting \langfor with arithmetic circuits) imply that the determinant
-and inverse of a matrix can already be defined in $\langforf{f_/}$. So instead of using LU decomposition with pivoting for matrix inversion and computing the determinant, we provide an alternative solution.
+and inverse of a matrix can already be defined in $\langforf{f_/}$. So instead of using LU decomposition with pivoting for matrix inversion and computing the determinant, we provide an alternative solution that will be based on Csanky's algorithm~\cite{Csanky76}.
 
-More specifically, we rely on Csanky's algorithm for computing the inverse of a matrix~\cite{Csanky76}. This algorithm uses the characteristic
-polynomial $p_A(x)=\mathsf{det}(xI-A)$ of a matrix. When expanded as a polynomial
-$p_A(x)=\sum_{i=0}^{n} c_i x^i$, it is known that $A^{-1}=\frac{-1}{\phantom{-1}c_n}\sum_{i=0}^{n-1}c_i A^{n-1-i}$
-if $c_n\neq 0$. Furthermore, $c_0=1$, $c_n=(-1)^n\mathsf{det}(A)$ and the coefficients $c_i$ of $p_A(x)$
-are known to satisfy the system of equations $S\cdot c=s$ given by:
-$$
-\left(\begin{matrix}
-1 & 0 & 0 & \cdots & 0 & 0\\
-S_1 & 2 & 0 & \cdots  &0 & 0\\
-S_2 & S_1 & 3 & \cdots  &0 & 0\\
-\vdots & \vdots & \vdots & \vdots & \vdots & 0\\
-S_{n-1} & S_{n-2} & S_{n-3} & \cdots & S_1 & n\\
-\end{matrix}\right)\cdot
-\left(\begin{matrix}
-c_1\\
-c_2\\
-c_3\\
-\vdots\\
-c_n\\
-\end{matrix}\right)=\left(\begin{matrix}
-S_1\\
-S_2\\
-S_3\\
-\vdots\\
-S_n\\
-\end{matrix}\right),
-$$
-with $S_i=\mathsf{tr}(A^i)$. We can construct all ingredients of this system of equations in $\langforf{f_/}$. By observing that the matrix $S$ is a lower triangular matrix with non-zero elements on its diagonal, we can write it in the form $D_S+(S-D_{S})=D_S\cdot(I+D_S^{-1}\cdot (S-D_S))$ with $D_S$ the diagonal matrix consisting of the diagonal entries of $S$.
-Hence $S^{-1}=(I+D_{S}^{-1}\cdot(S-D_{S}))^{-1}\cdot D_S^{-1}$. 
-We remark $D_S^{-1}$ can simply be obtained by inverting the (non-zero) elements on the diagonal by means of $f_/$ in $\langforf{f_/}$. Furthermore, we observe that $(I+D_S^{-1}(S-D_S))^{-1}=\sum_{i=0}^{n}(D_S^{-1}(S-D_S))^i$ which is something
-we can compute in $\langforf{f_/}$ as well. Hence, we can invert $S$ and obtain the vector $(c_1,\ldots,c_n)^T$ as $S^{-1}\cdot s$. To compute $A^{-1}$ it now suffices to compute
-$\frac{-1}{\phantom{-1}c_n}\sum_{i=0}^{n-1}c_i A^{n-1-i}$. To find the determinant,
-we compute $(-1)^nc_n$. All this can be done in $\langforf{f_/}$.
-%We may thus conclude:
+The main objective of this subsection is to show the following result:
+
 \begin{proposition}\label{prop:inverse}
     There are $\langforf{f_/}$ expressions $e_{\mathsf{det}}(V)$ and $e_{\mathsf{inv}}(V)$ such that
     $\sem{e_{\mathsf{det}}}{\I}=\mathsf{det}(A)$, and  
     $\sem{e_{\mathsf{inv}}}{\I}=A^{-1}$ when $\I$ assigns $V$
     to $A$ and $A$ is invertible.
 \end{proposition}
+
+%More specifically, we rely on Csanky's algorithm for computing the inverse of a matrix~\cite{Csanky76}. This algorithm uses the characteristic
+%polynomial $p_A(x)=\mathsf{det}(xI-A)$ of a matrix. When expanded as a polynomial
+%$p_A(x)=\sum_{i=0}^{n} c_i x^i$, it is known that $A^{-1}=\frac{-1}{\phantom{-1}c_n}\sum_{i=0}^{n-1}c_i A^{n-1-i}$
+%if $c_n\neq 0$. Furthermore, $c_0=1$, $c_n=(-1)^n\mathsf{det}(A)$ and the coefficients $c_i$ of $p_A(x)$
+%are known to satisfy the system of equations $S\cdot c=s$ given by:
+%$$
+%\left(\begin{matrix}
+%1 & 0 & 0 & \cdots & 0 & 0\\
+%S_1 & 2 & 0 & \cdots  &0 & 0\\
+%S_2 & S_1 & 3 & \cdots  &0 & 0\\
+%\vdots & \vdots & \vdots & \vdots & \vdots & 0\\
+%S_{n-1} & S_{n-2} & S_{n-3} & \cdots & S_1 & n\\
+%\end{matrix}\right)\cdot
+%\left(\begin{matrix}
+%c_1\\
+%c_2\\
+%c_3\\
+%\vdots\\
+%c_n\\
+%\end{matrix}\right)=\left(\begin{matrix}
+%S_1\\
+%S_2\\
+%S_3\\
+%\vdots\\
+%S_n\\
+%\end{matrix}\right),
+%$$
+%with $S_i=\mathsf{tr}(A^i)$. 
+
+
+%More specifically, we rely on Csanky's algorithm for computing the inverse of a matrix~\cite{Csanky76}. This algorithm uses the characteristic polynomial $p_A(x)=\mathsf{det}(xI-A)$ of a matrix. When expanded as a polynomial $p_A(x)=\sum_{i=0}^{n} c_i x^i$, it is known that
+%$A^{-1}=\frac{1}{c_n}\sum_{i=0}^{n-1}c_i A^{n-1-i},$ if $c_n\neq 0$. It also holds that $c_n=(-1)^n\mathsf{det}(A)$, and if $c_n\neq 0$, then $c_0 = 1$. Furthermore, the coefficients $c_1,\ldots,c_n$ are known to satisfy the system of equations $S\cdot c=s$ given by:
+%    $$
+%    \underbrace{\left(\begin{matrix}
+%    1 & 0 & 0 & \cdots & 0 & 0\\
+%    S_1 & 1 & 0 & \cdots  &0 & 0\\
+%    S_2 & S_1 & 1 & \cdots  &0 & 0\\
+%    \vdots & \vdots & \vdots & \vdots & \vdots & 0\\
+%    S_{n-1} & S_{n-2} & S_{n-3} & \cdots & S_1 & 1\\
+%    \end{matrix}\right)}_{S}\cdot
+%    \underbrace{\left(\begin{matrix}
+%    c_1\\
+%    c_2\\
+%    c_3\\
+%    \vdots\\
+%    c_n\\
+%    \end{matrix}\right)}_{c}=\underbrace{\left(\begin{matrix}
+%    S_1\\
+%    S_2\\
+%    S_3\\
+%    \vdots\\
+%    S_n\\
+%    \end{matrix}\right)}_{s},
+%    $$
+%with $S_i:=\frac{1}{i+1}\mathsf{tr}(A^i)$, where $\mathsf{tr}(\cdot)$ is the trace operator that sums up the diagonal elements of a matrix. 
+
+%We can construct all ingredients of this system of equations in $\langforf{f_/}$. By observing that the matrix $S$ is a lower triangular matrix with non-zero elements on its diagonal, we can write it in the form $D_S+(S-D_{S})=D_S\cdot(I+D_S^{-1}\cdot (S-D_S))$ with $D_S$ the diagonal matrix consisting of the diagonal entries of $S$.
+%Hence $S^{-1}=(I+D_{S}^{-1}\cdot(S-D_{S}))^{-1}\cdot D_S^{-1}$. 
+%We remark $D_S^{-1}$ can simply be obtained by inverting the (non-zero) elements on the diagonal by means of $f_/$ in $\langforf{f_/}$. Furthermore, we observe that $(I+D_S^{-1}(S-D_S))^{-1}=\sum_{i=0}^{n}(D_S^{-1}(S-D_S))^i$ which is something
+%we can compute in $\langforf{f_/}$ as well. Hence, we can invert $S$ and obtain the vector $(c_1,\ldots,c_n)^T$ as $S^{-1}\cdot s$. To compute $A^{-1}$ it now suffices to compute
+%$\frac{-1}{\phantom{-1}c_n}\sum_{i=0}^{n-1}c_i A^{n-1-i}$. To find the determinant,
+%we compute $(-1)^nc_n$. All this can be done in $\langforf{f_/}$.
+
+%We start by showing 
+%%We may thus conclude:
+%\begin{proposition}\label{prop:inverse}
+%    There are $\langforf{f_/}$ expressions $e_{\mathsf{det}}(V)$ and $e_{\mathsf{inv}}(V)$ such that
+%    $\sem{e_{\mathsf{det}}}{\I}=\mathsf{det}(A)$, and  
+%    $\sem{e_{\mathsf{inv}}}{\I}=A^{-1}$ when $\I$ assigns $V$
+%    to $A$ and $A$ is invertible.
+%\end{proposition}
 
 \input{sections/proofs/inverse.tex}
