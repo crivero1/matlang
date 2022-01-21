@@ -82,7 +82,7 @@ to an invertible lower triangular matrix $A$.
 \medskip 
 \noindent{\textsc{Proof of Proposition \ref{prop:inverse}.}}
 With this result at hand, we are now ready to prove Proposition \ref{prop:inverse}. More specifically, we rely on Csanky's algorithm for computing the inverse of a matrix~\cite{Csanky76}. This algorithm uses the characteristic polynomial $p_A(x)=\mathsf{det}(xI-A)$ of a matrix. When expanded as a polynomial $p_A(x)=\sum_{i=0}^{n} c_i x^i$, it is known that
-$A^{-1}=\frac{1}{c_n}\sum_{i=0}^{n-1}c_i A^{n-1-i},$ if $c_n\neq 0$. It also holds that $c_n=(-1)^n\mathsf{det}(A)$, and   $c_0 = 1$. We can thus write We write $p_A(x)=1 + \sum_{i=1}^n c_ix^i$. Furthermore, the coefficients $c_1,\ldots,c_n$ are known to satisfy the system of equations $S\cdot \bar c=\bar s$ given by:
+$A^{-1}=\frac{1}{c_n}\sum_{i=0}^{n-1}c_i A^{n-1-i},$ if $c_n\neq 0$. It also holds that $c_n=(-1)^n\mathsf{det}(A)$, and   $c_0 = 1$. We can thus write $p_A(x)=1 + \sum_{i=1}^n c_ix^i$. Furthermore, the coefficients $c_1,\ldots,c_n$ are known to satisfy the system of equations $S\cdot \bar c=\bar s$ given by:
     $$
     \underbrace{\left(\begin{matrix}
     1 & 0 & 0 & \cdots & 0 & 0\\
