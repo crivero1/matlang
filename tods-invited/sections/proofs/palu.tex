@@ -21,7 +21,7 @@
        \nneq{a}{u} := &\texttt{for}\, v,X \texttt{.}\, \left( 1-e_{\ones}(v)^T\cdot X \right) \times f_{>0}\left( ( v^T\cdot a )^2 \right)\times v \\
         &\hspace{4em}+ \mathsf{max}(v)\times\left( 1-e_{\ones}(v)^T\cdot X \right)\times \left( 1 - f_{>0}\left( ( v^T\cdot a )^2 \right) \right) \times u \\
     \end{align*}
-where $e_{\ones}(v)$ is the expression for the $\diag(v)$ operator (see Example~\ref{ex:onevec}).
+where $e_{\ones}(v)$ is the expression for the $\ones(v)$ operator (see Example~\ref{ex:onevec}).
 Here, $\nneq{a}{u}$ receives two $n$ dimensional vectors $a$ and $u$ and outputs a 
     canonical vector $b_j$ such that $a_j$ is the first non-zero entry of $a$, or $u$ if such non-zero value does not exist in $a$. We check for $f_{>0}((v^T\cdot a)^2)$ 
     in case a negative number is tested. The above expression simply checks in each iteration
