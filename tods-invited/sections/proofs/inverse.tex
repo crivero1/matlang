@@ -81,7 +81,8 @@ to an invertible lower triangular matrix $A$.
 
 \medskip 
 \noindent{\textsc{Proof of Proposition \ref{prop:inverse}.}}
-With this result at hand, we are now ready to prove Proposition \ref{prop:inverse}. More specifically, we rely on Csanky's algorithm for computing the inverse of a matrix~\cite{Csanky76}. This algorithm uses the characteristic polynomial $p_A(x)=\mathsf{det}(xI-A)$ of a matrix. When expanded as a polynomial $p_A(x)=\sum_{i=0}^{n} c_i x^i$, it is known that
+With this result at hand, we are now ready to prove Proposition \ref{prop:inverse}. More specifically, we rely on Csanky's algorithm for computing the inverse of a matrix~\cite{Csanky76}.
+This algorithm uses the characteristic polynomial $p_A(x)=\mathsf{det}(xI-A)$ of a matrix. When expanded as a polynomial $p_A(x)=\sum_{i=0}^{n} c_i x^i$, it is known that
 $A^{-1}=\frac{1}{c_n}\sum_{i=0}^{n-1}c_i A^{n-1-i},$ if $c_n\neq 0$. It also holds that $c_n=(-1)^n\mathsf{det}(A)$, and   $c_0 = 1$. We can thus write $p_A(x)=1 + \sum_{i=1}^n c_ix^i$. Furthermore, the coefficients $c_1,\ldots,c_n$ are known to satisfy the system of equations $S\cdot \bar c=\bar s$ given by:
     $$
     \underbrace{\left(\begin{matrix}
@@ -210,6 +211,9 @@ with $S_i:=\frac{1}{i+1}\mathsf{tr}(A^i)$, where $\mathsf{tr}(\cdot)$ is the tra
     $$
     an expression that, when $V$ is interpreted as any invertible matrix $A$, computes $A^{-1}$. \qed
 %\end{proof}
+
+Note that we use a slightly different, but equivalent, system of equations to the originally proposed in \cite{Csanky76}.
+For each equation $i=1, \ldots, n$, we divide the equality by $i$ and push the negative sign to the solution $c_1, \ldots, c_n$.
 
 As an observation, here we only use operators $\ssum$ and $\sprod$ defined in section \ref{sec:restrict}. 
 We also assume access to order.
