@@ -20,20 +20,21 @@ to an invertible lower triangular matrix $A$.
     When this is the case, we multiply the current result by $A$, and when $w$ is greater 
     than $v$, we use the identity as not to affect the already computed result. We add the identity at the end.
 
-    Now, let $A$ be an $n\times n$ matrix that is upper triangular and let $D_A$ be the matrix consisting of the diagonal elements of $A$, i.e.,
-    \[
-    D_A = \begin{bmatrix}
-        a_{11} & \cdots & \cdots &  0 \\
-        0 & a_{22} & \cdots &  0 \\
-        0 & \ddots & \vdots & \vdots \\
-        \vdots & \cdots& \cdots & a_{nn}
-    \end{bmatrix}.
-    \]
+    Now, let $A$ be an $n\times n$ matrix that is upper triangular and let $D_A$ be the diagonal matrix consisting of the diagonal elements of $A$.
+	% , i.e.,
+%     \[
+%     D_A = \begin{bmatrix}
+%         a_{11} & \cdots & \cdots &  0 \\
+%         0 & a_{22} & \cdots &  0 \\
+%         0 & \ddots & \vdots & \vdots \\
+%         \vdots & \cdots& \cdots & a_{nn}
+%     \end{bmatrix}.
+%     \]
     We can compute $D_A$ by the expression:
     $$
     e_{\mathsf{getDiag}}(V) := \ssum v. (v^T\cdot V\cdot v) \times v\cdot v^T.
     $$
-    Let $T=A-D_A$, then
+    Let $T=A-D_A$. We can write
     $$
     A^{-1}=\left[ D_A+T \right]^{-1}= \left[ D_A\left( I+D_A^{-1}T\right) \right]^{-1} = \left( I+D_A^{-1}T\right)^{-1}D_A^{-1}.
     $$
@@ -43,8 +44,7 @@ to an invertible lower triangular matrix $A$.
     $$
     where $f_{/}$ is the division function. In the last equality we take advantage of the fact that the diagonals of $A$ and $D_A$ are the same.
 
-    We now focus on the computation of $\left( I+D_A^{-1}\cdot T\right)^{-1}$. First, by construction, $D_A^{-1}\cdot T$ is strictly upper triangular and thus nilpotent, 
-    such that $\left( D_A^{-1}\cdot T\right)^n=0$, where $n$ is the dimension of $A$.
+    We now focus on the computation of $\left( I+D_A^{-1}\cdot T\right)^{-1}$. First, by construction, $D_A^{-1}\cdot T$ is strictly upper triangular and thus nilpotent, i.e.,   $\left( D_A^{-1}\cdot T\right)^n=0$  where $n$ is the dimension of $A$.
     Recall the following algebraic identity 
     $$(1+x)\left( \sum_{i=0}^{m}(-x)^i \right)=1-(-x)^{m+1}.$$
     By choosing $m=n-1$ and applying it to $x=D_A^{-1}\cdot T$, we have
@@ -61,17 +61,15 @@ to an invertible lower triangular matrix $A$.
     $$
     and thus 
     $$
-    A^{-1}= e_{\mathsf{ps}}\left(-1\times \left[e_{\mathsf{diagInverse}}(A)(A-e_{\mathsf{getDiag}}(A))\right] \right)e_{\mathsf{diagInverse}}(A).
+    A^{-1}= e_{\mathsf{ps}}\left(-1\times \left[e_{\mathsf{diagInverse}}(A)\cdot(A-e_{\mathsf{getDiag}}(A))\right] \right)\cdot e_{\mathsf{diagInverse}}(A).
     $$
-    Seeing this as an expression:
+    Seeing this as a \langfor\ expression:
     $$
-    e_{\mathsf{upperDiagInv}}(V):= e_{\mathsf{ps}}\left(-1\times \left[e_{\mathsf{diagInverse}}(V)(V-e_{\mathsf{getDiag}}(V))\right] \right)e_{\mathsf{diagInverse}}(V),
+    e_{\mathsf{upperDiagInv}}(V):= e_{\mathsf{ps}}\left(-1\times \left[e_{\mathsf{diagInverse}}(V)\cdot(V-e_{\mathsf{getDiag}}(V))\right] \right)\cdot e_{\mathsf{diagInverse}}(V),
     $$
     we see that  when interpreting $V$ as an  upper triangular invertible matrix, 
     $e_{\mathsf{upperDiagInv}}(A)$ evaluates to $A^{-1}$.
-
-
-    To deal with invertible lower triangular matrices $A$, we observe that  $\left(A^{-1}\right)^T=\left(A^T\right)^{-1}$ and $A^T$ is upper triangular.
+   To deal with invertible lower triangular matrices $A$, we observe that  $\left(A^{-1}\right)^T=\left(A^T\right)^{-1}$ and $A^T$ is upper triangular.
     Hence, it suffices to define
     $$
     e_{\mathsf{lowerDiagInv}}(V):= e_{\mathsf{upperDiagInv}}(V^T)^T.
@@ -107,40 +105,7 @@ $A^{-1}=\frac{1}{c_n}\sum_{i=0}^{n-1}c_i A^{n-1-i},$ if $c_n\neq 0$. It also hol
     \end{matrix}\right)}_{\bar s},
     $$
 with $S_i:=\frac{1}{i+1}\mathsf{tr}(A^i)$, where $\mathsf{tr}(\cdot)$ is the trace operator that sums up the diagonal elements of a matrix. 
-%
-%\begin{proof}
-%    Let $A$ be an $n \times n$ matrix. As mentioned above, we will implement Csanky's algorithm. Let $p_A(x):=\mathsf{det}(xI-A)$ denote  characteristic polynomial of $A$.  We write $p_A(x)=1 + \sum_{i=1}^n c_ix^i$ and let  $S_i:=\frac{1}{i+1}\mathsf{tr}(A^i)$ 
-%    \cristian{In the body above, $S_i$ is defined as $S_i:=\mathsf{tr}(A^i)$. Which is the correct one? $S_i:=\frac{1}{i+1}\mathsf{tr}(A^i)$ or $S_i:=\mathsf{tr}(A^i)$?}
-%    with $\mathsf{tr}(\cdot)$ the trace operator which sums up the diagonal elements of a matrix.
-%    Then, the coefficients $c_1,\ldots,c_n$ are known to satisfy\footnote{We use a slightly different, but equivalent, system of equations than the one mentioned previously.} 
-%    $$
-%    \underbrace{\left(\begin{matrix}
-%    1 & 0 & 0 & \cdots & 0 & 0\\
-%    S_1 & 1 & 0 & \cdots  &0 & 0\\
-%    S_2 & S_1 & 1 & \cdots  &0 & 0\\
-%    \vdots & \vdots & \vdots & \vdots & \vdots & 0\\
-%    S_{n-1} & S_{n-2} & S_{n-3} & \cdots & S_1 & 1\\
-%    \end{matrix}\right)}_{S}\cdot
-%    \underbrace{\left(\begin{matrix}
-%    c_1\\
-%    c_2\\
-%    c_3\\
-%    \vdots\\
-%    c_n\\
-%    \end{matrix}\right)}_{\bar c}=\underbrace{\left(\begin{matrix}
-%    S_1\\
-%    S_2\\
-%    S_3\\
-%    \vdots\\
-%    S_n\\
-%    \end{matrix}\right)}_{\bar s}
-%    $$
-%    and furthermore, $c_n=(-1)^n\mathsf{det}(A)$ and if $c_{n}\neq 0$, then
-%    $$
-%    A^{-1}=\frac{1}{c_n}\sum_{i=0}^{n-1}c_i A^{n-1-i},
-%    $$
-%    with $c_0=1$. 
-  %  
+
     We can now compute the $S_i's$ in $\langfor$ as follows. First, for
     $i=1,\ldots,n$ we can consider
     $$
@@ -210,10 +175,9 @@ with $S_i:=\frac{1}{i+1}\mathsf{tr}(A^i)$, where $\mathsf{tr}(\cdot)$ is the tra
     e_{\mathsf{inv}}(V):= f_{/}(1, e_{\bar c}(V)^T\cdot e_{\mathsf{max}})\times e_{\mathsf{pow}}(V, e_{\mathsf{max}}) + \left[ \ssum v. f_{/}\left( e_{\bar c}(V)^T\cdot v, e_{\bar c}(V)^T\cdot e_{\mathsf{max}} \right)\times e_{\mathsf{invPow}}(V, v) \right],
     $$
     an expression that, when $V$ is interpreted as any invertible matrix $A$, computes $A^{-1}$. \qed
-%\end{proof}
 
-Note that we use a slightly different, but equivalent, system of equations to the originally proposed in \cite{Csanky76}.
-For each equation $i=1, \ldots, n$, we divide the equality by $i$ and push the negative sign to the solution $c_1, \ldots, c_n$.
+Note that we use a slightly different, but equivalent, system of equations to the originally one proposed in \cite{Csanky76}. Indeed,
+for each equation $i=1, \ldots, n$, we divide the equality by $i$ and push the negative sign to the solution $c_1, \ldots, c_n$.
 
-As an observation, here we only use operators $\ssum$ and $\sprod$ defined in section \ref{sec:restrict}. 
-We also assume access to order.
+We conclude by observing that we here only use operators $\ssum$ and $\sprod$ defined in section \ref{sec:restrict} and
+also assume access to order information.
