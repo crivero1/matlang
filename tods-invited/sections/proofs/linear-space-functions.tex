@@ -101,11 +101,11 @@ minimal modifications for functions  $f=\bigcup_{n\geq 0}f_n:(\Sigma^n)^\ell\to 
  We split up the construction of $e_f$ in three
 	parts: \textbf{(a)}~an expression $e_f^{\geq n_0}$, for dealing with $n\geq n_0$; \textbf{(b)}~an expression
 	$e_f^{<n_0}$, for dealing with $n<n_0$; and finally \textbf{(c)}~the expression $e_f$ combining both these expressions. 
+
 \medskip
 \noindent
 \underline{\textbf{(a)} Large $n$, i.e. $n\geq n_0$.}
-    Let us first define $e_f^{\geq n_0}$. 
-    To simulate $T$ we need to encode states, tapes and head positions. For this, we assume that $\mathcal{M}$ contains matrix variables:
+    Let us first define $e_f^{\geq n_0}$. To simulate $T$ we need to encode states, tapes and head positions. For this, we assume that $\mathcal{M}$ contains matrix variables:
     $$
     Q_1,\ldots,Q_m, R_1,\ldots,R_\ell, H_1,\ldots,H_\ell, W_1,\ldots,W_s, H_{W_1},\ldots,H_{W_s}, v_1,\ldots,v_{k}
     $$
@@ -148,8 +148,8 @@ minimal modifications for functions  $f=\bigcup_{n\geq 0}f_n:(\Sigma^n)^\ell\to 
 
     We will use several expressions related to ordering information of canonical vectors, as explained in Section \ref{sec:formatlang:design}.
 	In particular, we use $\mathsf{min}$ and $\mathsf{max}$, to test whether their input vector is the first, respectively, last canonical
-	vector, expressions $e_{\mathsf{min}}$ and $e_{\mathsf{max}}$, which return the first and last canonical vector, respectively, and expressions $\mathsf{Next}$
-	and $\mathsf{Prev}$, which return matrices that, when multiplied with a canonical vector, return the next, respectively previous, canonical vector.
+	vector, expressions $e_{\mathsf{min}}$ and $e_{\mathsf{max}}$, which return the first and last canonical vector, respectively, and expressions $e_{\mathsf{Next}}$
+	and $e_{\mathsf{Prev}}$, which return matrices that, when multiplied with a canonical vector, return the next, respectively previous, canonical vector.
 	  % In our  expressions we use subexpressions which we defined before in . These subexpression
 	  %     require some auxiliary variables, as detailed below. As a consequence, $e_f$ will be an expressions
 	  %     defined over an extended schema $\mathcal{S}'$. Hence, the instance $\I$ in the statement of the Proposition
@@ -258,17 +258,17 @@ Since we want to simulate $T$ we need to be able to check which
     with the vector $(2,0,0,\ldots,0)\in\mathbb{R}$ since all heads read the symbol $\rhd$. Similarly, 
     we have to initialize $Q_1$ with the first canonical vector since $T$ is in the initial state $q_1$.
 
-    We furthermore need to be able to correctly adjust head positions. We do this by means of the expressions $\mathsf{Prev}$ and $\mathsf{Next}$	described earlier.
+    We furthermore need to be able to correctly adjust head positions. We do this by means of the expressions $e_{\mathsf{Prev}}$ and $e_{\mathsf{Next}}$	described earlier.
     A consequence of our encoding is that we need to treat the border cases (corresponding to $\rhd$ and 
     $\lhd$) differently. More specifically, for the input tapes $R_i$ and heads $H_i$ we define 
     $$
     \mathsf{move\_inp}^i_{\mathsf{d}}:=
     \begin{cases}
     \bigl(2\cdot\mathsf{min}(H_i)\bigr)\times H_i &\!\!\!\!\!+ \bigl(1/2\cdot\mathsf{border}_{\lhd}(H_i)\bigr)\times H_i \\
-    & \hspace{-4em}+\Bigl(\bigl(1-\mathsf{min}(H_i)\bigr)\cdot\bigl(1-\mathsf{border}_{\lhd}(H_i)\bigr)\Bigr)\times \mathsf{Prev}\cdot H_i \quad \text{ if $\mathsf{d}=\leftarrow$}\\
+    & \hspace{-4em}+\Bigl(\bigl(1-\mathsf{min}(H_i)\bigr)\cdot\bigl(1-\mathsf{border}_{\lhd}(H_i)\bigr)\Bigr)\times e_{\mathsf{Prev}}\cdot H_i \quad \text{ if $\mathsf{d}=\leftarrow$}\\
     \bigl(2\cdot \mathsf{max}(H_i)\bigr)\times H_i &\!\!\!\!\! + \bigl(1/2\cdot\mathsf{border}_{\rhd}(H_i)\bigr)\times H_i \\
-    & \hspace{-4em}+ \Bigl( \bigl(1-\mathsf{max}(H_i)\bigr) \cdot \bigl(1-\mathsf{border}_{\rhd}(H_i)\bigr) \Bigr)\times \mathsf{Next}\cdot H_i  \quad\!\text{if $\mathsf{d}=\rightarrow$}\\
-    H_i & \hspace{18em}\!\text{if $\mathsf{d}=\sqcup$}. 
+    & \hspace{-4em}+ \Bigl( \bigl(1-\mathsf{max}(H_i)\bigr) \cdot \bigl(1-\mathsf{border}_{\rhd}(H_i)\bigr) \Bigr)\times e_{\mathsf{Next}}\cdot H_i  \quad\!\text{if $\mathsf{d}=\rightarrow$}\\
+    H_i & \hspace{17.5em}\!\text{if $\mathsf{d}=\sqcup$}. 
     \end{cases}
     $$
     In other words, we shift to the previous (or next) canonical vector when $\mathsf{d}$ is $\leftarrow$ 
@@ -343,7 +343,7 @@ We next consider the case when $n<n_0$. For each $n<n_0$ and every possible inpu
     $\mathsf{mat}(R_i)=\mathsf{vec}(w_i)$ for each $i\in[\ell]$. This can be easily done since $n$ 
     can be regarded as a constant. For example, to check whether $\mathsf{mat}(R_i)=[0,1,1]^T$ we simply write
     $$
-    (1- R_i^T\cdot e_{\mathsf{min}})\cdot (R_i^T\cdot \mathsf{Next}\cdot e_{\mathsf{min}})\cdot (1- R_i^T\cdot \mathsf{Next}\cdot \mathsf{Next}\cdot e_{\mathsf{min}})\times (1- e_{\ones}(R_i)^T\cdot \mathsf{Next}\cdot \mathsf{Next}\cdot \mathsf{Next}\cdot e_{\mathsf{min}})
+    (1- R_i^T\cdot e_{\mathsf{min}})\cdot (R_i^T\cdot e_{\mathsf{Next}}\cdot e_{\mathsf{min}})\cdot (1- R_i^T\cdot e_{\mathsf{Next}}\cdot e_{\mathsf{Next}}\cdot e_{\mathsf{min}})\times (1- e_{\ones}(R_i)^T\cdot e_{\mathsf{Next}}\cdot e_{\mathsf{Next}}\cdot e_{\mathsf{Next}}\cdot e_{\mathsf{min}})
     $$
     which will evaluate to $1$ if and only if $\mathsf{mat}(R_i)=[0,1,1]^T$. We note that the final factor is in 
     place to check that the dimension of $\mathsf{mat}(R_i)$ is three.
@@ -354,7 +354,7 @@ We next consider the case when $n<n_0$. For each $n<n_0$ and every possible inpu
     write any word $w$ of fixed size in the matrix variable $W_1$. For example, suppose that $w=101$
     then we write 
     $$
-    W_1+ e_{\mathsf{min}}+  \mathsf{Next}\cdot \mathsf{Next}\cdot e_{\mathsf{min}}.
+    W_1+ e_{\mathsf{min}}+  e_{\mathsf{Next}}\cdot e_{\mathsf{Next}}\cdot e_{\mathsf{min}}.
     $$
     We let $e_{n,w}$ be the expression which writes $w$ of size $|w|=n$ in matrix variable $W_1$.
     Then, the expression
@@ -381,9 +381,9 @@ to take a further disjunction for $n=0,\ldots, n_0-1$. That is,
 \underline{\textbf{(c)} The final expression $e_f$.}	
  The desired final expression $e_f$ is now given by
     $$
-    e_f:=e_f^{<n_0} + \bigl(e_{\ones}(R_1)^T\cdot\underbrace{\mathsf{Next}\cdot\cdots\cdot \mathsf{Next}}_{\text{$n_0$ times}}\bigr)\times e_f^{\geq n_0},
+    e_f:=e_f^{<n_0} + \bigl(e_{\ones}(R_1)^T\cdot\underbrace{e_{\mathsf{Next}}\cdot\cdots\cdot e_{\mathsf{Next}}}_{\text{$n_0$ times}}\bigr)\times e_f^{\geq n_0},
     $$
-where we note that $e_{\ones}(R_1)^T\cdot\underbrace{\mathsf{Next}\cdot\cdots\cdot \mathsf{Next}}_{\text{$n_0$ times}}$ evaluates to $1$ if
+where we note that $e_{\ones}(R_1)^T\cdot\underbrace{e_{\mathsf{Next}}\cdot\cdots\cdot e_{\mathsf{Next}}}_{\text{$n_0$ times}}$ evaluates to $1$ if
 $n\geq n_0$ and to $0$ otherwise.
 \end{proof}
 

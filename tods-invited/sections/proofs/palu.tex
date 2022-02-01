@@ -15,7 +15,6 @@
     be found, this implies that no interchange is required as well and we can move on to next column.
 
     To find the vector $u$ needed for $P$, we can, for example, find the first entry $j\geq k$ in column $k$ of $A_k$ that holds a non-zero value. In $\langforf{f_{>0}}$  we can, more generally, find the first entry in a vector $a$ that holds a non-zero value by using the function $f_{>0}$. Indeed, consider the following expression:
-
     \begin{align*}\allowdisplaybreaks
        \nneq{a}{u} := &\texttt{for}\, v,X \texttt{.}\, \left( 1-e_{\ones}(v)^T\cdot X \right) \times f_{>0}\left( ( v^T\cdot a )^2 \right)\times v \\
         &\hspace{4em}+ \mathsf{max}(v)\times\left( 1-e_{\ones}(v)^T\cdot X \right)\times \left( 1 - f_{>0}\left( ( v^T\cdot a )^2 \right) \right) \times u \\
@@ -37,12 +36,10 @@ Here, $\nneq{a}{u}$ receives two $n$ dimensional vectors $a$ and $u$ and outputs
     $$ 
     From the explanations given above, it should be clear that $e_{P_u}(A,u)$ computes the necessary permutation matrix of $A_k$ for the column indicated by $u$, or $I$
     if no permutation is needed, or if such permutation does not exist (so we skip the current column). Also, we have to modify the $\red{V}{y}$ operator, resulting in $\redd{V}{y}$, as follows:
-
     \begin{align*}
         &\redd{V}{y}:= e_{\mathsf{Id}}+ f_{>0}\left( ( y^T\cdot V\cdot y)^2 \right)\times f_/\biggl(\ccoleq{V}{y}, \\
-        &\hspace{4em}\Bigl(-(y^T\cdot V\cdot y)\times e_{\ones}(y) + \Bigl( 1 - f_{>0}\bigl(( y^T\cdot V\cdot y)^2 \bigr) \Bigr)\times e_{\ones}(y) \Bigr)\biggr)\cdot y^T. \\
+        &\hspace{4em}\Bigl(-(y^T\cdot V\cdot y)\times e_{\ones}(y) + \Bigl( 1 - f_{>0}\bigl(( y^T\cdot V\cdot y)^2 \bigr) \Bigr)\times e_{\ones}(y) \Bigr)\biggr)\cdot y^T. 
     \end{align*}
-    
     So, when $V$ is interpreted by a matrix $B$ and $y=b_i$, it returns $I+c_ib_i^T$ if $B_{ii}$ is not zero. 
     If $B_{ii}=0$ then we divide $\ccoleq{B}{b_i}$ by $e_{\ones}(b_i)$ (so we don't get \textit{undefined}), 
     but we don't add $c_ib_i^T$ precisely because $B_{ii}=0$, and return the identity so nothing happens. We check 

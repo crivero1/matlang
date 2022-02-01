@@ -110,7 +110,7 @@ of the $i$th input gate. To evaluate $\Phi_n$ on $A$ we  maintain two stacks: A 
  $\cG$ and a \textit{value stack} $\cV$. In general, for a stack $\mathcal S$ we have the following operations: $\push{\mathcal S}{s}$: pushes $s$ onto $\mathcal S$;
 $\pop{\mathcal S}$: pops the top element;  $\getsize{\mathcal S}$: returns the length of the stack; and
 $\gettop{\mathcal S}$: returns the top element in the stack. We refer to the $i$th element on $\mathcal S$ by $\mathcal S[i]$.
-\looseness=-1
+
 
 \smallskip
 The evaluation algorithm \textsc{Evaluate} works for any arithmetic circuit. The logarithmic depth assumption in Theorem~\ref{th-circuits-ml} is only needed for its simulation in \langfor.
@@ -446,7 +446,7 @@ after evaluating $e_f$ on $\I$. Similarly, if $f=\bigcup_{n\geq 0}f_n:(\{0,1\}^n
 \end{proposition}
 
 In other words, when we represent the binary identifiers of gates as $n\times 1$ vectors, all of the above-mentioned circuit-related functions have a \langfor counterpart that either return again an $n\times 1$ vector, representing a gate, or values $1$ or $0$, representing true and false, respectively. In what follows, we  abuse notation and identify the circuit functions with their \langfor counterparts. For example, $\getfirst{}$ is now a \langfor expression taking an $n\times 1$ binary vector $b$ as input and returning an $n\times 1$ binary vector encoding the \texttt{id} of the first child of the gate with identifier $b$.
-\looseness=-1
+
 %
 % The previous functions are all definable by an $L$-transducer and can be defined from the $L$-transducer of $f$. Then, by proposition \ref{prop:transducer}, for each of these functions there is a \langfor expression that simulates them.
 %
@@ -460,7 +460,7 @@ We now turn our attention to simulating $\textsc{Evaluate}(\Phi_n,A)$ and its fu
 \textbf{(a)}~first we assume that $n$ is large enough such that we have specific bounds for the number of gates, wires
 and depth of $\Phi_n$; \textbf{(b)}~second we deal with small $n$; and \textbf{(c)}~the final expression $e_\Phi$ then combines these two cases.
 
-\medskip
+\bigskip
 \noindent
 \underline{\textbf{(a)} Large $n$.}
  To simulate the two stacks $\cG$ and $\cV$ we use a matrix variable $X$ that will be instantiated by a matrix (also referred to by $X$) of dimensions $n \times n$, where
@@ -476,6 +476,7 @@ $\getsize{\cG} = \getsize{\cV}$ (leftmost matrix $X$ below) and  when $\getsize{
 representing the contents of the value stack $\cV$ and the positions of the
 top elements in the gate stack $\cG$ and value stack $\cV$, respectively. The matrix
 $G$ (shown on the right below) has the same dimensions as $X$ and encodes the stack $\cG$.
+\medskip
     %
     % If we have $j$ gates in the stack and currently $\getsize{\cG}=\getsize{\cV}$ then $X$ would look like:
 $$ \underbrace{\left[\begin{smallmatrix}
@@ -731,24 +732,31 @@ The desired \langfor expression $e_\Phi$ relies on several other expressions. In
 the expressions that extract gate information (see Proposition~\ref{prop:transducer2} and surrounding discussion), we also use \langfor expressions that leverage the order on canonical vectors, as explained in Section~\ref{sec:formatlang:design}. 
 
 In particular, we use  $e_{\mathsf{min}+\mathsf{i}}$ and  $e_{\mathsf{max}-\mathsf{i}}$, for $i=0,\ldots,n-1$,
-to obtain the $(1+i)$th and $(n-i)$th canonical vectors, respectively, and also use $\mathsf{Next}$ and $\mathsf{Prev}$, expressions that return matrices that allow to
+to obtain the $(1+i)$th and $(n-i)$th canonical vectors, respectively, and also use $e_{\mathsf{Next}}$ and $e_{\mathsf{Prev}}$, expressions that return matrices that allow to
 move from one canonical vector to the next and previous canonical vector, respectively. In addition, we use $\mathsf{min}$, $\mathsf{max}$ and $\mathsf{succ}$,  expressions returning
 $1$ when their input vector(s) are the first canonical vector, the last canonical vector, and consecutive canonical vectors, respectively, and $0$ otherwise. Given these, we also use the following derived expressions:
-\begin{gather*}\allowdisplaybreaks
-   e_{V}:=e_{\mathsf{max}-2} \quad e_{G_{\mathsf{top}}}:=e_{\mathsf{max}-1} \quad     e_{V_{\mathsf{top}}}:=e_{\mathsf{max}} \quad 
+\vspace{-4ex}
+\begin{gather*}
+   e_{V}:=e_{\mathsf{max}-2} \quad e_{G_{\mathsf{top}}}:=e_{\mathsf{max}-1} \quad     e_{V_{\mathsf{top}}}:=e_{\mathsf{max}} \\ 
   V_{\mathsf{top}}:= X\cdot e_{V_{\mathsf{top}}} \quad  G_{\mathsf{top}} :=X\cdot e_{G_{\mathsf{top}}}\\
+     V:= \Iden{V_{\mathsf{top}}} \cdot X \cdot e_V \quad
+  G := \Iden{G_{\mathsf{top}}}\cdot X \cdot \Iden{e_{\mathsf{max}-3}}\\
    \Iden{b_i}:=\ssum v. \, \mathsf{succ}(v,b_i)\times (v\cdot v^T)  \\
-\pondIden{b_i}{c}:=\ssum v. \, \bigl(c\cdot v^T\cdot b_i + (1- v^T\cdot b_i)\bigr)\times (v\cdot v^T) \\
-           V:= \Iden{V_{\mathsf{top}}} \cdot X \cdot e_V \quad
-        G := \Iden{G_{\mathsf{top}}}\cdot X \cdot \Iden{e_{\mathsf{max}-3}}.
+\pondIden{b_i}{c}:=\ssum v. \, \bigl(c\cdot v^T\cdot b_i + (1- v^T\cdot b_i)\bigr)\times (v\cdot v^T).
  \end{gather*}
-Here, $e_V$, $e_{G_{\mathsf{top}}}$ and $e_{V_{\mathsf{top}}}$ return the canonical vectors identifying the columns in $X$ for the value stack (column $n-2$) and columns holding the positions of the top elements in the the gate stack (column $n-1$) and value stack (column $n$), respectively. Moreover, 
+Here, $e_V$, $e_{G_{\mathsf{top}}}$ and $e_{V_{\mathsf{top}}}$ return the canonical vectors identifying the columns in $X$ for the value stack (column $n-2$) and columns holding the positions of the top elements in the the gate stack (column $n-1$) and value stack (column $n$), respectively.
+
+ Moreover, 
  $V_{\mathsf{top}}$, $G_{\mathsf{top}}$, $V$ and $G$ evaluate to
 the vectors and matrix shown in Example~\ref{ex:matrixX}. Here,  $V_{\mathsf{top}}$
-selects the $n$th column from $X$, and  $G_{\mathsf{top}}$ selects the $(n-1)$th column. Moreover, the expression $\Iden{b_i}$ evaluates to the diagonal matrix with diagonal entries $1$ up to position $(i,i)$ and zero otherwise. Hence, for $V$, we first make $X$ zero below
+selects the $n$th column from $X$, and  $G_{\mathsf{top}}$ selects the $(n-1)$th column. The expression $\Iden{b_i}$ evaluates to the diagonal matrix with diagonal entries $1$ up to position $(i,i)$ and zero otherwise. 
+
+Hence, for $V$, we first make $X$ zero below
 the row corresponding to the canonical vector $V_{\mathsf{top}}$ and then extract its
 $(n-2)$th column. Similarly, for $G$ we make $X$ zero below the row corresponding to
-$G_{\mathsf{top}}$ and also after column $n-3$. The expression $\pondIden{b_i}{c}$ will be used later on and creates the identity matrix with value $c$ on position $(i,i)$. In what follows, although gate ids only require $n-3$ values, we represent them in reverse binary notation, followed by three zeroes.
+$G_{\mathsf{top}}$ and also after column $n-3$. The expression $\pondIden{b_i}{c}$ will be used later on and creates the identity matrix with value $c$ on position $(i,i)$. 
+
+In what follows, although gate ids only require $n-3$ values, we represent them in reverse binary notation, followed by three zeroes.
 These three trailing zeroes do not change which gate an id represents. In this way, we can work with vectors of size $n$ throughout.
 
     % For a canonical vector, let $$.$$ This matrix has ones in the diagonal up to position $i$ marked by $e_{i}$. We define the following sub-matrices of $X$:
@@ -983,24 +991,24 @@ To simulate $\textsc{Extend}$ we define
 $$
 e_{\mathsf{extend}}:=e_{\mathsf{ext\_plus}}+e_{\mathsf{ext\_prod}}+e_{\mathsf{ext\_one}}+ e_{\mathsf{ext\_zero}}+e_{\mathsf{ext\_input}},
 $$
-where  $e_{\mathsf{ext\_plus}}$, $e_{\mathsf{ext\_prod}}$, $e_{\mathsf{ext\_one}}$ and $e_{\mathsf{ext\_input}}$ correspond to the different cases in \textsc{Extend} (lines 11--13, 14--16, 17--18, 19--20 and 21--22 in Algorithm~\ref{alg:eval_code}, respectively). More precisely, we define:
+where  $e_{\mathsf{ext\_plus}}$, $e_{\mathsf{ext\_prod}}$, $e_{\mathsf{ext\_one}}$, $e_{\mathsf{ext\_zero}}$ and $e_{\mathsf{ext\_input}}$ correspond to the different cases in \textsc{Extend} (lines 11--13, 14--16, 17--18, 19--20 and 21--22 in Algorithm~\ref{alg:eval_code}, respectively). More precisely, we define:
     \begin{align*}\allowdisplaybreaks
       e_{\mathsf{ext\_plus}}&:= \texttt{isplus}\bigl(G^T\cdot G_{\mathsf{top}}\bigr)\times \Bigl( G + 
-       \mathsf{Next}\cdot G_{\mathsf{top}} \cdot \texttt{getfirst}\bigl(G^T\cdot G_{\mathsf{top}}\bigr)^T  +{} \\
-        &\hspace{4cm}\mathsf{Next}\cdot G_{\mathsf{top}}\cdot e_{G_{\mathsf{top}}}^T +V\cdot e_{V}^T + \mathsf{Next}\cdot V_{\mathsf{top}}\cdot e_{V_{\mathsf{top}}}^T \Bigr) \\
+       e_{\mathsf{Next}}\cdot G_{\mathsf{top}} \cdot \texttt{getfirst}\bigl(G^T\cdot G_{\mathsf{top}}\bigr)^T  +{} \\
+        &\hspace{4cm}e_{\mathsf{Next}}\cdot G_{\mathsf{top}}\cdot e_{G_{\mathsf{top}}}^T +V\cdot e_{V}^T + e_{\mathsf{Next}}\cdot V_{\mathsf{top}}\cdot e_{V_{\mathsf{top}}}^T \Bigr) \\
   \displaybreak[0]      e_{\mathsf{ext\_prod}}&:= \texttt{isprod}\bigl(G^T\cdot G_{\mathsf{top}}\bigr)\times \Bigl(G +
-        \mathsf{Next}\cdot G_{\mathsf{top}} \cdot \texttt{getfirst}\bigl(G^T\cdot G_{\mathsf{top}}\bigr)^T + {}\\
-        &\hspace{2cm}\mathsf{Next}\cdot G_{\mathsf{top}}\cdot e_{G_{\mathsf{top}}}^T +(V + \mathsf{Next}\cdot V_{\mathsf{top}})\cdot e_{V}^T + \mathsf{Next}\cdot V_{\mathsf{top}}\cdot e_{V_{\mathsf{top}}}^T \Bigr) \\
-        e_{\mathsf{ext\_one}}&:= \texttt{isone}\bigl(G^T\cdot G_{\mathsf{top}}\bigr)\times \Bigl(G + G_{\mathsf{top}}\cdot e_{G_{\mathsf{top}}}^T + (V + \mathsf{Next}\cdot V_{\mathsf{top}})\cdot e_{V}^T + \mathsf{Next}\cdot V_{\mathsf{top}}\cdot e_{V_{\mathsf{top}}}^T \Bigr) \\
-        e_{\mathsf{ext\_zero}}&:= \texttt{iszero}\bigl(G^T\cdot G_{\mathsf{top}}\bigr)\times \Bigl(G + G_{\mathsf{top}}\cdot e_{G_{\mathsf{top}}}^T + V\cdot e_{V}^T + \mathsf{Next}\cdot V_{\mathsf{top}}\cdot e_{V_{\mathsf{top}}}^T \Bigr) \\
+        e_{\mathsf{Next}}\cdot G_{\mathsf{top}} \cdot \texttt{getfirst}\bigl(G^T\cdot G_{\mathsf{top}}\bigr)^T + {}\\
+        &\hspace{2cm}e_{\mathsf{Next}}\cdot G_{\mathsf{top}}\cdot e_{G_{\mathsf{top}}}^T +(V + e_{\mathsf{Next}}\cdot V_{\mathsf{top}})\cdot e_{V}^T + e_{\mathsf{Next}}\cdot V_{\mathsf{top}}\cdot e_{V_{\mathsf{top}}}^T \Bigr) \\
+        e_{\mathsf{ext\_one}}&:= \texttt{isone}\bigl(G^T\cdot G_{\mathsf{top}}\bigr)\times \Bigl(G + G_{\mathsf{top}}\cdot e_{G_{\mathsf{top}}}^T + (V + e_{\mathsf{Next}}\cdot V_{\mathsf{top}})\cdot e_{V}^T + e_{\mathsf{Next}}\cdot V_{\mathsf{top}}\cdot e_{V_{\mathsf{top}}}^T \Bigr) \\
+        e_{\mathsf{ext\_zero}}&:= \texttt{iszero}\bigl(G^T\cdot G_{\mathsf{top}}\bigr)\times \Bigl(G + G_{\mathsf{top}}\cdot e_{G_{\mathsf{top}}}^T + V\cdot e_{V}^T + e_{\mathsf{Next}}\cdot V_{\mathsf{top}}\cdot e_{V_{\mathsf{top}}}^T \Bigr) \\
         e_{\mathsf{ext\_input}}&:= \texttt{isinput}\bigl(G^T\cdot G_{\mathsf{top}}\bigr) \times{} \biggl(G + G_{\mathsf{top}}\cdot e_{G_{\mathsf{top}}}^T + \\
-        & \Bigl(V + \bigl( v^T \cdot \mathsf{Next}\cdot V_{\mathsf{top}} \cdot \texttt{getinput}\bigl(G^T\cdot G_{\mathsf{top}}\bigr)^T \bigr)\Bigr)\cdot e_{V}^T + \mathsf{Next}\cdot V_{\mathsf{top}}\cdot e_{V_{\mathsf{top}}}^T \biggr).
+        & \Bigl(V + \bigl( v^T \cdot e_{\mathsf{Next}}\cdot V_{\mathsf{top}} \cdot \texttt{getinput}\bigl(G^T\cdot G_{\mathsf{top}}\bigr)^T \bigr)\Bigr)\cdot e_{V}^T + e_{\mathsf{Next}}\cdot V_{\mathsf{top}}\cdot e_{V_{\mathsf{top}}}^T \biggr).
     \end{align*} 
 We depict the effect of these expressions on the matrix $X$ in Figure~\ref{fig:langforevalalg1}. In these expressions, $G^T\cdot G_{\mathsf{top}}$ evaluates to the
 current \texttt{id} on the top of the gate stack and is used to determine which case of \textsc{Extend} to consider. For example,
 $\texttt{isplus}\bigl(G^T\cdot G_{\mathsf{top}}\bigr)$ is $1$ if that gate is a $+$-gate, and is $0$ otherwise. So,
-$e_{\mathsf{ext\_plus}}$ has only effect when the top gate is indeed a $+$-gate. We use similar checks in all other expressions. Then, the matrix $G$ (holding the ids on the current gate stack) is additively updated. For example, for a $+$-gate we place the first child's gate \texttt{id} on row $\mathsf{Next}\cdot G_{\mathsf{top}}$, move the position of the $1$ indicating the top elements in the two stacks one row below using $\mathsf{Next}\cdot G_{\mathsf{top}}\cdot e_{G_{\mathsf{top}}}^T$ and $\mathsf{Next}\cdot V_{\mathsf{top}}\cdot e_{V_{\mathsf{top}}}^T$ and copy the value stack by means of $V\cdot e_V^t$. For a $\times$-gate, the only difference is that we need to put $1$ in the value stack by means of $(V+\mathsf{Next}\cdot V_{\mathsf{top}})\cdot e_V^T$. For $1$-gates or $0$-gates, the difference is that we do not need to advance the $1$ for the gate stack. Finally, input gates are treated as constant gates, except that the corresponding value in $v$ needs to be added to the value stack, which is done using 
-$\Bigl(V + \bigl( v^T \cdot \mathsf{Next}\cdot V_{\mathsf{top}} \cdot \texttt{getinput}\bigl(G^T\cdot G_{\mathsf{top}}\bigr)^T\Bigr)\cdot e_V^T$.
+$e_{\mathsf{ext\_plus}}$ has only effect when the top gate is indeed a $+$-gate. We use similar checks in all other expressions. Then, the matrix $G$ (holding the ids on the current gate stack) is additively updated. For example, for a $+$-gate we place the first child's gate \texttt{id} on row $e_{\mathsf{Next}}\cdot G_{\mathsf{top}}$, move the position of the $1$ indicating the top elements in the two stacks one row below using $e_{\mathsf{Next}}\cdot G_{\mathsf{top}}\cdot e_{G_{\mathsf{top}}}^T$ and $e_{\mathsf{Next}}\cdot V_{\mathsf{top}}\cdot e_{V_{\mathsf{top}}}^T$ and copy the value stack by means of $V\cdot e_V^t$. For a $\times$-gate, the only difference is that we need to put $1$ in the value stack by means of $(V+e_{\mathsf{Next}}\cdot V_{\mathsf{top}})\cdot e_V^T$. For $1$-gates or $0$-gates, the difference is that we do not need to advance the $1$ for the gate stack. Finally, input gates are treated as constant gates, except that the corresponding value in $v$ needs to be added to the value stack, which is done using 
+$\Bigl(V + \bigl( v^T \cdot e_{\mathsf{Next}}\cdot V_{\mathsf{top}} \cdot \texttt{getinput}\bigl(G^T\cdot G_{\mathsf{top}}\bigr)^T\Bigr)\cdot e_V^T$.
  %
  % of the stack. In INIT${\_}$PLUS we get the current stack $G$, we add $\mathsf{Next}\cdot G_{top} \cdot \getfirst{G^T\cdot G_{top}}^T$ which is an $n\times n$ matrix with the first child of $G^T\cdot G_{top}$ in the next row. Then $\mathsf{Next}\cdot G_{top}\cdot e_{G_{top}}^T$ adds $\mathsf{Next}\cdot G_{top}$ to the $n-1$ column to mark the gate we added as the top. Next, we do the same with the values by adding $V\cdot e_{V} + \mathsf{Next}\cdot V_{top}\cdot e_{V_{top}}^T$.
 
@@ -1081,21 +1089,21 @@ where  $e_{\mathsf{pop}}$, $e_{\mathsf{agg\_plus}}$, $e_{\mathsf{agg\_prod}}$, $
 % 	%     We define the expressions: AGG${\_}$PLUS (algorithm \ref{alg:agg_code}, lines 4, 5), AGG${\_}$PROD (algorithm \ref{alg:agg_code}, lines 6, 7),  IS${\_}$NOT${\_}$LAST (algorithm \ref{alg:agg_code}, lines 8, 9), IS${\_}$LAST and POP:
 % where
     \begin{align*}\allowdisplaybreaks
-        e_{\mathsf{pop}} &:= \Iden{\mathsf{Prev}\cdot G_{\mathsf{top}}}\cdot G + \mathsf{Prev}\cdot V_{\mathsf{top}}\cdot e_{V_{\mathsf{top}}}^T  \\
-        e_{\mathsf{agg\_plus}}&:= \texttt{isplus}\bigl(G^T \cdot \mathsf{Prev} \cdot G_{\mathsf{top}}\bigr) \times \biggl(\Bigl(\Iden{\mathsf{Prev}\cdot V_{\mathsf{top}}} \cdot V + \bigl( V^T \cdot V_{\mathsf{top}} \bigr)\cdot \bigl(\mathsf{Prev}\cdot V_{\mathsf{top}}\bigr)\Bigr) \cdot e_{V}^T \biggr) \\
-        e_{\mathsf{agg\_prod}}&:= \isprod{G^T \cdot \mathsf{Prev} \cdot G_{\mathsf{top}}} \times \biggl(
-				 \pondIden{\mathsf{Prev}\cdot V_{\mathsf{top}}}{V^T \cdot V_{\mathsf{top}}}\cdot 
-				 \Iden{\mathsf{Prev}\cdot V_{\mathsf{top}}} \cdot V \cdot e_{V}^T \biggr) \\
-e_{\mathsf{agg\_not\_last}} &:= \texttt{isnotlast}\bigl(G^T \cdot \mathsf{Prev} \cdot G_{\mathsf{top}},G^T \cdot G_{\mathsf{top}}\bigr) \\
-&\hspace{3cm}\times \biggl(G_{\mathsf{top}} \cdot \texttt{nextgate}\bigl(G^T \cdot \mathsf{Prev}\cdot G_{\mathsf{top}},G^T \cdot G_{\mathsf{top}}\bigr)^T + G_{\mathsf{top}}\cdot e_{G_{\mathsf{top}}}^T \biggr) \\
- e_{\mathsf{agg\_last}}&:= \Bigl( 1 - \texttt{isnotlast}\bigl(G^T \cdot \mathsf{Prev}\cdot G_{\mathsf{top}},G^T \cdot G_{\mathsf{top}}\bigr)\Bigr)\times \Bigl(\mathsf{Prev}\cdot G_{\mathsf{top}} \cdot e_{G_{\mathsf{top}}}^T \Bigr).
+        e_{\mathsf{pop}} &:= \Iden{e_{\mathsf{Prev}}\cdot G_{\mathsf{top}}}\cdot G + e_{\mathsf{Prev}}\cdot V_{\mathsf{top}}\cdot e_{V_{\mathsf{top}}}^T  \\
+        e_{\mathsf{agg\_plus}}&:= \texttt{isplus}\bigl(G^T \cdot e_{\mathsf{Prev}} \cdot G_{\mathsf{top}}\bigr) \times \biggl(\Bigl(\Iden{e_{\mathsf{Prev}}\cdot V_{\mathsf{top}}} \cdot V + \bigl( V^T \cdot V_{\mathsf{top}} \bigr)\cdot \bigl(e_{\mathsf{Prev}}\cdot V_{\mathsf{top}}\bigr)\Bigr) \cdot e_{V}^T \biggr) \\
+        e_{\mathsf{agg\_prod}}&:= \isprod{G^T \cdot e_{\mathsf{Prev}} \cdot G_{\mathsf{top}}} \times \biggl(
+				 \pondIden{e_{\mathsf{Prev}}\cdot V_{\mathsf{top}}}{V^T \cdot V_{\mathsf{top}}}\cdot 
+				 \Iden{e_{\mathsf{Prev}}\cdot V_{\mathsf{top}}} \cdot V \cdot e_{V}^T \biggr) \\
+e_{\mathsf{agg\_not\_last}} &:= \texttt{isnotlast}\bigl(G^T \cdot e_{\mathsf{Prev}} \cdot G_{\mathsf{top}},G^T \cdot G_{\mathsf{top}}\bigr) \\
+&\hspace{3cm}\times \biggl(G_{\mathsf{top}} \cdot \texttt{nextgate}\bigl(G^T \cdot e_{\mathsf{Prev}}\cdot G_{\mathsf{top}},G^T \cdot G_{\mathsf{top}}\bigr)^T + G_{\mathsf{top}}\cdot e_{G_{\mathsf{top}}}^T \biggr) \\
+ e_{\mathsf{agg\_last}}&:= \Bigl( 1 - \texttt{isnotlast}\bigl(G^T \cdot e_{\mathsf{Prev}}\cdot G_{\mathsf{top}},G^T \cdot G_{\mathsf{top}}\bigr)\Bigr)\times \Bigl(e_{\mathsf{Prev}}\cdot G_{\mathsf{top}} \cdot e_{G_{\mathsf{top}}}^T \Bigr).
     \end{align*}
 We depict the effect of these expressions (always in combination with $e_{\mathsf{pop}}$) on the matrix $X$ in Figure~\ref{fig:langforevalalg2}.
-For starters, $e_{\mathsf{pop}}$ copies the id stack up position $\mathsf{Prev}\cdot G_{\mathsf{top}}$ (so pops
+For starters, $e_{\mathsf{pop}}$ copies the id stack up position $e_{\mathsf{Prev}}\cdot G_{\mathsf{top}}$ (so pops
 the gate stack) and already moves up the $1$ indicating where the top element of the value stack will be. All other
-entries will be zero. Then, similarly as before, the gate ids stored in $G^T\cdot\mathsf{Prev}\cdot G_{\mathsf{top}}$ and $G^T\cdot G_{\mathsf{top}}$ are used to distinguish between the different cases. The expressions $e_{\mathsf{agg\_plus}}$ and $e_{\mathsf{agg\_prod}}$ copy the popped value stack (using $\Iden{\mathsf{Prev}\cdot V_{\mathsf{top}}} \cdot V$) and
+entries will be zero. Then, similarly as before, the gate ids stored in $G^T\cdot e_{\mathsf{Prev}}\cdot G_{\mathsf{top}}$ and $G^T\cdot G_{\mathsf{top}}$ are used to distinguish between the different cases. The expressions $e_{\mathsf{agg\_plus}}$ and $e_{\mathsf{agg\_prod}}$ copy the popped value stack (using $\Iden{e_{\mathsf{Prev}}\cdot V_{\mathsf{top}}} \cdot V$) and
 update it additively and multiplicatively, respectively, with the value $V^T \cdot V_{\mathsf{top}}$. Finally, $e_{\mathsf{agg\_not\_last}}$ and $e_{\mathsf{agg\_last}}$ update the top position of the gate stack. That is,
-if we dealt with the last child gate of $G^T\cdot G_{\mathsf{top}}$, we simply move up the $1$, indicating the top element in the gate stack, by means of $\mathsf{Prev}\cdot G_{\mathsf{top}} \cdot e_{G_{\mathsf{top}}}^T$. Otherwise, $e_{\mathsf{agg\_not\_last}}$ reinstates $G_{\mathsf{top}}\cdot e_{G_{\mathsf{top}}}^T$ (the stack remains of the same size)
+if we dealt with the last child gate of $G^T\cdot G_{\mathsf{top}}$, we simply move up the $1$, indicating the top element in the gate stack, by means of $e_{\mathsf{Prev}}\cdot G_{\mathsf{top}} \cdot e_{G_{\mathsf{top}}}^T$. Otherwise, $e_{\mathsf{agg\_not\_last}}$ reinstates $G_{\mathsf{top}}\cdot e_{G_{\mathsf{top}}}^T$ (the stack remains of the same size)
 and adds the next gate's id to $G$ in the row identified by $G_{\mathsf{top}}$.
    
   
@@ -1199,7 +1207,7 @@ $$ \underbrace{\left[\begin{smallmatrix}
 \medskip
 \noindent
 \underline{\textbf{(b)} Small $n$.}
-We next consider the case when $n<n_0$. We only need to consider a finite number of cases,
+We next consider the case when $n<n_0$. We only need to consider a finite number of cases
 $\Phi_i(a_1,\ldots,a_i)$ can have, for $i=1,\ldots,n$, for which we can precompute their values. More precisely,
 we simply define
 $$
