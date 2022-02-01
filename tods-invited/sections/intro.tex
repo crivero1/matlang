@@ -47,8 +47,8 @@ is capable of expressing many textbook linear algebra algorithms. We provide exp
 	 We show that every uniform family of arithmetic circuits of polynomial degree correspond to a \langfor expression, and vice versa, when a \langfor expression has polynomial degree, then there is an equivalent uniform family of arithmetic circuits. As a consequence, \langfor inherits all expressiveness properties of such circuits.
 	\item  Finally,  we generalize the semantics of \langfor to matrices with values in a semiring $K$  in Section~\ref{sec:restrict}, and show that two natural fragments of \langfor, \langsum, and \langprod, are equivalent to the (positive) relational algebra and weighted logics on binary $K$-relations, respectively. We also briefly comment on a minimal fragment of \langfor, based on \langmprod, that is able to compute matrix inversion.
 \end{itemize}
-Due to space limitations, we only include some proof sketches. We refer
-to the full version~\cite{geerts2020expressive} for more details.
+%Due to space limitations, we only include some proof sketches. We refer
+%to the full version~\cite{geerts2020expressive} for more details.
 
 \smallskip
 \noindent
@@ -73,4 +73,5 @@ We already mentioned \lara~\cite{HutchisonHS17} and \lang~\cite{matlang-journal}
 whose expressive power was further analyzed in~\cite{BarceloH0S20,brijder2019matrices,Geerts19,Geerts20}. A thorough overview of matrix query languages that form the basis of our work can be found in \cite{GeertsMRBV21}. Extensions of \texttt{SQL} for matrix manipulations are reported in~\cite{Jermaine/17/LAonRA}. Most relevant
 is~\cite{JankovLYCZJG19} in which a recursion mechanism is added to \texttt{SQL} which resembles for-loops.
 The expressive power of this extension is unknown, however. Classical logics with aggregation~\cite{Hella:2001} and fixed-point logics with counting~\cite{GroheP17} can also be used for linear algebra. For-loop extensions of  standard first-order logic are considered in~\cite{NevenOTB01} but with a different semantics as ours and in which no aggregation is supported.
-More generally, for the descriptive complexity of linear algebra we refer to~\cite{dghl_rank,holm_phd}. Most of these works require to encode real numbers inside relations, whereas we treat real numbers as atomic values. We refer to relevant papers related to arithmetic circuits and logical formalisms on semiring-annotated relations in the corresponding sections.% later in the paper.
+More generally, for the descriptive complexity of linear algebra we refer to~\cite{dghl_rank,holm_phd}. Most of these works require to encode real numbers inside relations, whereas we treat real numbers as atomic values. We refer to relevant papers related to arithmetic circuits and logical formalisms on semiring-annotated relations in the corresponding sections. % later in the paper. 
+Finally, we need to mention Functional Aggregate Queries ($\mathsf{FAQ}\text{s}$) \cite{FAQAI,FAQ}, which are known to capture many computational problems in databases, machine learning and AI. We briefly discuss the connection of this framework to \langfor in Section~\ref{sec:restrict}.
