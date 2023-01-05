@@ -1,0 +1,295 @@
+%!TEX root = ../../main.tex
+We here show how to convert \langfor expressions to arithmetic circuits over matrices.
+Such circuits take matrices as input and can also return matrices by means of multiple
+output gates. The translation from \langfor to circuits is done inductively, on the structure
+of \langfor expressions, and we inductively build the corresponding circuit. To this aim, we keep track of
+the type of circuits, which basically indicates the size of the output matrix. More specifically,
+for a circuit $\Phi$ we write $\ttype(\Phi)=(\alpha,\beta)$, with $\alpha,\beta\in \{n,1\}$, to denote the size of 
+the output matrix of $\Phi$. 
+%
+% We denote such circuits by $\Phi(A_1,\ldots ,A_k)$, where $\Phi$ is an arithmetic circuit
+% with multiple output gates, and each  $A_i$ is a matrix of dimensions $\alpha_i\times \beta_i$,
+% with $\alpha_i,\beta_i \in \{n,1\}$ to denote the input matrices for a circuit $\Phi$.
+% When $\{\Phi_n\mid n=1,2,\ldots\}$ is a uniform family of
+% arithmetic circuits over matrices, we will assume that the Turing machine for generating $\Phi_n$ also
+% gives us the information about how to access a position of each input matrix, and how to access the
+% positions of the output matrix, as is usually done when handling matrices with arithmetic
+% circuits \cite{Raz02}.
+%
+% We will also write $\ttype(\Phi)=(\alpha,\beta)$, with
+% $\alpha,\beta\in \{n,1\}$, to denote the size of the output matrix for $\Phi$.
+We describe circuits by specifying circuits for each output gate. We refer to
+these circuits by $\Phi_{n}[i,j]$ when $\ttype(\Phi)=(n,n)$, 
+$\Phi_{n}[i,1]$ when $\ttype(\Phi)=(n,1)$, $\Phi_{n}[1,j]$ when $\ttype(\Phi)=(1,n)$ and 
+$\Phi_{n}$ when $\ttype(\Phi)=(1,1)$. The indices $i$ and $j$ always range over $\{1,2,\ldots,n\}$.
+
+
+% The notion of degree is extended to be the sum of the degrees of all
+% the output gates. The former will b. Also, when we write $a \oplus b$ we mean
+As will become clear shortly, we translate addition and multiplication in \langfor
+expressions in terms of addition ($\oplus$) and multiplication ($\otimes$) of circuits.
+That is, given a set $I$ of output gates of a circuit $\Phi$, we define 
+$\bigoplus_{g\in I} \Phi[g]$ as the circuit consisting a $+$-gate with children
+$\Phi(g)$, for $g\in I$. Similarly, $\bigotimes_{g\in I} \Phi(g)$ is a circuit
+consisting of a $\times$-gate with children $\Phi(g)$, for $g\in I$. When 
+we write $\Phi[g]=\Phi_1[g_1]\oplus \Phi_2[g_2]$ we mean that the output gate
+$g$ in $\Phi$ is the top-most $+$-gate in the circuit $\Phi_1[g_1]\oplus \Phi_2[g_2]$, and 
+similarly for $\Phi[g]=\Phi_1[g_1]\otimes \Phi_2[g_2]$.
+
+
+% We also write
+% $\Phi(g)\oplus \Phi(g')$
+%
+%
+% More precisely, if we h
+% %
+% % \begin{center}
+% % \begin{tikzpicture}[level distance=1.5cm,
+% %   level 1/.style={sibling distance=1.5cm},
+% %   every node/.style = {
+% %   	shape=circle,
+% %     draw,
+% %     align=center,
+% %     top color=white,
+% %     bottom color=white
+% %     }]
+% %   \node {\( + \)}
+% %     child {node { \( a \) }}
+% %     child {node { \( b \) }};
+% % \end{tikzpicture}
+% % \end{center}
+% % When we write $\bigoplus_{l=1}^n a_l$ we mean
+%
+% \begin{center}
+% \begin{tikzpicture}[level distance=1.5cm,
+%   level 1/.style={sibling distance=1.5cm},
+%   every node/.style = {
+%   	shape=circle,
+%     draw,
+%     align=center,
+%     top color=white,
+%     bottom color=white
+%     }]
+%   \node {\( + \)}
+%     child {node { \( a_1 \) }}
+%     child {node { \( \cdots \) }}
+%     child {node { \( a_n \) }};
+% \end{tikzpicture}
+% \end{center}
+% Same with $\otimes$. Now we prove the statement.
+%
+
+\medskip
+Let $e$ be a \langfor expression. We define the circuit $\Phi_n^e$ and its type $\ttype(\Phi_n^e)$ inductively on the structure of $e$.
+
+\begin{itemize}
+	\item
+	If $e=V$ then $\Phi_n^e$ consists of gates corresponding to an input matrix $A$. More specifically:
+\begin{itemize}
+	\item If $\ttype(V)=(1,1)$ then $\ttype(\Phi^e_n)=(1,1)$ and $\Phi_n^e$ consists of single input gate, which is also
+	the output gate.
+	% $\Phi^e_n[1,1]$ has  one input/output gate.
+	\item If $\ttype(V)=(1,\alpha)$ then $\ttype(\Phi^e_n)=(1,n)$ and $\Phi^e_n$ has $n$ input/output gates.
+  \item If $\ttype(V)=(\alpha,1)$ then $\ttype(\Phi^e_n)=(n,1)$ and $\Phi^e_n$ has $n$ input/output gates.
+	\item If $\ttype(V)=(\alpha,\alpha)$ then $\ttype(\Phi^e_n)=(n,n)$ and $\Phi^e_n$ has $n^2$ input/output gates. 
+\end{itemize}
+\item
+If $e=e_1^T$ then $\Phi^e_n$ is $\Phi^{e_1}_n$ but in which the output gates of $\Phi_n^{e_1}$ are rearranged, as follows:
+\begin{itemize}
+	\item If $\ttype(\Phi^{e_1}_n)=(1, 1)$ then $\type(\Phi^e_n)=(1,1)$ and $\Phi_n^e:=\Phi_n^{e_1}$.
+	\item If $\ttype(\Phi^{e_1}_n)=(1, n)$ then $\type(\Phi^e_n)=(n,1)$ and $\Phi^e_n[i,1]:=\Phi^{e_1}_n[1,i]$. 
+  \item If $\ttype(\Phi^{e_1}_n)=(n, 1)$ then $\type(\Phi^e_n)=(1,n)$ and $\Phi^e_n[1,j]:=\Phi^{e_1}_n[j,1]$. 
+  \item If $\ttype(\Phi^{e_1}_n)=(n, n)$ then $\type(\Phi^e_n)=(n,n)$ and $\Phi^e_n[i,j]:=\Phi^{e_1}_n[j,i]$. 
+\end{itemize}
+\item
+If $e={\ones}(e_1)$ with $\ttype(\Phi^{e_1}_n)=(\alpha,\beta)$ then $\ttype(\Phi^{e}_n)=(\alpha,1)$ and we just
+create a circuit consisting of $\alpha$ $1$-gates, which are also the output gates. We write this as
+$\Phi^e_n[i,1]:=1$.
+\item
+If $e=e_1 + e_2$ then $\Phi_n^e$ consists of $\Phi_n^{e_1}$ and $\Phi_n^{e_2}$ with a new layer connecting the output gates of $\Phi_n^{e_1}$ and $\Phi_n^{e_2}$ by means
+of $+$-gates, as follows:
+\begin{itemize}
+	\item If $\ttype(\Phi^{e_1}_n)=\ttype(\Phi^{e_2}_n)=(1, 1)$  then $\ttype(\Phi^{e}_n)=(1, 1)$ and $\Phi^e_n:=\Phi^{e_1}_n \oplus \Phi^{e_2}_n$.
+  \item If $\ttype(\Phi^{e_1}_n)=\ttype(\Phi^{e_2}_n)=(1, n)$  then $\ttype(\Phi^{e}_n)=(1, n)$ and $\Phi^e_n[1,j]:=\Phi^{e_1}_n[1,j] \oplus \Phi^{e_2}_n[1,j]$.
+  \item If $\ttype(\Phi^{e_1}_n)=\ttype(\Phi^{e_2}_n)=(n, 1)$  then $\ttype(\Phi^{e}_n)=(n, 1)$ and $\Phi^e_n[i,1]:=\Phi^{e_1}_n[i,1] \oplus \Phi^{e_2}_n[i,1]$.
+  \item If $\ttype(\Phi^{e_1}_n)=\ttype(\Phi^{e_2}_n)=(n, n)$  then $\ttype(\Phi^{e}_n)=(n, n)$ and $\Phi^e_n[i,j]:=\Phi^{e_1}_n[i,j] \oplus \Phi^{e_2}_n[i,j]$.
+\end{itemize}
+% \end{itemize}
+% If $e=f(e_1, \ldots, e_k)$ we have two cases
+%
+% \begin{itemize}
+%   \item When $f$ is the function $f_{\odot}$ (recall that this function is definable in $\langf{\emptyset}$ by Lemma \ref{lm-prod-sum}) then
+%   \begin{itemize}
+%     \item If $\ttype(\Phi^{e_1}_n)=\ldots =\ttype(\Phi^{e_k}_n)=(1, 1)$ then $\Phi^e_n:=\bigotimes_{l=1}^k \Phi^{e_l}_n$.
+%     \item If $\ttype(\Phi^{e_1}_n)=\ldots =\ttype(\Phi^{e_k}_n)=(1, n)$ then $\Phi^e_n[1,j]:=\bigotimes_{l=1}^k \Phi^{e_l}_n[1,j]$.
+%     \item If $\ttype(\Phi^{e_1}_n)=\ldots =\ttype(\Phi^{e_k}_n)=(n, 1)$ then $\Phi^e_n[i,1]:=\bigotimes_{l=1}^k \Phi^{e_l}_n[i,1]$.
+%     \item If $\ttype(\Phi^{e_1}_n)=\ldots =\ttype(\Phi^{e_k}_n)=(n, n)$ then $\Phi^e_n[i,j]:=\bigotimes_{l=1}^k \Phi^{e_l}_n[i,j]$.
+%   \end{itemize}
+% 	\item When $f$ is any function, we prove the case when $\ttype(\Phi^{e_1}_n)=\ldots =\ttype(\Phi^{e_k}_n)=(1, 1)$
+%   (only case necessary, as discussed in section \ref{sec:queries:simp}). Here $\Phi^e_n$ is
+%
+% \begin{center}
+% \begin{tikzpicture}[level distance=1.5cm,
+%   level 1/.style={sibling distance=1.5cm},
+%   every node/.style = {
+%   	shape=circle,
+%     draw,
+%     align=center,
+%     top color=white,
+%     bottom color=white
+%     }]
+%   \node {\( f \)}
+%     child {node { \( \Phi^{e_1}_n \) }}
+%     child {node { \( \cdots \) }}
+%     child {node { \( \Phi^{e_k}_n \) }};
+% \end{tikzpicture}
+% \end{center}
+%
+% Note that since for the context of this result we only consider $\langfor = \langf{\emptyset}$, this case is not strictly necessary, modulo for $f_\odot,f_\oplus$ due to Lemma \ref{lm-prod-sum}. However, if we extend the circuits with the same functions allowed in \langfor, then our inductive construction still goes through, as just illustrated.
+%
+% \end{itemize}
+\item 
+If $e=e_1\cdot e_2$ then $\Phi_n^e$ consists of $\Phi_n^{e_1}$ and $\Phi_n^{e_2}$ in which we connect the output gates of $\Phi_n^{e_1}$ and $\Phi_n^{e_2}$
+by means of $+$-gates and $\times$-gates in order to perform matrix multiplication, as follows:
+
+\begin{itemize}
+	\item If $\ttype(\Phi^{e_1}_n)=(1,1)$ and $\ttype(\Phi^{e_2}_n)=(1, 1)$ then $\ttype(\Phi^{e}_n)=(1, 1)$ and $\Phi^{e}_n:=\Phi^{e_1}_n \otimes \Phi^{e_2}_n$.
+  \item If $\ttype(\Phi^{e_1}_n)=(1,1)$ and $\ttype(\Phi^{e_2}_n)=(1, n)$ then $\ttype(\Phi^{e}_n)=(1, n)$ and $\Phi^{e}_n[1,j]:=\Phi^{e_1}_n \otimes \Phi^{e_2}_n[1,j]$.
+  \item If $\ttype(\Phi^{e_1}_n)=(n,1)$ and $\ttype(\Phi^{e_2}_n)=(1, 1)$ then $\ttype(\Phi^{e}_n)=(n, 1)$ and $\Phi^{e}_n[i,1]:=\Phi^{e_1}_n[i,1] \otimes \Phi^{e_2}_n$.
+  \item If $\ttype(\Phi^{e_1}_n)=(n,1)$ and $\ttype(\Phi^{e_2}_n)=(1, n)$ then $\ttype(\Phi^{e}_n)=(n, n)$ and $\Phi^{e}_n[i,j]:=\Phi^{e_1}_n[i,1] \otimes \Phi^{e_2}_n[1,j]$.
+  \item If $\ttype(\Phi^{e_1}_n)=(1,n)$ and $\ttype(\Phi^{e_2}_n)=(n, 1)$ then $\ttype(\Phi^{e}_n)=(1, 1)$ and $\Phi^{e}_n:=\bigoplus_{k=1}^n \left( \Phi^{e_1}_n[1,k] \otimes \Phi^{e_2}_n[k,1] \right)$.
+  \item If $\ttype(\Phi^{e_1}_n)=(1,n)$ and $\ttype(\Phi^{e_2}_n)=(n, n)$ then $\ttype(\Phi^{e}_n)=(1, n)$ and $\Phi^{e}_n[1,j]:=\bigoplus_{k=1}^n \left( \Phi^{e_1}_n[1,k] \otimes \Phi^{e_2}_n[k,j] \right)$.
+  \item If $\ttype(\Phi^{e_1}_n)=(n,n)$ and $\ttype(\Phi^{e_2}_n)=(n, 1)$ then $\ttype(\Phi^{e}_n)=(n, 1)$ and $\Phi^{e}_n[i,1]:=\bigoplus_{k=1}^n \left( \Phi^{e_1}_n[i,k] \otimes \Phi^{e_2}_n[k,1] \right)$.
+  \item If $\ttype(\Phi^{e_1}_n)=(n,n)$ and $\ttype(\Phi^{e_2}_n)=(n, n)$ then $\ttype(\Phi^{e}_n)=(n, n)$ and $\Phi^{e}_n[i,j]:=\bigoplus_{k=1}^n \left( \Phi^{e_1}_n[i,k] \otimes \Phi^{e_2}_n[k,j] \right)$.
+\end{itemize}
+\item If $e=e_1\times e_2$ then $\Phi_n$ uses $\times$-gates to connect every output gate of $\Phi_n^{e_2}$ with the output gate $\Phi^e_n[1,1]$ of $\Phi_n^{e_1}$, as follows:
+\begin{itemize}
+	\item If $\ttype(\Phi^{e_2}_n)=(1, 1)$  then  $\Phi^e_n:=\Phi^{e_1}_n \otimes \Phi^{e_2}_n$.
+  \item If $\ttype(\Phi^{e_2}_n)=(1, n)$  then  $\Phi^e_n[1,j]:=\Phi^{e_1} \otimes \Phi^{e_2}_n[1,j]$.
+  \item If $\ttype(\Phi^{e_2}_n)=(n, 1)$  then  $\Phi^e_n[i,1]:=\Phi^{e_1}_n \otimes \Phi^{e_2}_n[i,1]$.
+  \item If $\ttype(\Phi^{e_2}_n)=(n, n)$ then $\Phi^e_n[i,j]:=\Phi^{e_1}_n \otimes \Phi^{e_2}_n[i,j]$.
+\end{itemize}
+
+\item Finally, if $e=\ffor{X}{v}e_1(X, v)$ then  we first  define $\Phi^{\mathbf{0}}$ 
+as the ``zero matrix circuit'' of type  $\ttype(\Phi^{\mathbf{0}})=(1,1)$ if $\ttype(\Phi^{e_1}_n)=(1,1)$ and 
+$\ttype(\Phi^{\mathbf{0}})=(n,n)$ if $\ttype(\Phi^{e_1}_n)=(n,n)$.  This circuit consists entirely out of $0$-gates,
+that is, $\Phi^{\mathbf{0}}:=0$ if $\ttype(\Phi^{\mathbf{0}})=(1,1)$ and
+$\Phi^{\mathbf{0}}[i,j]:=0$ if $\ttype(\Phi^{\mathbf{0}})=(n,n)$.
+Furthermore, for each $i=1,\ldots, n$, we define a ``canonical vector circuit'' $\Phi^{v_i}$ as the circuit such that $\ttype(\Phi^{v_i})=(n,1)$ and $\Phi^{v_i}[i,1]:=1$ and $0$ otherwise. So, $\Phi^{v_i}$ consists of a single $1$-gate and $(n-1)$ $0$-gates.
+The circuit $\Phi_n^e$ now simply corresponds to the following composition of circuits:
+$$\Phi^{e}_n:=\Phi^{e_1}_n\left( \Phi^{e_1}_n \left( \cdots \left( \Phi^{e_1}_n\left( \Phi^{\mathbf{0}}, \Phi^{v_1}\right), \Phi^{v_2}\right)\cdots, \Phi^{v_{n-1}} \right), \Phi^{v_n} \right).$$
+Here $\Phi_n^{e_1}$ is a circuit, inductively computed, that takes a matrix $A$ and canonical vector $b$ as input, and returns a matrix $\Phi_n^{e_1}(A,b)$ of the same type as $A$. In the expression above we initially replace $\Phi_n^{e_1}$ by substituting $A$ and $b$ by $\Phi^{\mathbf{0}}$ and $\Phi^{v_1}$, resulting in the circuit 
+$\Phi_n^{e_1}(\Phi^{\mathbf{0}},\Phi^{v_1})$. In the next step, we consider the circuit $\Phi_n^{e_1}$ by substituting $A$ and $b$ by $\Phi_n^{e_1}(\Phi^{\mathbf{0}},\Phi^{v_1})$ and 
+$\Phi^{v_2}$, and so on, until the last canonical vector circuit $\Phi^{v_n}$ is considered.
+\end{itemize}
+
+The correctness of  $\Phi_n^e$ should be clear from the construction. That is, let $e$ be a \langfor expression over  a schema $\Sch$, and  let $V_1,\ldots ,V_k$ be the variables of $e$ such that $\ttype(V_i)\in \{(\alpha,\alpha),\allowbreak (\alpha,1), (1,\alpha), (1,1)\}$. Then 
+for any instance $\I = (\dom,\conc)$ such that $\dom(\alpha) = n$ and $\conc(V_i) = A_i$ it holds that $\sem{e}{\I} = \Phi_n^e(A_1,\ldots ,A_k)$.
+
+% \floris{There was some remark before about the polynomial depth of the obtained circuits (see commented latex). Is this needed?
+% The description below is a bit high-level, not sure whether more details are needed. Please check.}
+ % Note that every circuit adds a constant number of layers except when $e=\ffor{X}{v}e'(\cI, X, v)$. This means that the depth still is polynomial. When $e=\ffor{X}{v}e'(\cI, X, v)$ we have that the depth of the circuit is $n\cdot p(n)$, where the depth of $e'(\cI, X, v)$ is $p(n)$, so it also remains polynomial.
+%
+Theorem~\ref{th-ml-to-circuits} also requires showing that $\{\Phi_n^e \mid n=1,2,\ldots\}$ is a uniform arithmetic circuit family over matrices.
+We do not provide the precise \logspace-Turing machines that describe these circuits which also need to provide information about how to access a position of each input matrix, and how to access the positions of the output matrix. We remark that the inductive construction of the circuits only depends on $e$ and $n$ and,
+except for  $e=\ffor{X}{v}e_1(X, v)$, only simple modifications are made to the previously constructed circuits (at most two additional layers of gates are added).
+The corresponding  \logspace-Turing machines can be devised easily. For  $e=\ffor{X}{v}e_1(X, v)$, we compose circuits and to see that uniformity is preserved by such compositions, a proof analogous to the standard proof that the composition of \logspace-functions is again a \logspace-function  \cite{aroraB2009} can be used. It is important to observe that for $e=\ffor{X}{v}e_1(X, v)$, we only need to keep track of where we are in the evaluation (i.e. which $v_i$ we are processing), and not of all the previous results, given that the resulting matrix is updated in a fixed order.
+
+A final comment is that we can extend the above construction even when \langfor expressions using function applications $f$ are considered. We only need to extend
+the notion of circuits such that ``$f$-gates'' can be used, where the semantics of $f$-gates is the application of the function $f$ on the values of circuits
+corresponding the $f$-gate's children.
+
+% %
+% % However, the inductive construction of $\Phi_n^e$ given above only depends on the expression $e$ and
+% % the dimension $n$, and in most cases,  except when $e=\ffor{X}{v}e'(X, v)$, we add at most two layers of new gates. An inductive construction of the \logspace\
+% % Turing machine is thus possible.
+% %
+% % For $e=\ffor{X}{v}e'(X, v)$
+% % we have that the depth of the circuit is $n\cdot p(n)$, where the depth of $e'(X, v)$ is $p(n)$
+% %
+% %
+% %
+% %
+% % Note that every circuit adds a constant number of layer
+% % This means that the depth still is polynomial. When $e=\ffor{X}{v}e'(X, v)$
+% % we have that the depth of the circuit is $n\cdot p(n)$, where the depth of $e'(X, v)$ is $p(n)$,
+% % so it also remains polynomial.
+% %
+% % Here, we do not need to translate scalar multiplication
+% % because it can be simulated using the $\mathsf{ones}$ operator and $f_{\kprod}$ (see section \ref{sec:queries:simp}).
+%
+% Finally, we remark that when composing the circuits the fact that uniformity is preserved (i.e. the resulting circuit can be generated by a \logspace\ machine) is proved analogously as when composing two \logspace\ transducers \cite{aroraB2009}. The only more involved case is treating for-loop construction, however, notice here that we only need to keep track of where we are in the evaluation (i.e. which $v_i$ we are processing), and not of all the previous results, given that they update the resulting matrix in a fixed order.
+% \end{proof}
+
+% As a consequence, blah blah....
+
+% In general, uniform arithmetic circuit family $\{\Phi_n^e\mid n=1,2,\ldots\}$ is not necessarily of polynomial degree. Indeed, consider it suffices to consider the MATLANG expression which computes
+% $f_n(x)=x^{2^n}$. 
+% As uniform arithmetic circuit families of polynomial degree have nice properties, e.g., they can be assumed to be of logarithmic depth, we next want to zoom in such families. In what follows we therefore limit ourselves to MATLANG expressions $e$ such that $\{\Phi_n^e\mid n=1,2,\ldots\}$ is a family of polynomial degree arithmetic circuits.
+
+% \begin{itemize}
+% 	\item Checking whether a MATLANG expression $e$ corresponds to a family of of polynomial degree arithmetic circuits is undecidable. 
+% \end{itemize}
+
+% Let $e$ be a ``nice'' MATLANG expression, i.e.,  $\{\Phi_n^e\mid n=1,2,\ldots\}$ is a family of polynomial degree arithmetic circuits which can be assumed to be logarithmic depth. 
+% \begin{itemize}
+% 	\item There exists a MATLANG expression that can
+% \end{itemize}
+
+% Let $e$ be a \langfor expression. If $e=V$ we have
+% \begin{itemize}
+% 	\item When $V$ is $1\times 1$ then $\Phi^e_1$ has the one input/output gate (\textit{not necessary, covered in second item}).
+% 	\item When $V$ is $n\times 1$ or $1\times n$ then $\Phi^e_n$ has $n$ input/output gates.
+% 	\item When $V$ is $n\times n$ then $\Phi^e_n$ has $n^2$ input/output gates. Here, $V_{ij}=\Phi_n(V)\left[ j+n(i-1)\right]$ and $i,j=1,\ldots, n$ (entries listed row by row).
+% \end{itemize}
+
+% If $e=e'^T$ then $\Phi^e_n=\Phi^{e'}_n$. 
+
+% If $e=e_1 + e_2$ we have
+
+% \begin{itemize}
+% 	\item When $e$ is $1\times 1$ then $\Phi^e_1$ is $\Phi^{e_1}_1 \oplus \Phi^{e_2}_1$.
+% 	\item When $e$ is $n\times 1$ or $1\times n$ then $\Phi^e_n$ has $n$ output gates, where gate $k$ is $\Phi^{e_1}_n[k] \oplus \Phi^{e_2}_n[k]$.
+% 	\item When $V$ is $n\times n$ then $\Phi^e_1$ has $n^2$ output gates, where gate $k$ is $\Phi^{e_1}_n[k] \oplus \Phi^{e_2}_n[k]$.
+% \end{itemize}
+
+% If $e=f(e_1, \ldots, e_k)$ we have
+
+% \begin{itemize}
+% 	\item When $e$ is $1\times 1$ (only case necessary) then $\Phi^e_1$ is 
+	
+% \begin{center}
+% \begin{tikzpicture}[level distance=1.5cm,
+%   level 1/.style={sibling distance=1.5cm},
+%   every node/.style = {
+%   	shape=circle,
+%     draw,
+%     align=center,
+%     top color=white,
+%     bottom color=white
+%     }]
+%   \node {\( f \)}
+%     child {node { \( \Phi^{e_1}_1 \) }}
+%     child {node { \( \cdots \) }}
+%     child {node { \( \Phi^{e_k}_1 \) }};
+% \end{tikzpicture}
+% \end{center}
+
+% \end{itemize}
+
+% If $e=e_1\cdot e_2$ we have
+
+% \begin{itemize}
+% 	\item When $e_1,e_2$ are $1\times 1$ then $\Phi^e_1$ is $\Phi^{e_1}_1 \otimes \Phi^{e_2}_1$.
+% 	\item When $e_1$ is $1\times 1$ and $e_2$ is $1\times n$ then $\Phi^e_n$ has $n$ output gates, where output gate $i$ is $\Phi^{e_1}_1 \otimes \Phi^{e_2}_n[i]$.
+% 	\item When $e_1$ is $n\times 1$ and $e_2$ is $1\times 1$ then $\Phi^e_n$ has $n$ output gates, where output gate $i$ is $\Phi^{e_1}_n[i] \otimes \Phi^{e_2}_1$.
+% 	\item When $e_1$ is $n\times 1$ and $e_2$ is $1\times n$ then $\Phi^e_n$ has $n^2$ output gates, where output gate $k=j + n(i-1)$ is $\Phi^{e_1}_n[i] \otimes \Phi^{e_2}_n[j]$. Note that $k=1,\ldots, n^2$ and $i,j=1,\ldots, n$.
+% 	\item When $e_1$ is $1\times n$ and $e_2$ is $n\times 1$ then $\Phi^e_n$ has one output gate $$\bigoplus_{l=1}^n \left( \Phi^{e_1}_n[l] \otimes \Phi^{e_2}_n[l] \right).$$
+% 	\item When $e_1$ is $1\times n$ and $e_2$ is $n\times n$ then $\Phi^e_n$ has $n$ output gates, where gate $j$ is $$\bigoplus_{i=1}^n \left( \Phi^{e_1}_n[j] \otimes \Phi^{e_2}_n[j + n(i-1)] \right).$$
+% 	\item When $e_1$ is $n\times n$ and $e_2$ is $n\times 1$ then $\Phi^e_n$ has $n$ output gates, where gate $i$ is $$\bigoplus_{j=1}^n \left( \Phi^{e_1}_n[j+n(i-1)] \otimes \Phi^{e_2}_n[j] \right).$$
+% 	\item When $e_1$ is $n\times n$ and $e_2$ is $n\times n$ then $\Phi^e_n$ has $n^2$ output gates, where gate $k=j+n(i-1)$ is $$\bigoplus_{l=1}^n \left( \Phi^{e_1}_n[i] \otimes \Phi^{e_2}_n[j+n(l-1)] \right).$$ Note that $k=1,\ldots, n^2$ and $i,j=1,\ldots, n$.
+% \end{itemize}
+
+% If $e=\ffor{X}{v}e'(\cI, X, v)$ then $$\Phi^{e}_n=\Phi^{e'}_n\left( \cI, \Phi^{e'}_n \left( \cI, \cdots \Phi^{e'}_n\left( \cI, \Phi^{e'}_n\left( \cI, 0, v_1\right), v_2\right)\cdots, v_{n-1} \right), v_n \right).$$
+
+%

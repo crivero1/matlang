@@ -1,0 +1,27 @@
+% Now we can prove theorem \ref{th-circuits-ml}
+%
+% \begin{proof}
+
+    % For a stack $S$, the operations are standard:
+    %
+    % \begin{itemize}
+    %     \item $\push{S}{s}$: pushes $s$ into $S$.
+    %     \item $\pop{S}$: pops the top element.
+    %     \item $\getsize{S}$: the length of the stack.
+    %     \item $\gettop{S}$: the top element in the stack.
+    % \end{itemize}
+    %
+    % For the pseudo-code, $\cG$ and $\cV$ denote stacks of gates and values, respectively. The property that holds during the simulation is that the value in $\cV[i]$ is the value that $\cG[i]$ currently outputs. The algorithm ends with $\cG=\left[ g_{\texttt{root}}\right]$ and $\cV=\left[ v_{\texttt{root}}\right]$ after traversing the circuit, and returns $v_{\texttt{root}}$
+    %
+    % During the evaluation algorithm there will be two possible configurations of $\cG$ and $\cV$.
+    %
+    % \begin{enumerate}
+    %     \item $\getsize{\cG} = \getsize{\cV} + 1$: this means that $\gettop{\cG}$ is a gate that we visit for the first time and we need to initialize its value.
+    %
+    %     \item $\getsize{\cG} = \getsize{\cV}$: here $\gettop{\cV}$ is the value of evaluating the circuit in gate $\gettop{\cG}$. Therefore, we need to aggregate the value $\gettop{\cV}$ to the parent gate of $g$.
+    % \end{enumerate}
+    %
+    % We assume the circuit has input gates, $+, \times$-gates and allow constant $1$-gate.
+    %
+    % The idea is to traverse the circuit top down in a depth first search way. For example, in the circuit $f(a_1,a_2,a_3,a_4)=a_1a_2 +a_3a_4$ above, we would initialize the output gate value as $0$ because it is a $+$ gate, so $\cG=\lbrace +\rbrace$, $\cV=\lbrace 0\rbrace$. Then stack the left $\times$ gate to $\cG$, stack its initial value (i.e. $1$) to $\cV$. Now stack $a_1$ to $\cG$ and its value (i.e. $a_1$) to $\cV$. Since we are on an input gate we pop the gate and value pair off of $\cG$ and $\cV$ respectively, aggregate $a_1$ to $\gettop{\cV}$ and continue by stacking the $a_2$ gate to $\cG$. We pop $a_2$ off of $\cV$ (and its gate off of $\cG$) and aggregate its value to $\gettop{\cV}$. We pop and aggregate the value of the left $\times$ gate to $\gettop{\cV}$ (the root value). Then continue with the right $\times$ gate branch similarly.
+

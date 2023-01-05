@@ -1,0 +1,104 @@
+% !TeX spellcheck = en_US
+%!TEX root = ../../main.tex
+\begin{proof}
+Both directions are proved by induction on the structure of expressions.
+
+\smallskip
+
+%First, let $\Sch=(\Mnam,\size)$ be a schema of square matrices, that is, there exists an $\alpha$ such 
+%that $\size(V) \in \{1, \alpha\} \times \{1,\alpha\}$ for every $V \in \Mnam$.
+%Define the relational vocabulary $\text{WL}(\Sch) = \{R_V \mid V \in \Mnam\}$ such that $\arity(R_V) = 2$ 
+%if $\size(V) = (\alpha, \alpha)$, $\arity(R_V) = 1$ if $\size(V) \in \{(\alpha,1), (1,\alpha)\}$, and 
+%$\arity(R_V) = 0$ otherwise.
+%Then given a matrix instance $\I = (\dom,\conc)$ over $\Sch$ with  $\dom(\alpha) = n$ define the structure 
+%$\text{WL}(\I) = (\{1, \ldots, n\}, \{R_V^{\I}\} )$ such that 
+%$R_V^{\I}(i, j) = \conc(V)_{i,j}$ if $\size(V) = (\alpha, \alpha)$, $R_V^{\I}(i) = \conc(V)_{i}$ 
+%if $\size(V) \in \{(\alpha,1), (1,\alpha)\}$, and $R_V^{\I} = \conc(V)$ if $\size(V) = (1,1)$.
+
+\noindent \emph{From \langprod to Weighted Logics.} 
+Similar to the proof of Proposition~\ref{prop:sum_to_ara}, for each expression $e(v_1, \ldots, v_k)$ of type $(\alpha, \alpha)$ we must encode in WL the $\alpha$ and the vector variables $v_1, \ldots, v_k$. For this, we use variables $x_{\alpha}^\row$, $x_{\alpha}^\col$, and $x_{v_i}$ for each variable $v_1, \ldots, v_k$. Then we use the following induction hypotheses (similar to Proposition~\ref{prop:sum_to_ara}):
+
+\newcommand{\varphie}{\varphi_e}
+\newcommand{\xr}{x_{\alpha}^\row}
+\newcommand{\xc}{x_{\alpha}^\col}
+
+\begin{itemize}
+	\item If $e(v_1,\ldots,v_k)$ is of type $(\alpha,\alpha)$ then there exists a formula $\varphie(x_{\alpha}^\row,x_{\alpha}^\col, x_{v_1}, \ldots, x_{v_k})$ such that
+	$$
+	\ssem{\varphie}{\text{WL}(\I)}(\sigma) \ = \ \sem{e}{\I[v_1\gets b_{i_1},\ldots,v_k\gets b_{i_k}]}_{i,j}
+	$$
+	for assignment $\sigma$ with $\sigma(\xr)=i$, $\sigma(\xc)=j$ and $\sigma(x_{v_s})=i_s$ for $s=1,\ldots, k$.
+	
+	\item If $e(v_1,\ldots,v_k)$ is of type $(\alpha,1)$ then there exists a WL formula $\varphie(x_{\alpha}^\row, x_{v_1}, \ldots, x_{v_k})$ such that
+	$$
+	\ssem{\varphie}{\text{WL}(\I)}(\sigma) \ = \ \sem{e}{\I[v_1\gets b_{i_1},\ldots,v_k\gets b_{i_k}]}_{i}
+	$$
+	for assignment $\sigma$ with $\sigma(\xr)=i$ and $\sigma(x_{v_s})=i_s$ for $s=1,\ldots, k$.
+	And similarly for when $e$ is of type $(1,\alpha)$.
+	
+	\item If $e(v_1,\ldots,v_k)$ is of type $(1,1)$ then there exists a WL formula $\varphie( x_{v_1}, \ldots, x_{v_k})$ such that
+	$$
+	\ssem{\varphie}{\text{WL}(\I)}(\sigma) \ = \ \sem{e}{\I[v_1\gets b_{i_1},\ldots,v_k\gets b_{i_k}]}
+	$$
+	for assignment $\sigma$ with $\sigma(x_{v_s})=i_s$ for $s=1,\ldots, k$.
+\end{itemize}
+If we prove the previous statement we are done, because the last bullet is what we want to show when $e$ has no free vector variables. 
+Then rest of the proof is to go by induction on the structure of \langprod expressions.
+For a WL-formula $\varphi$ and variables $x,y$, we will write  $\varphi[x \mapsto y]$ for the formula $\varphi$ when $x$ is replaced with $y$ all over the formula (syntactically).
+Let $e$ be an \langprod expression.
+\begin{itemize} \itemsep3mm
+  \item If $e=V$ and $\Sch(e)= (\alpha, \alpha)$ then $\varphie:=R_V(\xr, \xc)$. Similarly, if $\Sch(e)$ is of type $(\alpha,1)$, $(1, \alpha)$, or $(1,1)$, then $\varphie:=R_V(\xr)$, $\varphie:=R_V(\xc)$, and $\varphie:=R_V$, respectively.
+  
+  \item If $e=v$, for $v\in \{v_1,\ldots ,v_k\}$, and $\Sch(v)= (\alpha,1)$ then $\varphie := \xr = x_v$. Similarly, if $\Sch(v)= (1,\alpha)$ then $\varphie := \xc = x_v$.
+  
+  \item if $e= e_1^T$ and $\Sch(e)=(\alpha,\alpha)$ then
+  $$
+  \varphie:= \varphi_{e_1}[\xr \mapsto \xc, \xc \mapsto \xr].
+  $$
+  Similarly, if $\Sch(e)$ is equal to $(\alpha,1)$ or $(1,\alpha)$ then $\varphie:=\varphi_{e_1}[\xr \mapsto \xc]$ and $\varphie:=\varphi_{e_1}[\xc \mapsto \xr]$, respectively.   
+
+
+	\item If $e=e_1+e_2$ with $\Sch (e_1)=\Sch (e_2)$, then $\varphie:= \varphi_{e_1} \ksum \varphi_{e_2}$.
+	
+	\item If $e=f_\odot(e_1,\ldots, e_k)$ with $\Sch(e_i)=\Sch(e_j)$ for all $i,j\in[1,k]$, then $\varphie:= \varphi_{e_1} \kprod \varphi_{e_2} \kprod \cdots \kprod \varphi_{e_k}$.
+	
+	\item If $e=e_1\cdot e_2$ with $\Sch (e_1)=\Sch (e_2)=(\alpha, \alpha)$,  then $\varphie:= \Sigma y. \  \varphi_{e_1}[\xc \mapsto y] \kprod \varphi_{e_2}[\xr \mapsto y]$ where $y$ is a fresh variable not mentioned in $\varphi_{e_1}$ or $\varphi_{e_2}$. Instead, if $\Sch (e_1)= (\alpha', 1)$ and $\Sch (e_2)=(1, \alpha'')$ with $\alpha', \alpha'' \in \{\alpha, 1\}$, then $\varphie := \varphi_{e_1} \kprod \varphi_{e_2}$.
+	
+	\item If $e=\ssum v. e_1(v)$, then we define $\varphie := \Sigma x_{v}. \  \varphi_{e_1}(x_v)$.
+
+  \item If $e=\qhadprod v. e_1(v)$, then $\varphie := \sprod x_{v}.\  \varphi_{e_1}(x_v)$.
+\end{itemize}
+From the construction it is now straightforward to check that the inductive hypotheses hold for all cases. To conclude this direction, define $\Phi(e) := \varphie$ for every expression $e$, and we are done.
+
+\medskip
+%We now encode weighted structures into matrices and vectors. Let $\Gamma$ be a relational vocabulary 
+%where $\arity(R) \leq 2$. 
+%Define $\text{Mat}(\Gamma) = (\Mnam_\Gamma,\size_\Gamma)$ such 
+%that $\Mnam_\Gamma = \{ V_{R} \mid R \in \Gamma\}$ and $\size_\Gamma(V_{R})$ is equal to 
+%$(\alpha, \alpha), (\alpha, 1)$, or $(1,1)$ if $\arity(R)=2$, $\arity(R)=1$, or $\arity(R)=0$, 
+%respectively, for some $\alpha \in \DD$. Similarly, let $\cA = (A, \{R^{\cA}\}_{R \in \Gamma})$ 
+%be a structure with $A = \{a_1, \ldots, a_n\}$, ordered arbitrarily.
+%Then we define the matrix instance $\text{Mat}(\cA) = (\dom,\conc)$ such that $\dom(\alpha) = n$, 
+%$\conc(V_{R})_{i,j} = R^{\cA}(a_i, a_j)$ if $\arity(R)=2$, $\conc(V_{R})_{i,1} = R^{\cA}(a_i)$ if $\arity(R)=1$, 
+%and $\conc(V_{R})_{1,1} = R^{\cA}$ otherwise.
+
+\newcommand{\evarphi}{e_\varphi}
+
+\noindent \emph{From Weighted Logics to \langprod.} 
+Similar to the previous direction, we have to encode the \langprod variables of a formula $\varphi$ with vector variables in the equivalent \langprod expression $\evarphi$. For this, for each \langprod variable $x$ we define a vector variable $v_x$ of type $(\alpha, 1)$. 
+Take a structure $\cA = (A, \{R^{\cA}\}_{R \in \Gamma})$ with $A = \{a_1, \ldots, a_n\}$, ordered arbitrarily.
+Then for each formula $\varphi(x_1, \ldots, x_k)$ we define an expression $\evarphi(v_{x_1}, \ldots, v_{x_k})$ of type $(1,1)$ such that for every assignment $\sigma$ of $x_1, \ldots, x_k$ we have:
+$$
+\sem{\evarphi}{\text{Mat}(\cA)[v_{x_1} \gets b_{i_1},\ldots,v_{x_1}\gets b_{i_k}]} \ = \ \ssem{\varphi}{\cA}(\sigma) 
+$$
+such that $\sigma(x_{s}) = a_{i_s}$ for every $s \leq k$. Note that when the formula has no free variables, the proof of the proposition is shown. Finally, we proceed by induction over the formula $\varphi$ over $\Gamma$.
+\begin{itemize} \itemsep3mm
+  \item If $\varphi=x=y$, then $\evarphi:= v_x^T \cdot v_{y}$.
+  \item If $\varphi=R(x,y)$, then $\evarphi:=v_x^T \cdot V_R \cdot v_{y}$. Similarly, if $\varphi:=R(x)$ or $\varphi:=R$, then $\evarphi:= V_R^T \cdot v_{x}$  and $\evarphi:= V_R$, respectively. 
+  \item If $\varphi = \varphi_1 \ksum \varphi_2$, then $\evarphi:= e_{\varphi_1} + e_{\varphi_2}$.
+  \item If $\varphi = \varphi_1 \kprod \varphi_2$, then $\evarphi:= f_\odot(e_{\varphi_1},e_{\varphi_2})$.
+  \item If $\varphi = \ssum x.\  \varphi_1$, then $\evarphi :=\ssum v_x.\ e_{\varphi_1}$.
+  \item If $\varphi = \qhadprod x. \varphi_1$, then $\evarphi := \sprod v_x.\ e_{\varphi_1}$.
+\end{itemize}
+The inductive hypothesis can be proved following the above construction. To finish the proof, we define $\Psi(\varphi) := \evarphi$ and the proposition is shown.
+\end{proof}

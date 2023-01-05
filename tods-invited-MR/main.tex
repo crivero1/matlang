@@ -1,0 +1,77 @@
+\documentclass[acmsmall,review]{acmart}
+
+\usepackage{enumitem}
+\usepackage{balance}
+\usepackage{subdepth}
+% \usepackage{bbm}
+\input{./extras/macros}
+
+\input{./extras/title_authors}
+
+%%%%%%%%%%%%%%%%%%%
+%% Document body %%
+%%%%%%%%%%%%%%%%%%%
+% \let\mathsf\relax    % just to avoid a message in the log file
+% \DeclareRobustCommand{\mathsf}[1]{\text{\normalfont\sffamily#1}}
+% \DeclareMathAlphabet{\mathsf}
+\DeclareMathAlphabet{\mathsf}{OT1}{\sfdefault}{m}{n}
+\begin{document} 
+
+\input{./extras/abstract}
+\input{./extras/keywords}
+
+\maketitle
+
+\section{Introduction}
+\input{./sections/intro.tex}
+
+
+\section{MATLANG}\label{sec:matlang}
+\input{./sections/prelim.tex}
+
+\section{Extending MATLANG with for loops}\label{sec:formatlang}
+\input{./sections/forloops.tex}
+
+
+%\section{Order}\label{sec:order}
+%\input{./sections/order.tex}
+
+\section{Algorithms in Linear Algebra}\label{sec:queries}
+\input{./sections/algorithms.tex}
+
+\section{Expressiveness of for-MATLANG}\label{sec:circuits}
+\input{./sections/expr.tex}
+
+
+\section{Restricting the power of for loops}\label{sec:restrict}
+\input{./sections/restrictions.tex}
+
+\section{Conclusions}\label{sec:conclude}
+\input{./sections/concl.tex}
+
+
+
+%%%%%%%%%%%%%%%%%%%
+%%% Bibliography %%
+%%%%%%%%%%%%%%%%%%%
+
+% \newpage
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{./extras/biblio}
+\appendix
+
+\section{Additional details for Section~\ref{sec:circuits}}
+
+% \input{sections/definitions/for_predicates.tex}
+%
+\input{sections/proofs/linear-space-functions.tex}
+
+\subsection{Proof of Theorem~\ref{th-ml-to-circuits}}
+
+\input{sections/proofs/lang-in-ac.tex}
+
+\subsection{Proof of Proposition~\ref{prop-undec}}
+\input{sections/proofs/undecidability.tex}
+
+
+\end{document}

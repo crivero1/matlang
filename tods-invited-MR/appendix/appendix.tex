@@ -1,0 +1,65 @@
+% !TeX spellcheck = en_US
+%!TEX root = ../main.tex
+\section{Preliminaries}
+We first introduce some additional notations and describe simplifications that will be used later in the appendix.
+\subsection{Definitions}
+\input{./appendix/app-def.tex}\label{app:def}
+
+\subsection{Simplifications}\label{app:simp}
+\input{./appendix/app-simp.tex}
+
+
+\section{Proofs of Section~\ref{sec:formatlang}}
+
+\subsection{Order predicates}\label{app:order}
+\input{./appendix/app-order.tex}
+
+
+\section{Proofs of Section~\ref{sec:queries}}
+We next provide more details about how to perform LU-decomposition (without and with pivoting)
+and to compute the determinant and inverse of a matrix.
+\subsection{LU-decomposition}
+\input{./appendix/app-gauss.tex}
+
+\subsection{LU-decomposition with pivoting}
+\input{./appendix/app-palu.tex}
+
+\subsection{Determinant and inverse}\label{app:inverse}
+\input{./appendix/app-inverse.tex}
+
+
+\section{Proofs of Section~\ref{sec:circuits}}
+
+% \subsection{Arithmetic circuits (AC)}
+% \input{./sections/app-circuits.tex}
+
+\subsection{Linear space functions}
+\input{./appendix/app-linspace-result.tex}
+
+\subsection{Circuit evaluation}
+\input{./appendix/app-circuit-result.tex}
+
+\subsection{From MATLANG to uniform ACs}
+\input{./appendix/app-lang-in-ac.tex}
+
+\subsection{Undecidability}
+\input{./appendix/app-undec-result.tex}
+
+
+\section{Proofs of Section~\ref{sec:restrict}}
+
+\subsection{From \langsum to \rak}
+\input{./appendix/app-sum-to-ara}
+
+\subsection{From \rak to \langsum}
+\input{./appendix/app-ara-to-sum}
+
+%\input{./sections/app-ara.tex}
+
+% \input{./sections/app-ml-sum.tex}
+
+\subsection{Weighted logics and \langprod}
+\input{./appendix/app-prod-and-wl.tex}
+
+\subsection{Matrix inversion in \langmprod extended with order}\label{app:asset_order}
+\input{./appendix/app-asset-order.tex}

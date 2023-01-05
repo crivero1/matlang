@@ -1,0 +1,131 @@
+\newcommand{\MLm}{\mathsf{MATLANG}}
+\newcommand{\ML}{$\MLm$\xspace}
+\newcommand{\ARAm}{\mathsf{ARA}}
+\newcommand{\ARA}{$\ARAm$\xspace}
+\newcommand{\ARAC}{$(\ARAm+\zeta_k)(k)$\xspace}
+\newcommand{\ARACTWO}{$(\ARAm+\zeta_2)(2)$\xspace}
+\newcommand{\Rel}{\mathrm{Rel}}
+\newcommand{\Mat}{\mathrm{Mat}}
+
+% \DeclareMathOperator{\sdiff}{\triangle}
+% By \emph{function} we will always mean a total function. For a function $f: X \to Y$ and $Z \subseteq X$, the \emph{restriction} of $f$ to $Z$, denoted by $f|_Z$, is the function $Z \to Y$ where $f|_Z(x) = f(x)$ for all $x \in Z$.
+
+%
+%
+%
+% From the outset, we also fix countable infinite sets $\mathbf{rel}$, $\mathbf{att}$, and $\mathbf{dom}$, the elements of which are called \emph{relation names}, \emph{attributes}, and \emph{domain elements}, respectively. We assume an equivalence relation $\sim$ on $\mathbf{att}$ that partitions $\mathbf{att}$ into an infinite number of equivalence classes that are each infinite. When $A \sim B$, we say that $A$ and $B$ are \emph{compatible}. Intuitively, $A \sim B$ will mean that $A$ and $B$ have the same set of domain values. A function $f: X \to Y$ with $X$ and $Y$ sets of attributes is called \emph{compatible} if $f(A) \sim A$ for all $A \in X$.
+%
+\subsection{Annotated-Relation Algebra (\ARA)} 
+For completeness, we start by recalling the definition of the \ARA query language. We  here closely follow the exposition given in~\cite{brijder2019matrices}.
+
+Let $\mathbf{att}$ and $\mathbf{dom}$ denote countable infinite sets of  \emph{attributes} and \emph{domain elements}, respectively. A notion of compatibility between attributes is assumed. More formally,
+we assume that an equivalence relation $\sim$ on $\mathbf{att}$ is present which partitions $\mathbf{att}$ into an infinite number of equivalence classes that are each infinite. When $A \sim B$, we say that $A$ and $B$ are \emph{compatible}. Intuitively, $A \sim B$ will mean that $A$ and $B$ have the same set of domain values. A function $f: X \to Y$ with $X$ and $Y$ sets of attributes is called \emph{compatible} if $f(A) \sim A$ for all $A \in X$.
+
+A \emph{relation schema} is a finite subset of $\mathbf{att}$. A \emph{database schema} is a function $\mathcal{R}$ on a finite set $N$ of relation names, assigning a relation schema $\mathcal{R}(R)$ to each $R \in N$.
+% The \emph{arity} of a relation name $R$ is the cardinality $|\mathcal{R}(R)|$ of its schema. The \emph{arity} of $\mathcal{R}$ is the largest arity among relation names $R \in N$.
+
+The \emph{(positive) Annotated-Relation Algebra}, abbreviated by \ARA, is defined as follows. With each expression $\varphi$ in \ARA one also assigns a relation schema $\mathcal{R}(\varphi)$, by extending the initial schema
+$\mathcal{R}$. An \emph{\ARA expression} $\varphi$ over a database schema $\mathcal{R}$ is equal to 
+\begin{itemize}
+\item a relation name $R$ of $\mathcal{R}$;
+\item $\mathbf{1}(\psi)$, where $\psi$ is an \ARA expression, and $\mathcal{R}(\varphi) := \mathcal{R}(\psi)$;
+\item $\psi_1 \cup \psi_2$, where $\psi_1$ and $\psi_2$ are \ARA expressions with $\mathcal{R}(\psi_1) = \mathcal{R}(\psi_2)$, and $\mathcal{R}(\varphi) := \mathcal{R}(\psi_1)$;
+\item $\pi_Y(\psi)$, where $\psi$ is an \ARA expression and $Y \subseteq \mathcal{R}(\psi)$, and $\mathcal{R}(\varphi) := Y$;
+% \item $\pi_Y^\star(\psi)$, where $\psi$ is an \ARA expression and $Y \subseteq \mathcal{S}(\psi)$, and $\mathcal{S}(\varphi) := Y$;
+\item $\sigma_{Y}(\psi)$, where $\psi$ is an \ARA expression, $Y \subseteq \mathcal{R}(\psi)$, the elements of $Y$ are mutually compatible, and $\mathcal{R}(\varphi) := \mathcal{R}(\psi)$;
+\item $\rho_{\mathcal{R}(\psi) \mapsto Y}(\psi)$, where $\psi$ is an \ARA expression and $\mathcal{R}(\psi) \mapsto Y$ is a compatible one-to-one correspondence of attributes with $Y \subseteq \mathbf{att}$, and $\mathcal{R}(\varphi) := Y$; or
+\item $\psi_1 \Join \psi_2$, where $\psi_1$ and $\psi_2$ are \ARA expressions, and $\mathcal{R}(\varphi) := \mathcal{R}(\psi_1) \cup \mathcal{R}(\psi_2)$.
+\end{itemize}
+
+We next define the semantics of \ARA expression.
+A \emph{domain assignment} is a function $\mathbb{D}: \mathbf{att} \to
+2^{\mathbf{dom}}$ such that $A \sim B$ implies
+$\mathbb{D}(A) = \mathbb{D}(B)$. Let $X$ be a relation schema. A \emph{tuple} over
+$X$ with respect to $\mathbb{D}$
+is a function $t: X \to \mathbf{dom}$ such that
+$t(A) \in \mathbb{D}(A)$ for all $A \in X$. We denote by
+$\mathcal{T}_{\mathbb{D}}(X)$ the set of tuples over $X$ with respect to $\mathbb{D}$. Note that
+$\mathcal{T}_{\mathbb{D}}(X)$ is finite.  A \emph{relation} $r$ over
+$X$ with respect to $\mathbb{D}$ is a function $r:
+\mathcal{T}_{\mathbb{D}}(X) \to K$ for a \emph{semiring} $(K,+,*,0,1)$. So a relation annotates every tuple
+over $X$ with respect to $\mathbb{D}$ with a value from $K$.  If $\mathcal{R}$ is a
+database schema, then an \emph{instance $\mathcal{I}$ of
+$\mathcal{R}$ with respect to $\mathbb{D}$} is a function that assigns to every
+relation name $R$ of $\mathcal{R}$ a relation $\mathcal{I}(R):
+\mathcal{T}_{\mathbb{D}}(\mathcal{R}(R)) \to K$.
+
+The semantics of \ARA expressions is defined, as follows.
+
+\begin{description}
+
+
+\item[One] For every relation schema $X$,
+  we define $\mathbf{1}_X: \mathcal{T}_{\mathbb{D}}(X) \to K$ where $\mathbf{1}_X(t) = 1$ for every $t \in \mathcal{T}_{\mathbb{D}}(X)$. 
+
+
+\item[Union] Let $r_1, r_2: \mathcal{T}_{\mathbb{D}}(X) \to K$. Define $r_1 \cup r_2: \mathcal{T}_{\mathbb{D}}(X) \to K$ as $(r_1 \cup r_2)(t) = r_1(t) + r_2(t)$.
+
+
+\item[Projection] Let $r: \mathcal{T}_{\mathbb{D}}(X) \to K$ and $Y \subseteq X$. Define $\pi_{Y}(r): \mathcal{T}_{\mathbb{D}}(Y) \to K$ as
+\[
+(\pi_{Y}(r))(t) = \sum_{\substack{t' \in \mathcal{T}_{\mathbb{D}}(X),\\ t'|_{Y} = t}} \!\! r(t').
+\]
+
+
+\item[Selection] Let $r: \mathcal{T}_{\mathbb{D}}(X) \to K$ and $Y \subseteq X$ where the elements of $Y$ are mutually compatible. Define $\sigma_{Y}(r): \mathcal{T}_{\mathbb{D}}(X) \to K$ such that
+\[
+(\sigma_{Y}(r))(t) =
+\begin{cases}
+r(t) & \text{if } t(A)=t(B) \text{ for all } A, B \in Y;\cr
+0    & \text{otherwise}.
+\end{cases}
+\]
+
+
+\item[Renaming] Let $r: \mathcal{T}_{\mathbb{D}}(X) \to K$ and $\varphi: X \to Y$ a compatible one-to-one correspondence. We define $\rho_\varphi(r): \mathcal{T}_{\mathbb{D}}(Y) \to K$ as $\rho_\varphi(r)(t) = r(t \circ \varphi)$.
+
+\item[Join] Let $r_1: \mathcal{T}_{\mathbb{D}}(X_1) \to K$ and $r_2: \mathcal{T}_{\mathbb{D}}(X_2) \to K$. Define $r_1 \Join r_2: \mathcal{T}_{\mathbb{D}}(X_1 \cup X_2) \to K$ as $(r_1 \Join r_2)(t) = r_1(t|_{X_1})*r_2(t|_{X_2})$.
+\end{description}
+
+The above operations provide semantics for \ARA in a natural manner. Formally, let $\mathcal{R}$ be a database schema, let $\varphi$ be an \ARA expression over $\mathcal{R}$, and let $\mathcal{I}$ be an instance of $\mathcal{R}$. The \emph{output} relation $\varphi(\mathcal{I})$ of $\varphi$ under $\mathcal{I}$ is defined as follows. If $\varphi = R$ with $R$ a relation name of $\mathcal{R}$, then $\varphi(\mathcal{I}) := \mathcal{I}(R)$. If $\varphi = \mathbf{1}(\psi)$, then $\varphi(\mathcal{I}) := \mathbf{1}_{\mathcal{S}(\psi)}$. If $\varphi = \psi_1 \cup \psi_2$, then $\varphi(\mathcal{I}) := \psi_1(\mathcal{I}) \cup \psi_2(\mathcal{I})$. If $\varphi = \pi_{X}(\psi)$, then $\varphi(\mathcal{I}) := \pi_{X}(\psi(\mathcal{I}))$. If $\varphi = \sigma_{Y}(\psi)$, then $\varphi(\mathcal{I}) := \sigma_{Y}(\psi(\mathcal{I}))$. If $\varphi = \rho_\varphi(\psi)$, then $\varphi(\mathcal{I}) := \rho_\varphi(\psi(\mathcal{I}))$. Finally, if $\varphi = \psi_1 \Join \psi_2$, then $\varphi(\mathcal{I}) := \psi_1(\mathcal{I}) \Join \psi_2(\mathcal{I})$.
+
+
+\subsection{An extension of \ARA}
+We extend \ARA with the following two operators:
+\begin{itemize}
+ \item $\pi_Y^\star(\psi)$, where $\psi$ is an \ARA expression and $Y \subseteq \mathcal{R}(\psi)$, and $\mathcal{R}(\varphi) := Y$;
+ \item $\textsf{Apply}[f](\psi_1,\ldots,\psi_k)$, where $\psi_1,\ldots,\psi_k$ are \ARA expressions with $\mathcal{R}(\psi_1)=\cdots=\mathcal{R}(\psi_k)$, 
+ $f$ is a function $K^k\to K$,
+ and 
+ $\mathcal{R}(\varphi)=\mathcal{R}(\psi_1)$.
+\end{itemize}
+The semantics of these operators is given by:
+\begin{description}
+\item[$\star$-Projection] Let $r: \mathcal{T}_{\mathbb{D}}(X) \to K$ and $Y \subseteq X$. Define $\pi_{Y}^\star(r): \mathcal{T}_{\mathbb{D}}(Y) \to K$ as
+\[
+(\pi_{Y}(r))(t) = \prod_{\substack{t' \in \mathcal{T}_{\mathbb{D}}(X),\\ t'|_{Y} = t}} \!\! r(t').
+\]
+\item[Function application] Let $r_{i}: \mathcal{T}_{\mathbb{D}}(X) \to K$ for $i=1,\ldots,k$. Define $\textsf{Apply}[f](r_1,\ldots,r_k): \mathcal{T}_{\mathbb{D}}(Y) \to K$ as
+\[
+(\textsf{Apply}[f](r_1,\ldots,r_k))(t) = f(r_1(t),\ldots,r_k(t)).
+\]
+\end{description}
+Hence, if $\varphi=\pi^\star_{Y}(\psi)$ then 
+$\varphi(\mathcal{I}):=\pi^\star_{Y}(\psi(\mathcal{I}))$, and
+if $\varphi=\textsf{Apply}[f](\psi_1,\allowbreak \ldots,\psi_k)$ then we have
+$\varphi(\mathcal{I}):=\textsf{Apply}[f](\psi_1(\mathcal{I}), \ldots,\psi_k(\mathcal{I}))$. We let $\Omega$ denote a set of pointwise functions that can be used in function applications and write \ARA$_\Omega$ to make this explicit.
+
+
+\subsection{Upper bound on expressivity}
+There is a straightforward translation from \ARA$_{\Omega}$ expressions into the relational algebra with aggregation $\text{ALG}_{\text{aggr}}(\Omega',\Theta)$ as defined in~\cite{LIBKIN2003}. Here, $\Omega'$ consists of the functions in $\Omega$ and complemented with the unary functions $1:K\to K:k\mapsto 1$, to deal with $\mathbf{1}$ operator and $0:K\to K:k\mapsto 0$ to deal with selection and binary functions $f_+:K^2\to K:(k,\ell)\mapsto k+\ell$ and $f_*:K^2\to K:(k,\ell)\mapsto k*\ell$.
+Furthermore, $\Theta$ consist of aggregate functions corresponding to the semiring sum and product, lifted to multi-sets. More precisely,
+$\Theta$ includes $f_+^1,f_+^2,f_+^3,\ldots$ such that $f_+^n$ maps
+$n$-element multi-sets in $K$ to their sum, and 
+ $f_*^1,f_*^2,f_*^3,\ldots$ such that $f_*^n$ maps
+ $n$-element multi-sets in $K$ to their product.
+
+The language $\text{ALG}_{\text{aggr}}(\Omega,\Theta)$ is defined over a ``pure'' relational schema in which attributes are typed. It is easy to see that with every \ARA schema $\mathcal{R}$ we can associate a relational schema encoding the same information. Intuitively, we have one attribute of type $\mathbf{dom}$ for each $A\in\mathcal{R}$ and a special attribute $\text{Val}$ of type $K$ which is to hold the semiring values.
+
+Given this translation, it is known that every expression in  $\text{ALG}_{\text{aggr}}(\Omega,\Theta)$ corresponds to an expression in the finite rank fragment $\mathcal{L}_{\infty,\omega}^*(\textbf{Cnt})$ of infinitary logic with counting $\mathcal{L}_{\infty,\omega}(\textbf{Cnt})$~\cite{LIBKIN2003,Hella:2001}. 
+Since this logic is local, \ARA inherits this locality. As an example, 
+transitive closure and connectivity of graphcs cannot be expressed in \ARA$_{\Omega}$.

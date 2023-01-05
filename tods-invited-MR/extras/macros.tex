@@ -1,0 +1,313 @@
+\usepackage{xspace}
+\newcommand{\paths}{\text{PATHS}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%			COMMENTS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[textwidth=2cm,textsize=small]{todonotes}
+
+\newcommand{\domagoj}[1]{\todo[inline, color=blue!15]{{\bf Domagoj:} #1}}
+\newcommand{\cristian}[1]{\todo[inline, color=orange!30]{{\bf Cristian:} #1}}
+\newcommand{\thomas}[1]{\todo[inline, color=green!30]{{\bf Thomas:} #1}}
+\newcommand{\floris}[1]{\todo[inline, color=red!30]{{\bf Floris:} #1}}
+
+%%% UNCOMMENT BELOW TO REMOVE COMMENTS
+%\renewcommand{\domagoj}[1]{}
+%\renewcommand{\cristian}[1]{}
+%\renewcommand{\thomas}[1]{}
+%\renewcommand{\floris}[1]{}
+
+% Pseudocode packages
+\usepackage{algorithm} 
+\usepackage[noend]{algpseudocode}
+
+% Tikz
+\usepackage{tikz}
+\usepackage{pgfplots}
+
+\pgfplotsset{compat=1.12}
+\usetikzlibrary{arrows,decorations.pathmorphing,backgrounds,positioning,fit,calc,automata,matrix}
+\usetikzlibrary{trees}
+\usetikzlibrary{shapes}
+\usetikzlibrary{chains}
+\usetikzlibrary{patterns}
+\usetikzlibrary{tikzmark}
+
+
+
+\usepackage{xspace}
+% Other packages
+\usepackage[overload]{empheq}
+\usepackage{mathtools}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+
+%% Macros comments
+\newcommand{\tover}[1]{\textcolor{red}{#1}}
+\newcommand{\td}[1]{\textcolor{blue}{[TODO: #1]}}
+
+%% Macros logics
+\newcommand{\NN}{\mathbb{N}}
+\newcommand{\ZZ}{\mathbb{Z}}
+\newcommand{\MM}{\mathbb{M}}
+\newcommand{\SE}{\mathbb{S}}
+\newcommand{\BB}{\mathbb{B}}
+\newcommand{\RR}{\mathbb{R}}
+\newcommand{\cF}{\mathcal{F}}
+\newcommand{\cI}{\mathcal{I}}
+\newcommand{\cM}{\mathcal{M}}
+\newcommand{\cS}{\mathcal{S}}
+\newcommand{\cX}{\mathcal{X}}
+\newcommand{\cV}{\mathcal{V}}
+\newcommand{\QFBILIA}{\textsf{QFBILIA}}
+\newcommand{\nnf}{\textsf{f}}
+\newcommand{\Cat}{\operatorname{Cat}}
+\newcommand{\ssum}{\Sigma}
+\newcommand{\sprod}{\Pi}
+%\newcommand{\for}{\textbf{for }}
+
+\newcommand{\ite}{\textsf{ite}}
+\newcommand{\limp}{\Rightarrow}
+\newcommand{\flc}{\rightarrow}
+
+
+\newcommand{\bsingle}{\textsf{bag}}
+\newcommand{\bplus}{\oplus}
+\newcommand{\bminus}{\ominus}
+
+%% Macros tools
+\newcommand{\spen}{\textsc{spen}}
+\newcommand{\zzz}{\textsc{Z3}}
+
+%% Environments
+\newtheorem{mythm}{Theorem}[section]
+\newtheorem{mydef}[mythm]{Definition}
+\newtheorem{myprop}[mythm]{Proposition}
+\newtheorem{mylem}[mythm]{Lemma}
+\newtheorem{myex}[mythm]{Example}
+\newtheorem{mycor}[mythm]{Corollary}
+
+\newtheorem*{myrem}{Remark} %% based on amsthm
+\newtheorem*{mynota}{Notation}
+\newtheorem*{mylem*}{Lemma}
+\newtheorem{myclaim}{Claim}
+\newtheorem*{myclaim*}{Claim}
+\newtheorem*{myprop*}{Proposition}
+\newtheorem*{comp}{Efficiency Study}
+
+
+\newenvironment{point}[1]
+{\subsection*{#1}}%
+{}
+
+\newcommand{\flist}{\text{\sc FList}}
+\newcommand{\set}{\text{\sc Set}}
+\newcommand{\fset}{\text{\sc FSet}}
+\newcommand{\B}{\text{\bf B}}
+%\newcommand{\G}{\mathcal{G}}
+\newcommand{\K}{\mathcal{K}}
+\newcommand{\LOG}{\text{\sc Log}}
+\newcommand{\length}{\text{\rm length}}
+\newcommand{\BK}{\text{\sc BK}}
+%\newcommand{\cP}{\mathcal{P}}
+%\newcommand{\cV}{\mathcal{V}}
+%\newcommand{\cC}{\mathcal{C}}
+%\newcommand{\cS}{\mathcal{S}}
+%\newcommand{\cA}{\mathcal{A}}
+%\newcommand{\cR}{\mathcal{R}}
+%\newcommand{\cQ}{\mathcal{Q}}
+\newcommand{\cG}{\mathcal{G}}
+\newcommand{\cT}{\mathcal{T}}
+\newcommand{\pr}{\mathbf{Pr}}
+\newcommand{\Dyck}{\mathcal{D}}
+\newcommand{\expected}{\mathbf{E}}
+\newcommand{\bv}{\mathbf{v}}
+\newcommand{\bV}{\mathbf{V}}
+\newcommand{\bs}{\mathbf{s}}
+\newcommand{\bsigma}{\mathbf{\sigma}}
+\newcommand{\bw}{\mathbf{w}}
+\newcommand{\ba}{\mathbf{a}}
+\newcommand{\bq}{\mathbf{q}}
+\newcommand{\bx}{\mathbf{x}}
+\newcommand{\by}{\mathbf{y}}
+
+\newcommand{\bstring}{\{0,1\}^\ast}
+
+\newcommand{\quot}[1]{#1/\!\equiv}
+
+\newcommand{\then}{\,|\,}
+\newcommand{\body}{q}
+\newcommand{\bchain}{\text{bc}}
+
+\newcommand{\owner}{\text{\rm owner}}
+\newcommand{\pred}{\text{\rm pred}}
+\newcommand{\mine}{\text{\rm mine}}
+\newcommand{\suc}{\text{\rm succ}}
+
+
+\newcommand{\bP}{\mathbf{P}}
+\newcommand{\bB}{\mathbf{B}}
+\newcommand{\bA}{\mathbf{A}}
+\newcommand{\bR}{\mathbf{R}}
+\newcommand{\bS}{\mathbf{S}}
+\newcommand{\bH}{\mathbf{H}}
+\newcommand{\bQ}{\mathbf{Q}}
+
+\newcommand{\forkm}[1]{F^{#1}}
+\newcommand{\mfork}{F_m}
+\newcommand{\mgfork}{F_{m,g}}
+\newcommand{\last}{\text{\rm last}}
+\newcommand{\best}{\text{\rm best}}
+\newcommand{\cho}{\text{\rm choose}}
+
+\newcommand{\ie}{i.e.$\!$ }
+
+\newcommand{\longest}{{\text{\rm longest}}}
+
+\newcommand{\subbody}{{\text{\rm sub-state}}}
+
+\newcommand{\df}{\text{\rm DF}}
+\newcommand{\fg}{\text{\rm FG}}
+\newcommand{\fr}{\text{\rm FR}}
+\newcommand{\bdf}{\text{\rm {\bf DF}}}
+\newcommand{\bfg}{\text{\rm {\bf FG}}}
+\newcommand{\bfr}{\text{\rm {\bf FR}}}
+
+\newcommand{\meet}{\text{\rm meet}}
+
+\DeclareMathOperator*{\argmax}{argmax}
+
+
+%\newcommand{\rpa}{r_p^\alpha}
+\newcommand{\rpa}{r_p}
+
+\newcommand{\ameet}{\text{\rm all-meet}}
+\newcommand{\base}{\text{\rm base}}
+
+\newcommand{\ucl}{\text{\rm up-cl}}
+\newcommand{\dcl}{\text{\rm down-cl}}
+
+
+\newcommand{\sem}[2]{\llbracket #1 \rrbracket(#2)}
+
+
+
+\newcommand{\Mnam}{\mathcal{M}}
+\newcommand{\Mvar}{\mathcal{V}}
+\newcommand{\Fun}{\mathcal{F}}
+\newcommand{\Mlang}{\text{MATLANG}}
+\newcommand{\llet}{\texttt{let } V = e_1 \texttt{ in } e_2}
+\newcommand{\ones}{\mathbf{1}}
+\newcommand{\diag}{\textsf{diag}}
+\newcommand{\apply}[1]{\texttt{apply}[#1]}
+
+\newcommand{\I}{\mathcal{I}}
+\newcommand{\Voc}{\mathcal{S}}
+\newcommand{\Sch}{\mathcal{S}}
+
+\newcommand{\mtr}[1]{\textsf{Mat}[#1]}
+
+\newcommand{\dom}{\mathcal{D}}
+\newcommand{\conc}{\texttt{mat}}
+
+\newcommand{\DD}{\texttt{Symb}}
+\newcommand{\size}{\texttt{size}}
+
+\newcommand{\ddim}{\texttt{dim}}
+\newcommand{\ttype}{\texttt{type}_{\Sch}}
+\newcommand{\ttypeo}{\texttt{type}_{\Sch_1}}
+
+\newcommand{\type}{\texttt{type}}
+
+\newcommand{\rak}{\texttt{RA}$_K^+$\xspace}
+\newcommand{\lara}{\texttt{LARA}\xspace}
+\newcommand{\lang}{\texttt{MATLANG}\xspace}
+\newcommand{\langf}[1]{\texttt{MATLANG}[#1]}
+\newcommand{\langfor}{\texttt{for}\text{-}\texttt{MATLANG}\xspace}
+\newcommand{\langforf}[1]{\texttt{for}\text{-}\texttt{MATLANG}[#1]\xspace}
+\newcommand{\langsum}{\texttt{sum}-\texttt{MATLANG}\xspace}
+\newcommand{\langprod}{\texttt{sp}-\texttt{MATLANG}\xspace}
+\newcommand{\langmprod}{\texttt{prod}-\texttt{MATLANG}\xspace}
+
+\newcommand{\ffor}[3]{\texttt{for}\, #1,#2 \texttt{.}\, #3}
+
+%\newcommand{\initf}[4]{\texttt{for}[#1]\, #2,#3 \texttt{.}\, #4}
+\newcommand{\initf}[4]{\texttt{for}\, #2,#3\!=\! #1 \texttt{.}\, #4}
+
+\newcommand{\lleq}[2]{\texttt{leq}(#1,#2)}
+\newcommand{\mmin}[1]{\texttt{min}(#1)}
+
+\newcommand{\ccol}[2]{\texttt{col(}#1,#2\texttt{)}}
+\newcommand{\red}[2]{\texttt{reduce(}#1,#2\texttt{)}}
+\newcommand{\redd}[2]{\texttt{reduce'(}#1,#2\texttt{)}}
+\newcommand{\nneq}[2]{\texttt{neq(}#1,#2\texttt{)}}
+\newcommand{\ccoleq}[2]{\texttt{col}_{\texttt{eq}}\texttt{(}#1,#2\texttt{)}}
+\newcommand{\getdiag}[1]{\texttt{get{\_}diag}(#1)}
+\newcommand{\diaginverse}[1]{\texttt{diag{\_}inverse}(#1)}
+
+\newcommand{\Dist}{\texttt{Dist}}
+
+\newcommand{\push}[2]{#1\texttt{.push}(#2)}
+\newcommand{\pop}[1]{#1\texttt{.pop}}
+\newcommand{\getsize}[1]{#1\texttt{.size}}
+\newcommand{\gettop}[1]{#1\texttt{.top}}
+
+\newcommand{\isplus}[1]{\texttt{isplus}(#1)}
+\newcommand{\isprod}[1]{\texttt{isprod}(#1)}
+\newcommand{\isone}[1]{\texttt{isone}(#1)}
+\newcommand{\iszero}[1]{\texttt{iszero}(#1)}
+\newcommand{\isinput}[1]{\texttt{isinput}(#1)}
+\newcommand{\getfirst}[1]{\texttt{getfirst}(#1)}
+\newcommand{\getinput}[1]{\texttt{getinput}(#1)}
+\newcommand{\getroot}{\texttt{getroot}()}
+\newcommand{\isnotlast}[2]{\texttt{not{\_}last}(#1,#2)}
+\newcommand{\nextgate}[2]{\texttt{next{\_}gate}(#1, #2)}
+
+\newcommand{\Iden}[1]{\mathsf{IdUpTo}(#1)}
+\newcommand{\pondIden}[2]{\mathsf{IdVal}(#1, #2)}
+
+%Complexity theory
+\newcommand{\np}{{\sc NP}}
+\newcommand{\nl}{{\sc NLOGSPACE}}
+\newcommand{\logspace}{{\sc LOGSPACE}}
+
+
+% SUBFRAGMENTS SECTION
+
+\newcommand{\ddom}{\mathbb{D}}
+\newcommand{\fdom}{\operatorname{dom}}
+\newcommand{\att}{\mathbb{A}}
+\newcommand{\tuples}{\mathbf{tuples}}
+\newcommand{\supp}{\operatorname{supp}}
+\newcommand{\cJ}{\mathcal{J}}
+\newcommand{\cR}{\mathcal{R}}
+\newcommand{\adom}{\mathbf{adom}}
+
+\newcommand{\ksum}{\oplus}
+\newcommand{\kprod}{\odot}
+\newcommand{\bigksum}{\bigoplus}
+\newcommand{\bigkprod}{\bigodot}
+\newcommand{\kzero}{\mymathbb{0}}
+\newcommand{\kone}{\mymathbb{1}}
+
+\newcommand{\row}{\mathsf{row}}
+\newcommand{\rows}{\mathsf{rows}}
+\newcommand{\col}{\mathsf{col}}
+\newcommand{\cols}{\mathsf{cols}}
+\newcommand{\arae}{Q}
+
+\newcommand{\ssem}[2]{\llbracket #1 \rrbracket_{#2}}
+
+\newcommand{\hadprod}{\circ} 
+\newcommand{\qhadprod}{\Pi^{\hadprod}} 
+
+
+\newcommand{\cA}{\mathcal{A}}
+\newcommand{\arity}{\operatorname{arity}}
+
+\newcommand{\hprod}{\circ}
+
+%\usepackage{bbold}
+\DeclareMathAlphabet{\mymathbb}{U}{BOONDOX-ds}{m}{n}
+
+
+
