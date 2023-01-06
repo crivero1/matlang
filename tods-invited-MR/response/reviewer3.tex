@@ -1,0 +1,438 @@
+\section{Reviewer 3}
+\label{sec:reviewer-3}
+\bigskip
+
+\begin{comment}
+	(\ldots) However, the
+	presentation can still be improved by a lot as indicated below.
+	Also there is some problem in the way how the expressiveness of
+	MATLANG is compared with arithmetic circuits. 
+	
+	(\ldots) While the small errors are easily fixable, the presentation and the comparison
+	to circuit families of polynomial degree needs a major revision.
+\end{comment}
+
+\answer \TODO
+\bigskip
+
+\begin{comment}
+	The authors define a MATLANG expression of polynomial degree as any MATLANG
+	expression that has an equivalent circuit family of polynomial degree.
+	Afterwards there is the mind blowing result that this class exactly corresponds
+	to the class of circuits of polynomial degree. Of course this result does not
+	provide any scientific value, as it just repeats the definition. It is not
+	clear at all how this class of MATLANG expressions looks like. Actually it is
+	undecidable if a given MATLANG expression has a polynomial degree.
+	
+	Instead there should be an (ideally syntactic) definition that is intrinsic to
+	MATLANG. Especially it should not be necessary to refer to circuit families in
+	order to provide a definition of polynomial degree for MATLANG expressions. If
+	no syntactic definition is possible than a sensible semantic definition will
+	also work.
+\end{comment}
+
+\answer \TODO
+\bigskip
+
+\begin{comment}
+	I start with the comparison to arithmetic circuits. In Section 5.2 you
+	construct MATLANG expressions that uses an input vector of the same arity as
+	the circuit and outputs a single value, the same that the circuit will
+	produce. Theorem 5.1 does not talk about the sizes of other matrices used.
+	
+	In your construction you use square matrices and vectors of the same size as
+	the input vector. As a result of this design decision, you must limit the
+	construction to circuits of logarithmic depth. For the other direction
+	however, you produce circuits of polynomial depth.
+	
+	Here you introduce MATLANG expressions of polynomial degree in order to have
+	a MATLANG class and a circuit class of equal expressiveness. Instead, I
+	propose to change your construction of MATLANG expressions in a way that
+	allows to handle all polynomial arithmetic circuits.
+	
+	Replace Algorithm 1 with an algorithm that computes (and stores) the output
+	values of all gates in topological order. This algorithm is way simpler and
+	does not need a stack.
+	
+	Then allow your MATLANG construction to use intermediate values of polynomial
+	size. The main data structure is a vector that has as many entries as you have
+	gates in the circuit. Now you can iterate over all gates (w.l.o.g. the gates
+	are sorted in topological order) and compute all values. This is a single for
+	loop.
+	
+	Of course you still need the construction from the appendix to compute the
+	nextgate() function, i.e. to simulate the TM that constructs the circuit.
+	Probably it would be simpler if this TM would directly construct a vector that
+	contains all input gates. Then you only need to call this function once for
+	each gate and just use an additional for-loop for the aggregation.
+	
+	Now you have a natural class of MATLANG expressions that exactly corresponds
+	to arithmetic circuits. I do not see why MATLANG expressions should not be
+	allowed to use intermediate results that have bigger arity than the input.
+	This is a restriction that you never formulated and that is also not imposed
+	on the circuits.
+	
+	Of course, you can still discuss restricted settings, but please use sensible
+	definitions. E.g. if you restrict the  size of intermediate results in MATLANG
+	a corresponding restriction would be on the width of the arithmetic circuit.
+\end{comment}
+
+\answer \TODO
+\bigskip
+
+\begin{comment}
+	You should introduce and describe a consistent notation that allows to easily
+	distinguish whether some MATLANG expressions (1) construct some vector or matrix; or
+	(2) is a Boolean test (i.e., evaluates to a scalar value 0 or 1).
+\end{comment}
+
+\answer \TODO
+\bigskip
+
+\begin{comment}
+	Also, you should adopt the notation that iterator variables are easily
+	distinguishable from other variables throughout the article. Especially if you
+	give expressions like for $col(V,y)$ in line 572, it would be really helpful to
+	immediately see that $y$ is meant to be a variable that can only take canonical
+	vectors as values.
+\end{comment}
+
+\answer \TODO
+\bigskip
+
+\begin{comment}
+	Actually, I would even prefer a notation where iterator variables (like $i,j$)
+	range over indices, i.e. take values from $1$ to $n$. Then you can still write $b_i$
+	if you need the canonical vector, but you could also just write $V_{ij}$ instead
+	of $v^t * V * y$, which is way easier to parse for a human. Obviously, such a
+	notation would be just syntactic sugar.
+\end{comment}
+
+\answer \TODO
+\bigskip
+
+\begin{comment}
+	I also suggest to consider introducing some $\texttt{if } e_1 \texttt{ then } e_2 \texttt{ else } e_3$
+	construction, where $e_1$ is some expression that evaluates to a scalar $0$ or $1$.
+	This is used a lot in the article.
+\end{comment}
+
+\answer \TODO
+\bigskip
+
+\begin{comment}
+	You have to rename the $succ$ and $succ+$ expressions, as they in fact do not test
+	for successors. What you call successor is the less or equal relation and what
+	you call $succ+$ is the less than relation. So $succ$ could be renamed to
+	$islessorequal$ and $succ+$ could be named $isless$, which also directly reminds the
+	reader that this expression is a Boolean test.
+\end{comment}
+
+\answer \TODO
+\bigskip
+
+\begin{comment}
+	You seem to mix $\to$ and $\mapsto$ in function specifications in a random way.
+	Function signatures use $\to$ ($f \colon A \to B$, where $A$ and $B$ are domain and
+	image of $f$), while $\mapsto$ is used for concrete mappings (e.g., $f \colon n
+	\mapsto n^2$). And you should use \verb+\colon+ instead of $:$, because $:$ is treated as
+	a division operator by Latex and thus the spacing is not correct.
+\end{comment}
+
+\answer \TODO
+\bigskip
+
+\begin{comment}
+	LU-Decomposition: You should definitely provide some pseudocode for the LU Decomposition
+	algorithm in order to allow a simpler comparison with your MATLANG
+	expressions. Right now the algorithm is given as prose. Furthermore it is not
+	even complete as the definition of $c_i$ with $i \neq 1$ is missing.
+\end{comment}
+
+\answer \TODO
+\bigskip
+
+\begin{comment}
+	Algorithm 1: the aggregate function is working in a completely different way than your
+	MATLANG construction. The MATLANG constructions is a sum over 5 expressions,
+	which especially implies that the order of evaluation is irrelevant. However
+	the algorithm is written in a way that the order of the statements is very
+	important. Especially it is not the case that the five expressions correspond
+	to five different cases of the algorithm as you claim.
+	(\ldots)
+	some constructions are way more complex than needed.
+\end{comment}
+
+\answer \TODO
+\bigskip
+
+\begin{comment}
+	Algorithm 1: simplify $e_{iterate}$ by using the loop init $X_1 = e_{start}$. Then you can
+	remove the outer ``if-then-else''.
+\end{comment}
+
+\answer \TODO
+\bigskip
+
+\begin{comment}
+	Algorithm 1: $e_{pop}$ can just pop both stacks simultaneously by just removing one row
+	from the matrix. The complicated $IdUpTo$ expression is not needed. Just
+	compute
+	$$
+	e_{pop} := - G_{top} * G_{top}^T * X_k + e_{Prev} * V_{top} * e_{V_{top}}^T
+	$$
+	to pop both stacks. The first summand computes the delta to remove a line
+	from the matrix and the second summand reads the pointer for the value
+	stack. The pointer for the gate stack will be added in $e_{agg\_(not)\_last}$.
+	Note that this is just a delta. Thus $e_{aggregate}$ will need an additional
+	$X_{k}$` summand.
+\end{comment}
+
+\answer \TODO
+\bigskip
+
+\begin{comment}
+	Algorithm 1: $e_{agg\_prod}$ also looks way to complicated. Why do you need $IdVal$? Just
+	manipulate the single matrix entry directly:
+	$$
+	e_{agg\_prod} := V^T * V_{top} * (V^T * (e_{Prev} * V_{top}) - 1)
+	$$
+	The $-1$ is to accomodate for the value that is already on the stack.
+	No for-loop needed (hidden in the $IdVal$ expression).
+\end{comment}
+
+\answer \TODO
+\bigskip
+
+\begin{comment}
+	Algorithm 1: I find it confusing that in Figure 3 you list the combined effect of two
+	of the expressions. The figure should describe each of the expressions on
+	its own. Especially as these combinations that you describe are not possible
+	in the algorithm. The algorithm combines always three of the expressions.
+	Also the Figure is wrong. In the upper two cases, there should be no pointer
+	for the gate stack. And in the lower cases there should be an empty value
+	stack according to your construction.
+\end{comment}
+
+\answer \TODO
+\bigskip
+
+\begin{comment}
+	Algorithm 1: Also, please note that you overload $n$ with many different meanings:
+	(1) arity of the circuit, (2) size of the matrices, and (3) length of a bit vector describing a gate id.
+\end{comment}
+
+\answer \TODO
+\bigskip
+
+
+\begin{comment}
+	Algorithm 1: Why are gate ids of linear length in the input? This would correspond to an
+	circuit of exponential size.
+\end{comment}
+
+\answer \TODO
+\bigskip
+
+
+\begin{comment}
+	Proposition 5.2: First of all, add a runtime bound to the Turing machine. I do not believe that
+	your construction can simulate every linear space machine without restrictions
+	on the runtime.
+\end{comment}
+
+\answer \TODO
+\bigskip
+
+
+\begin{comment}
+	Proposition 5.2: And now: Why do you write up the proof using the most complicated type of TMs
+	possible? For your construction it would be perfectly sufficient to have a
+	single tape machine. Your computations take at most two IDs of size $O(log(n))$
+	as input and produce one such ID as output. This even fits on a single tape if
+	you restrict to length $n$. You are assuming $n > n_0$ for some sufficiently large $n_0$
+	anyway. Using only a single tape makes the construction much more readable, as you can
+	get rid of many indices.
+\end{comment}
+
+\answer \TODO
+\bigskip
+
+\begin{comment}
+	Proposition 5.2: If you change Algorithm 1 as laid out above, it could make sense to
+	actually allow for an output ``tape'' that is formed like a square matrix. The
+	head of the output tape could move in four directions (simulated by two
+	vectors wit a single 1 entry). It is obvious (to all that know TMs) that this
+	does not add additional power and one can easily translate the TM producing
+	the circuit to such a TM with a square output. The advantage would be that
+	you could directly produce the adjacency matrix of the circuit which you
+	could use immediately in the expression that evaluates your circuit.
+\end{comment}
+
+\answer \TODO
+\bigskip
+
+\begin{comment}
+	Proposition 5.2: Also, you do not need to consider the case of small $n$ at all. This case is already considered in the proof of Theorem 1. You can restrict Proposition 5.2 to all
+	$n$ greater than some $n_0$ (and maybe say that it also holds without this
+	restriction). But no need to waste the space for the proof.
+\end{comment}
+
+\answer \TODO
+\bigskip
+
+\begin{comment}
+	Proposition 5.2: And please try to simplify the construction of the TM. Why do you encode the
+	position of the head in a special way if it is at the edge of the tape? Just
+	adjust the size of the tape such that the end markers are included in the
+	length. Then you do not need to special code this.
+\end{comment}
+
+\answer \TODO
+\bigskip
+
+\begin{comment}
+	From MATLANG to circuits: Why do you restrict the result to MATLANG expressions, where all types only
+	use the size symbol alpha? The construction should work in exactly the same
+	way in the general case. OK, for uniformness you need that all sizes can be
+	computed from the input size by a logspace TM, which results from the
+	definition of uniform circuits where the TM just gets one input parameter.
+	Probably you should discuss this (as it is the usual definition), but in your
+	setting a slightly more general setting of uniform circuits would make sense.
+	
+	In any case, the proof needs to be reformulated in order to avoid all these
+	pointless case distinctions on the types of the subexpressions. Do all
+	induction cases with $\texttt{type}_S(V)=(\alpha,\beta)$ and provide one induction step for
+	every operation. The cases where one or both of alpha beta are 1 are special
+	cases of the general case and subsumed by the general case. No need to do any
+	case distinctions.
+\end{comment}
+
+\answer \TODO
+\bigskip
+
+\begin{comment}
+	Comparison with $K$-Relations: Your definition of the renaming operator is nonstandard. Usually this operator
+	takes a function $f$ that renames the variables of a given relation, i.e., the
+	domain of $f$ are the attributes of the relation/expression inside the operator
+	and the image are the new (renamed) attributes. You define it the other way
+	round. When you use the operator, you mix standard and your non-standard
+	definition. Please stay with the established definition.
+\end{comment}
+
+\answer \TODO
+\bigskip
+
+\begin{comment}
+	Comparison with $K$-Relations: The construction of algebra expression from MATLANG expressions is much more
+	complicated than necessary. You should not do case distinctions on the types of
+	matrices, as the general construction works independently of whether some
+	dimension is 1 or not.
+\end{comment}
+
+\answer \TODO
+\bigskip
+
+\begin{comment}
+	Comparison with $K$-Relations: Just use $Rel(S)(R_V) := \{row, col\}$ for every matrix $V$. row and col encode the domain of the indices of the matrix, as in your construction. The only
+	difference is, that this domain could be the singleton $\{1\}$. And you should omit
+	the subscripts alpha and beta of row and col. They are not needed, as the domain
+	is encoded by the relation. If you omit the subscripts you will not need to
+	talk about types at all in most parts of the proof. The soundness of the
+	MATLANG expression ensures that the domains of row and col are correct.
+	
+	To always provide a col attribute you need a new relation $R_1$ with attribute
+	col and a single number 1 inside the relation. You can then change $Q(v_p)$ to be
+	$$
+	\sigma_{row, \gamma_p} (\rho_{\alpha -> \gamma_p}(R_\alpha) \texttt{join} \rho_{\alpha ->
+			row}(R_\alpha) \texttt{join} R_1)
+	$$
+	This construction simplifies the definition for transposition to just
+	rename row $\rightarrow$ col and col $\rightarrow$ row. Also for the other operators you only need
+	to talk about one case. And types are working flawlessly. E.g. matrix product
+	becomes rename col $\rightarrow$ C for the first expression and row $\rightarrow$ C for the second
+	expression before doing the join. However you have to explain what the join
+	does, i.e., that it just computes the same sum as the matrix product.
+\end{comment}
+
+\answer \TODO
+\bigskip
+
+\begin{comment}
+line 183: this is ugly to read. Please align at := and at if.
+\end{comment}
+
+\answer \TODO
+\bigskip
+
+\begin{comment}
+	line 216: this also should be aligned.
+\end{comment}
+
+\answer \TODO
+\bigskip
+
+\begin{comment}
+	line 1386: Please rephrase. One could get the impression that the halting problem for linear time TMs is undecidable (which it certainly is not).
+\end{comment}
+
+\answer \TODO
+\bigskip
+
+\begin{comment}
+	line 1435: please provide a pageref for figure 4 or mention that it is at the very end of the article.
+\end{comment}
+
+\answer \TODO
+\bigskip
+
+\begin{comment}
+	line 1443: You have to restrict the expression e, such that it cannot use X. Otherwise Proposition 6.1 is definitely not true.
+\end{comment}
+
+\answer \TODO
+\bigskip
+
+\begin{comment}
+	line 1449: Using your ill-defined definition of expressions of polynomial
+	degree, the proof of Proposition 6.1 is nontrivial and cannot be omitted. You
+	have to show that every expression of sum-MATLANG can be converted to a
+	circuit family of polynomial degree, meeting the syntactic definition of the circuits.
+	Showing that you cannot produce superpolynomial matrix entries is not enough.
+\end{comment}
+
+\answer \TODO
+\bigskip
+
+\begin{comment}
+	line 1681: change $Q_1$ to $Q_2$.
+\end{comment}
+
+\answer \TODO
+\bigskip
+
+\begin{comment}
+	line 1731: again, X should not be used inside e.
+\end{comment}
+
+\answer \TODO
+\bigskip
+
+\begin{comment}
+	line 1912 (figure 4): If you adapt the constructions as indicated above, the
+	figure is ok. Otherwise you need to specify which subclass of MATLANG is
+	equivalent to which subclass of arithmetic circuits. E.g., right now, you
+	only can convert MATLANG expressions that use a single size symbol alpha, as
+	you needlessly restrict your construction.
+\end{comment}
+
+\answer \TODO
+\bigskip
+
+
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "response.tex"
+%%% End:

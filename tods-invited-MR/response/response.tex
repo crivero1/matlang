@@ -1,0 +1,116 @@
+\documentclass[a4paper,11pt]{article}
+%\usepackage{a4wide}
+\usepackage{xcolor}
+\usepackage[normalem]{ulem}
+\usepackage{xspace}
+\usepackage{mdframed}
+\usepackage{amsmath}
+\usepackage{url}
+\usepackage{wasysym}
+\usepackage{paralist}
+
+\usepackage[textwidth=2cm,textsize=small]{todonotes}
+
+%--------------------------------------------------------------------
+% automatically include a blank line between paragraphs
+%--------------------------------------------------------------------
+\usepackage{parskip}             
+
+
+%%%%%%%%%%%%%%
+%% Comments %%
+%%%%%%%%%%%%%%
+
+\newcommand{\cristian}[1]{\todo[inline, color=orange!30]{{\bf Cristian:} #1}}
+\newcommand{\floris}[1]{\todo[inline, color=green!30]{{\bf Floris:} #1}}
+\newcommand{\domagoj}[1]{\todo[inline, color=pink!30]{{\bf Domagoj:} #1}}
+\newcommand{\thomas}[1]{\todo[inline, color=blue!15]{{\bf Thomas:} #1}}
+
+\newcommand{\EDIT}[1]{{\color{red} #1}}
+
+\newmdenv[
+  topline=false,
+  bottomline=false,
+  rightline=false,
+  leftline=true,
+  leftmargin=0.2cm,
+  skipabove=\topsep,
+  skipbelow=\topsep
+]{comment}
+
+
+%\newcommand{\comment}[1]{\medskip \noindent\uline{COMMENT}: #1 \newline \medskip }
+
+
+
+\newcommand{\answer}{\medskip \noindent\uline{ANSWER:}\xspace}
+
+\newcommand{\TODO}{{\color{red} \textbf{TODO}}}
+
+\title{Revision letter \\
+``Expressive power of \\
+linear algebra query languages''}
+\date{}
+
+\begin{document}
+\maketitle
+
+\noindent
+Dear reviewers,
+\medskip
+
+We wish to thank you for your thorough, insightful and
+constructive comments.
+
+Please find attached our revised manuscript entitled ``Expressive power of linear algebra query languages''. In the process of revising the paper, we have addressed
+all your comments and suggestions.  Please note that this resulted in several changes
+to the paper, \EDIT{which we have highlighted in red}.
+\cristian{For highlight an edit in the document, use the command \texttt{EDIT}.}
+
+The most important changes are the following.
+
+\begin{enumerate}
+	\item \textbf{A clearer write-up of bla bla bla \ldots}
+	
+	We have completely rewritten bla bla bla \ldots
+	
+	\item \textbf{A clearer write-up of bla bla bla \ldots}
+	
+	We have completely rewritten bla bla bla \ldots
+
+
+\end{enumerate}
+
+\noindent
+Below we also provide a detailed list of answers and explanations to other reviewer comments, excluding those comments that we have already addressed above.
+\smallskip
+
+\noindent
+We sincerely hope that this new version of the manuscript sufficiently improves on the previous version, and that it will be considered for publication in TODS.
+
+\vspace*{1cm}
+
+\noindent
+Best Regards,\\
+The authors.
+
+\newpage
+
+\input{reviewer1}
+
+\bigskip
+\input{reviewer2}
+
+\bigskip
+\input{reviewer3}
+
+\bibliographystyle{plain}
+{\bibliography{../extras/biblio}}
+
+
+\end{document}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:

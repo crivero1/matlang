@@ -1,0 +1,104 @@
+\section*{Reviewer 2}
+\label{sec:reviewer-2}
+
+\bigskip
+
+\begin{comment}
+(\ldots) However, being TODS about Database *systems* and thus usually more oriented towards applied results, I wonder whether an additional (even preliminary) experimental evaluation/implementation of the language would have been needed (I will not fight to have that, though).
+\end{comment}
+\answer \TODO
+
+\bigskip
+
+
+\begin{comment}
+	On the negative side, I believe that the paper is trying, in different places to oversell a bit its results. In particular, the paper makes a big deal in explaining that families of circuits are the de-facto representative logic of linear algebra, but you do not clarify if this is the case under the assumption that, e.g., the depth is bounded. Since your equivalence results are about families of bounded depth/degree, you should properly discuss to what extent, families of circuits of this kind are able to express linear algebra constructs.
+\end{comment}
+\answer \TODO
+\cristian{To what I remember: We agree on lowering the tone with respect to the argument that arithmetic circuits are the de-facto for representing linear algebra. Also, we agree on adding some reference related to writing the determinant with arithmetic circuits (among other operators in linear algebra).}
+
+\bigskip
+
+\begin{comment}
+	Moreover, although you show via simple examples that there are for-MATLANG expressions (without bound on degree) that are not expressible via families of circuits of polynomial degree, it is not clear whether for-MATLANG (without any restriction) is able to capture all families of circuites without bound on the depth. From what I can see you do not have any proof on whether a family of circuits cannot be expressed via a for-MATLANG expression. This issue should be discussed, either via a theorem, or stating that this problem remains open.
+	
+	You must be much more transparent in what you are achieving. In different places you claim that you connect for-MATLANG expressions to families of circuits, but then do it in restricted settings. I believe you should make very clear that a full characterization of the form:
+	for any function f over matrices, f is computable by a uniform family of circuits iff it is computable by a for-MATLANG expression
+	is not obtainable, or it is difficult to obtain, and left for future work. Then, you can justify restricting on circuits of bounded depth/degree.
+	Then, the paper should provide a discussion on what these kinds of families can actually express.
+	
+	This kind of dicussion is particularly relevent in the introduction. The authors should properly clarify what is the actual capacity of for-MATLANG expressions. That is, given the characterization via polynomial degree circuits, which features do you keep, and which are you missing? For example, can you still implement Strassen's algorithm or compute discrete Fourier transformations, as argued in the introduction?
+	I feel that giving the circuit characterization without making explicit what these circuit families can actually do might leave the reader without meaningful "take-home messages", which I guess is what the goal of this paper is: provide key insights on what for-MATLANG can do in terms of *linear algebra* constructs (the equivalence via circuits is "just" the technical tool to convey these messages).
+	
+	($\ldots$)
+	
+	So, I would request the authors to expand on what for-MATLANG expressions of polynomial degree can atually achieve in terms of linear algebra constructs (e.g., exploiting the connection with families of bounded degree), or at least state what you cannot achieve. Moreover, it is important to make clear as soon as possible that a connection between general for-MATLANG and general families of circuits is not achievable (e.g., via some some formal statements, or just by making clear ths connection is left as an open problem).
+	
+\end{comment}
+\answer \TODO
+
+\cristian{With a clear statement that we left for future work the characterization of the expressive power for unrestricted for-Matlang should be enough.}
+\bigskip
+
+\begin{comment}
+	(\ldots) I believe the title is too general. The authors study a *specific* query language, i.e., MATLANG. I understand you study fragments of it, and thus you have languageS, but I feel the title is a bit deceiving. I would make more explicit the content of the paper, specifying it is about the expressive power of MATLANG with iteration.
+\end{comment}
+
+\answer \TODO
+\bigskip
+
+\begin{comment}
+When you introduce the $\min(v)$ expression for the first time (after Proposition 3.4) I would anticipate you will explain how to express it in for-MATLANG in the next section.
+\end{comment}
+
+\answer \TODO
+\bigskip
+
+\begin{comment}
+	In page 9, definition of $succ(b_i^n,b_j^n)$, I guess you mean $[[succ(u,v)]](I)$, where $I$ maps $u$ and $v$ to $b_i^n$, and $b_j^n$. Similarly for $Prev \cdot b_i^n$.
+\end{comment}
+
+\answer \TODO
+\bigskip
+
+\begin{comment}
+	Proposition 4.3: here you use the expression ``when $I$ assigns $V$ to $A$''. In similar claims, like Proposition 4.2, you do not say anything about what $I$ does to $V$, and in Proposition 4.1 you use the function $mat$ to state what is the value of $V$. Please make these equivalence statements more uniform.
+\end{comment}
+
+\answer \TODO
+\bigskip
+
+\begin{comment}
+	In different parts of the paper you say ``circuits of bounded degree''. In my view, this usually means that there exists a *constant* that bounds the degree of all circuits in the family, but it is not what you are considering here.
+\end{comment}
+
+\answer \TODO
+\bigskip
+
+\begin{comment}
+	Line 22 of Algorithm 1: in the comment I guess meant that $getinput(g)$ outputs $i$, and not $A[i]$.
+\end{comment}
+
+\answer \TODO
+\bigskip
+
+\begin{comment}
+	Proposition 5.2 is very long, as it is defining notation in place. I would defined the required notation, such as $vec()$, first, and then give the claim. Moreover, you use $\Sigma$, which has never been defined. Do you mean $\{0,1\}$?
+\end{comment}
+
+\answer \TODO
+\bigskip
+
+\begin{comment}
+	Proposition 6.3: wherever you use $S(e)$, I guess you mean $type(e)$.
+\end{comment}
+
+\answer \TODO
+\bigskip
+
+\begin{comment}
+	Figure 4 is again somehow misleading, as you do not prove equivalence with those formalisms in general, but you assume e.g., bounded depth/polynomial degree, binary relations, etc. Please introduce proper notation for these restricted fragments. You could explain this notation in the caption of the figure.
+\end{comment}
+
+\answer \TODO
+\bigskip
