@@ -2,8 +2,11 @@ We proposed \langfor, an extension of \lang with limited recursion,
 and showed that it is able to capture most of linear algebra due to its
 connection to arithmetic circuits. We further revealed interesting connections
 to logics on annotated relations. Our focus was on language design and
-expressivity. An interesting direction for future work relates to the study of 
-efficient evaluation methods of (fragments) of \langfor. 
+expressivity. 
+
+\EDIT{Looking forward, we see several potential directions for our work, all of them related to the study of efficient evaluation methods of (fragments) of \langfor. First, we believe that a thorough complexity analysis of problems related to \langfor evaluation (e.g. deciding whether an expression can be evaluated to a specific value on some instance) is a good starting point. Following this, we wish to look into concrete algorithms for evaluating arbitrary expressions using known matrix evaluation algorithms. Apart from classical matrix algorithms, we also wish to explore a general methodology for communication-optimal algorithms for for-loop linear algebra programs, such as the one explored in \cite{Christ_2013}. Finally, we wish to transform the conceptual algorithms developed in the previous step into practical implementation. Here it would be interesting to see whether proposed solutions can be modified to handle matrices by blocks, in order to implement them on GPU-based systems, and test their performance on large scale matrices.}
+
+%An interesting direction for future work relates to the study of  efficient evaluation methods of (fragments) of \langfor. 
 % A possible starting point is \cite{Christ_2013}
 % in which a general methodology for communication-optimal algorithms
 % for for-loop linear algebra programs is proposed.
