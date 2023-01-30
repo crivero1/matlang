@@ -100,7 +100,9 @@ to start the iteration given some concrete matrix  originating from the result o
 with the difference that $A_0:=\sem{e_0}{\I}$. We observe, however, that $\initf{e_0}{v}{X}{e}$ can already
 be expressed in \langfor. In other words, we do not loose generality by assuming an initialization of $A_0$ by $\mathbf{0}$.
 The key insight is that in \langfor\ we can check during evaluation whether or not
-the current canonical vector $b_i^n$ is equal to $b_1^n$ using the order predicate $\mmin{v}$, which, when evaluated on an instance, returns $1$ if its input vector is $b_1^n$, and returns $0$ for any other canonical vector\footnote{We explain in detail how $\mmin$, as well as many other operators which access the order of canonical vectors, can be defined in \langfor in the following subsection. We also remark that natural numbers, such as 1, or more precisely, the matrix $[1]$, can be defined based on $\mmin$, e.g. by the expression $\ffor{v}{X} X + \mmin{v}\times v^T\cdot v$.}. Given $\mmin$, consider now the
+the current canonical vector $b_i^n$ is equal to $b_1^n$ using the
+\EDIT{order predicate\footnote{We explain in detail how $\mmin$, as well as many other operators which access the order of canonical vectors, can be defined in \langfor in the following subsection. We also remark that natural numbers, such as 1, or more precisely, the matrix $[1]$, can be defined based on $\mmin$, e.g. by the expression $\ffor{v}{X} X + \mmin{v}\times v^T\cdot v$.}}
+$\mmin{v}$, which, when evaluated on an instance, returns $1$ if its input vector is $b_1^n$, and returns $0$ for any other canonical vector. Given $\mmin$, consider now the
 \langfor\ expression
  $$\ffor{v}{X}{\mmin{v}\times e(v,X/e_0) + (1-\mmin{v})\times e(v,X)},$$
  where we explicitly list $v$ and $X$ as matrix variables on which $e$ potentially depends on, and where
@@ -160,11 +162,11 @@ $$
 \mathsf{succ}(u,v) := u^T\cdot e_{\leq} \cdot v,
 $$
 we obtain an order relation that allows us to discern whether one canonical vector comes before 
-the other in the order given by $S_{\leq}$. Namely, we have that $$\mathsf{succ}(b_i^n,b_j^n) = \begin{cases}
+the other in the order given by $S_{\leq}$. Namely, we have that \EDIT{$$\sem{\mathsf{succ}(u,v)}{\I[u:=b_i^n,v:=b_j^n]} = \begin{cases}
 1, & \text{ if } i\leq j\\
 0, & \text{ otherwise}.
 \end{cases}$$
-
+}
 
 If we want a strict order, we can just use the expression
 $e_< := e_{\leq} - e_{\mathsf{Id}}$, where $e_{\mathsf{Id}} := \ffor{v}{X}{v\cdot v^T}$, is an expression in \langfor which returns the identity matrix (of appropriate dimension). Given this, we define

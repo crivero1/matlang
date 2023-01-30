@@ -21,7 +21,7 @@ circuits, defined -- as usual -- via a Turing machine generating a description o
 each input size $n$.
 %
 The main result of this section (Theorem~\ref{th-equivalence}) is that any function $f$ which operates on matrices, and is computed 
-by a uniform family of arithmetic circuits of bounded degree, can also be computed by 
+by a uniform family of arithmetic circuits of \EDIT{polynomial} degree, can also be computed by 
 a \langfor expression, and vice versa.
 
 In order to keep the notation light, we will focus on \langfor schemas over square matrices where 
@@ -156,7 +156,7 @@ called first.
      \ElsIf{$\iszero{\gettop{\cG}}$} \Comment{$\iszero{g}$ checks whether $g$ is a $0$-gate}
      \State $\push{\cV}{0}$
      \ElsIf{$\isinput{\gettop{\cG}}$} \Comment{$\isinput{g}$ checks whether $g$ is an input gate}
-         \State $\push{\cV}{A\left[ \getinput{\gettop{\cG}} \right]}$ \Comment{$\getinput{g}$ outputs $A[i]$ if $g$ is the $i$th input}
+         \State $\push{\cV}{A\left[ \getinput{\gettop{\cG}} \right]}$ \Comment{$\getinput{g}$ outputs \EDIT{$i$} if $g$ is the $i$th input}
      \EndIf
      \State \textbf{return} $\cG, \cV$
  \EndFunction
@@ -426,7 +426,10 @@ Indeed, using the identifiers of gates, we can regard circuit-related functions 
 in case they return some boolean value. Now, given the \logspace-Turing machine for $\{\Phi_n\mid n=1,2,\ldots\}$, it is readily verified that for such
 circuit-related functions $f_n$, there exists a \textit{linear
 space machine} $T$ such that for every $n\geq 0$, and $w_1,\ldots,w_\ell\in\{0,1\}^n$, $T(w_1,\ldots,w_\ell)$ has $f_n(w_1,\ldots,w_\ell)$ on its output tape. We defer the precise definition of linear space machines to the appendix.
-Important here is that such machines and the functions that they compute  can be simulated in \langfor. Due to space limitations, we defer the lengthy, yet non-trivial, encoding of linear space machines in \langfor to the appendix. We show there the following:
+Important here is that such machines and the functions that they compute can be simulated in \langfor.
+Due to space limitations, we defer the lengthy, yet non-trivial, encoding of linear space machines in \langfor to the appendix.
+\EDIT{Let $\mathsf{vec}(w)$ be the $n\times 1$-vector encoding of a word $w\in\{0,1\}^n$}.
+We show there the following:
 
 \begin{proposition} \label{prop:transducer2}
 Let $f=\bigcup_{n\geq 0}f_n:(\{0,1\}^n)^\ell\to \{0,1\}^n$ be a function computable by a linear space machine
@@ -439,8 +442,8 @@ schema $\mathcal{S}=(\mathcal{M},\textsf{size})$ where $\mathcal{M}$ contains va
 $I_1,\ldots,I_\ell$ and $O$ all of size $\alpha\times 1$; and (ii)~a \langfor 
 expression $e_f$ over $\mathcal{S}$ such that for the instance 
 $\I=(\mathcal{D},\textsf{mat})$ over $\mathcal{S}$ with $\mathcal{D}(\alpha)=n$ and 
-$\mathsf{mat}(I_i)=\mathsf{vec}(w_i)\in \mathbb{R}^n$,  for $i\in[\ell]$ and words $w_1,\ldots,w_\ell\in\Sigma^n$, and such that $\mathsf{vec}(w_i)$ is the $n\times 1$-vector 
-encoding the word $w_i$, we have that  $\mathsf{mat}(O)=\mathsf{vec}(f_n(w_1,\ldots,w_\ell))\in\mathbb{R}^n$ 
+$\mathsf{mat}(I_i)=\mathsf{vec}(w_i)\in \mathbb{R}^n$,  for $i\in[\ell]$ and words $w_1,\ldots,w_\ell\in\{0,1\}^n$,
+we have that  $\mathsf{mat}(O)=\mathsf{vec}(f_n(w_1,\ldots,w_\ell))\in\mathbb{R}^n$ 
 after evaluating $e_f$ on $\I$. Similarly, if $f=\bigcup_{n\geq 0}f_n:(\{0,1\}^n)^\ell\to \{0,1\}$, then we have
  an expression $e_f$ such that $\mathsf{mat}(O)=f_n(w_1,\ldots,w_\ell)\in \mathbb{R}$ where $O$ is now of size $1\times 1$.\qed
 \end{proposition}

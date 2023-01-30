@@ -32,7 +32,7 @@ To implement the described procedure in \langfor, we first assume that the input
 \begin{proposition}\label{prop:gauss}
 There exist $\langforf{f_/}$ expressions $e_L(V)$ and $e_U(V)$ such that
 $\sem{e_L}{\I}=L$ and $\sem{e_U}{\I}=U$ form an LU-decomposition of $A$,
-where $\conc(V)=A$ and $A$ is LU-factorizable.
+\EDIT{where $\I$ assigns $V$ to a matrix $A$ that is} LU-factorizable.
 \end{proposition}
 \begin{proof}
 Assume $A$ to be an LU-factorizable matrix. To compute the LU decomposition of a matrix, as described above, we need to compute the vector $c_i$ for each column $i$. We do this in two steps. First, we extract from our input matrix its $i$th column and set all its upper diagonal entries to zero
@@ -80,8 +80,9 @@ where $f_{>0}:\RR\to\RR$ is such that $f_{>0}(x):=1$ if $x>0$ and $f_{>0}(x):=0$
 Intuitively, $f_{>0}$ introduces a limited form of \texttt{if-then-else} to \langfor, allowing to continue reducing columns only when the right pivot has been found.
 
 \begin{proposition}\label{prop:palu}
-There exists expressions $e_{L^{-1}P}(M)$ and $e_U(M)$ in $\langforf{f_/,f_{>0}}$  such that
-$L^{-1}\cdot P=\sem{e_{L^{-1}P}}{\I}$ and $U=\sem{e_U}{\I}$ satisfy $L^{-1}\cdot P\cdot A=U$.
+There exists expressions $e_{L^{-1}P}(M)$ and $e_U(M)$ in $\langforf{f_/,f_{>0}}$ such that
+$L^{-1}\cdot P=\sem{e_{L^{-1}P}}{\I}$ and $U=\sem{e_U}{\I}$ satisfy $L^{-1}\cdot P\cdot A=U$,
+\EDIT{when $\I$ assigns $M$ to a matrix $A$ that is PALU factorizable.}
 \end{proposition}
 
 \input{sections/proofs/palu.tex}

@@ -92,14 +92,14 @@ Let $V\in\Mnam$ with $\size(V)=(\alpha,\beta)$ and let $\conc(V)$ be its corresp
 To encode $\I$ as a $K$-instance in $\mathsf{RA}_{K}^+$, we use as data domain $\ddom = \mathbb{N} \setminus \{0\}$. Then we construct the $K$-instance $\text{Rel}(\I)$ such that for each $V\in\Mnam$ we define 
 $R_V^{\text{Rel}(\I)}(t):=\conc(V)_{ij}$ whenever $t(\row_\alpha) = i \leq \dom(\alpha)$ and $t(\col_\beta) = j \leq \dom(\beta)$, and $\kzero$ otherwise. Furthermore, for each $\alpha \in \DD$ we define $R_\alpha^{\text{Rel}(\I)}(t):=\kone$ whenever $t(\alpha) \leq \dom(\alpha)$, and $\kzero$ otherwise. In other words, $R_\alpha$ and $R_\beta$ encodes the active domain of a matrix variable $V$ with $\size(V)=(\alpha,\beta)$. Given that the $\mathsf{RA}_{K}^+$ framework of \cite{GreenKT07} represents the ``absence'' of a tuple in the relation with $\kzero$, we need to separately encode the indexes in a matrix.
 This is where $R_\alpha^{\text{Rel}(\I)}$ and $R_\beta^{\text{Rel}(\I)}$ are used for.
-We are now ready to state the first connection between \langsum and $\mathsf{RA}_{K}^+$  by using the previous encoding. 
+We are now ready to state the first connection between \langsum and $\mathsf{RA}_{K}^+$  by using the previous encoding.
 \begin{proposition}\label{prop:sum_to_ara} 
-	For each \langsum expression $e$ over schema $\Sch$ such that $\Sch(e)=(\alpha,\beta)$ with $\alpha\neq 1\neq\beta$, there exists an $\mathsf{RA}_{K}^+$  expression $\Phi(e)$ over relational schema $\text{Rel}(\Sch)$ such that $\text{Rel}(\Sch)(\Phi(e))=\{\row_\alpha,\row_\beta\}$ and 
+	For each \langsum expression $e$ over schema $\Sch$ such that $\EDIT{\ttype(e)}=(\alpha,\beta)$ with $\alpha\neq 1\neq\beta$, there exists an $\mathsf{RA}_{K}^+$  expression $\Phi(e)$ over relational schema $\text{Rel}(\Sch)$ such that $\text{Rel}(\Sch)(\Phi(e))=\{\row_\alpha,\row_\beta\}$ and 
 	such that, for any instance $\I$ over~$\Sch$,
 	$$
 	\sem{e}{\I}_{i,j}=\ssem{\Phi(e)}{\text{Rel}(\I)}(t)
 	$$
-	for tuple $t(\mathrm{row}_\alpha)=i$ and $t(\mathrm{col}_\beta)=j$. Similarly for $e$ when $e$ has schema $\Sch(e)=(\alpha,1)$, $\Sch(e)=(1,\beta)$ or $\Sch(e)=(1,1)$, then $\Phi(e)$ has schema $\text{Rel}(\Sch)(\Phi(e))=\{\mathrm{row}_\alpha\}$,
+	for tuple $t(\mathrm{row}_\alpha)=i$ and $t(\mathrm{col}_\beta)=j$. Similarly for $e$ when $e$ has schema $\EDIT{\ttype(e)}=(\alpha,1)$, $\EDIT{\ttype(e)}=(1,\beta)$ or $\EDIT{\ttype(e)}=(1,1)$, then $\Phi(e)$ has schema $\text{Rel}(\Sch)(\Phi(e))=\{\mathrm{row}_\alpha\}$,
 	$\text{Rel}(\Sch)(\Phi(e))=\{\mathrm{col}_\alpha\}$, or
 	$\text{Rel}(\Sch)(\Phi(e))=\{\}$, respectively.
 \end{proposition}
@@ -213,7 +213,7 @@ Let $\Sch$ be a \lang\ schema of square matrices and $\Gamma$ a relational vocab
 \begin{proposition} \label{prop:wl}
 Weighted logics over $\Gamma$ and \langprod over $\Sch$ have the same expressive power. More specifically,
 \begin{itemize}
-	\item for each \langprod expression $e$ over $\Sch$ such that $\Sch(e)=(1,1)$, there exists a WL-formula $\Phi(e)$ over $\text{WL}(\Sch)$ such that for every instance $\I$ of~$\Sch$:
+	\item for each \langprod expression $e$ over $\Sch$ such that $\EDIT{\ttype(e)}=(1,1)$, there exists a WL-formula $\Phi(e)$ over $\text{WL}(\Sch)$ such that for every instance $\I$ of~$\Sch$:
 	$$
 	\sem{e}{\I} \ = \ \ssem{\Phi(e)}{\text{WL}(\I)}.
 	$$
