@@ -133,13 +133,13 @@ called first.
  \label{alg:eval_code}
  \begin{algorithmic}[1]
  \Function{Evaluate}{$\Phi_n,A$}\Comment{Input: Circuit $\Phi_n$, $ n\times 1$ vector $A$}
-   \State $\cG:=\emptyset$,$\cV:=\emptyset$
+   \State $\cG\coloneqq \emptyset$,$\cV\coloneqq \emptyset$
     \State $\push{\cG}{\getroot}$ \Comment{$\getroot$: returns output gate of the circuit}
      \While{$\getsize{\cG}\neq 1$ \textbf{or} $\getsize{\cV}\neq 1$}
          \If{$\getsize{\cG}\neq \getsize{V}$}
-             \State $(\cG,\cV) := \textsc{Extend}(\cG,\cV,A)$
+             \State $(\cG,\cV) \coloneqq  \textsc{Extend}(\cG,\cV,A)$
          \Else
-             \State $(\cG,\cV):= \textsc{Aggregate}(\cG,\cV)$
+             \State $(\cG,\cV)\coloneqq  \textsc{Aggregate}(\cG,\cV)$
          \EndIf
      \EndWhile
      \State \textbf{return} $\gettop{\cV}$
@@ -161,12 +161,12 @@ called first.
      \State \textbf{return} $\cG, \cV$
  \EndFunction
  \Function{Aggregate}{$\cG, \cV$}\Comment{Always called when $\getsize{\cG} =  \getsize{\cV}$}
-     \State $g := \pop{\cG}$
-     \State $v := \pop{\cV}$
+     \State $g \coloneqq  \pop{\cG}$
+     \State $v \coloneqq  \pop{\cV}$
      \If{$\isplus{\gettop{\cG}}$}
-         \State $\gettop{\cV} := \gettop{\cV} + v$
+         \State $\gettop{\cV} \coloneqq  \gettop{\cV} + v$
      \ElsIf{$\isprod{\gettop{\cG}}$}
-         \State $\gettop{\cV} := \gettop{\cV} \cdot v$
+         \State $\gettop{\cV} \coloneqq  \gettop{\cV} \cdot v$
      \EndIf
      \If{$\isnotlast{\gettop{\cG}}{g}$} \Comment{$\isnotlast{g}{g'}$ is true if $g'$ is not the last child of $g$}
          \State $\push{\cG}{\nextgate{\gettop{\cG}}{g}}$ \Comment{$\nextgate{g}{g'}$ returns  next child of $g$ after $g'$}
@@ -715,7 +715,7 @@ that $n\geq n_0$.
     % \]
     %
     % \[
-    %             \mathsf{succ}(b_i,b_j)=\begin{cases}
+    %             \EDIT{\islessorequal}(b_i,b_j)=\begin{cases}
     %             1 \text{ if } i\leq j \\
     %             0 \text{ otherwise }
     %             \end{cases}
@@ -736,16 +736,16 @@ the expressions that extract gate information (see Proposition~\ref{prop:transdu
 
 In particular, we use  $e_{\mathsf{min}+\mathsf{i}}$ and  $e_{\mathsf{max}-\mathsf{i}}$, for $i=0,\ldots,n-1$,
 to obtain the $(1+i)$th and $(n-i)$th canonical vectors, respectively, and also use $e_{\mathsf{Next}}$ and $e_{\mathsf{Prev}}$, expressions that return matrices that allow to
-move from one canonical vector to the next and previous canonical vector, respectively. In addition, we use $\mathsf{min}$, $\mathsf{max}$ and $\mathsf{succ}$,  expressions returning
+move from one canonical vector to the next and previous canonical vector, respectively. In addition, we use $\mathsf{min}$, $\mathsf{max}$ and $\EDIT{\islessorequal}$,  expressions returning
 $1$ when their input vector(s) are the first canonical vector, the last canonical vector, and consecutive canonical vectors, respectively, and $0$ otherwise. Given these, we also use the following derived expressions:
 \vspace{-4ex}
 \begin{gather*}
-   e_{V}:=e_{\mathsf{max}-2} \quad e_{G_{\mathsf{top}}}:=e_{\mathsf{max}-1} \quad     e_{V_{\mathsf{top}}}:=e_{\mathsf{max}} \\ 
-  V_{\mathsf{top}}:= X\cdot e_{V_{\mathsf{top}}} \quad  G_{\mathsf{top}} :=X\cdot e_{G_{\mathsf{top}}}\\
-     V:= \Iden{V_{\mathsf{top}}} \cdot X \cdot e_V \quad
-  G := \Iden{G_{\mathsf{top}}}\cdot X \cdot \Iden{e_{\mathsf{max}-3}}\\
-   \Iden{b_i}:=\ssum v. \, \mathsf{succ}(v,b_i)\times (v\cdot v^T)  \\
-\pondIden{b_i}{c}:=\ssum v. \, \bigl(c\cdot v^T\cdot b_i + (1- v^T\cdot b_i)\bigr)\times (v\cdot v^T).
+   e_{V}\coloneqq e_{\mathsf{max}-2} \quad e_{G_{\mathsf{top}}}\coloneqq e_{\mathsf{max}-1} \quad     e_{V_{\mathsf{top}}}\coloneqq e_{\mathsf{max}} \\ 
+  V_{\mathsf{top}}\coloneqq  X\cdot e_{V_{\mathsf{top}}} \quad  G_{\mathsf{top}} \coloneqq X\cdot e_{G_{\mathsf{top}}}\\
+     V\coloneqq  \Iden{V_{\mathsf{top}}} \cdot X \cdot e_V \quad
+  G \coloneqq  \Iden{G_{\mathsf{top}}}\cdot X \cdot \Iden{e_{\mathsf{max}-3}}\\
+   \Iden{b_i}\coloneqq \ssum v. \, \EDIT{\islessorequal}(v,b_i)\times (v\cdot v^T)  \\
+\pondIden{b_i}{c}\coloneqq \ssum v. \, \bigl(c\cdot v^T\cdot b_i + (1- v^T\cdot b_i)\bigr)\times (v\cdot v^T).
  \end{gather*}
 Here, $e_V$, $e_{G_{\mathsf{top}}}$ and $e_{V_{\mathsf{top}}}$ return the canonical vectors identifying the columns in $X$ for the value stack (column $n-2$) and columns holding the positions of the top elements in the the gate stack (column $n-1$) and value stack (column $n$), respectively.
 
@@ -831,9 +831,9 @@ These three trailing zeroes do not change which gate an id represents. In this w
 
 \paragraph{$\blacktriangleright$ The overall expression encoding {\normalfont \textsc{Evaluate}} for $n\geq n_0$}
 We simulate $\textsc{Evaluate}(\Phi_n,A)$ for $n\geq n_0$ by the expression
-$e_{\Phi}^{\geq n_0}:= e_{\mathsf{min}}^T\cdot e_{\mathsf{iterate}}\cdot e_{\max -2}$ with
+$e_{\Phi}^{\geq n_0}\coloneqq  e_{\mathsf{min}}^T\cdot e_{\mathsf{iterate}}\cdot e_{\max -2}$ with
     \begin{align*}\allowdisplaybreaks
-		e_{\mathsf{iterate}}&:= \ffor{v_1}{X_1} \\
+		e_{\mathsf{iterate}}&\coloneqq  \ffor{v_1}{X_1} \\
 		& \qquad\ffor{v_2}{X_2=X_1}  \\
 		& \qquad \quad \ffor{v_3}{X_3=X_2}  \cdots\\
 		& \qquad \qquad\quad \ffor{v_k}{X_{k}=X_{k-1}} \Biggl(\Bigl(\bigl( \sprod_{i=1}^k \mathsf{min}(v_i)\bigr) \times e_{\mathsf{start}}\Bigr) + 
@@ -985,26 +985,26 @@ $$ \underbrace{\left[\begin{smallmatrix}
 \paragraph{$\blacktriangleright$ The initialization expression $e_{\mathsf{start}}$}
 Expression $e_{\mathsf{start}}$ is used to set the matrix $X$ in the initial state, conform to line 3 in Algorithm~\ref{alg:eval_code}. More precisely,
     % To set the initial state (algorithm \ref{alg:eval_code} line 2) we define the $\langfor$ expressio
-$$e_{\mathsf{start}}:=e_{\mathsf{min}}\cdot \getroot^T + e_{\mathsf{min}}\cdot e_{G_{\mathsf{top}}}^T.$$
+$$e_{\mathsf{start}}\coloneqq e_{\mathsf{min}}\cdot \getroot^T + e_{\mathsf{min}}\cdot e_{G_{\mathsf{top}}}^T.$$
 In other words, it will put the \texttt{id} of the output gate on the first row of $X$ and also sets the $(n-1)$th entry  of the first row to $1$,
 as depicted in Figure~\ref{fig:langforevalalg1}. 
 
 \paragraph{$\blacktriangleright$ The expression $e_{\mathsf{extend}}$ simulating {\normalfont\textsc{Extend}}}
 To simulate $\textsc{Extend}$ we define
 $$
-e_{\mathsf{extend}}:=e_{\mathsf{ext\_plus}}+e_{\mathsf{ext\_prod}}+e_{\mathsf{ext\_one}}+ e_{\mathsf{ext\_zero}}+e_{\mathsf{ext\_input}},
+e_{\mathsf{extend}}\coloneqq e_{\mathsf{ext\_plus}}+e_{\mathsf{ext\_prod}}+e_{\mathsf{ext\_one}}+ e_{\mathsf{ext\_zero}}+e_{\mathsf{ext\_input}},
 $$
 where  $e_{\mathsf{ext\_plus}}$, $e_{\mathsf{ext\_prod}}$, $e_{\mathsf{ext\_one}}$, $e_{\mathsf{ext\_zero}}$ and $e_{\mathsf{ext\_input}}$ correspond to the different cases in \textsc{Extend} (lines 11--13, 14--16, 17--18, 19--20 and 21--22 in Algorithm~\ref{alg:eval_code}, respectively). More precisely, we define:
     \begin{align*}\allowdisplaybreaks
-      e_{\mathsf{ext\_plus}}&:= \texttt{isplus}\bigl(G^T\cdot G_{\mathsf{top}}\bigr)\times \Bigl( G + 
+      e_{\mathsf{ext\_plus}}&\coloneqq  \texttt{isplus}\bigl(G^T\cdot G_{\mathsf{top}}\bigr)\times \Bigl( G + 
        e_{\mathsf{Next}}\cdot G_{\mathsf{top}} \cdot \texttt{getfirst}\bigl(G^T\cdot G_{\mathsf{top}}\bigr)^T  +{} \\
         &\hspace{4cm}e_{\mathsf{Next}}\cdot G_{\mathsf{top}}\cdot e_{G_{\mathsf{top}}}^T +V\cdot e_{V}^T + e_{\mathsf{Next}}\cdot V_{\mathsf{top}}\cdot e_{V_{\mathsf{top}}}^T \Bigr) \\
-  \displaybreak[0]      e_{\mathsf{ext\_prod}}&:= \texttt{isprod}\bigl(G^T\cdot G_{\mathsf{top}}\bigr)\times \Bigl(G +
+  \displaybreak[0]      e_{\mathsf{ext\_prod}}&\coloneqq  \texttt{isprod}\bigl(G^T\cdot G_{\mathsf{top}}\bigr)\times \Bigl(G +
         e_{\mathsf{Next}}\cdot G_{\mathsf{top}} \cdot \texttt{getfirst}\bigl(G^T\cdot G_{\mathsf{top}}\bigr)^T + {}\\
         &\hspace{2cm}e_{\mathsf{Next}}\cdot G_{\mathsf{top}}\cdot e_{G_{\mathsf{top}}}^T +(V + e_{\mathsf{Next}}\cdot V_{\mathsf{top}})\cdot e_{V}^T + e_{\mathsf{Next}}\cdot V_{\mathsf{top}}\cdot e_{V_{\mathsf{top}}}^T \Bigr) \\
-        e_{\mathsf{ext\_one}}&:= \texttt{isone}\bigl(G^T\cdot G_{\mathsf{top}}\bigr)\times \Bigl(G + G_{\mathsf{top}}\cdot e_{G_{\mathsf{top}}}^T + (V + e_{\mathsf{Next}}\cdot V_{\mathsf{top}})\cdot e_{V}^T + e_{\mathsf{Next}}\cdot V_{\mathsf{top}}\cdot e_{V_{\mathsf{top}}}^T \Bigr) \\
-        e_{\mathsf{ext\_zero}}&:= \texttt{iszero}\bigl(G^T\cdot G_{\mathsf{top}}\bigr)\times \Bigl(G + G_{\mathsf{top}}\cdot e_{G_{\mathsf{top}}}^T + V\cdot e_{V}^T + e_{\mathsf{Next}}\cdot V_{\mathsf{top}}\cdot e_{V_{\mathsf{top}}}^T \Bigr) \\
-        e_{\mathsf{ext\_input}}&:= \texttt{isinput}\bigl(G^T\cdot G_{\mathsf{top}}\bigr) \times{} \biggl(G + G_{\mathsf{top}}\cdot e_{G_{\mathsf{top}}}^T + \\
+        e_{\mathsf{ext\_one}}&\coloneqq  \texttt{isone}\bigl(G^T\cdot G_{\mathsf{top}}\bigr)\times \Bigl(G + G_{\mathsf{top}}\cdot e_{G_{\mathsf{top}}}^T + (V + e_{\mathsf{Next}}\cdot V_{\mathsf{top}})\cdot e_{V}^T + e_{\mathsf{Next}}\cdot V_{\mathsf{top}}\cdot e_{V_{\mathsf{top}}}^T \Bigr) \\
+        e_{\mathsf{ext\_zero}}&\coloneqq  \texttt{iszero}\bigl(G^T\cdot G_{\mathsf{top}}\bigr)\times \Bigl(G + G_{\mathsf{top}}\cdot e_{G_{\mathsf{top}}}^T + V\cdot e_{V}^T + e_{\mathsf{Next}}\cdot V_{\mathsf{top}}\cdot e_{V_{\mathsf{top}}}^T \Bigr) \\
+        e_{\mathsf{ext\_input}}&\coloneqq  \texttt{isinput}\bigl(G^T\cdot G_{\mathsf{top}}\bigr) \times{} \biggl(G + G_{\mathsf{top}}\cdot e_{G_{\mathsf{top}}}^T + \\
         & \Bigl(V + \bigl( v^T \cdot e_{\mathsf{Next}}\cdot V_{\mathsf{top}} \cdot \texttt{getinput}\bigl(G^T\cdot G_{\mathsf{top}}\bigr)^T \bigr)\Bigr)\cdot e_{V}^T + e_{\mathsf{Next}}\cdot V_{\mathsf{top}}\cdot e_{V_{\mathsf{top}}}^T \biggr).
     \end{align*} 
 We depict the effect of these expressions on the matrix $X$ in Figure~\ref{fig:langforevalalg1}. In these expressions, $G^T\cdot G_{\mathsf{top}}$ evaluates to the
@@ -1022,7 +1022,7 @@ $\Bigl(V + \bigl( v^T \cdot e_{\mathsf{Next}}\cdot V_{\mathsf{top}} \cdot \textt
  
     % Where $v$ is the matrix variable stated in the theorem, the one associated with the input $A$ of the circuit.
 
-    % The $\langfor$ expression equivalent to algorithm \ref{alg:init_code} is $$\text{INIT}:=\text{INIT{\_}PLUS}+\text{INIT{\_}PROD}+\text{CONST}+\text{INPUT}.$$
+    % The $\langfor$ expression equivalent to algorithm \ref{alg:init_code} is $$\text{INIT}\coloneqq \text{INIT{\_}PLUS}+\text{INIT{\_}PROD}+\text{CONST}+\text{INPUT}.$$
     %
     % The idea is to return the matrix for the next iteration. Recall that here $\getsize{\cG}=\getsize{\cV} + 1$. So, when the operation is INPUT or CONST, if we start with
    %
@@ -1079,12 +1079,12 @@ $\Bigl(V + \bigl( v^T \cdot e_{\mathsf{Next}}\cdot V_{\mathsf{top}} \cdot \textt
 \paragraph{$\blacktriangleright$ The expression $e_{\mathsf{aggregate}}$ simulating {\normalfont\textsc{Aggregate}}}
 To simulate $\textsc{Aggregate}$ we define
 $$
-	e_{\mathsf{aggregate}}:=e_{\mathsf{pop}}+e_{\mathsf{agg\_plus}}+e_{\mathsf{agg\_prod}}+e_{\mathsf{agg\_not\_last}}+e_{\mathsf{agg\_last}},
+	e_{\mathsf{aggregate}}\coloneqq e_{\mathsf{pop}}+e_{\mathsf{agg\_plus}}+e_{\mathsf{agg\_prod}}+e_{\mathsf{agg\_not\_last}}+e_{\mathsf{agg\_last}},
 	$$
 where  $e_{\mathsf{pop}}$, $e_{\mathsf{agg\_plus}}$, $e_{\mathsf{agg\_prod}}$, $e_{\mathsf{agg\_not\_last}}$ and $e_{\mathsf{agg\_last}}$ correspond to the different cases in \textsc{Aggregate} (lines 25--26, 27--28, 29--30, and 31--32 in Algorithm~\ref{alg:eval_code}, respectively). More precisely, we define:
 %     The $\langfor$ expression equivalent to algorithm \ref{alg:agg_code} is
 %
-% 	% $$\text{AGG}:=\text{POP} + \text{AGG{\_}PLUS}+\text{AGG{\_}PROD}+\text{IS{\_}NOT{\_}LAST}+\text{IS{\_}LAST}.$$
+% 	% $$\text{AGG}\coloneqq \text{POP} + \text{AGG{\_}PLUS}+\text{AGG{\_}PROD}+\text{IS{\_}NOT{\_}LAST}+\text{IS{\_}LAST}.$$
 % 	%
 % 	%
 % 	%     For the aggregate expression (algorithm \ref{alg:agg_code}) we do the following. Let cdot v \cdot v^T,$$ namely, it is the identity with $c$ in position $(i,i)$.
@@ -1092,14 +1092,14 @@ where  $e_{\mathsf{pop}}$, $e_{\mathsf{agg\_plus}}$, $e_{\mathsf{agg\_prod}}$, $
 % 	%     We define the expressions: AGG${\_}$PLUS (algorithm \ref{alg:agg_code}, lines 4, 5), AGG${\_}$PROD (algorithm \ref{alg:agg_code}, lines 6, 7),  IS${\_}$NOT${\_}$LAST (algorithm \ref{alg:agg_code}, lines 8, 9), IS${\_}$LAST and POP:
 % where
     \begin{align*}\allowdisplaybreaks
-        e_{\mathsf{pop}} &:= \Iden{e_{\mathsf{Prev}}\cdot G_{\mathsf{top}}}\cdot G + e_{\mathsf{Prev}}\cdot V_{\mathsf{top}}\cdot e_{V_{\mathsf{top}}}^T  \\
-        e_{\mathsf{agg\_plus}}&:= \texttt{isplus}\bigl(G^T \cdot e_{\mathsf{Prev}} \cdot G_{\mathsf{top}}\bigr) \times \biggl(\Bigl(\Iden{e_{\mathsf{Prev}}\cdot V_{\mathsf{top}}} \cdot V + \bigl( V^T \cdot V_{\mathsf{top}} \bigr)\cdot \bigl(e_{\mathsf{Prev}}\cdot V_{\mathsf{top}}\bigr)\Bigr) \cdot e_{V}^T \biggr) \\
-        e_{\mathsf{agg\_prod}}&:= \isprod{G^T \cdot e_{\mathsf{Prev}} \cdot G_{\mathsf{top}}} \times \biggl(
+        e_{\mathsf{pop}} &\coloneqq  \Iden{e_{\mathsf{Prev}}\cdot G_{\mathsf{top}}}\cdot G + e_{\mathsf{Prev}}\cdot V_{\mathsf{top}}\cdot e_{V_{\mathsf{top}}}^T  \\
+        e_{\mathsf{agg\_plus}}&\coloneqq  \texttt{isplus}\bigl(G^T \cdot e_{\mathsf{Prev}} \cdot G_{\mathsf{top}}\bigr) \times \biggl(\Bigl(\Iden{e_{\mathsf{Prev}}\cdot V_{\mathsf{top}}} \cdot V + \bigl( V^T \cdot V_{\mathsf{top}} \bigr)\cdot \bigl(e_{\mathsf{Prev}}\cdot V_{\mathsf{top}}\bigr)\Bigr) \cdot e_{V}^T \biggr) \\
+        e_{\mathsf{agg\_prod}}&\coloneqq  \isprod{G^T \cdot e_{\mathsf{Prev}} \cdot G_{\mathsf{top}}} \times \biggl(
 				 \pondIden{e_{\mathsf{Prev}}\cdot V_{\mathsf{top}}}{V^T \cdot V_{\mathsf{top}}}\cdot 
 				 \Iden{e_{\mathsf{Prev}}\cdot V_{\mathsf{top}}} \cdot V \cdot e_{V}^T \biggr) \\
-e_{\mathsf{agg\_not\_last}} &:= \texttt{isnotlast}\bigl(G^T \cdot e_{\mathsf{Prev}} \cdot G_{\mathsf{top}},G^T \cdot G_{\mathsf{top}}\bigr) \\
+e_{\mathsf{agg\_not\_last}} &\coloneqq  \texttt{isnotlast}\bigl(G^T \cdot e_{\mathsf{Prev}} \cdot G_{\mathsf{top}},G^T \cdot G_{\mathsf{top}}\bigr) \\
 &\hspace{3cm}\times \biggl(G_{\mathsf{top}} \cdot \texttt{nextgate}\bigl(G^T \cdot e_{\mathsf{Prev}}\cdot G_{\mathsf{top}},G^T \cdot G_{\mathsf{top}}\bigr)^T + G_{\mathsf{top}}\cdot e_{G_{\mathsf{top}}}^T \biggr) \\
- e_{\mathsf{agg\_last}}&:= \Bigl( 1 - \texttt{isnotlast}\bigl(G^T \cdot e_{\mathsf{Prev}}\cdot G_{\mathsf{top}},G^T \cdot G_{\mathsf{top}}\bigr)\Bigr)\times \Bigl(e_{\mathsf{Prev}}\cdot G_{\mathsf{top}} \cdot e_{G_{\mathsf{top}}}^T \Bigr).
+ e_{\mathsf{agg\_last}}&\coloneqq  \Bigl( 1 - \texttt{isnotlast}\bigl(G^T \cdot e_{\mathsf{Prev}}\cdot G_{\mathsf{top}},G^T \cdot G_{\mathsf{top}}\bigr)\Bigr)\times \Bigl(e_{\mathsf{Prev}}\cdot G_{\mathsf{top}} \cdot e_{G_{\mathsf{top}}}^T \Bigr).
     \end{align*}
 We depict the effect of these expressions (always in combination with $e_{\mathsf{pop}}$) on the matrix $X$ in Figure~\ref{fig:langforevalalg2}.
 For starters, $e_{\mathsf{pop}}$ copies the id stack up position $e_{\mathsf{Prev}}\cdot G_{\mathsf{top}}$ (so pops
@@ -1214,11 +1214,11 @@ We next consider the case when $n<n_0$. We only need to consider a finite number
 $\Phi_i(a_1,\ldots,a_i)$ can have, for $i=1,\ldots,n$, for which we can precompute their values. More precisely,
 we simply define
 $$
-e_\Phi^{<n_0}:=\sum_{i=0}^{n_0-2} \Phi_{i+1}(a_1,\ldots,a_{i+1})\cdot\bigl(e_{\mathsf{min}+\mathsf{i}}^T\cdot e_{\mathsf{max}}\bigr),
+e_\Phi^{<n_0}\coloneqq \sum_{i=0}^{n_0-2} \Phi_{i+1}(a_1,\ldots,a_{i+1})\cdot\bigl(e_{\mathsf{min}+\mathsf{i}}^T\cdot e_{\mathsf{max}}\bigr),
 $$
 such that the right value of $\Phi$ is returned depending on the input size. We use $e_{\mathsf{min}+\mathsf{i}}^T\cdot e_{\mathsf{max}}$ to check the dimension.
     %
-    % Finally, we need to take care of all $n<n_0$, where $(\star)$ does not necessarily hold. For any $i$, let: $$\text{Eval}[i,A]:= \text{ the } 1\times 1 \text{ matrix with the value of the polynomial } \Phi_n(A) \text{ when } n=i.$$
+    % Finally, we need to take care of all $n<n_0$, where $(\star)$ does not necessarily hold. For any $i$, let: $$\text{Eval}[i,A]\coloneqq  \text{ the } 1\times 1 \text{ matrix with the value of the polynomial } \Phi_n(A) \text{ when } n=i.$$
 
 
 \medskip
@@ -1227,7 +1227,7 @@ such that the right value of $\Phi$ is returned depending on the input size. We 
 It remains to combine $e_\Phi^{< n_0}$ and $e_{\Phi}^{\geq n_0}$ into the final expression
 $e_\Phi$. We do this, as follows:
 $$
-e_\Phi:=e_\Phi^{< n_0} + \Bigl(1 - \sum_{i=0}^{n_0-2} \bigl(e_{\mathsf{min}+\mathsf{i}}^T\cdot e_{\mathsf{max}}\bigr)\Bigr)\cdot e_{\Phi}^{\geq n_0}.
+e_\Phi\coloneqq e_\Phi^{< n_0} + \Bigl(1 - \sum_{i=0}^{n_0-2} \bigl(e_{\mathsf{min}+\mathsf{i}}^T\cdot e_{\mathsf{max}}\bigr)\Bigr)\cdot e_{\Phi}^{\geq n_0}.
 $$
 such that either $e_{\Phi}^{<n_0}$ or $e_{\Phi}^{\geq n_0}$ is used depending on the input size. 
 This concludes the proof of Theorem~\ref{th-circuits-ml}.

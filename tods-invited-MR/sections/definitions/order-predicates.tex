@@ -5,7 +5,7 @@ and furthermore, we also define expressions for operators that will be used in o
 
 To begin with, we can easily obtain the last canonical vector using the expression 
 $$
-e_{\mathsf{max}} := \ffor{v}{X}{v}.
+e_{\mathsf{max}} \coloneqq  \ffor{v}{X}{v}.
 $$ 
 In other words, we simply overwrite $X$ with the current canonical vector in each iteration.
 Hence, at the end, $X$ is assigned to the last canonical vector.
@@ -30,7 +30,7 @@ $$
 We observe that $S_{\leq}$ can be expressed in \langfor as 
 follows:
 $$
-S_{\leq}:=\ffor{v}{X}{X + \bigl((X\cdot e_{\mathsf{max}}) + v \bigr)\cdot v^T + v\cdot e^T_{\mathsf{max}}},
+S_{\leq}\coloneqq \ffor{v}{X}{X + \bigl((X\cdot e_{\mathsf{max}}) + v \bigr)\cdot v^T + v\cdot e^T_{\mathsf{max}}},
 $$
 where $e_{\mathsf{max}}$ is as defined above. 
 The intuition behind this expression is that by using the last canonical vector $b_n$, as returned by $e_{\mathsf{max}}$, we have access to the last column of $X$ (via the product $X\cdot e_{\mathsf{max}}$). We use this column such that after the $i$-th iteration, this column contains the $i$-th column of $S_{\leq}$. This is done by incrementing $X$ with $v\cdot e_{\mathsf{max}}^T$.
@@ -45,15 +45,15 @@ the $(i-1)$-th column of $S_{\leq}$; and (ii)~the current canonical vector (via 
 
 By defining 
 $$
-\mathsf{succ}(u,v) := u^T\cdot S_{\leq} \cdot v,
+\EDIT{\islessorequal}(u,v) \coloneqq  u^T\cdot S_{\leq} \cdot v,
 $$
 we obtain an order relation that allows us to discern whether one canonical vector comes before 
 the other in the order given by $S_{\leq}$. If we want a strict order, we can just use the matrix
-$S_< := S_{\leq} - e_{\mathsf{Id}}$, where $e_{\mathsf{Id}}$ is an expression in \langfor which returns the identity matrix (of appropriate dimension). Given this, we define
-$$\mathsf{succ}^+(u,v) := u^T\cdot S_{<} \cdot v.$$
+$S_< \coloneqq  S_{\leq} - e_{\mathsf{Id}}$, where $e_{\mathsf{Id}}$ is an expression in \langfor which returns the identity matrix (of appropriate dimension). Given this, we define
+$$\EDIT{\isless}(u,v) \coloneqq  u^T\cdot S_{<} \cdot v.$$
 from which we can also derive 
 $$
-\mathsf{max}(u):=u^T\cdot e_{\mathsf{max}}.
+\mathsf{max}(u)\coloneqq u^T\cdot e_{\mathsf{max}}.
 $$
 which is an expression that returns the last canonical vector.
 
@@ -75,11 +75,11 @@ Using this matrix, we have that for a canonical vector $b_i$:
             \end{cases}
 \]
 where $\mathbf{0}$ is a vector of zeros of the same type as $b_i$. Notice also that $\ones(u)^T\cdot \mathsf{Prev} \cdot u$ is equal to zero, for a canonical vector $u$, if and only if $u = b_1$ is the first canonical vector, and zero otherwise.
-Therefore the expression $\mathsf{min}(u)$ is defined as $$\mathsf{min}(u) := 1 - \ones(u)^T\cdot \mathsf{Prev} \cdot u,$$ and, when evaluated over canonical vectors, will result in $1$ if and only if $u=b_1$ is the first canonical vector.
+Therefore the expression $\mathsf{min}(u)$ is defined as $$\mathsf{min}(u) \coloneqq  1 - \ones(u)^T\cdot \mathsf{Prev} \cdot u,$$ and, when evaluated over canonical vectors, will result in $1$ if and only if $u=b_1$ is the first canonical vector.
 To define the first canonical vector in the order given by \texttt{for}, we can then write:
-$$e_{\mathsf{min}} := \ffor{v}{X}{X + \mathsf{min}(v)\times v},$$
+$$e_{\mathsf{min}} \coloneqq  \ffor{v}{X}{X + \mathsf{min}(v)\times v},$$
 Finally, we show that $\mathsf{Prev}$ can be defined using the following \langfor expression:
-$$e_{\mathsf{Prev}}:= \ffor{v}{X}{X + \bigl((1 - \mathsf{max}(v))\times v\cdot e_{\mathsf{max}}^T - (X\cdot e_{\mathsf{max}})\cdot e_{\mathsf{max}}^T + (X\cdot e_{\mathsf{max}})\cdot v^T\bigr)}.$$
+$$e_{\mathsf{Prev}}\coloneqq  \ffor{v}{X}{X + \bigl((1 - \mathsf{max}(v))\times v\cdot e_{\mathsf{max}}^T - (X\cdot e_{\mathsf{max}})\cdot e_{\mathsf{max}}^T + (X\cdot e_{\mathsf{max}})\cdot v^T\bigr)}.$$
 Here, $X$ is initialized as $\mathbf{0}$ and thus in the first iteration we put
  $b_1$ in the last column of $X$ (note that $X\cdot e_{\mathsf{max}}$ is also zero in the first iteration). Next, in iteration two, we add a matrix that has the stored vector $X\cdot e_{\mathsf{max}}$ (the previous canonical vector) in the column indicated by $v$ (the current canonical vector) and $v-X\cdot e_{\mathsf{max}}$ in the last column, to replace the vector stored. As a consequence, $b_2$ is now stored in the last column. In the last iteration, we have $b_{n-1}$ already in the last column, so no further update of $X$ is required.
  
@@ -91,12 +91,12 @@ To get the \textit{next} relation we simply do $e_{\mathsf{Next}} = e_{\mathsf{P
             \end{cases}
 \]
 In this way, we also can obtain the following operators for a canonical vector $v$: 
-$$\mathsf{prev}(v):=e_{\mathsf{Prev}}\cdot v.$$
-$$\mathsf{next}(v):=e_{\mathsf{Next}}\cdot v.$$
+$$\mathsf{prev}(v)\coloneqq e_{\mathsf{Prev}}\cdot v.$$
+$$\mathsf{next}(v)\coloneqq e_{\mathsf{Next}}\cdot v.$$
 More generally, we define 
 \begin{align*}
-    e_{\mathsf{getPrevMatrix}}(v)&:=\sprod w.  \mathsf{succ}(w,v)\times e_{\mathsf{Prev}} + (1 - \mathsf{succ}(w,v))\times e_{\mathsf{Id}}\\
-    e_{\mathsf{getNextMatrix}}(v)&:=\sprod w. \mathsf{succ}(w,v)\times e_{\mathsf{Next}} + (1 - \mathsf{succ}(w,v))\times e_{\mathsf{Id}}
+    e_{\mathsf{getPrevMatrix}}(v)&\coloneqq \sprod w.  \EDIT{\islessorequal}(w,v)\times e_{\mathsf{Prev}} + (1 - \EDIT{\islessorequal}(w,v))\times e_{\mathsf{Id}}\\
+    e_{\mathsf{getNextMatrix}}(v)&\coloneqq \sprod w. \EDIT{\islessorequal}(w,v)\times e_{\mathsf{Next}} + (1 - \EDIT{\islessorequal}(w,v))\times e_{\mathsf{Id}}
 \end{align*}
 expressions that, when $v$ is interpreted as canonical vector $b_i$, output $\mathsf{Prev}^i$ and $\mathsf{Next}^i$ respectively.
 Note that
@@ -115,9 +115,9 @@ and
 \]
 Finally, define
 $$
-e_{\mathsf{min}+i}:=\underbrace{e_{\mathsf{getNextMatrix}}(\ldots e_{\mathsf{getNextMatrix}}}_{i \text{ times}}(e_{\mathsf{min}}))
+e_{\mathsf{min}+i}\coloneqq \underbrace{e_{\mathsf{getNextMatrix}}(\ldots e_{\mathsf{getNextMatrix}}}_{i \text{ times}}(e_{\mathsf{min}}))
 $$
 and
 $$
-e_{\mathsf{max}-i}:=\underbrace{e_{\mathsf{getPrevMatrix}}(\ldots e_{\mathsf{getPrevMatrix}}}_{i \text{ times}}(e_{\mathsf{max}})).
+e_{\mathsf{max}-i}\coloneqq \underbrace{e_{\mathsf{getPrevMatrix}}(\ldots e_{\mathsf{getPrevMatrix}}}_{i \text{ times}}(e_{\mathsf{max}})).
 $$

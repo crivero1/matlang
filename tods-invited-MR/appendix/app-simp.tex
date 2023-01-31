@@ -2,7 +2,7 @@ When showing results based on induction of expressions in \langfor, it is often 
 the case when all expressions $e_1,\ldots,e_k$ have type $1\times 1$. This does not loose generality. Indeed,
 for general function applications $f(e_1,\ldots,e_k)$, if we have $\ssum$, scalar product and function application on scalars (here denoted by $f_{1\times 1}$), we can simulate full function application, as follows:
  $$
-f(e_1,\ldots, e_k) :=\Sigma v_i \Sigma v_j. f_{1\times 1}(v_i^T\cdot e_1\cdot v_j, \ldots ,v_i^T\cdot e_k\cdot v_j) \times v_i\cdot v_j^T.
+f(e_1,\ldots, e_k) \coloneqq \Sigma v_i \Sigma v_j. f_{1\times 1}(v_i^T\cdot e_1\cdot v_j, \ldots ,v_i^T\cdot e_k\cdot v_j) \times v_i\cdot v_j^T.
 $$
 
 Furthermore, it also convenient at times to use the pointwise functions
@@ -16,7 +16,7 @@ In fact, this lemma also holds for the smaller fragments we consider.
 %
 We also observe that having $f_\odot^2:\RR^2\to\RR$ allows us to define scalar multiplication:
 $$
-e_1\times e_2 :=f_{\kprod}(\ones(e_2)^T\cdot e_1 \cdot \ones(e_2)^T, e_2).
+e_1\times e_2 \coloneqq f_{\kprod}(\ones(e_2)^T\cdot e_1 \cdot \ones(e_2)^T, e_2).
 $$
 Conversely, $f_\odot^k$ can be expressed using scalar multiplication, as can be seen from our simulation of general function applications by pointwise function application on scalars.
 %
@@ -33,12 +33,12 @@ Conversely, $f_\odot^k$ can be expressed using scalar multiplication, as can be 
 % \item  This is useful when the function allowed is $\kprod$, since one can be computed using the other and viceversa.
 % Note that, if $\ssum$ is present, multiplication function application on matrices of any size can be simulated as
 % $$
-% f_{\kprod}(e_1,\ldots, e_n) :=\Sigma x_i \Sigma x_j. (x_i^T\cdot e_1\cdot x_j)\times \ldots \times (x_i^T\cdot e_n\cdot x_j) \times x_i\cdot x_j^T,
+% f_{\kprod}(e_1,\ldots, e_n) \coloneqq \Sigma x_i \Sigma x_j. (x_i^T\cdot e_1\cdot x_j)\times \ldots \times (x_i^T\cdot e_n\cdot x_j) \times x_i\cdot x_j^T,
 % $$
 % which also holds if $e_1,\ldots, e_n$ are scalars. If we have function application, we can simulate
 % scalar product. Let $c$ a scalar:
 % $$
-% c\times A :=f_{\kprod}(e_{\ones}(A)^T\cdot c \cdot e_{\ones}(A)^T, A).
+% c\times A \coloneqq f_{\kprod}(e_{\ones}(A)^T\cdot c \cdot e_{\ones}(A)^T, A).
 % $$
 %
 % Another interesting consequence of allowing for loops in \lang\ is that the pointwise product and sum can be defined without direct access to these operators. Namely, the following result tells us that we can always assume to have access to the product and the sum.

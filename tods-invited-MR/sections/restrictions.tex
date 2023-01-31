@@ -8,12 +8,12 @@ relational algebra on $K$-relations. We then extend \langsum such that also upda
 \label{ss:sumML}
 %When defining $4$-cliques and in several other expressions we have seen so far, we 
 % only update $X$ by adding some matrix to it. This restricted form of for-loop proved useful throughout the paper, and we therefore introduce it as a special operator. That is, we define:
-%$$\Sigma v. e := \ffor{v}{X}{X + e}.$$
+%$$\Sigma v. e \coloneqq  \ffor{v}{X}{X + e}.$$
 %Here, $e=e(v)$. We define the subfragment of \langfor, called \langsum, to consist of the $\Sigma$ operator plus the ``core'' operators in \lang, namely, transposition, matrix multiplication and addition, scalar multiplication, and pointwise function applications.
 
 Recall from Section \ref{sec:formatlang} that we introduced a special version of the for-loop that only allows to update the computed matrix by adding to it the result of some expression which depends on the current canonical vector. 
   That is, we defined the operator:
-$$\Sigma v. e := \ffor{v}{X}{X + e},$$
+$$\Sigma v. e \coloneqq  \ffor{v}{X}{X + e},$$
 where $e = e(v)$. We call \langsum the fragment of \langfor consisting of 
  the $\Sigma$ operator plus the ``core'' operators in \lang, namely, transposition, matrix multiplication and addition, scalar multiplication, and pointwise function applications.
 
@@ -42,31 +42,31 @@ Let $\ddom$ be a data domain and $\att$ a set of \textit{attributes}. A \textit{
 Furthermore, we write $R \in \cR$ to say that $R$ is a symbol of $\cR$. 
 For $R \in \cR$, an \textit{$R$-tuple} is a function $t: R \rightarrow \ddom$. We denote by $\tuples(R)$ the set of all $R$-tuples. Given $X \subseteq R$, we denote by $t[X]$ the restriction of $t$ to the set $X$.
 
-We fix a semiring $(K, \ksum, \kprod, \kzero, \kone)$ and a relational schema $\cR$. A \textit{$K$-relation of} $R \in \cR$ is a function $r: \tuples(R) \rightarrow K$ such that the \textit{support}  $\supp(r):= \{t \in \tuples(R) \mid r(t) \neq \kzero\}$ is finite. 
+We fix a semiring $(K, \ksum, \kprod, \kzero, \kone)$ and a relational schema $\cR$. A \textit{$K$-relation of} $R \in \cR$ is a function $r: \tuples(R) \rightarrow K$ such that the \textit{support}  $\supp(r)\coloneqq  \{t \in \tuples(R) \mid r(t) \neq \kzero\}$ is finite. 
 A \textit{$K$-instance} $\cJ$ of $\cR$ is a function that assigns relational signatures of $\cR$ to $K$-relations. Given $R \in \cR$, we denote by $R^\cJ$ the $K$-relation associated to $R$ by $\cJ$. Recall that $R^\cJ$ is a function and hence  $R^\cJ(t)$ is the value in $K$ assigned to $t$. 
-Given a $K$-relation $r$ we denote by $\adom(r)$ the \textit{active domain} of $r$ defined as $\adom(r):= \{t(a) \mid t \in \supp(r) \wedge a \in R\}$. More generally, the active domain of an $K$-instance $\cJ$ of $\cR$ is defined as $\adom(\cJ):= \bigcup_{R \in \cR} \adom(R^\cJ)$. 
+Given a $K$-relation $r$ we denote by $\adom(r)$ the \textit{active domain} of $r$ defined as $\adom(r)\coloneqq  \{t(a) \mid t \in \supp(r) \wedge a \in R\}$. More generally, the active domain of an $K$-instance $\cJ$ of $\cR$ is defined as $\adom(\cJ)\coloneqq  \bigcup_{R \in \cR} \adom(R^\cJ)$. 
 
 An $\mathsf{RA}_{K}^+$  \textit{expression} $\arae$ over $\cR$ is given by the following syntax:
 $$
 \begin{array}{rcl}
-\arae & := & R \ \mid \ \arae \cup \arae \ \mid \  \pi_X(\arae) \ \mid \  \sigma_X(\arae) \ \mid \ \rho_f(\arae) \ \mid \ \arae \bowtie \arae,
+\arae & \coloneqq  & R \ \mid \ \arae \cup \arae \ \mid \  \pi_X(\arae) \ \mid \  \sigma_X(\arae) \ \mid \ \rho_f(\arae) \ \mid \ \arae \bowtie \arae,
 \end{array}
 $$
-where $R \in \cR$, $X \subseteq \att$ is finite, and $f: X \rightarrow Y$ is a one-to-one mapping with $Y \subseteq \att$. One can extend the schema $\cR$ to any expression over $\cR$ recursively as follows: $\cR(R):= R$, $\cR(\arae \cup \arae'):= \cR(\arae)$, $\cR(\pi_X(\arae)):= X$, $\cR(\sigma_X(\arae)):= \cR(\arae)$, $\cR(\rho_f(\arae)):= X$ where $f:X \rightarrow Y$, and $\cR(\arae \bowtie \arae'):= \cR(\arae) \cup \cR(\arae')$ for every expressions $\arae$ and $\arae'$.
+where $R \in \cR$, $X \subseteq \att$ is finite, and $f: X \rightarrow Y$ is a one-to-one mapping with $Y \subseteq \att$. One can extend the schema $\cR$ to any expression over $\cR$ recursively as follows: $\cR(R)\coloneqq  R$, $\cR(\arae \cup \arae')\coloneqq  \cR(\arae)$, $\cR(\pi_X(\arae))\coloneqq  X$, $\cR(\sigma_X(\arae))\coloneqq  \cR(\arae)$, $\cR(\rho_f(\arae))\coloneqq  X$ where $f:X \rightarrow Y$, and $\cR(\arae \bowtie \arae')\coloneqq  \cR(\arae) \cup \cR(\arae')$ for every expressions $\arae$ and $\arae'$.
 We further assume that any expression $\arae$ satisfies the following syntactic restrictions: $\cR(\arae') = \cR(\arae'')$ whenever $\arae = \arae' \cup \arae''$, $X \subseteq \cR(\arae')$ whenever $\arae = \pi_X(\arae')$ or $\arae = \sigma_X(\arae')$, and $Y = \cR(\arae')$ whenever $\arae = \rho_f(\arae')$ with $f: X \rightarrow Y$.
 
-Given an $\mathsf{RA}_{K}^+$ expression $\arae$ and a $K$-instance $\cJ$ of $\cR$, we define the \textit{semantics} $\ssem{\arae}{\cJ}$ as a $K$-relation of $\cR(\arae)$ as follows. For $X \subseteq \att$, let $\operatorname{Eq}_X(t):= \kone$ when $t(a) = t(b)$ for every $a, b \in X$, and $\operatorname{Eq}_X(t):= \kzero$ otherwise. For every tuple $t \in \cR(\arae)$:
+Given an $\mathsf{RA}_{K}^+$ expression $\arae$ and a $K$-instance $\cJ$ of $\cR$, we define the \textit{semantics} $\ssem{\arae}{\cJ}$ as a $K$-relation of $\cR(\arae)$ as follows. For $X \subseteq \att$, let $\operatorname{Eq}_X(t)\coloneqq  \kone$ when $t(a) = t(b)$ for every $a, b \in X$, and $\operatorname{Eq}_X(t)\coloneqq  \kzero$ otherwise. For every tuple $t \in \cR(\arae)$:
 $$
 \begin{array}{ll}
-\!\!\!\text{if $\arae = R$, then} & \ssem{\arae}{\cJ}(t):= R^\cJ(t) \\
-\!\!\!\text{if $\arae = \arae_1 \cup \arae_2$, then} & \ssem{\arae}{\cJ}(t):= \ssem{\arae_1}{\cJ}(t) \ksum \ssem{\arae_2}{\cJ}(t)  \\
-\!\!\!\text{if $\arae = \pi_X(\arae')$, then} & \ssem{\arae}{\cJ}(t):= \bigksum_{t': t'[X] = t} \ssem{\arae'}{\cJ}(t') \\
-\!\!\!\text{if $\arae = \sigma_X(\arae')$, then} & \ssem{\arae}{\cJ}(t):= 
+\!\!\!\text{if $\arae = R$, then} & \ssem{\arae}{\cJ}(t)\coloneqq  R^\cJ(t) \\
+\!\!\!\text{if $\arae = \arae_1 \cup \arae_2$, then} & \ssem{\arae}{\cJ}(t)\coloneqq  \ssem{\arae_1}{\cJ}(t) \ksum \ssem{\arae_2}{\cJ}(t)  \\
+\!\!\!\text{if $\arae = \pi_X(\arae')$, then} & \ssem{\arae}{\cJ}(t)\coloneqq  \bigksum_{t': t'[X] = t} \ssem{\arae'}{\cJ}(t') \\
+\!\!\!\text{if $\arae = \sigma_X(\arae')$, then} & \ssem{\arae}{\cJ}(t)\coloneqq  
 \ssem{\arae'}{\cJ}(t) \kprod \operatorname{Eq}_X(t)  \\
-\!\!\!\text{if $\arae = \rho_f(\arae')$, then} & \ssem{\arae}{\cJ}(t):= 
+\!\!\!\text{if $\arae = \rho_f(\arae')$, then} & \ssem{\arae}{\cJ}(t)\coloneqq  
 \ssem{\arae'}{\cJ}(t \circ f)  
 \\
-\!\!\!\text{if $\arae = \arae_1 \bowtie \arae_2$, then} & \ssem{\arae}{\cJ}(t):=  \ssem{\arae_1}{\cJ}(t[Y]) \kprod  \ssem{\arae_2}{\cJ}(t[Z])
+\!\!\!\text{if $\arae = \arae_1 \bowtie \arae_2$, then} & \ssem{\arae}{\cJ}(t)\coloneqq   \ssem{\arae_1}{\cJ}(t[Y]) \kprod  \ssem{\arae_2}{\cJ}(t[Z])
 \end{array}
 $$
 where $Y = \cR(\arae_1)$ and $Z = \cR(\arae_2)$. We note that the $\bigksum$-operation in the semantics of $\pi_X(\arae')$ is well-defined given that the support of $\ssem{\arae'}{\cJ}$ is always finite. 
@@ -77,9 +77,9 @@ Similarly as for \lang\ over $\RR$, given a \lang\ schema $\Sch$, a $K$-instance
 The next step for comparing \langsum with $\mathsf{RA}_{K}^+$  is to encode $K$-matrices as $K$-relations.
 Let $\Sch=(\Mnam,\size)$ be a \lang\ schema. On the relational side
 we have for each size symbol $\alpha\in\DD\setminus\{1\}$, attributes $\alpha$, $\row_\alpha$, and $\col_\alpha$ in $\att$. Furthermore, for each $V\in\Mnam$ and $\alpha \in \DD$ we denote
-by $R_V$ and $R_\alpha$ its corresponding relation name, respectively. Then, given $\Sch$ we define the relational schema $\text{Rel}(\Sch)$ such that $\fdom(\text{Rel}(\Sch)):=  \{R_\alpha \mid \alpha\in\DD\} \cup \{R_V \mid V \in \Mnam\}$ where $\text{Rel}(\Sch)(R_\alpha):= \{\alpha\}$ and:
+by $R_V$ and $R_\alpha$ its corresponding relation name, respectively. Then, given $\Sch$ we define the relational schema $\text{Rel}(\Sch)$ such that $\fdom(\text{Rel}(\Sch))\coloneqq   \{R_\alpha \mid \alpha\in\DD\} \cup \{R_V \mid V \in \Mnam\}$ where $\text{Rel}(\Sch)(R_\alpha)\coloneqq  \{\alpha\}$ and:
 \[
-\text{Rel}(\Sch)(R_V):= \begin{cases}
+\text{Rel}(\Sch)(R_V)\coloneqq  \begin{cases}
 \lbrace\row_\alpha,\col_\beta \rbrace & \text{ if $ \size(V)=(\alpha,\beta)$} \\
 \lbrace\row_\alpha \rbrace & \text{ if $ \size(V)=(\alpha,1)$} \\
 \lbrace\col_\beta \rbrace  &
@@ -90,7 +90,7 @@ by $R_V$ and $R_\alpha$ its corresponding relation name, respectively. Then, giv
 Consider now a matrix instance $\I = (\dom,\conc)$ over $\Sch$.
 Let $V\in\Mnam$ with $\size(V)=(\alpha,\beta)$ and let $\conc(V)$ be its corresponding $K$-matrix of dimension $\dom(\alpha)\times \dom(\beta)$.
 To encode $\I$ as a $K$-instance in $\mathsf{RA}_{K}^+$, we use as data domain $\ddom = \mathbb{N} \setminus \{0\}$. Then we construct the $K$-instance $\text{Rel}(\I)$ such that for each $V\in\Mnam$ we define 
-$R_V^{\text{Rel}(\I)}(t):=\conc(V)_{ij}$ whenever $t(\row_\alpha) = i \leq \dom(\alpha)$ and $t(\col_\beta) = j \leq \dom(\beta)$, and $\kzero$ otherwise. Furthermore, for each $\alpha \in \DD$ we define $R_\alpha^{\text{Rel}(\I)}(t):=\kone$ whenever $t(\alpha) \leq \dom(\alpha)$, and $\kzero$ otherwise. In other words, $R_\alpha$ and $R_\beta$ encodes the active domain of a matrix variable $V$ with $\size(V)=(\alpha,\beta)$. Given that the $\mathsf{RA}_{K}^+$ framework of \cite{GreenKT07} represents the ``absence'' of a tuple in the relation with $\kzero$, we need to separately encode the indexes in a matrix.
+$R_V^{\text{Rel}(\I)}(t)\coloneqq \conc(V)_{ij}$ whenever $t(\row_\alpha) = i \leq \dom(\alpha)$ and $t(\col_\beta) = j \leq \dom(\beta)$, and $\kzero$ otherwise. Furthermore, for each $\alpha \in \DD$ we define $R_\alpha^{\text{Rel}(\I)}(t)\coloneqq \kone$ whenever $t(\alpha) \leq \dom(\alpha)$, and $\kzero$ otherwise. In other words, $R_\alpha$ and $R_\beta$ encodes the active domain of a matrix variable $V$ with $\size(V)=(\alpha,\beta)$. Given that the $\mathsf{RA}_{K}^+$ framework of \cite{GreenKT07} represents the ``absence'' of a tuple in the relation with $\kzero$, we need to separately encode the indexes in a matrix.
 This is where $R_\alpha^{\text{Rel}(\I)}$ and $R_\beta^{\text{Rel}(\I)}$ are used for.
 We are now ready to state the first connection between \langsum and $\mathsf{RA}_{K}^+$  by using the previous encoding.
 \begin{proposition}\label{prop:sum_to_ara} 
@@ -150,7 +150,7 @@ Similarly to using sum, we can use other operations to update $X$ in the for-loo
 For the rest of this section, we fix a semiring $(K, \ksum, \kprod, \kzero, \kone)$. The \textit{Hadamard product} over $K$-matrices is defined as the pointwise application of $\kprod$ between two matrices of the same size. Formally, we define the expression $e \hadprod e'$ where $e, e'$ are expressions  over
 some schema $\Sch=(\Mnam,\size)$ satisfying  $\ttype(e) = \ttype(e')$. Then the semantics of $e \hadprod e'$ is the pointwise application of $\kprod$, namely, $\sem{e \hadprod e'}{\I}_{ij} = \sem{e}{\I}_{ij} \kprod \sem{e'}{\I}_{ij}$ for any instance $\I$ of $\cS$. This enables us to define, similar as for the operator $\Sigma v$, the  pointwise-product quantifier $\qhadprod v$ as follows:
 $$
-\qhadprod v. \  e := \ffor{v}{X\!=\!e_{\kone}}{X \circ e}.
+\qhadprod v. \  e \coloneqq  \ffor{v}{X\!=\!e_{\kone}}{X \circ e}.
 $$
 where $e_\kone$ is the \langfor expression for the matrix with the same type as $X$ and all entries equal to the $\kone$-element of $K$ (i.e., we need to initialize $X$ accordingly with the $\kprod$-operator).
 We call \langprod  (for ``sum-product \lang''`) the subfragment of \langfor that consists of \langsum \ extended with $\qhadprod v$.
@@ -159,7 +159,7 @@ We call \langprod  (for ``sum-product \lang''`) the subfragment of \langfor that
 	Similar to the trace of a matrix, a useful function in linear algebra is to compute the product of the values on the diagonal. 
 	Using the $\qhadprod v$ operator, this can be easily expressed:
 \begin{equation*}
-	 e_{\mathsf{dp}}(V) := \qhadprod v. \ v^T\cdot V \cdot v. \tag*{$\qed$}
+	 e_{\mathsf{dp}}(V) \coloneqq  \qhadprod v. \ v^T\cdot V \cdot v. \tag*{$\qed$}
 \end{equation*}
 \end{example}
 
@@ -174,7 +174,7 @@ A \textit{$K$-weighted structure over $\Gamma$} (or just structure) is a pair $\
 Let $X$ be a set of first-order variables. A \textit{$K$-weighted logic (WL) formula} $\varphi$ over $\Gamma$ is defined by the following syntax:
 $$
 \begin{array}{rcl}
-\varphi & := & x = y \ \mid \ R(\bar{x}) \ \mid \ \varphi \ksum \varphi \ \mid \ \varphi \kprod \varphi \ \mid \ \Sigma x. \varphi \ \mid \ \Pi x. \varphi
+\varphi & \coloneqq  & x = y \ \mid \ R(\bar{x}) \ \mid \ \varphi \ksum \varphi \ \mid \ \varphi \kprod \varphi \ \mid \ \Sigma x. \varphi \ \mid \ \Pi x. \varphi
 \end{array}
 $$ 
 where $x, y \in X$, $R \in \Gamma$, and $\bar{x} = x_1, \ldots, x_k$ is a sequence of variables in $X$ such that $k=\arity(R)$. As usual, we say that $x$ is a free variable of $\varphi$, if $x$ is not below $\Sigma x$ or $\Pi x$ quantifiers (e.g. $x$ is free in $\Sigma y. R(x,y)$ but $y$ is not). 
@@ -183,18 +183,18 @@ Given that $K$ is fixed, from now on we talk about structures and formulas witho
 An \textit{assignment} $\sigma$ over a structure $\cA = (A, \{R^\cA\}_{R \in \Gamma})$ is a function $\sigma: X \rightarrow A$. Given $x \in X$ and $a \in A$, we denote by $\sigma[x \mapsto a]$ a new assignment such that $\sigma[x \mapsto a](y) = a$ whenever $x = y$ and $\sigma[x \mapsto a](y) = \sigma(y)$ otherwise. For $\bar{x} = x_1, \ldots, x_k$,  we write $\sigma(\bar{x})$ to say $\sigma(x_1),\ldots, \sigma(x_k)$. Given a structure $\cA = (A, \{R^\cA\}_{R \in \Gamma})$ and an assignment $\sigma$, we define the \textit{semantics} $\ssem{\varphi}{\cA}(\sigma)$ of $\varphi$:
 $$
 \begin{array}{ll}
-\text{if $\varphi= x = y$, then} & \ssem{\varphi}{\cA}(\sigma):= 
+\text{if $\varphi= x = y$, then} & \ssem{\varphi}{\cA}(\sigma)\coloneqq  
 \left\{
 \begin{array}{ll}
 \kone & \text{if $\sigma(x) = \sigma(y)$} \\
 \kzero & \text{otherwise}
 \end{array}
 \right. \\
-\text{if $\varphi= R(\bar{x})$, then} & \ssem{\varphi}{\cA}(\sigma):= R^\cA(\sigma(\bar{x})) \\
-\text{if $\varphi= \varphi_1 \ksum \varphi_2$, then} & \ssem{\varphi}{\cA}(\sigma):= \ssem{\varphi_1}{\cA}(\sigma) \ksum \ssem{\varphi_2}{\cA}(\sigma)  \\
-\text{if $\varphi= \varphi_1 \kprod \varphi_2$, then} & \ssem{\varphi}{\cA}(\sigma):= \ssem{\varphi_1}{\cA}(\sigma) \kprod \ssem{\varphi_2}{\cA}(\sigma)  \\
-\text{if $\varphi= \Sigma x. \, \varphi'$, then} & \ssem{\varphi}{\cA}(\sigma):=  \bigksum_{a \in A} \ssem{\varphi'}{\cA}(\sigma[x \mapsto a]) \\
-\text{if $\varphi= \Pi x. \, \varphi'$, then} & \ssem{\varphi}{\cA}(\sigma):=  \bigkprod_{a \in A} \ssem{\varphi'}{\cA}(\sigma[x \mapsto a])
+\text{if $\varphi= R(\bar{x})$, then} & \ssem{\varphi}{\cA}(\sigma)\coloneqq  R^\cA(\sigma(\bar{x})) \\
+\text{if $\varphi= \varphi_1 \ksum \varphi_2$, then} & \ssem{\varphi}{\cA}(\sigma)\coloneqq  \ssem{\varphi_1}{\cA}(\sigma) \ksum \ssem{\varphi_2}{\cA}(\sigma)  \\
+\text{if $\varphi= \varphi_1 \kprod \varphi_2$, then} & \ssem{\varphi}{\cA}(\sigma)\coloneqq  \ssem{\varphi_1}{\cA}(\sigma) \kprod \ssem{\varphi_2}{\cA}(\sigma)  \\
+\text{if $\varphi= \Sigma x. \, \varphi'$, then} & \ssem{\varphi}{\cA}(\sigma)\coloneqq   \bigksum_{a \in A} \ssem{\varphi'}{\cA}(\sigma[x \mapsto a]) \\
+\text{if $\varphi= \Pi x. \, \varphi'$, then} & \ssem{\varphi}{\cA}(\sigma)\coloneqq   \bigkprod_{a \in A} \ssem{\varphi'}{\cA}(\sigma[x \mapsto a])
 \end{array}
 $$
 When $\varphi$ contains no free variables, we omit $\sigma$ and write $\ssem{\varphi}{\cA}$ instead of $\ssem{\varphi}{\cA}(\sigma)$.
@@ -202,11 +202,11 @@ When $\varphi$ contains no free variables, we omit $\sigma$ and write $\ssem{\va
 For comparing the expressive power of \langprod with WL, we have to show how to encode \lang\ instances into structures and vice versa. For this, we make two assumptions to align both formalisms: (1) we restrict structures to relation symbols of arity at most two and (2) we restrict instances to square matrices. The first assumption is for the same reasons as when comparing \langsum with $\mathsf{RA}_K^+$, and the second assumption is to have a crisp translation between both languages. Indeed, understanding the relation of \langprod with WL for non-square matrices is slightly more complicated and we leave this for future work. 
 
 Let $\Sch=(\Mnam,\size)$ be a schema of square matrices, that is, there exists an $\alpha$ such that $\size(V) \in \{1, \alpha\} \times \{1,\alpha\}$ for every $V \in \Mnam$.
-Define the relational vocabulary $\text{WL}(\Sch):= \{R_V \mid V \in \Mnam\}$ such that $\arity(R_V) = 2$ if $\size(V) = (\alpha, \alpha)$, $\arity(R_V) = 1$ if $\size(V) \in \{(\alpha,1), (1,\alpha)\}$, and $\arity(R_V) = 0$ otherwise.
-Then given a matrix instance $\I = (\dom,\conc)$ over $\Sch$ define the structure $\text{WL}(\I):= (\{1, \ldots, n\}, \{R_V^{\I}\}_{V \in \Mnam} )$ such that $\dom(\alpha) = n$ and $R_V^{\I}(i, j):= \conc(V)_{i,j}$ if $\size(V) = (\alpha, \alpha)$, $R_V^{\I}(i):= \conc(V)_{i}$ if $\size(V) \in \{(\alpha,1), (1,\alpha)\}$, and $R_V^{\I}:= \conc(V)$ if $\size(V) = (1,1)$.
+Define the relational vocabulary $\text{WL}(\Sch)\coloneqq  \{R_V \mid V \in \Mnam\}$ such that $\arity(R_V) = 2$ if $\size(V) = (\alpha, \alpha)$, $\arity(R_V) = 1$ if $\size(V) \in \{(\alpha,1), (1,\alpha)\}$, and $\arity(R_V) = 0$ otherwise.
+Then given a matrix instance $\I = (\dom,\conc)$ over $\Sch$ define the structure $\text{WL}(\I)\coloneqq  (\{1, \ldots, n\}, \{R_V^{\I}\}_{V \in \Mnam} )$ such that $\dom(\alpha) = n$ and $R_V^{\I}(i, j)\coloneqq  \conc(V)_{i,j}$ if $\size(V) = (\alpha, \alpha)$, $R_V^{\I}(i)\coloneqq  \conc(V)_{i}$ if $\size(V) \in \{(\alpha,1), (1,\alpha)\}$, and $R_V^{\I}\coloneqq  \conc(V)$ if $\size(V) = (1,1)$.
 
 To encode weighted structures into matrices and vectors, the story is similar as for $\mathsf{RA}_K^+$. Let $\Gamma$ be a relational vocabulary where $\arity(R) \leq 2$. 
-Define $\text{Mat}(\Gamma):= (\Mnam_\Gamma,\size_\Gamma)$ such that $\Mnam_\Gamma:= \{ V_{R} \mid R \in \Gamma\}$ and $\size_\Gamma(V_{R})$ is equal to $(\alpha, \alpha), (\alpha, 1)$, or $(1,1)$ if $\arity(R)=2$, $\arity(R)=1$, or $\arity(R)=0$, respectively, for some $\alpha \in \DD$. Similarly, let $\cA= (A, \{R^{\cA}\}_{R \in \Gamma})$ be a structure with $A = \{a_1, \ldots, a_n\}$, ordered arbitrarily.
+Define $\text{Mat}(\Gamma)\coloneqq  (\Mnam_\Gamma,\size_\Gamma)$ such that $\Mnam_\Gamma\coloneqq  \{ V_{R} \mid R \in \Gamma\}$ and $\size_\Gamma(V_{R})$ is equal to $(\alpha, \alpha), (\alpha, 1)$, or $(1,1)$ if $\arity(R)=2$, $\arity(R)=1$, or $\arity(R)=0$, respectively, for some $\alpha \in \DD$. Similarly, let $\cA= (A, \{R^{\cA}\}_{R \in \Gamma})$ be a structure with $A = \{a_1, \ldots, a_n\}$, ordered arbitrarily.
 Then we define the matrix instance $\text{Mat}(\cA) = (\dom,\conc)$ such that $\dom(\alpha) = n$, $\conc(V_{R})_{i,j} = R^{\cA}(a_i, a_j)$ if $\arity(R)=2$, $\conc(V_{R})_{i} = R^{\cA}(a_i)$ if $\arity(R)=1$, and $\conc(V_{R}) = R^{\cA}$ otherwise.
 
 Let $\Sch$ be a \lang\ schema of square matrices and $\Gamma$ a relational vocabulary of relational symbols of arity at most $2$. We can show the equivalence of \langprod and WL as follows. 
@@ -241,7 +241,7 @@ are processed.
 \end{proposition}
 
 Furthermore, when allowing for the $f_{>0}$ function,  \langsum extended with $\sprod v$ suffices to compute the transitive closure.
-Indeed, one can use the expression $e_{\mathsf{TC}}(V):=f_{>0}\bigl(\sprod v.\, (e_{\mathsf{Id}}+V)\bigr)$ for this purpose because
+Indeed, one can use the expression $e_{\mathsf{TC}}(V)\coloneqq f_{>0}\bigl(\sprod v.\, (e_{\mathsf{Id}}+V)\bigr)$ for this purpose because
  $\sem{e_{\mathsf{TC}}}{\I}=f_{>0}\bigl((I+A)^n\bigr)$ when $\I$ assigns an $n\times n$ adjacency matrix $A$ to $V$, and non-zero entries in $(I+A)^n$ coincide with non-zero entries in  the transitive closure of $A$.
 Furthermore, if we additionally allow access to the matrix $S_{<}$, defining the (strict) order on canonical vectors, then Csanky's matrix inversion algorithm becomes expressible (if $f_/$ is allowed). We denote this fragment by \langmprod+$S_{<}$. 
 

@@ -30,7 +30,7 @@ halts in at most $n$ steps, and $0$ if $M$ did not halt yet after $n$ steps.
 
 As a consequence, when $M$ does not halt, $\sem{e_M}{\I_n^0}=0$ for all $n\geq 0$. When $M$ halts, there will be an $n$ such that $\sem{e_M}{\I_n^0}=1$ It now suffices to consider the \langfor expression
 $$
-d_M:=e_M\cdot e_{\mathsf{exp}}
+d_M\coloneqq e_M\cdot e_{\mathsf{exp}}
 $$
 where $e_{\texttt{exp}} = \ffor{v}{X=\ones(X)^T\cdot\ones(X)}{X\cdot X}$ such that
 $e_{\texttt{exp}}(\I_n^0)=n^{2^n}$. Then, when $M$ does not halt we can clearly compute $d_M$ with a constant degree circuit ``0''
@@ -42,7 +42,7 @@ for at least one $n$, simply because no polynomial degree uniform  circuit famil
 %
 % 3/ Based on e_M(n) we now consider the ML expression
 %
-%  d_M(n):=e_M(n) Pow(n)
+%  d_M(n)\coloneqq e_M(n) Pow(n)
 %
 % with Pow(n)=2^n (or any other ML expression which cannot
 % be computed by a poly degree circuit). Then, d_M(n) will be of

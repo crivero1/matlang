@@ -20,7 +20,7 @@ In this paper we take a more principled approach by studying what are the atomic
 \quad\texttt{for}\=\,  $k = 1..n$ \texttt{do}\\
 \> \texttt{for}\=\,  $i = 1..n$ \texttt{do}\\
 \> \> \texttt{for}\=\,  $j = 1..n$ \texttt{do}\\
-\> \> \> $A[i,j] := A[i,j] + A[i,k] \cdot A[k,j]$
+\> \> \> $A[i,j] \coloneqq  A[i,j] + A[i,k] \cdot A[k,j]$
 \end{tabbing}
 After executing the algorithm, all of the non zero entries signify an edge in the (irreflexive) transitive closure graph.
 

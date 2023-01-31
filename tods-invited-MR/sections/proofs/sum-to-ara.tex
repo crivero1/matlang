@@ -26,19 +26,19 @@
 %Next, for a matrix instance $\I = (\dom,\conc)$ over $\Sch$,
 %let $V\in\Mnam$ with $\size(V)=(\alpha,\beta)$ and let $\conc(V)$ be its corresponding $K$-matrix of dimension $\dom(\alpha)\times \dom(\beta)$.
 %The $K$-instance in $\mathsf{RA}_{K}^+$ according to $\I$ is $\text{Rel}(\I)$ with data domain $\ddom = \mathbb{N} \setminus \{0\}$. For each $V\in\Mnam$ we define 
-%$R_V^{\text{Rel}(\I)}(t):=\conc(V)_{ij}$ whenever $t(\row_\alpha) = i \leq \dom(\alpha)$ and $t(\col_\beta) = j \leq \dom(\beta)$, and $\kzero$ otherwise. 
-%Also, for each $\alpha \in \DD$ we define $R_\alpha^{\text{Rel}(\I)}(t):=\kone$ whenever $t(\alpha) \leq \dom(\alpha)$, and $\kzero$ otherwise.
-%If $\size(V)=(\alpha,1)$ then $R_V^{\text{Rel}(\I)}(t):=\conc(V)_{i1}$ whenever $t(\row_\alpha) = i \leq \dom(\alpha)$ and $\kzero$ otherwise.
-%Similarly, if $\size(V)=(1,\beta)$ then $R_V^{\text{Rel}(\I)}(t):=\conc(V)_{1j}$ whenever $t(\col_\beta) = j \leq \dom(\beta)$ and $\kzero$ otherwise.
-%If $\size(V)=(1,1)$ then $R_V^{\text{Rel}(\I)}(()):=\conc(V)_{11}$.
+%$R_V^{\text{Rel}(\I)}(t)\coloneqq \conc(V)_{ij}$ whenever $t(\row_\alpha) = i \leq \dom(\alpha)$ and $t(\col_\beta) = j \leq \dom(\beta)$, and $\kzero$ otherwise. 
+%Also, for each $\alpha \in \DD$ we define $R_\alpha^{\text{Rel}(\I)}(t)\coloneqq \kone$ whenever $t(\alpha) \leq \dom(\alpha)$, and $\kzero$ otherwise.
+%If $\size(V)=(\alpha,1)$ then $R_V^{\text{Rel}(\I)}(t)\coloneqq \conc(V)_{i1}$ whenever $t(\row_\alpha) = i \leq \dom(\alpha)$ and $\kzero$ otherwise.
+%Similarly, if $\size(V)=(1,\beta)$ then $R_V^{\text{Rel}(\I)}(t)\coloneqq \conc(V)_{1j}$ whenever $t(\col_\beta) = j \leq \dom(\beta)$ and $\kzero$ otherwise.
+%If $\size(V)=(1,1)$ then $R_V^{\text{Rel}(\I)}(())\coloneqq \conc(V)_{11}$.
 %
 %
 The proof of the proposition is by induction on the structure of a \langsum expression~$e$. In the following we need to distinguish between matrix variables $v$
 that occur in $e$ as part of a sub-expression $\ssum v. (\cdot)$, i.e. those variables that will be used to iterate over by means of canonical vectors, and those that are not. To make this distinction clear, we use $v_1,v_2,\ldots$ for those ``iterator'' variables, and capital $V$ for the matrix variables occurring in $e$. For simplicity, we assume that each occurrence of $\ssum$ has its own iterator variable associated with it. 
 
 To state the induction hypothesis we define a notion of \textit{free} (iterator) \textit{variables}, as follows:
-$\mathsf{free}(V):=\emptyset$, $\mathsf{free}(v):=\{v\}$, $\mathsf{free}(e^T):=\mathsf{free}(e)$, $\mathsf{free}(e_1+e_2):=\mathsf{free}(e_1)\cup \mathsf{free}(e_2)$, $\mathsf{free}(e_1\cdot e_2):=\mathsf{free}(e_1)\cup \mathsf{free}(e_2)$,
- $\mathsf{free}(f_\odot(e_1,\ldots,e_k)):=\mathsf{free}(e_1)\cup\cdots \cup \mathsf{free}(e_k)$, and $\mathsf{free}(\ssum v. e_1)=\mathsf{free}(e_1)\setminus\{v\}$. We will explicitly denote the free variables in an expression $e$ by writing $e(v_1,\ldots,v_k)$.
+$\mathsf{free}(V)\coloneqq \emptyset$, $\mathsf{free}(v)\coloneqq \{v\}$, $\mathsf{free}(e^T)\coloneqq \mathsf{free}(e)$, $\mathsf{free}(e_1+e_2)\coloneqq \mathsf{free}(e_1)\cup \mathsf{free}(e_2)$, $\mathsf{free}(e_1\cdot e_2)\coloneqq \mathsf{free}(e_1)\cup \mathsf{free}(e_2)$,
+ $\mathsf{free}(f_\odot(e_1,\ldots,e_k))\coloneqq \mathsf{free}(e_1)\cup\cdots \cup \mathsf{free}(e_k)$, and $\mathsf{free}(\ssum v. e_1)=\mathsf{free}(e_1)\setminus\{v\}$. We will explicitly denote the free variables in an expression $e$ by writing $e(v_1,\ldots,v_k)$.
 On the relational side, we will also use attribute $\gamma_p$ corresponding to iterator variable $v_p$.
 
 We now use the following induction hypotheses:
@@ -73,8 +73,8 @@ The proof is by induction on the structure of \langsum expressions. In line with
 
 Let $e$ be a \langsum expression.
 \begin{itemize}
-  \item If $e=V$ then $\arae (e):=R_V$.
-  \item If $e=v_p$ then $\arae (e):=\sigma_{\lbrace \row_\alpha,\gamma_p\rbrace}\bigl(\rho_{\row_\alpha\to \alpha}(R_\alpha)\bowtie \rho_{\gamma_p\to \alpha}(R_\alpha)\bigr)$ when  $v_p$ is of type $(\alpha,1)$. It is here that we introduce the attribute $\gamma_p$ associated with iterator variable $v_p$.
+  \item If $e=V$ then $\arae (e)\coloneqq R_V$.
+  \item If $e=v_p$ then $\arae (e)\coloneqq \sigma_{\lbrace \row_\alpha,\gamma_p\rbrace}\bigl(\rho_{\row_\alpha\to \alpha}(R_\alpha)\bowtie \rho_{\gamma_p\to \alpha}(R_\alpha)\bigr)$ when  $v_p$ is of type $(\alpha,1)$. It is here that we introduce the attribute $\gamma_p$ associated with iterator variable $v_p$.
  We note that 
 $$ \ssem{\arae(v_p)}{\text{Rel}(\I)}(t)=\sem{v_p}{\I[v_p\gets b_{j}]}_{i,1}=(b_j)_{i,1}
 $$
@@ -83,7 +83,7 @@ and this holds when $t(\mathrm{row}_\alpha)=t[\gamma_p]=j$, and $(b_j)_{i,1}=\kz
 and this also holds when $t(\mathrm{row}_\alpha)\neq t[\gamma_p]=j$.
 
   \item If $e(v_1,\ldots,v_k)=(e_1(v_1,\ldots,v_k))^T$ with $\Sch (e_1)=(\alpha, \beta)$ then \[
-\arae(e) :=
+\arae(e) \coloneqq 
 \begin{cases}
 \rho_{\mathrm{row}_\alpha \to \mathrm{col}_\alpha,\mathrm{col}_\beta \to \mathrm{row}_\beta}\bigl(\arae(e_1)\bigr) & \text{if } \alpha \neq 1 \neq \beta; \cr
 \rho_{\mathrm{row}_\alpha \to \mathrm{col}_\alpha}\bigl(\arae(e_1)\bigr) & \text{if } \alpha \neq 1 = \beta; \cr
@@ -91,23 +91,23 @@ and this also holds when $t(\mathrm{row}_\alpha)\neq t[\gamma_p]=j$.
 \arae(e_1) & \text{if } \alpha = 1 = \beta.
 \end{cases}
 \]
-\item If $e=e_1(v_1,\ldots,v_k)+e_2(v_1,\ldots,v_k)$ with $\Sch (e_1)=\Sch (e_2)=(\alpha, \beta)$ then $\arae (e):=\arae (e_1)\cup \arae (e_2)$. We assume here that $e_1$ and $e_2$ have the same free variables. This is without loss of generality. Indeed, as an example, suppose that we have $e_1(v_1,v_2)$
+\item If $e=e_1(v_1,\ldots,v_k)+e_2(v_1,\ldots,v_k)$ with $\Sch (e_1)=\Sch (e_2)=(\alpha, \beta)$ then $\arae (e)\coloneqq \arae (e_1)\cup \arae (e_2)$. We assume here that $e_1$ and $e_2$ have the same free variables. This is without loss of generality. Indeed, as an example, suppose that we have $e_1(v_1,v_2)$
 and $e_2(v_2,v_3)$. Then, we can replace $e_1$ by  $e_1(v_1,v_2,v_3)=(v_3^T\cdot v_3)\times e_1(v_1,v_2)$
 and similarly, $e_2$ by $e_2(v_1,v_2,v_3)=(v_1^T\cdot v_1)\times e_2(v_2,v_3)$, where in addition we replace scalar multiplication with its simulation using $f_{\odot}$ and the ones vector, as mentioned earlier. 
 
-  \item If $e=f_\odot(e_1,\ldots, e_k)$ with $\Sch(e_i)=\Sch(e_j)$ for all $i,j\in[1,k]$, then $\arae(e):=\arae(e_1)\Join \cdots \Join\arae(e_k)$.
+  \item If $e=f_\odot(e_1,\ldots, e_k)$ with $\Sch(e_i)=\Sch(e_j)$ for all $i,j\in[1,k]$, then $\arae(e)\coloneqq \arae(e_1)\Join \cdots \Join\arae(e_k)$.
 
-  \item If $e=e_1\cdot e_2$ with $\Sch (e_1)=(\alpha, \gamma)$ and $\Sch (e_2)=(\gamma, \beta)$, we have two cases. If $\gamma = 1$ then $\arae (e):=\arae (e_1)\Join \arae (e_2)$.
+  \item If $e=e_1\cdot e_2$ with $\Sch (e_1)=(\alpha, \gamma)$ and $\Sch (e_2)=(\gamma, \beta)$, we have two cases. If $\gamma = 1$ then $\arae (e)\coloneqq \arae (e_1)\Join \arae (e_2)$.
 If $\gamma\neq 1$ then
 $$
-\arae (e) := \pi_{\lbrace \row_{\alpha},\col_{\beta}, \gamma_1,\ldots,\gamma_k \rbrace}\left(\rho_{C\to \col_\gamma}(\arae (e_1))\Join \rho_{C\to \row_\gamma}(\arae (e_2)) \right),
+\arae (e) \coloneqq  \pi_{\lbrace \row_{\alpha},\col_{\beta}, \gamma_1,\ldots,\gamma_k \rbrace}\left(\rho_{C\to \col_\gamma}(\arae (e_1))\Join \rho_{C\to \row_\gamma}(\arae (e_2)) \right),
 $$
 when $\text{Rel}(\Sch)(\arae(e_1))=\{\row_\alpha,\col_\gamma,\gamma_1',\ldots,\gamma_{\ell}'\}$,
-$\text{Rel}(\Sch)(\arae(e_2))=\{\row_\gamma,\col_\beta,\gamma_1'',\ldots,\gamma_{m}''\}$ and $\{\gamma_1,\ldots,\gamma_k\}:=\{\gamma_1',\ldots,\gamma_\ell',\gamma_1'',\ldots,\gamma_m''\}$.
+$\text{Rel}(\Sch)(\arae(e_2))=\{\row_\gamma,\col_\beta,\gamma_1'',\ldots,\gamma_{m}''\}$ and $\{\gamma_1,\ldots,\gamma_k\}\coloneqq \{\gamma_1',\ldots,\gamma_\ell',\gamma_1'',\ldots,\gamma_m''\}$.
 
   \item If $e(v_1,\ldots,v_{p-1},v_{p+1},\ldots,v_k)=\ssum v_p. \, e_1(v_1,\ldots,v_k)$ where $\Sch(e_1)=(\alpha,\beta)$ and $\Sch(v_p)=(\gamma_p,1)$. Then we define
   $$
-  \arae (e):=\pi_{\text{Rel}(\Sch)(\arae(e_1))\setminus\{\gamma_p\}} \arae (e_1).
+  \arae (e)\coloneqq \pi_{\text{Rel}(\Sch)(\arae(e_1))\setminus\{\gamma_p\}} \arae (e_1).
   $$
  Indeed, by induction we know that 
  $$
@@ -116,7 +116,7 @@ $$
 for tuple $t(\mathrm{row}_\alpha)=i$, $t(\mathrm{col}_\beta)=j$ and $t(\gamma_s)=i_s$ for $s=1,\ldots, k$.
 Hence, for $t(\mathrm{row}_\alpha)=i$, $t(\mathrm{col}_\beta)=j$ and $t(\gamma_s)=i_s$ for $s=1,\ldots, k$ and $s\neq p$,
 $$
-\ssem{\arae(e)}{\text{Rel}(\I)}(t):=\bigksum_{i_p=1,\ldots,\dom(\gamma)} \sem{e_1}{\I[v_1\gets b_{i_1},\ldots,v_{p}\gets b_{i_p},\ldots v_k\gets b_{i_k}]}_{i,j},$$
+\ssem{\arae(e)}{\text{Rel}(\I)}(t)\coloneqq \bigksum_{i_p=1,\ldots,\dom(\gamma)} \sem{e_1}{\I[v_1\gets b_{i_1},\ldots,v_{p}\gets b_{i_p},\ldots v_k\gets b_{i_k}]}_{i,j},$$
 which precisely corresponds to 
 $$
 \sem{\ssum v_p. e_1(v_1,\ldots,v_k)}{\I[v_1\gets b_{i_1},\ldots,v_{p-1}\gets b_{i_{p-1}},v_{p+1}\gets b_{i_{p+1}},\ldots,v_k\gets b_{i_k}]}_{i,j}.

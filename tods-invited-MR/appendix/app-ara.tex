@@ -28,13 +28,13 @@ The \emph{(positive) Annotated-Relation Algebra}, abbreviated by \ARA, is define
 $\mathcal{R}$. An \emph{\ARA expression} $\varphi$ over a database schema $\mathcal{R}$ is equal to 
 \begin{itemize}
 \item a relation name $R$ of $\mathcal{R}$;
-\item $\mathbf{1}(\psi)$, where $\psi$ is an \ARA expression, and $\mathcal{R}(\varphi) := \mathcal{R}(\psi)$;
-\item $\psi_1 \cup \psi_2$, where $\psi_1$ and $\psi_2$ are \ARA expressions with $\mathcal{R}(\psi_1) = \mathcal{R}(\psi_2)$, and $\mathcal{R}(\varphi) := \mathcal{R}(\psi_1)$;
-\item $\pi_Y(\psi)$, where $\psi$ is an \ARA expression and $Y \subseteq \mathcal{R}(\psi)$, and $\mathcal{R}(\varphi) := Y$;
-% \item $\pi_Y^\star(\psi)$, where $\psi$ is an \ARA expression and $Y \subseteq \mathcal{S}(\psi)$, and $\mathcal{S}(\varphi) := Y$;
-\item $\sigma_{Y}(\psi)$, where $\psi$ is an \ARA expression, $Y \subseteq \mathcal{R}(\psi)$, the elements of $Y$ are mutually compatible, and $\mathcal{R}(\varphi) := \mathcal{R}(\psi)$;
-\item $\rho_{\mathcal{R}(\psi) \mapsto Y}(\psi)$, where $\psi$ is an \ARA expression and $\mathcal{R}(\psi) \mapsto Y$ is a compatible one-to-one correspondence of attributes with $Y \subseteq \mathbf{att}$, and $\mathcal{R}(\varphi) := Y$; or
-\item $\psi_1 \Join \psi_2$, where $\psi_1$ and $\psi_2$ are \ARA expressions, and $\mathcal{R}(\varphi) := \mathcal{R}(\psi_1) \cup \mathcal{R}(\psi_2)$.
+\item $\mathbf{1}(\psi)$, where $\psi$ is an \ARA expression, and $\mathcal{R}(\varphi) \coloneqq  \mathcal{R}(\psi)$;
+\item $\psi_1 \cup \psi_2$, where $\psi_1$ and $\psi_2$ are \ARA expressions with $\mathcal{R}(\psi_1) = \mathcal{R}(\psi_2)$, and $\mathcal{R}(\varphi) \coloneqq  \mathcal{R}(\psi_1)$;
+\item $\pi_Y(\psi)$, where $\psi$ is an \ARA expression and $Y \subseteq \mathcal{R}(\psi)$, and $\mathcal{R}(\varphi) \coloneqq  Y$;
+% \item $\pi_Y^\star(\psi)$, where $\psi$ is an \ARA expression and $Y \subseteq \mathcal{S}(\psi)$, and $\mathcal{S}(\varphi) \coloneqq  Y$;
+\item $\sigma_{Y}(\psi)$, where $\psi$ is an \ARA expression, $Y \subseteq \mathcal{R}(\psi)$, the elements of $Y$ are mutually compatible, and $\mathcal{R}(\varphi) \coloneqq  \mathcal{R}(\psi)$;
+\item $\rho_{\mathcal{R}(\psi) \mapsto Y}(\psi)$, where $\psi$ is an \ARA expression and $\mathcal{R}(\psi) \mapsto Y$ is a compatible one-to-one correspondence of attributes with $Y \subseteq \mathbf{att}$, and $\mathcal{R}(\varphi) \coloneqq  Y$; or
+\item $\psi_1 \Join \psi_2$, where $\psi_1$ and $\psi_2$ are \ARA expressions, and $\mathcal{R}(\varphi) \coloneqq  \mathcal{R}(\psi_1) \cup \mathcal{R}(\psi_2)$.
 \end{itemize}
 
 We next define the semantics of \ARA expression.
@@ -87,13 +87,13 @@ r(t) & \text{if } t(A)=t(B) \text{ for all } A, B \in Y;\cr
 \item[Join] Let $r_1: \mathcal{T}_{\mathbb{D}}(X_1) \to K$ and $r_2: \mathcal{T}_{\mathbb{D}}(X_2) \to K$. Define $r_1 \Join r_2: \mathcal{T}_{\mathbb{D}}(X_1 \cup X_2) \to K$ as $(r_1 \Join r_2)(t) = r_1(t|_{X_1})*r_2(t|_{X_2})$.
 \end{description}
 
-The above operations provide semantics for \ARA in a natural manner. Formally, let $\mathcal{R}$ be a database schema, let $\varphi$ be an \ARA expression over $\mathcal{R}$, and let $\mathcal{I}$ be an instance of $\mathcal{R}$. The \emph{output} relation $\varphi(\mathcal{I})$ of $\varphi$ under $\mathcal{I}$ is defined as follows. If $\varphi = R$ with $R$ a relation name of $\mathcal{R}$, then $\varphi(\mathcal{I}) := \mathcal{I}(R)$. If $\varphi = \mathbf{1}(\psi)$, then $\varphi(\mathcal{I}) := \mathbf{1}_{\mathcal{S}(\psi)}$. If $\varphi = \psi_1 \cup \psi_2$, then $\varphi(\mathcal{I}) := \psi_1(\mathcal{I}) \cup \psi_2(\mathcal{I})$. If $\varphi = \pi_{X}(\psi)$, then $\varphi(\mathcal{I}) := \pi_{X}(\psi(\mathcal{I}))$. If $\varphi = \sigma_{Y}(\psi)$, then $\varphi(\mathcal{I}) := \sigma_{Y}(\psi(\mathcal{I}))$. If $\varphi = \rho_\varphi(\psi)$, then $\varphi(\mathcal{I}) := \rho_\varphi(\psi(\mathcal{I}))$. Finally, if $\varphi = \psi_1 \Join \psi_2$, then $\varphi(\mathcal{I}) := \psi_1(\mathcal{I}) \Join \psi_2(\mathcal{I})$.
+The above operations provide semantics for \ARA in a natural manner. Formally, let $\mathcal{R}$ be a database schema, let $\varphi$ be an \ARA expression over $\mathcal{R}$, and let $\mathcal{I}$ be an instance of $\mathcal{R}$. The \emph{output} relation $\varphi(\mathcal{I})$ of $\varphi$ under $\mathcal{I}$ is defined as follows. If $\varphi = R$ with $R$ a relation name of $\mathcal{R}$, then $\varphi(\mathcal{I}) \coloneqq  \mathcal{I}(R)$. If $\varphi = \mathbf{1}(\psi)$, then $\varphi(\mathcal{I}) \coloneqq  \mathbf{1}_{\mathcal{S}(\psi)}$. If $\varphi = \psi_1 \cup \psi_2$, then $\varphi(\mathcal{I}) \coloneqq  \psi_1(\mathcal{I}) \cup \psi_2(\mathcal{I})$. If $\varphi = \pi_{X}(\psi)$, then $\varphi(\mathcal{I}) \coloneqq  \pi_{X}(\psi(\mathcal{I}))$. If $\varphi = \sigma_{Y}(\psi)$, then $\varphi(\mathcal{I}) \coloneqq  \sigma_{Y}(\psi(\mathcal{I}))$. If $\varphi = \rho_\varphi(\psi)$, then $\varphi(\mathcal{I}) \coloneqq  \rho_\varphi(\psi(\mathcal{I}))$. Finally, if $\varphi = \psi_1 \Join \psi_2$, then $\varphi(\mathcal{I}) \coloneqq  \psi_1(\mathcal{I}) \Join \psi_2(\mathcal{I})$.
 
 
 \subsection{An extension of \ARA}
 We extend \ARA with the following two operators:
 \begin{itemize}
- \item $\pi_Y^\star(\psi)$, where $\psi$ is an \ARA expression and $Y \subseteq \mathcal{R}(\psi)$, and $\mathcal{R}(\varphi) := Y$;
+ \item $\pi_Y^\star(\psi)$, where $\psi$ is an \ARA expression and $Y \subseteq \mathcal{R}(\psi)$, and $\mathcal{R}(\varphi) \coloneqq  Y$;
  \item $\textsf{Apply}[f](\psi_1,\ldots,\psi_k)$, where $\psi_1,\ldots,\psi_k$ are \ARA expressions with $\mathcal{R}(\psi_1)=\cdots=\mathcal{R}(\psi_k)$, 
  $f$ is a function $K^k\to K$,
  and 
@@ -111,9 +111,9 @@ The semantics of these operators is given by:
 \]
 \end{description}
 Hence, if $\varphi=\pi^\star_{Y}(\psi)$ then 
-$\varphi(\mathcal{I}):=\pi^\star_{Y}(\psi(\mathcal{I}))$, and
+$\varphi(\mathcal{I})\coloneqq \pi^\star_{Y}(\psi(\mathcal{I}))$, and
 if $\varphi=\textsf{Apply}[f](\psi_1,\allowbreak \ldots,\psi_k)$ then we have
-$\varphi(\mathcal{I}):=\textsf{Apply}[f](\psi_1(\mathcal{I}), \ldots,\psi_k(\mathcal{I}))$. We let $\Omega$ denote a set of pointwise functions that can be used in function applications and write \ARA$_\Omega$ to make this explicit.
+$\varphi(\mathcal{I})\coloneqq \textsf{Apply}[f](\psi_1(\mathcal{I}), \ldots,\psi_k(\mathcal{I}))$. We let $\Omega$ denote a set of pointwise functions that can be used in function applications and write \ARA$_\Omega$ to make this explicit.
 
 
 \subsection{Upper bound on expressivity}

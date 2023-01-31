@@ -34,12 +34,12 @@ We first remark that if we have $e_{S_{<}}$, we can also obtain
 %             \end{cases}
 % $$
 % As a consequence we
-we can compute $\mathsf{succ}$ and $\mathsf{succ}^+$ as well. Furthermore, 
+we can compute $\EDIT{\islessorequal}$ and $\EDIT{\isless}$ as well. Furthermore, 
 \begin{align*}
-  e_{\mathsf{min}}&:=\ssum v. \left[ \sprod w. \mathsf{succ}(w,v)\right] \times v. \\
-  e_{\mathsf{max}}&:=\ssum v. \left[ \sprod w. \left( 1-\mathsf{succ}(w,v) \right) \right] \times v.
+  e_{\mathsf{min}}&\coloneqq \ssum v. \left[ \sprod w. \EDIT{\islessorequal}(w,v)\right] \times v. \\
+  e_{\mathsf{max}}&\coloneqq \ssum v. \left[ \sprod w. \left( 1-\EDIT{\islessorequal}(w,v) \right) \right] \times v.
 \end{align*}
-Both expressions are only using $\ssum$ and $\sprod$ and $\mathsf{succ}$, so are in our fragment.
+Both expressions are only using $\ssum$ and $\sprod$ and $\EDIT{\islessorequal}$, so are in our fragment.
 % Consider $S_<$ and the matrix $J$ that consist of all ones (assume they are $n\times n$). From linear algebra we know that
 % \[
 % S_<^2 \circ \left( S_{<}^2-2\times J\right) \circ \left( S_{<}^2-3\times J\right) = \begin{bmatrix}
@@ -54,17 +54,17 @@ Both expressions are only using $\ssum$ and $\sprod$ and $\mathsf{succ}$, so are
 % all of its entries as $\ssum v.(1-\mathsf{max}(v))\times e_{\ones}(v)\cdot e_{\ones}(v)^T$.
 % So, if we have $f_{/}$ we can define
 % $$
-% e_{\mathsf{Pred}}:= f_{/}\left( f_{\odot}\left(e_{S_{<}}^2, e_{S_{<}}^2-2\times (e_{\ones}(e_{S_{<}})\cdot e_{\ones}(e_{S_{<}})^T), e_{S_{<}}^2-3\times (e_{\ones}(e_{S_{<}})\cdot e_{\ones}(e_{S_{<}})^T) \right),\ssum v.(1-\mathsf{max}(v))\times e_{\ones}(v)\cdot e_{\ones}(v)^T\right)
+% e_{\mathsf{Pred}}\coloneqq  f_{/}\left( f_{\odot}\left(e_{S_{<}}^2, e_{S_{<}}^2-2\times (e_{\ones}(e_{S_{<}})\cdot e_{\ones}(e_{S_{<}})^T), e_{S_{<}}^2-3\times (e_{\ones}(e_{S_{<}})\cdot e_{\ones}(e_{S_{<}})^T) \right),\ssum v.(1-\mathsf{max}(v))\times e_{\ones}(v)\cdot e_{\ones}(v)^T\right)
 % $$
-% Thus we have $e_{\mathsf{Next}}:=e_{\mathsf{Pred}}^T$.
+% Thus we have $e_{\mathsf{Next}}\coloneqq e_{\mathsf{Pred}}^T$.
 % We can now define $\mathsf{prev}(v)$ and $\mathsf{next}(v)$ as in the previous section.
 % The same goes with $e_{\mathsf{getPrevMatrix}}(V)$,
 % $e_{\mathsf{getNextMatrix}}(V)$, $e_{\mathsf{min}+i}$ and $e_{\mathsf{max}+i}$.
 Furthermore, if we have $f_{>0}$ then we can define
 $$
-e_{\mathsf{Pred}}:= e_{S_{<}}- f_{>0}(e_{S_{<}}^2)
+e_{\mathsf{Pred}}\coloneqq  e_{S_{<}}- f_{>0}(e_{S_{<}}^2)
 $$
-Also, recall that  $e_{\mathsf{Next}}:=e_{\mathsf{Pred}}^T$. As a consequence, 
+Also, recall that  $e_{\mathsf{Next}}\coloneqq e_{\mathsf{Pred}}^T$. As a consequence, 
 we can now define $\mathsf{prev}(v)$ and $\mathsf{next}(v)$ as in \ref{app:order}. Similarly,
 it is readily verified that also $e_{\mathsf{getPrevMatrix}}(V)$,
 $e_{\mathsf{getNextMatrix}}(V)$, $e_{\mathsf{min}+i}$ and $e_{\mathsf{max}+i}$ can be expressed
@@ -88,11 +88,11 @@ in our fragment.
 % We can also define $\mathsf{prev}(v)$ and $\mathsf{next}(v)$.
 % Note that we can compute
 % $$
-% e_{S_{\leq}}:=\ssum v. \left( v\cdot v^T + \ssum w. v\cdot\mathsf{next}(v)^T \right)
+% e_{S_{\leq}}\coloneqq \ssum v. \left( v\cdot v^T + \ssum w. v\cdot\mathsf{next}(v)^T \right)
 % $$
 % Here, $(e_{S_{\leq}})_{ij}=1$ if and only if $b_i$ comes 
 % before according to $\mathsf{Pred}$ and $\mathsf{Next}$, or is equal to $b_j$. As a consequence we
-% can compute $\mathsf{succ}$ and $\mathsf{succ}^+$.
+% can compute $\EDIT{\islessorequal}$ and $\EDIT{\isless}$.
 
 % We can now compute everything as we have $S_{\leq}$ and thus $S_{<}$.
 
@@ -143,7 +143,7 @@ in our fragment.
 
 % Note that $\mathsf{Prev}$ can be defined using the following \langfor expression:
 % $$
-% e_{\mathsf{Prev}}:= \texttt{for }v,X.\quad X + \left[ (1 - \mathsf{max}(v))\times ve_{\mathsf{max}}^T - (Xe_{\mathsf{max}})\cdot e_{\mathsf{max}}^T + (Xe_{\mathsf{max}})\cdot v^T\right].
+% e_{\mathsf{Prev}}\coloneqq  \texttt{for }v,X.\quad X + \left[ (1 - \mathsf{max}(v))\times ve_{\mathsf{max}}^T - (Xe_{\mathsf{max}})\cdot e_{\mathsf{max}}^T + (Xe_{\mathsf{max}})\cdot v^T\right].
 % $$
 
 % Here, $X$ starts as 0 and thus in turn $X\cdot e_{\mathsf{max}}$, so we initiate storing $b_1$ in the last column. Next, we add a matrix that has the stored vector $Xe_{\mathsf{max}}$ (the previous canonical vector) in the column indicated by $v$ (the current canonical vector) and $v-Xe_{\mathsf{max}}$ in the last column, to replace the vector stored.

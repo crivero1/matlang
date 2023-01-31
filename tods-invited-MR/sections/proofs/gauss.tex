@@ -2,14 +2,14 @@
     Let $A$ be an LU-factorizable matrix. We already explained how the expression 
     $e_U(V)$ is obtained, i.e., 
     $$
-    e_{U}(V) :=  \left( \initf{e_{\mathsf{Id}}}{y}{X}{\red{X\cdot V}{y}\cdot X} \right) \cdot V.
+    e_{U}(V) \coloneqq   \left( \initf{e_{\mathsf{Id}}}{y}{X}{\red{X\cdot V}{y}\cdot X} \right) \cdot V.
     $$
     We recall that $e_U(A)=T_n\cdot\cdots\cdot T_1\cdot A$ with $L^{-1}=T_n\cdot\cdots\cdot T_1$. Let
     $$
-    e_{L^{-1}}(V) :=  \initf{e_{\mathsf{Id}}}{y}{X}{\red{X\cdot V}{y}\cdot X}.
+    e_{L^{-1}}(V) \coloneqq   \initf{e_{\mathsf{Id}}}{y}{X}{\red{X\cdot V}{y}\cdot X}.
     $$
     such that	$$
-        e_{\mathsf{U}}(V) :=  e_{L^{-1}}(V) \cdot V.
+        e_{\mathsf{U}}(V) \coloneqq   e_{L^{-1}}(V) \cdot V.
         $$
 
     It now suffices to observe that, since $T_n=I$,
@@ -25,7 +25,7 @@
     As a consequence, to obtain $L$ from $L^{-1}$ we just need to multiply every entry below the diagonal by $-1$. Since both  $L$ and $L^{-1}$ are lower triangular, this can done 
     by computing $L=-1\times L^{-1} + 2\times I$. Translated into \langfor, this means that we can define
     $$
-    e_{L}(V) :=  -1\times e_{L^{-1}}(V) + 2\times e_{\mathsf{Id}},
+    e_{L}(V) \coloneqq   -1\times e_{L^{-1}}(V) + 2\times e_{\mathsf{Id}},
     $$
     which concludes the proof of the proposition.
 \end{proof}

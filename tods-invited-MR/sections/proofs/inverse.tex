@@ -11,11 +11,11 @@ to an invertible lower triangular matrix $A$.
 
 \begin{proof} We start by considering the expression:
     $$
-    e_{\mathsf{ps}}(V):= e_{\mathsf{Id}} + \ssum v.\sprod w. \left[ \mathsf{succ}(w,v)\times V + (1 - \mathsf{succ}(w,v))\times e_{\mathsf{Id}} \right].
+    e_{\mathsf{ps}}(V)\coloneqq  e_{\mathsf{Id}} + \ssum v.\sprod w. \left[ \EDIT{\islessorequal}(w,v)\times V + (1 - \EDIT{\islessorequal}(w,v))\times e_{\mathsf{Id}} \right].
     $$
     Here, $e_{\mathsf{ps}}(A)$ results in $I+A+A^2+\cdots + A^n$ for any matrix $A$. In the expression, the outer loop defines which power we compute. 
     That is, when $v$ is the $i$th canonical vector, we compute $A^i$.
-    Computing $A^i$ is achieved via the inner product loop, which uses $\mathsf{succ}(w,v)$ to 
+    Computing $A^i$ is achieved via the inner product loop, which uses $\EDIT{\islessorequal}(w,v)$ to 
     determine whether $w$ comes before or is $v$ in the ordering of canonical vectors.
     When this is the case, we multiply the current result by $A$, and when $w$ is greater 
     than $v$, we use the identity as not to affect the already computed result. We add the identity at the end.
@@ -32,7 +32,7 @@ to an invertible lower triangular matrix $A$.
 %     \]
     We can compute $D_A$ by the expression:
     $$
-    e_{\mathsf{getDiag}}(V) := \ssum v. (v^T\cdot V\cdot v) \times v\cdot v^T.
+    e_{\mathsf{getDiag}}(V) \coloneqq  \ssum v. (v^T\cdot V\cdot v) \times v\cdot v^T.
     $$
     Let $T=A-D_A$. We can write
     $$
@@ -40,7 +40,7 @@ to an invertible lower triangular matrix $A$.
     $$
     We now observe that $D_{A}^{-1}$ simply consists of the inverses of the elements on the diagonal. This can be expressed, as follows:
     $$
-    e_{\mathsf{diagInverse}}(V):=\ssum v. f_{/}(1,v^T\cdot V\cdot v)\times v\cdot v^T
+    e_{\mathsf{diagInverse}}(V)\coloneqq \ssum v. f_{/}(1,v^T\cdot V\cdot v)\times v\cdot v^T
     $$
     where $f_{/}$ is the division function. In the last equality we take advantage of the fact that the diagonals of $A$ and $D_A$ are the same.
 
@@ -65,14 +65,14 @@ to an invertible lower triangular matrix $A$.
     $$
     Seeing this as a \langfor\ expression:
     $$
-    e_{\mathsf{upperDiagInv}}(V):= e_{\mathsf{ps}}\left(-1\times \left[e_{\mathsf{diagInverse}}(V)\cdot(V-e_{\mathsf{getDiag}}(V))\right] \right)\cdot e_{\mathsf{diagInverse}}(V),
+    e_{\mathsf{upperDiagInv}}(V)\coloneqq  e_{\mathsf{ps}}\left(-1\times \left[e_{\mathsf{diagInverse}}(V)\cdot(V-e_{\mathsf{getDiag}}(V))\right] \right)\cdot e_{\mathsf{diagInverse}}(V),
     $$
     we see that  when interpreting $V$ as an  upper triangular invertible matrix, 
     $e_{\mathsf{upperDiagInv}}(A)$ evaluates to $A^{-1}$.
    To deal with invertible lower triangular matrices $A$, we observe that  $\left(A^{-1}\right)^T=\left(A^T\right)^{-1}$ and $A^T$ is upper triangular.
     Hence, it suffices to define
     $$
-    e_{\mathsf{lowerDiagInv}}(V):= e_{\mathsf{upperDiagInv}}(V^T)^T.
+    e_{\mathsf{lowerDiagInv}}(V)\coloneqq  e_{\mathsf{upperDiagInv}}(V^T)^T.
     $$
     This concludes the proof of the lemma.
 \end{proof}
@@ -104,49 +104,49 @@ $A^{-1}=\frac{1}{c_n}\sum_{i=0}^{n-1}c_i A^{n-1-i},$ if $c_n\neq 0$. It also hol
     S_n\\
     \end{matrix}\right)}_{\bar s},
     $$
-with $S_i:=\frac{1}{i+1}\mathsf{tr}(A^i)$, where $\mathsf{tr}(\cdot)$ is the trace operator that sums up the diagonal elements of a matrix. 
+with $S_i\coloneqq \frac{1}{i+1}\mathsf{tr}(A^i)$, where $\mathsf{tr}(\cdot)$ is the trace operator that sums up the diagonal elements of a matrix. 
 
     We can now compute the $S_i's$ in $\langfor$ as follows. First, for
     $i=1,\ldots,n$ we can consider
     $$
-    e_{\mathsf{powTr}}(V,v):=\ssum w. w^T\cdot\left(e_{\mathsf{pow}}(V,v)\cdot V\right)\cdot w
+    e_{\mathsf{powTr}}(V,v)\coloneqq \ssum w. w^T\cdot\left(e_{\mathsf{pow}}(V,v)\cdot V\right)\cdot w
     $$
     with 
     $$
-    e_{\mathsf{pow}}(V,v):= \sprod w. (\mathsf{succ}(w,v)\times V+(1-\mathsf{succ}(w,v))\times e_{\mathsf{Id}}).
+    e_{\mathsf{pow}}(V,v)\coloneqq  \sprod w. (\EDIT{\islessorequal}(w,v)\times V+(1-\EDIT{\islessorequal}(w,v))\times e_{\mathsf{Id}}).
     $$
     We have that $e_{\mathsf{pow}}(A,b_j)=A^{j}$ and thus $e_{\mathsf{powTr}}(A,b_j)=\mathsf{tr}(A^{j})$. Define:
     $$
-    e_{S}(V,v):=f_{/}(1, 1 + \ssum w. \mathsf{succ}(w,v))\times e_{\mathsf{powTr}}(V,v).
+    e_{S}(V,v)\coloneqq f_{/}(1, 1 + \ssum w. \EDIT{\islessorequal}(w,v))\times e_{\mathsf{powTr}}(V,v).
     $$
     Here $e_{S}(A,b_i)=S_i$. Note that $i+1$ is computed summing up to the dimension indicated by $v$, and adding 1.
     We can now easily construct the vector $\bar s$ used in the system of equations by means of the expression:
     $$
-    e_{\bar s}(V):=\ssum w.e_{S}(V,w)\times w.
+    e_{\bar s}(V)\coloneqq \ssum w.e_{S}(V,w)\times w.
     $$
     We next construct the matrix $S$. We need to be able to \textit{shift} a vector $a$ in $k$ positions, i.e.,
     such that $(a_1,\ldots,a_n)\mapsto (0,\ldots,a_1,\ldots,a_{n-k})$. We use $e_{\mathsf{getNextMatrix}}$ 
     defined in Section~\ref{sec:formatlang:design}, i.e., we define:
     $$
-    e_{\mathsf{shift}}(a,v):=\ssum w.(w^T\cdot a)\times(e_{\mathsf{getNextMatrix}}(v)\cdot w)
+    e_{\mathsf{shift}}(a,v)\coloneqq \ssum w.(w^T\cdot a)\times(e_{\mathsf{getNextMatrix}}(v)\cdot w)
     $$
     performs the desired shift when $u$ is assigned a vector $a$ and $v$ is $b_k$. 
     The matrix $S$ is now obtained as follows:
     $$
-    S(V):= e_{\mathsf{Id}} + \ssum v. e_{\mathsf{shift}}(e_{\bar s}(V), v)\cdot v^T
+    S(V)\coloneqq  e_{\mathsf{Id}} + \ssum v. e_{\mathsf{shift}}(e_{\bar s}(V), v)\cdot v^T
     $$
     We now observe that $S$ is lower triangular with nonzero diagonal entries. So,
     Lemma~\ref{prop:upperlowerinverse} tells us that we can invert it, i.e.,
     $e_{\mathsf{lowerDiagInv}}(S)=S^{-1}$. As a consequence,
     $$
-    e_{\bar c}(V):=e_{\mathsf{lowerDiagInv}}(S(V))\cdot e_{\bar s}(V).
+    e_{\bar c}(V)\coloneqq e_{\mathsf{lowerDiagInv}}(S(V))\cdot e_{\bar s}(V).
     $$
     outputs $\bar c$ when $V$ is interpreted as matrix $A$. Observe that we only use the division operator. We now have all coefficients of the characteristic polynomial of $A$.
 
 
     We can now define
     $$
-    e_{\mathsf{det}}(V):=\left( \left(\left( \sprod w. (-1)\times e_{\ones}(V)\right)^T\cdot e_{\mathsf{max}}\right) \times e_{\bar c}(V) \right)^T\cdot e_{\mathsf{max}},
+    e_{\mathsf{det}}(V)\coloneqq \left( \left(\left( \sprod w. (-1)\times e_{\ones}(V)\right)^T\cdot e_{\mathsf{max}}\right) \times e_{\bar c}(V) \right)^T\cdot e_{\mathsf{max}},
     $$
     an expression that, when $V$ is interpreted as any matrix $A$, outputs $\mathsf{det}(A)$.
     Here, $(\sprod w. (-1)\times e_{\ones}(V))$ is the $n$ dimensional vector with $(-1)^n$ in all of its entries.
@@ -166,13 +166,13 @@ with $S_i:=\frac{1}{i+1}\mathsf{tr}(A^i)$, where $\mathsf{tr}(\cdot)$ is the tra
     $$
     where
     $$
-    e_{\mathsf{invPow}}(V, v):= \sprod w. (1-\mathsf{max}(w)) \times \left[ (1 - \mathsf{succ}(w,v))\times V + \mathsf{succ}(w,v)\times e_{\mathsf{Id}} \right] + \mathsf{max}(w)\times e_{\mathsf{Id}}.
+    e_{\mathsf{invPow}}(V, v)\coloneqq  \sprod w. (1-\mathsf{max}(w)) \times \left[ (1 - \EDIT{\islessorequal}(w,v))\times V + \EDIT{\islessorequal}(w,v)\times e_{\mathsf{Id}} \right] + \mathsf{max}(w)\times e_{\mathsf{Id}}.
     $$
     Here, $e_{\mathsf{invPow}}(A, b_i)=A^{n-1-i}$ and $e_{\mathsf{invPow}}(A, b_n)=I$.
     Note that we always multiply by $e_{\mathsf{Id}}$ in the last step.
     To conclude, we define:
     $$
-    e_{\mathsf{inv}}(V):= f_{/}(1, e_{\bar c}(V)^T\cdot e_{\mathsf{max}})\times e_{\mathsf{pow}}(V, e_{\mathsf{max}}) + \left[ \ssum v. f_{/}\left( e_{\bar c}(V)^T\cdot v, e_{\bar c}(V)^T\cdot e_{\mathsf{max}} \right)\times e_{\mathsf{invPow}}(V, v) \right],
+    e_{\mathsf{inv}}(V)\coloneqq  f_{/}(1, e_{\bar c}(V)^T\cdot e_{\mathsf{max}})\times e_{\mathsf{pow}}(V, e_{\mathsf{max}}) + \left[ \ssum v. f_{/}\left( e_{\bar c}(V)^T\cdot v, e_{\bar c}(V)^T\cdot e_{\mathsf{max}} \right)\times e_{\mathsf{invPow}}(V, v) \right],
     $$
     an expression that, when $V$ is interpreted as any invertible matrix $A$, computes $A^{-1}$. \qed
 

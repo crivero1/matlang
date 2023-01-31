@@ -37,7 +37,7 @@ be found, this implies that no interchange is required as well and we can move o
 
 To find the vector $u$ in $P$, we can, for example, find the first entry $j\geq k$ in column $k$ of $A_k$ that holds a non-zero value. More generally, we can find the first entry in a vector $a$ that holds a non-zero value by using the function $f_{>0}$. Indeed, consider the following expression:
 $$
-\nneq{a}{u}:=\ffor{v}{X}{\left( 1-e_{\ones}(v)^T\cdot X \right) \times f_{>0}\left( ( v^T\cdot a )^2 \right)\times v + \mathsf{max}(v)\times\left( 1-e_{\ones}(v)^T\cdot X \right)\times \left( 1 - f_{>0}\left( ( v^T\cdot a )^2 \right) \right) \times u}
+\nneq{a}{u}\coloneqq \ffor{v}{X}{\left( 1-e_{\ones}(v)^T\cdot X \right) \times f_{>0}\left( ( v^T\cdot a )^2 \right)\times v + \mathsf{max}(v)\times\left( 1-e_{\ones}(v)^T\cdot X \right)\times \left( 1 - f_{>0}\left( ( v^T\cdot a )^2 \right) \right) \times u}
 $$
 Here, $\nneq{a}{u}$ receives two $n$ dimensional vectors $a$ and $u$ and outputs a 
 canonical vector $b_j$ such that $a_j$ is the first non-zero entry of $a$, or $u$ if such non-zero value does not exist in $a$. We check for $f_{>0}((\cdot)^2)$ 
@@ -49,14 +49,14 @@ a canonical vector yet and $b_n^T\cdot a$ is zero, the vector $u$ is returned.
 We use $\nneq{a}{u}$ to find a pivot for a specific column. Let us assume again that we
 want to find a pivot in column $k$ of $A_k$. We can then first make all entries in that column, with indexes smaller or equal to $k$, zero, just as we did by means of $\ccol{\cdot}{\cdot}$ in the
 definition of $\red{\cdot}$. Except, now we also need to make the $k$the entry zero as well.
-Let us denote by $\ccoleq{\cdot}{\cdot}$ the operation $\ccol{\cdot}{\cdot}$, as defined in the main body of the paper, but using $\mathsf{succ}$ instead of $\mathsf{succ}^+$ (to include the $k$ entry). Given this, we can construct $P=I-u\cdot u^T$ as follows:
+Let us denote by $\ccoleq{\cdot}{\cdot}$ the operation $\ccol{\cdot}{\cdot}$, as defined in the main body of the paper, but using $\EDIT{\islessorequal}$ instead of $\EDIT{\isless}$ (to include the $k$ entry). Given this, we can construct $P=I-u\cdot u^T$ as follows:
 $$
-e_{P_u}(A,u) := e_{\mathsf{Id}} - \left[ u - \nneq{ \ccoleq{A}{u} }{u} \right]\cdot \left[ u - \nneq{ \ccoleq{A}{u} }{u} \right]^T.
+e_{P_u}(A,u) \coloneqq  e_{\mathsf{Id}} - \left[ u - \nneq{ \ccoleq{A}{u} }{u} \right]\cdot \left[ u - \nneq{ \ccoleq{A}{u} }{u} \right]^T.
 $$ 
 From the explanations given above, it should be clear that $e_{P_u}(A,u)$ computes the necessary permutation matrix of $A_k$ for the column indicated by $u$, or $I$
 if no permutation is needed, or if such permutation does not exist (so we skip the current column). Also, we have to modify the $\red{V}{y}$ operators, as follows:
 $$
-\red{V}{y}:= e_{\mathsf{Id}}+ f_{>0}\left( ( y^T\cdot V\cdot y)^2 \right)\times f_/(\ccol{V}{y},\left[ -(y^T\cdot V\cdot y)\times e_{\ones}(y) + \left( 1 - f_{>0}\left( ( y^T\cdot V\cdot y)^2 \right) \right)\times e_{\ones}(y) \right])\cdot y^T,
+\red{V}{y}\coloneqq  e_{\mathsf{Id}}+ f_{>0}\left( ( y^T\cdot V\cdot y)^2 \right)\times f_/(\ccol{V}{y},\left[ -(y^T\cdot V\cdot y)\times e_{\ones}(y) + \left( 1 - f_{>0}\left( ( y^T\cdot V\cdot y)^2 \right) \right)\times e_{\ones}(y) \right])\cdot y^T,
 $$
 so that when $V$ is interpreted by a matrix $B$ and $y=b_i$, it returns $I+c_ib_i^T$ if $B_{ii}$ is not zero. 
 If $B_{ii}=0$ then we divide $\ccol{B}{b_i}$ by $e_{\ones}(b_i)$ (so we don't get \textit{undefined}), 
@@ -67,9 +67,9 @@ for $f_{>0}((\cdot)^2)$ in case a negative number is tested.
 
 Finally, we define
 $$
-e_{L^{-1}P}(V):=\initf{e_{\mathsf{Id}}}{v}{X}{\red{e_{P_v}(X\cdot V,v)\cdot X\cdot V}{v}\cdot e_{P_v}(X\cdot V,v)\cdot X}
+e_{L^{-1}P}(V)\coloneqq \initf{e_{\mathsf{Id}}}{v}{X}{\red{e_{P_v}(X\cdot V,v)\cdot X\cdot V}{v}\cdot e_{P_v}(X\cdot V,v)\cdot X}
 $$
-and $e_{\mathsf{U}}(V):=e_{L^{-1}P}(V)\cdot V$ as the desired expressions.
+and $e_{\mathsf{U}}(V)\coloneqq e_{L^{-1}P}(V)\cdot V$ as the desired expressions.
 
 As a final observation, in the definition of $e_{L^{-1}P}(V)$ 
 we interlaced permutation matrices with the $T_i$'s. More specifically, 
@@ -121,19 +121,19 @@ and thus we may assume that $P$ occurs at the end. Hence, we obtain $L^{-1}\cdot
 % So, if we have the PALU function such that $e_{L^{-1}P}(A)=L^{-1}P$ and 
 % $e_{\mathsf{U}}(A)=e_{L^{-1}P}(A)\cdot A$, we can compute $\mathsf{minnz}$ in the following way:
 % \begin{align*}
-%     e_{\mathsf{minnz}}(a)=&\ffor{v}{X}{X+\left( \mathsf{succ}(v,X)\cdot\dfrac{a^Tv}{v_{min}^T\left[ e_{U}(A)\right]v_{min}} \right)\times (v-v_{max}) \\
+%     e_{\mathsf{minnz}}(a)=&\ffor{v}{X}{X+\left( \EDIT{\islessorequal}(v,X)\cdot\dfrac{a^Tv}{v_{min}^T\left[ e_{U}(A)\right]v_{min}} \right)\times (v-v_{max}) \\
 %     &\hspace{5em} + min(v)\times\left( v_{max} + \dfrac{a^Tv}{v_{min}^T\left[ e_{U}(A)\right]v_{min}}\times (v-v_{max})\right) \\
 %     &\hspace{5em} - \left( max(v)\cdot\left( 1-e_{\ones}(v)^TX \right)\right)\times v_{max} }
 % \end{align*}
 % \thomas{I actually don't know if I should add the last substraction, since we run $e_{\mathsf{minnz}}(a)$ 
 % only when $a\neq\mathbf{0}$, or we would end up dividing by zero.}
 % In the expression above, for initialization we use $min(v)$ as usual and we add $v_{max}$ to 
-% set $X=v_{max}$ so $\mathsf{succ}(v,X)=1$ until something changes. If $a_1\neq 0$ then we add $v-v_{max}$ 
-% and thus set $X=b_1$ and $\mathsf{succ}(v,X)=0$ since then, so $\mathsf{minnz}(a)=b_1$, as expected. 
+% set $X=v_{max}$ so $\EDIT{\islessorequal}(v,X)=1$ until something changes. If $a_1\neq 0$ then we add $v-v_{max}$ 
+% and thus set $X=b_1$ and $\EDIT{\islessorequal}(v,X)=0$ since then, so $\mathsf{minnz}(a)=b_1$, as expected. 
 % If no nonzero value is found, we remove $v_{max}$ of $X$ to return $0$, as expected.
 % Next, $a^Tv$ extracts an entry of $a$, which will be zero until $v=b_k$, and we normalize it with $a_k$ 
 % obtained from $v_{min}^T\left[ e_{L^{-1}P}(A)\cdot A\right]v_{min}$, so we add $v$ only in this case and 
-% $X=b_k$ is set. From then on $\mathsf{succ}(v,X)$ will always be zero and we will end up with 
+% $X=b_k$ is set. From then on $\EDIT{\islessorequal}(v,X)$ will always be zero and we will end up with 
 % $\mathsf{minnz}(a)=b_k$ as expected. Note that the expression depends on the normalization of $a_k$, 
 % and would not be possible if we didn't have $a_k$ from the PALU algorithm.
 % \thomas{The following feels like cheating. Feels like I'm kind of using $f_{>0}$ not directly. Maybe it is better if we just state that if we have $f_{>0}$ we can do $e_{L^{-1}P}$ and thus $e_{\mathsf{U}}(A)=e_{L^{-1}P}(A)\cdot A$.}
@@ -152,6 +152,6 @@ and thus we may assume that $P$ occurs at the end. Hence, we obtain $L^{-1}\cdot
 % Here, we sum $v$ only when the corresponding entry is nonzero and there is not a vector stored in $X$.
 % So, for any matrix, if we have $f_{>0}$, we can compute its gaussian elimitation by defining
 % $$
-% e_{\mathsf{U}}(V) :=  e_{L^{-1}P}(V) \cdot V.
+% e_{\mathsf{U}}(V) \coloneqq   e_{L^{-1}P}(V) \cdot V.
 % $$
 % Note that the matrix that performs the gaussian elimination is $e_{L^{-1}P}(V)$, and it dependes on $f_{>0}$.

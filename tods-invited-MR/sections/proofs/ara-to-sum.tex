@@ -26,25 +26,25 @@ $$
 $$
 where $t(A_s)=d_{i_s}$ for $s=1,\ldots, k$. The proof of this claim follows by induction on the structure of expressions:
 \begin{itemize} \itemsep3mm
-	\item If $\arae=R$, then $\earae:=v_{A_1}^T \cdot V_R \cdot v_{A_2}$ if $\mathcal{R}(R)=\{A_1,A_2\}$ with $A_1<A_2$; 
-	$\earae:=V_R^T \cdot v_A$ if $\mathcal{R}(R)=\{A\}$; and 
-	$\earae:=V_R$ if $\mathcal{R}(R)=\{\}$.
+	\item If $\arae=R$, then $\earae\coloneqq v_{A_1}^T \cdot V_R \cdot v_{A_2}$ if $\mathcal{R}(R)=\{A_1,A_2\}$ with $A_1<A_2$; 
+	$\earae\coloneqq V_R^T \cdot v_A$ if $\mathcal{R}(R)=\{A\}$; and 
+	$\earae\coloneqq V_R$ if $\mathcal{R}(R)=\{\}$.
 	\item If $\arae=\arae_1\cup \arae_2$ then
-	$\earae:=e_{\arae_1} + e_{\arae_2}$.
+	$\earae\coloneqq e_{\arae_1} + e_{\arae_2}$.
 	\item If $\arae=\pi_{Y}(\arae_1)$ for $Y\subseteq \mathcal{R}(\arae_1)$ and $\{B_1, \ldots, B_l\} = \mathcal{R}(\arae_1) \setminus Y$ then
 	$
-	\earae:= \Sigma v_{B_1}. \ \Sigma v_{B_2}. \ \ldots \Sigma v_{B_l}. \ e_{\arae_1}
+	\earae\coloneqq  \Sigma v_{B_1}. \ \Sigma v_{B_2}. \ \ldots \Sigma v_{B_l}. \ e_{\arae_1}
 	$.
 	\item If $\arae=\sigma_{Y}(\arae_1)$ with $Y\subseteq\mathcal{R}(\arae_1)$ then
 	$
-	\earae:=e_{\arae_1} \kprod \bigkprod_{A,B\in Y} (v_{A}^T \cdot v_{B})
+	\earae\coloneqq e_{\arae_1} \kprod \bigkprod_{A,B\in Y} (v_{A}^T \cdot v_{B})
 	$.
 	Here $\bigkprod$ is the matrix multiplication of expressions of type $(1,1)$.
 	\item If $\arae=\rho_{f}(\arae_1)$ with $f: X \rightarrow Y$ then
-	$\earae:=e_{\arae_1}[v_{f(A)} \gets v_A\mid A\in X]$.
+	$\earae\coloneqq e_{\arae_1}[v_{f(A)} \gets v_A\mid A\in X]$.
 	In other words, we rename variable $v_{f(A)}$ with variable $v_A$ in the expression $e_{\arae_1}$. 
 	\item If $\arae=\arae_1\bowtie \arae_2$ then
-	$\earae:=e_{\arae_1} \cdot e_{\arae_1}$ where the product is over expression of type $(1,1)$.
+	$\earae\coloneqq e_{\arae_1} \cdot e_{\arae_1}$ where the product is over expression of type $(1,1)$.
 \end{itemize}
 By induction, one can check that the inductive hypothesis $(*)$ holds in each case. 
 

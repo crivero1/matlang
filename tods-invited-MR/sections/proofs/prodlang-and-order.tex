@@ -24,17 +24,17 @@ we assume access to $e_{S_<}$.
 
 We first remark that if we have $e_{S_{<}}$, we can also obtain
  $e_{S_{\leq}}$ by adding $e_{\mathsf{Id}}$. Hence,
-we can compute $\mathsf{succ}$ and $\mathsf{succ}^+$ as well. Furthermore, 
+we can compute $\EDIT{\islessorequal}$ and $\EDIT{\isless}$ as well. Furthermore, 
 \begin{align*}
-  e_{\mathsf{min}}&:=\ssum v. \left[ \sprod w. \mathsf{succ}(w,v)\right] \times v. \\
-  e_{\mathsf{max}}&:=\ssum v. \left[ \sprod w. \left( 1-\mathsf{succ}(w,v) \right) \right] \times v.
+  e_{\mathsf{min}}&\coloneqq \ssum v. \left[ \sprod w. \EDIT{\islessorequal}(w,v)\right] \times v. \\
+  e_{\mathsf{max}}&\coloneqq \ssum v. \left[ \sprod w. \left( 1-\EDIT{\islessorequal}(w,v) \right) \right] \times v.
 \end{align*}
-Both expressions are only using $\ssum$ and $\sprod$ and $\mathsf{succ}$, so are in our fragment.
+Both expressions are only using $\ssum$ and $\sprod$ and $\EDIT{\islessorequal}$, so are in our fragment.
 Furthermore, if we have $f_{>0}$ then we can define
 $$
-e_{\mathsf{Pred}}:= e_{S_{<}}- f_{>0}(e_{S_{<}}^2)
+e_{\mathsf{Pred}}\coloneqq  e_{S_{<}}- f_{>0}(e_{S_{<}}^2)
 $$
-Also, recall that  $e_{\mathsf{Next}}:=e_{\mathsf{Pred}}^T$. As a consequence, 
+Also, recall that  $e_{\mathsf{Next}}\coloneqq e_{\mathsf{Pred}}^T$. As a consequence, 
 we can now define $\mathsf{prev}(v)$ and $\mathsf{next}(v)$ as in \ref{sec:formatlang:design}. Similarly,
 it is readily verified that also 
 % $e_{\mathsf{getPrevMatrix}}(V)$,

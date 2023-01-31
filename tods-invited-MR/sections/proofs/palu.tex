@@ -16,7 +16,7 @@
 
     To find the vector $u$ needed for $P$, we can, for example, find the first entry $j\geq k$ in column $k$ of $A_k$ that holds a non-zero value. In $\langforf{f_{>0}}$  we can, more generally, find the first entry in a vector $a$ that holds a non-zero value by using the function $f_{>0}$. Indeed, consider the following expression:
     \begin{align*}\allowdisplaybreaks
-       \nneq{a}{u} := &\texttt{for}\, v,X \texttt{.}\, \left( 1-e_{\ones}(v)^T\cdot X \right) \times f_{>0}\left( ( v^T\cdot a )^2 \right)\times v \\
+       \nneq{a}{u} \coloneqq  &\texttt{for}\, v,X \texttt{.}\, \left( 1-e_{\ones}(v)^T\cdot X \right) \times f_{>0}\left( ( v^T\cdot a )^2 \right)\times v \\
         &\hspace{4em}+ \mathsf{max}(v)\times\left( 1-e_{\ones}(v)^T\cdot X \right)\times \left( 1 - f_{>0}\left( ( v^T\cdot a )^2 \right) \right) \times u \\
     \end{align*}
 where $e_{\ones}(v)$ is the expression for the $\ones(v)$ operator (see Example~\ref{ex:onevec}).
@@ -30,14 +30,14 @@ Here, $\nneq{a}{u}$ receives two $n$ dimensional vectors $a$ and $u$ and outputs
     We use $\nneq{a}{u}$ to find a pivot for a specific column. Let us assume again that we
     want to find a pivot in column $k$ of $A_k$. We can then first make all entries in that column, with indexes smaller or equal to $k$, zero, just as we did by means of $\ccol{\cdot}{\cdot}$ in the
     definition of $\red{\cdot}{\cdot}$. Except, now we also need to make the $k$th entry zero as well.
-    Let us denote by $\ccoleq{\cdot}{\cdot}$ the operation $\ccol{\cdot}{\cdot}$, as defined in the proof of Proposition \ref{prop:gauss}, but using $\mathsf{succ}$ instead of $\mathsf{succ}^+$ (to include the $k$ entry). Given this, we can construct $P=I-u\cdot u^T$ as follows:
+    Let us denote by $\ccoleq{\cdot}{\cdot}$ the operation $\ccol{\cdot}{\cdot}$, as defined in the proof of Proposition \ref{prop:gauss}, but using $\EDIT{\islessorequal}$ instead of $\EDIT{\isless}$ (to include the $k$ entry). Given this, we can construct $P=I-u\cdot u^T$ as follows:
     $$
-    e_{P_u}(A,u) := e_{\mathsf{Id}} - \bigl(u - \nneq{ \ccoleq{A}{u} }{u} \bigr)\cdot \bigl(u - \nneq{ \ccoleq{A}{u} }{u} \bigr)^T.
+    e_{P_u}(A,u) \coloneqq  e_{\mathsf{Id}} - \bigl(u - \nneq{ \ccoleq{A}{u} }{u} \bigr)\cdot \bigl(u - \nneq{ \ccoleq{A}{u} }{u} \bigr)^T.
     $$ 
     From the explanations given above, it should be clear that $e_{P_u}(A,u)$ computes the necessary permutation matrix of $A_k$ for the column indicated by $u$, or $I$
     if no permutation is needed, or if such permutation does not exist (so we skip the current column). Also, we have to modify the $\red{V}{y}$ operator, resulting in $\redd{V}{y}$, as follows:
     \begin{align*}
-        &\redd{V}{y}:= e_{\mathsf{Id}}+ f_{>0}\left( ( y^T\cdot V\cdot y)^2 \right)\times f_/\biggl(\ccoleq{V}{y}, \\
+        &\redd{V}{y}\coloneqq  e_{\mathsf{Id}}+ f_{>0}\left( ( y^T\cdot V\cdot y)^2 \right)\times f_/\biggl(\ccoleq{V}{y}, \\
         &\hspace{4em}\Bigl(-(y^T\cdot V\cdot y)\times e_{\ones}(y) + \Bigl( 1 - f_{>0}\bigl(( y^T\cdot V\cdot y)^2 \bigr) \Bigr)\times e_{\ones}(y) \Bigr)\biggr)\cdot y^T. 
     \end{align*}
     So, when $V$ is interpreted by a matrix $B$ and $y=b_i$, it returns $I+c_ib_i^T$ if $B_{ii}$ is not zero. 
@@ -46,16 +46,16 @@ Here, $\nneq{a}{u}$ receives two $n$ dimensional vectors $a$ and $u$ and outputs
     for $f_{>0}((\cdot)^2)$ in case a negative number is tested.
     Finally, we define
     $$
-    e_{L^{-1}P}(V):=\initf{e_{\mathsf{Id}}}{v}{X}{\redd{e_{P_v}(X\cdot V,v)\cdot X\cdot V}{v}\cdot e_{P_v}(X\cdot V,v)\cdot X}
+    e_{L^{-1}P}(V)\coloneqq \initf{e_{\mathsf{Id}}}{v}{X}{\redd{e_{P_v}(X\cdot V,v)\cdot X\cdot V}{v}\cdot e_{P_v}(X\cdot V,v)\cdot X}
     $$
-    and $e_{\mathsf{U}}(V):=e_{L^{-1}P}(V)\cdot V$ as the desired expressions.
+    and $e_{\mathsf{U}}(V)\coloneqq e_{L^{-1}P}(V)\cdot V$ as the desired expressions.
 
     As a final observation, in the definition of $e_{L^{-1}P}(V)$ 
     we interlaced permutation matrices with the $T_i$'s. More specifically, 
     $A_k=T_k\cdot P\cdot T_{k-1}\cdots T_1\cdot A$. We observe, however, that for $\ell\leq k-1$ and
     $T_{\ell}=I-c_\ell\cdot b_\ell^T$, we have that  $b_\ell^T\cdot P=b_\ell^T$ because $b_\ell$ has zeroes in positions in the rows involved in the row exchange $P$. Also, note that  $P^2=I$ and thus 
     $$P\cdot T_\ell\cdot P=P^2-P\cdot c_\ell\cdot b_\ell^T\cdot P=I-\widehat{c}_\ell\cdot b_\ell^T,$$
-where $\widehat{c}_\ell:=P\cdot c_\ell$. We define $\widehat{T}_\ell:=I-\widehat{c}_\ell\cdot b_\ell^T$.
+where $\widehat{c}_\ell\coloneqq P\cdot c_\ell$. We define $\widehat{T}_\ell\coloneqq I-\widehat{c}_\ell\cdot b_\ell^T$.
     As a consequence,
     $$
     T_k\cdot P\cdot T_{k-1}\cdots T_1=T_k\cdot P\cdot T_{k-1}\cdot P^2\cdot T_{k-2}\cdot P^2\cdots P^2 \cdot T_1\cdot P^2=T_k\cdot (P\cdot T_{k-1}\cdot P)\cdots (P\cdot T_1\cdot P)\cdot P=\widehat{T}_{k-1}\cdots \widehat{T}_1\cdot P,

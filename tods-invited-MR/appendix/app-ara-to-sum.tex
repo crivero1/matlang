@@ -25,25 +25,25 @@ $$
 $$
 where $t(A_s)=i_s$ for $s=1,\ldots, k$. The proof of this claim follows by induction on the structure of expressions:
 \begin{itemize} \itemsep3mm
-	\item If $\arae=R$, then $\earae:=v_{A_1}^T \cdot V_R \cdot v_{A_2}$ if $\mathcal{R}(R)=\{A_1,A_2\}$ with $A_1<A_2$; 
-	$\earae:=V_R^T \cdot v_A$ if $\mathcal{R}(R)=\{A\}$; and 
-	$\earae:=V_R$ if $\mathcal{R}(R)=\{\}$.
+	\item If $\arae=R$, then $\earae\coloneqq v_{A_1}^T \cdot V_R \cdot v_{A_2}$ if $\mathcal{R}(R)=\{A_1,A_2\}$ with $A_1<A_2$; 
+	$\earae\coloneqq V_R^T \cdot v_A$ if $\mathcal{R}(R)=\{A\}$; and 
+	$\earae\coloneqq V_R$ if $\mathcal{R}(R)=\{\}$.
 	\item If $\arae=\arae_1\cup \arae_2$ then
-	$\earae:=e_{\arae_1} + e_{\arae_2}$.
+	$\earae\coloneqq e_{\arae_1} + e_{\arae_2}$.
 	\item If $\arae=\pi_{Y}(\arae_1)$ for $Y\subseteq \mathcal{R}(\arae_1)$ and $\{B_1, \ldots, B_l\} = \mathcal{R}(\arae_1) \setminus Y$ then
 	$$
-	\earae:= \Sigma v_{B_1}. \ \Sigma v_{B_2}. \ \ldots \Sigma v_{B_l}. \ e_{\arae_1}
+	\earae\coloneqq  \Sigma v_{B_1}. \ \Sigma v_{B_2}. \ \ldots \Sigma v_{B_l}. \ e_{\arae_1}
 	$$
 	\item If $\arae=\sigma_{Y}(\arae_1)$ with $Y\subseteq\mathcal{R}(\arae_1)$ then
 	$$
-	\earae:=e_{\arae_1}\cdot \prod_{A,B\in Y} (v_{A}^T \cdot v_{B}).
+	\earae\coloneqq e_{\arae_1}\cdot \prod_{A,B\in Y} (v_{A}^T \cdot v_{B}).
 	$$
 	Here $\Pi$ is the matrix multiplication of expressions of type $(1,1)$.
 	\item If $\arae=\rho_{X\mapsto Y}(\arae_1)$ then
-	$$\earae:=e_{\arae_1}[v_B\gets v_A\mid A\in X, B\in Y, A\mapsto B].$$
+	$$\earae\coloneqq e_{\arae_1}[v_B\gets v_A\mid A\in X, B\in Y, A\mapsto B].$$
 	In other words, we rename variable $v_B$ with variable $v_B$ in all the expression $e_{\arae_1}$. 
 	\item If $\arae=\arae_1\bowtie \arae_2$ then
-	$\earae:=e_{\arae_1} \cdot e_{\arae_1}$ where the product is over expression of type $(1,1)$.
+	$\earae\coloneqq e_{\arae_1} \cdot e_{\arae_1}$ where the product is over expression of type $(1,1)$.
 \end{itemize}
 One can check, by induction over the construction, that the inductive hypothesis $(*)$ holds in each case.
 Now we can obtain proposition \ref{prop:ara_to_sum}.
@@ -108,14 +108,14 @@ By using the inductive hypothesis $(*)$ one can check that $\Psi(\arae)$ works i
 % explicitly in the induction?!}
 
 % \begin{itemize}
-%   \item If $\arae = R$ then $\Psi (\arae):=V_R$. Note that if $|R|=2$ then 
+%   \item If $\arae = R$ then $\Psi (\arae)\coloneqq V_R$. Note that if $|R|=2$ then 
 %     $$\sem{\Psi(\arae)}{\text{Mat}(\cJ)}_{i,j}=\conc(V_R)_{i,j} = R^{\cJ}((d_i, d_j))=\ssem{\arae}{\cJ}((d_i, d_j)).$$ 
 %     If $|R|=1$ then 
 %     $$\sem{\Psi(\arae)}{\text{Mat}(\cJ)}_{i,j}=\conc(V_R)_{i,1} = R^{\cJ}((d_i))=\ssem{\arae}{\cJ}((d_i)).$$
 %     And if $|R|=0$ then 
 % 	\floris{Not sure about this:}
 %     $\sem{\Psi(\arae)}{\text{Mat}(\cJ)}_{i,j}=\conc(V_R)_{1,1} = R^{\cJ}=\ssem{\arae}{\cJ}$.
-%   \item If $\arae=\arae_1\cup\arae_2$ then $\Psi(\arae):=\Psi(\arae_1)+\Psi(\arae_2)$.
+%   \item If $\arae=\arae_1\cup\arae_2$ then $\Psi(\arae)\coloneqq \Psi(\arae_1)+\Psi(\arae_2)$.
 %   \item If $\arae = \pi_{Y}(\arae_1)$ for $Y\subseteq R(\arae_1)$. Let $\cV = \lbrace V_A:A\in R(\arae_1)\setminus Y \rbrace$. 
 %     Then
 %     $$
@@ -123,10 +123,10 @@ By using the inductive hypothesis $(*)$ one can check that $\Psi(\arae)$ works i
 %     $$
 % \floris{What is $V_{\mathsf{Eq}_Y}$??}
 %   \item If $\arae = \sigma_Y(\arae_1)$ with $Y\subseteq R(\arae_1)$ then 
-%     $\Psi(\arae):=f_{\kprod}\left( \Psi(\arae_1), V_{\mathsf{Eq}_Y} \right)$.
-%   \item If $\arae = \rho_{X\rightarrow Y}(\arae_1)$ then $\Psi (\arae):= \Psi (\arae_1)\left[ V_A\gets V_B, A\in X, B\in Y, A \mapsto B \right]$.
+%     $\Psi(\arae)\coloneqq f_{\kprod}\left( \Psi(\arae_1), V_{\mathsf{Eq}_Y} \right)$.
+%   \item If $\arae = \rho_{X\rightarrow Y}(\arae_1)$ then $\Psi (\arae)\coloneqq  \Psi (\arae_1)\left[ V_A\gets V_B, A\in X, B\in Y, A \mapsto B \right]$.
 %   \item If $\arae = \arae_1\Join \arae_2$, where $R(\arae)=R(\arae_1)=R(\arae_2)$ then 
-%     $\Psi (\arae):=f_{\kprod}\left( \Psi (\arae_1), \Psi (\arae_2) \right)$
+%     $\Psi (\arae)\coloneqq f_{\kprod}\left( \Psi (\arae_1), \Psi (\arae_2) \right)$
 % \end{itemize}
 
 % Note that for function application we only allow $\kprod$, 
@@ -162,7 +162,7 @@ By using the inductive hypothesis $(*)$ one can check that $\Psi(\arae)$ works i
 % We define $\dom(\alpha)=|\mathbb{D}(A_1)|$ and
 % $\dom(\beta)=|\mathbb{D}(A_2)|$ where $s(A_1)=\alpha$ and $s(A_2)=\beta$. Furthermore,
 % $\conc(V_R)=\text{Mat}(r)$ such that 
-% $(\text{Mat}(r))_{i,j} := r(t)$, where $t$ is (1) the tuple with $t(A_1) = i$ and $t(A_2) = j$ if $|X| = 2$; (2) the tuple with $t(A_1) = i$ and $j = 1$ if $X = {A_1}$,
+% $(\text{Mat}(r))_{i,j} \coloneqq  r(t)$, where $t$ is (1) the tuple with $t(A_1) = i$ and $t(A_2) = j$ if $|X| = 2$; (2) the tuple with $t(A_1) = i$ and $j = 1$ if $X = {A_1}$,
 % (3) the tuple with $t(A_2) = j$ and $i = 1$ if $X = {A_2}$,
 % (3) the unique tuple of $r$ if $X=\emptyset$. Clearly, $\text{Mat}(r)$ is a matrix of dimension as
 % specified by $\mathbb{D}$. 
