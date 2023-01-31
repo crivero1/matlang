@@ -18,6 +18,7 @@ that refer to \emph{iterator variables}, which we introduce next.}
 \medskip
 \noindent Intuitively, $X$ is a matrix variable which is iteratively updated according to the expression $e$. We simulate iterations of the form ``\texttt{for} $i\in [1..n]$'' by letting $v$ loop over the \textit{canonical vectors} $b_1^n,\ldots,b_n^n$ of dimension $n$. Here,
 $b_1^n = [1\ 0 \cdots 0]^T$, $b_2^n = [0\ 1\ 0 \cdots 0]^T$, etc. When $n$ is clear from the context we simply write $b_1,b_2,\ldots$. We remark that the expression $e$ in the rule above may depend on $v$ and $X$. 
+\EDIT{We call $v$ an \emph{iterator variable}.}
 
 We next make the semantics of this new construct precise and start by
 declaring the \textit{type of for-loop expressions}.
