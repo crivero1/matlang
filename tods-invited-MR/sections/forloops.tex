@@ -260,6 +260,14 @@ we heavily rely on order information in the next sections when computing the inv
 
 
 \subsection{Useful shorthands and simplifications}\label{sec:queries:simp}
+\EDIT{
+\paragraph{Flux control}
+
+The following definition proves to be useful.
+
+$$\IfThenElse{e_1}{e_2}{e_3}\coloneqq e_1\times e_2 + (1-e_1)\times e_3.$$
+}
+
 \paragraph{Iteration based on sum and product.} When defining $4$-cliques (Example \ref{ex:fourcliques}), the diagonal matrix (Example \ref{ex:diag}), or the ones vector algorithm (Example \ref{ex:onevec}), we 
  only update $X$ by adding some matrix to it. This restricted form of for-loop will prove useful throughout the paper, and we therefore introduce it as a special operator. That is, we define:
 $$\Sigma v. \, e \coloneqq  \ffor{v}{X}{X + e}.$$

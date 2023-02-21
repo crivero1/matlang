@@ -10,11 +10,49 @@ compute LU decompositions of matrices. These decompositions form the basis of ma
 
 
 \subsection{LU decomposition}
+
+\begin{algorithm}[t]
+    \caption{LU pseudocode}
+    \label{alg:lu}
+    \begin{algorithmic}[1]
+        \Function{LU}{$A$}
+            \State{$A_0\coloneqq A$}
+            \For{$i=1,2,\ldots,n$}
+                \State{$A_i\coloneqq$ GETREDUCEMATRIX$(A_{i-1},i)\cdot A_{i-1}$}
+            \EndFor
+            \Return{$A_n$}
+        \EndFunction
+        \State{ }
+        \Function{GetL}{$A$}
+            \State{$A_0\coloneqq A$}
+            \State{$T_0\coloneqq I$}
+            \For{$i=1,2,\ldots,n$}
+                \State{$A_i\coloneqq T_{i-1}\cdot A_{i-1}$}
+                \State{$T_i\coloneqq$ GETREDUCEMATRIX$(A_i,i)\cdot T_{i-1}$}
+            \EndFor
+            \Return{$A_n$}
+        \EndFunction
+        \State{ }
+        \Function{GETREDUCEMATRIX}{$A,i$}
+            \State{$c\coloneqq [0,\ldots,0]^T$}
+            \For{$j=i+1,\ldots,n$}
+                \State{ $c_{j,1} \coloneqq -\dfrac{A_{ij}}{A_{ii}}$}\Comment{Assuming that $A_{ii}\neq 0$}
+                % \State{$T^{(i)}_{ij}\coloneqq A_{ij}+c_{j}A_{ii}$}
+            \EndFor
+            \State{}
+            \State{$b\coloneqq [0,\ldots,1,\ldots,0]^T$}\Comment{$i$-th canonical vector}
+            \State{$T\coloneqq I + c\cdot b^T$}
+            \State{}
+            \Return{$T$}
+        \EndFunction
+    \end{algorithmic}
+\end{algorithm}
+
 A lower-upper (LU) decomposition factors a matrix $A$ as the product of a lower triangular matrix $L$ and upper triangular matrix $U$.  
 This decomposition, and more generally LU decomposition with row pivoting (PLU),  underlies many linear algebra algorithms and 
 we next show that \langfor can compute these decompositions.
 
-LU decomposition can be seen as a matrix form of Gaussian elimination in which the columns of $A$
+LU decomposition (described in Algorithm~\ref{alg:lu}) can be seen as a matrix form of Gaussian elimination in which the columns of $A$
 are reduced, one by one, to obtain the matrix $U$. The reduction of columns of $A$ is achieved
 as follows. Consider the first column $[A_{11},\ldots,A_{n1}]^T$ of $A$ and  define 
 $c_1 \coloneqq   [0, \alpha_{21},\ldots, \alpha_{n1}]^T$ 
@@ -27,7 +65,7 @@ Furthermore, it is easily verified that each $T_i$ is invertible and by defining
 In case when such a denominator is zero in one of the reduction steps, one can remedy this situation by \textit{row pivoting}. That is, when the $i$th entry of the
 $i$th row in $T_{i-1}\cdots T_1\cdot A$ is zero, one replaces the $i$th row by  $j$th row in this matrix, with $j>i$, provided that the $i$th entry of the $j$th row is non-zero. If no such row exists, this implies that all elements below the diagonal are zero already in column $i$ and one can proceed with the next column. One can formulate this in matrix terms by stating that there exists a permutation matrix $P$, which pivots rows, such that $P\cdot A=L\cdot U$. Any matrix $A$ is LU-factorizable \textit{with pivoting} \cite{num}.
 
-To implement the described procedure in \langfor, we first assume that the input matrices are LU-factorizable, and  deal with general matrices later on. The following result tells us how to do this in $\langforf{f_/}$; that is, in \langfor extended with the \textit{division} function  $f_/:\RR^2\to\RR$, which is defined by $f_/(x,y)=:x/y$, for $y\neq 0$, and $f_/(x,y)\coloneqq   0$, otherwise. %, given by $f_/(x,y) \coloneqq   x/y$, where we define division by zero to be equal zero.
+To implement the described procedure in \langfor, we first assume that the input matrices are LU-factorizable, and  deal with general matrices later on. The following result tells us how to do this in $\langforf{f_/}$; that is, in \langfor extended with the \textit{division} function  $f_/:\RR^2\to\RR$, which is defined by $f_/(x,y)\coloneqq x/y$, for $y\neq 0$, and $f_/(x,y)\coloneqq   0$, otherwise. %, given by $f_/(x,y) \coloneqq   x/y$, where we define division by zero to be equal zero.
 
 \begin{proposition}\label{prop:gauss}
 There exist $\langforf{f_/}$ expressions $e_L(V)$ and $e_U(V)$ such that
@@ -41,8 +79,8 @@ by means of
  expression:
 $$\ccol{V}{y} \coloneqq   \Sigma v. \  \EDIT{\isless}(y,v)\cdot(v^T\cdot V \cdot y)\times v.$$
 Indeed, when $V$ is assigned to a matrix $A$ and $y$ to $b_i$, we initially assign the zero (column) vector to $A_0$, i.e., 
-$A_0\coloneqq  \mathbf{0}$, and then in consecutive iterations,  $A_j\coloneqq  A_{j-1}+ (b_j^T\cdot A\cdot b_i)\times b_i$ if $j>i$ (because $\EDIT{\isless}(b_i,b_j)=1$ if $j>i$) and $A_j=:A_{j-1}$ otherwise (because $\EDIT{\isless}(b_i,b_j)=0$ for $j\leq i$). The result of this evaluation is the desired column vector.
-Using $\ccol{V}{y}$, we can now compute $T_i$ by the following expression:
+$A_0\coloneqq  \mathbf{0}$, and then in consecutive iterations,  $A_j\coloneqq  A_{j-1}+ (b_j^T\cdot A\cdot b_i)\times b_i$ if $j>i$ (because $\EDIT{\isless}(b_i,b_j)=1$ if $j>i$) and $A_j\coloneqq A_{j-1}$ otherwise (because $\EDIT{\isless}(b_i,b_j)=0$ for $j\leq i$). The result of this evaluation is the desired column vector.
+Using $\ccol{V}{y}$, we can now compute $T_i$ by the following expression (which corresponds to function GETREDUCEMATRIX in Algorithm~\ref{alg:lu}):
 $$\red{V}{y} \coloneqq   e_{\mathsf{Id}}+ f_/\bigl(\ccol{V}{y},-(y^T\cdot V\cdot y)\times e_{\ones}(y)\bigr)\cdot y^T.$$
 When $V$ is assigned to $A$ and $y$ to $b_i$, $f_/(\ccol{A}{b_i},-(b_i^T\cdot A\cdot b_i)\times \ones)$ is equal to the vector $c_i$ used in the definition of $T_i$. To perform the reduction steps for all columns, we consider
 the expression:
@@ -50,7 +88,7 @@ $$
 e_{U}(V) \coloneqq    \left( \initf{e_{\mathsf{Id}}}{y}{X}{\red{X\cdot V}{y}\cdot X} \right) \cdot V.
 $$
 That is, when $V$ is assigned $A$, $X$ will be initially $A_0\coloneqq  e_{\mathsf{Id}}$, and then
-$A_i\coloneqq  \red{A_{i-1}\cdot A}{b_i}=T_i\cdot T_{i-1}\cdots T_1\cdot A$, as desired.
+$A_i\coloneqq  \red{A_{i-1}\cdot A}{b_i}\cdot A=T_i\cdot T_{i-1}\cdots T_1\cdot A$, as desired.
 
 In order to construct $e_L(V)$, we will use the fact that $e_U(A)=T_n\cdot\cdots\cdot T_1\cdot A$ with $L^{-1}=T_n\cdot\cdots\cdot T_1$, and that each $T_i$ can easily be inverted. For this, let
     $$
