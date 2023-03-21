@@ -247,9 +247,7 @@ e_{\mathsf{max}-i}\coloneqq \underbrace{\mathsf{prev}(\cdots \mathsf{prev}}_{i\t
 
 Finally, later on in the proof of Proposition~\ref{prop:inverse} we will need  matrix powers $\mathsf{Next}^i$ of $\mathsf{Next}$, where $i$ is specified as
 a canonical vector $b_i^n$. We can express this in \langfor by using
-\begin{align*}
-e_{\mathsf{getNextMatrix}}(v)&\coloneqq \ffor{w}{X = e_\mathsf{Id}}{ X \cdot \Big( \EDIT{\islessorequal}(w,v)\times e_{\mathsf{Next}} + (1 - \EDIT{\islessorequal}(w,v))\times e_{\mathsf{Id}} \Big) }
-\end{align*}
+$$e_{\mathsf{getNextMatrix}}(v)\coloneqq \ffor{w}{X = e_\mathsf{Id}}{ X \cdot \Big( \EDIT{\islessorequal}(w,v)\times e_{\mathsf{Next}} + (1 - \EDIT{\islessorequal}(w,v))\times e_{\mathsf{Id}} \Big) }$$
 which, when $v$ is interpreted as canonical vector $b_i^n$, output 
 $\mathsf{Next}^i$. 
 Intuitively, in computing  $e_{\mathsf{getNextMatrix}}(b_i^n)$, we start the for-loop by initializing $X$ to the identity via the expression $e_{\mathsf{Id}}$. Following this, the matrix stored in $X$ is multiplied by $\mathsf{Next}$ for the first $i$ canonical vectors (as specified by the subexpression $\EDIT{\islessorequal}(w,v)\times e_{\mathsf{Next}}$), and by the identity matrix for the canonical vectors $b_{i+1}^n, \ldots , b_n^n$. 
@@ -260,6 +258,17 @@ we heavily rely on order information in the next sections when computing the inv
 
 
 \subsection{Useful shorthands and simplifications}\label{sec:queries:simp}
+\EDIT{
+\paragraph{Flux control}
+
+The following definition proves to be useful.
+
+$$\IfThenElse{e_1}{e_2}{e_3}\coloneqq e_1\times e_2 + (1-e_1)\times e_3.$$
+
+For example, the expression $e_{\mathsf{getNextMatrix}}(v)$ defined in the previous section can be written as 
+$$e_{\mathsf{getNextMatrix}}(v)\coloneqq \ffor{w}{X = e_\mathsf{Id}}{ X \cdot \Big( \IfThenElse{\islessorequal(w,v)}{e_{\mathsf{Next}}}{e_{\mathsf{Id}}} \Big) }.$$
+}
+
 \paragraph{Iteration based on sum and product.} When defining $4$-cliques (Example \ref{ex:fourcliques}), the diagonal matrix (Example \ref{ex:diag}), or the ones vector algorithm (Example \ref{ex:onevec}), we 
  only update $X$ by adding some matrix to it. This restricted form of for-loop will prove useful throughout the paper, and we therefore introduce it as a special operator. That is, we define:
 $$\Sigma v. \, e \coloneqq  \ffor{v}{X}{X + e}.$$
