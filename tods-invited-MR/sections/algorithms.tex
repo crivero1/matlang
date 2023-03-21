@@ -12,35 +12,39 @@ compute LU decompositions of matrices. These decompositions form the basis of ma
 \subsection{LU decomposition}
 
 \begin{algorithm}[t]
-    \caption{LU pseudocode}
+    \caption{\EDIT{LU pseudocode}}
     \label{alg:lu}
     \begin{algorithmic}[1]
+        % \Function{LU}{$A$}
+        %     \State{$A_0\coloneqq A$}
+        %     \For{$i=1,2,\ldots,n$}
+        %         \State{$A_i\coloneqq$ GETREDUCEMATRIX$(A_{i-1},i)\cdot A_{i-1}$}
+        %     \EndFor
+        %     \Return{$A_n$}
+        % \EndFunction
+        % \State{ }
         \Function{LU}{$A$}
-            \State{$A_0\coloneqq A$}
-            \For{$i=1,2,\ldots,n$}
-                \State{$A_i\coloneqq$ GETREDUCEMATRIX$(A_{i-1},i)\cdot A_{i-1}$}
-            \EndFor
-            \Return{$A_n$}
-        \EndFunction
-        \State{ }
-        \Function{GetL}{$A$}
             \State{$A_0\coloneqq A$}
             \State{$T_0\coloneqq I$}
             \For{$i=1,2,\ldots,n$}
                 \State{$A_i\coloneqq T_{i-1}\cdot A_{i-1}$}
-                \State{$T_i\coloneqq$ GETREDUCEMATRIX$(A_i,i)\cdot T_{i-1}$}
+                \State{$L^{-1}_i\coloneqq$ GETREDUCEMATRIX$(A_i,i)\cdot T_{i-1}$}\Comment{Note that $L_n^{-1}=T_1\cdot\cdots\cdot T_n$}
             \EndFor
-            \Return{$A_n$}
+            \State{}
+            \State{$L\coloneqq (-1)\times L^{-1}_n + 2\times I$ }\Comment{This is equal to $T_1^{-1}\cdot\cdots\cdot T_n^{-1}$}
+            \State{$U\coloneqq A_n$ }
+            \State{}
+            \Return{$L,U$}
         \EndFunction
         \State{ }
-        \Function{GETREDUCEMATRIX}{$A,i$}
+        \Function{GETREDUCEMATRIX}{$A,i$}\Comment{This computes $T_i$}
             \State{$c\coloneqq [0,\ldots,0]^T$}
             \For{$j=i+1,\ldots,n$}
                 \State{ $c_{j,1} \coloneqq -\dfrac{A_{ij}}{A_{ii}}$}\Comment{Assuming that $A_{ii}\neq 0$}
                 % \State{$T^{(i)}_{ij}\coloneqq A_{ij}+c_{j}A_{ii}$}
             \EndFor
             \State{}
-            \State{$b\coloneqq [0,\ldots,1,\ldots,0]^T$}\Comment{$i$-th canonical vector}
+            \State{$b_i\coloneqq [0,\ldots,1,\ldots,0]^T$}\Comment{$i$-th canonical vector}
             \State{$T\coloneqq I + c\cdot b^T$}
             \State{}
             \Return{$T$}
@@ -52,7 +56,7 @@ A lower-upper (LU) decomposition factors a matrix $A$ as the product of a lower 
 This decomposition, and more generally LU decomposition with row pivoting (PLU),  underlies many linear algebra algorithms and 
 we next show that \langfor can compute these decompositions.
 
-LU decomposition (described in Algorithm~\ref{alg:lu}) can be seen as a matrix form of Gaussian elimination in which the columns of $A$
+LU decomposition \EDIT{(described in Algorithm~\ref{alg:lu})} can be seen as a matrix form of Gaussian elimination in which the columns of $A$
 are reduced, one by one, to obtain the matrix $U$. The reduction of columns of $A$ is achieved
 as follows. Consider the first column $[A_{11},\ldots,A_{n1}]^T$ of $A$ and  define 
 $c_1 \coloneqq   [0, \alpha_{21},\ldots, \alpha_{n1}]^T$ 
