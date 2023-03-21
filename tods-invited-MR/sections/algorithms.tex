@@ -20,7 +20,7 @@ compute LU decompositions of matrices. These decompositions form the basis of ma
             \State{$T_0\coloneqq I$}
             \For{$i=1,2,\ldots,n$}
                 \State{$A_i\coloneqq T_{i-1}\cdot A_{i-1}$}
-                \State{$L^{-1}_i\coloneqq$ GETREDUCEMATRIX$(A_i,i)\cdot T_{i-1}$}\Comment{Note that $L_n^{-1}=T_1\cdot\cdots\cdot T_n$}
+                \State{$L^{-1}_i\coloneqq$ GETREDUCEMATRIX$(A_i,i)\cdot T_{i-1}$}\Comment{Note that $L_i^{-1}=T_i\cdot\cdots\cdot T_1$}
             \EndFor
             \State{}
             \State{$L\coloneqq (-1)\times L^{-1}_n + 2\times I$ }\Comment{This is equal to $T_1^{-1}\cdot\cdots\cdot T_n^{-1}$}
