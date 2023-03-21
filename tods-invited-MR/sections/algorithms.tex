@@ -15,14 +15,6 @@ compute LU decompositions of matrices. These decompositions form the basis of ma
     \caption{\EDIT{LU pseudocode}}
     \label{alg:lu}
     \begin{algorithmic}[1]
-        % \Function{LU}{$A$}
-        %     \State{$A_0\coloneqq A$}
-        %     \For{$i=1,2,\ldots,n$}
-        %         \State{$A_i\coloneqq$ GETREDUCEMATRIX$(A_{i-1},i)\cdot A_{i-1}$}
-        %     \EndFor
-        %     \Return{$A_n$}
-        % \EndFunction
-        % \State{ }
         \Function{LU}{$A$}
             \State{$A_0\coloneqq A$}
             \State{$T_0\coloneqq I$}
