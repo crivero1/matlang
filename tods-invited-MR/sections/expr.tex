@@ -738,14 +738,14 @@ In particular, we use  $e_{\mathsf{min}+\mathsf{i}}$ and  $e_{\mathsf{max}-\math
 to obtain the $(1+i)$th and $(n-i)$th canonical vectors, respectively, and also use $e_{\mathsf{Next}}$ and $e_{\mathsf{Prev}}$, expressions that return matrices that allow to
 move from one canonical vector to the next and previous canonical vector, respectively. In addition, we use $\mathsf{min}$, $\mathsf{max}$ and $\EDIT{\islessorequal}$,  expressions returning
 $1$ when their input vector(s) are the first canonical vector, the last canonical vector, and consecutive canonical vectors, respectively, and $0$ otherwise. Given these, we also use the following derived expressions:
-\vspace{-4ex}
+% \vspace{-4ex}
 \begin{gather*}
    e_{V}\coloneqq e_{\mathsf{max}-2} \quad e_{G_{\mathsf{top}}}\coloneqq e_{\mathsf{max}-1} \quad     e_{V_{\mathsf{top}}}\coloneqq e_{\mathsf{max}} \\ 
   V_{\mathsf{top}}\coloneqq  X\cdot e_{V_{\mathsf{top}}} \quad  G_{\mathsf{top}} \coloneqq X\cdot e_{G_{\mathsf{top}}}\\
      V\coloneqq  \Iden{V_{\mathsf{top}}} \cdot X \cdot e_V \quad
   G \coloneqq  \Iden{G_{\mathsf{top}}}\cdot X \cdot \Iden{e_{\mathsf{max}-3}}\\
    \Iden{b_i}\coloneqq \ssum v. \, \EDIT{\islessorequal}(v,b_i)\times (v\cdot v^T)  \\
-\pondIden{b_i}{c}\coloneqq \ssum v. \, \bigl(c\cdot v^T\cdot b_i + (1- v^T\cdot b_i)\bigr)\times (v\cdot v^T).
+\pondIden{b_i}{c}\coloneqq \ssum v. \, \EDIT{\IfThenElse{v^T\cdot b_i}{c\times (v\cdot v^T)}{(v\cdot v^T)}}.
  \end{gather*}
 Here, $e_V$, $e_{G_{\mathsf{top}}}$ and $e_{V_{\mathsf{top}}}$ return the canonical vectors identifying the columns in $X$ for the value stack (column $n-2$) and columns holding the positions of the top elements in the the gate stack (column $n-1$) and value stack (column $n$), respectively.
 
@@ -832,22 +832,43 @@ These three trailing zeroes do not change which gate an id represents. In this w
 \paragraph{$\blacktriangleright$ The overall expression encoding {\normalfont \textsc{Evaluate}} for $n\geq n_0$}
 We simulate $\textsc{Evaluate}(\Phi_n,A)$ for $n\geq n_0$ by the expression
 $e_{\Phi}^{\geq n_0}\coloneqq  e_{\mathsf{min}}^T\cdot e_{\mathsf{iterate}}\cdot e_{\max -2}$ with
-    \begin{align*}\allowdisplaybreaks
-		e_{\mathsf{iterate}}&\coloneqq  \ffor{v_1}{X_1} \\
-		& \qquad\ffor{v_2}{X_2=X_1}  \\
-		& \qquad \quad \ffor{v_3}{X_3=X_2}  \cdots\\
-		& \qquad \qquad\quad \ffor{v_k}{X_{k}=X_{k-1}} \Biggl(\Bigl(\bigl( \sprod_{i=1}^k \mathsf{min}(v_i)\bigr) \times e_{\mathsf{start}}\Bigr) + 
-        \biggl( \bigl(1- \sprod_{i=1}^k \mathsf{min}(v_i)\bigr)\times{}\\
-        &\hspace{0.3em} \biggl( \bigl(1 -\mathsf{min}(G_{\mathsf{top}})\cdot \mathsf{min}(V_{\mathsf{top}})\bigr) \times \Bigl(\bigl( 1 - G_{\mathsf{top}}^T\cdot V_{\mathsf{top}}\bigr) \times e_{\mathsf{extend}} + 
-        \bigl(G_{\mathsf{top}}^T\cdot V_{\mathsf{top}}\bigr) \times e_{\mathsf{aggregate}}\Bigl)  \\
-        &\hspace{8cm}+\bigl(\mathsf{min}(G_{\mathsf{top}})\cdot \mathsf{min}(V_{\mathsf{top}})\bigr)\times X_k\biggr)\Biggr).
-	   \end{align*}
-In the expression $e_{\mathsf{iterate}}$, we basically perform $n^k$ updates to matrix variable $X_k$ (which takes the role of the matrix variable $X$ mentioned before).
-When all $v_1,\ldots,v_k$ are initially equal to $b_1^n$, we are at ``timestamp'' $0$ and start the evaluation by 
-calling expression $e_{\mathsf{start}}$ which encodes line 3 of  Algorithm~\ref{alg:eval_code}. This case is determined by the indicator function
-$ \sprod_{i=1}^k \mathsf{min}(v_i)$. For all subsequent assignments of $v_1,\ldots,v_k$, i.e. when $1- \sprod_{i=1}^k \mathsf{min}(v_i)$ is equal to $1$, and thus for all later ``timestamps'', we check whether or not we reach the end of the algorithm. This happens when both $G_{\mathsf{top}}$ and $V_{\mathsf{top}}$ are equal to $b_1^n$
+    % \begin{align*}\allowdisplaybreaks
+	% 	e_{\mathsf{iterate}}&\coloneqq  \ffor{v_1}{X_1} \\
+	% 	& \qquad\ffor{v_2}{X_2=X_1}  \\
+	% 	& \qquad \quad \ffor{v_3}{X_3=X_2}  \cdots\\
+	% 	& \qquad \qquad\quad \ffor{v_k}{X_{k}=X_{k-1}} \Biggl(\Bigl(\bigl( \sprod_{i=1}^k \mathsf{min}(v_i)\bigr) \times e_{\mathsf{start}}\Bigr) + 
+    %     \biggl( \bigl(1- \sprod_{i=1}^k \mathsf{min}(v_i)\bigr)\times{}\\
+    %     &\hspace{0.3em} \biggl( \bigl(1 -\mathsf{min}(G_{\mathsf{top}})\cdot \mathsf{min}(V_{\mathsf{top}})\bigr) \times \Bigl(\bigl( 1 - G_{\mathsf{top}}^T\cdot V_{\mathsf{top}}\bigr) \times e_{\mathsf{extend}} + 
+    %     \bigl(G_{\mathsf{top}}^T\cdot V_{\mathsf{top}}\bigr) \times e_{\mathsf{aggregate}}\Bigl)  \\
+    %     &\hspace{8cm}+\bigl(\mathsf{min}(G_{\mathsf{top}})\cdot \mathsf{min}(V_{\mathsf{top}})\bigr)\times X_k\biggr)\Biggr).
+	%    \end{align*}
+    \EDIT{\begin{align*}\allowdisplaybreaks
+        e_{\mathsf{iterate}}&\coloneqq  \ffor{v_1}{X_1=e_{\mathsf{start}}} \\
+        & \qquad\ffor{v_2}{X_2=X_1}  \\
+        & \qquad \quad \ffor{v_3}{X_3=X_2}  \cdots\\
+        & \qquad \qquad\quad \ffor{v_k}{X_{k}=X_{k-1}}\\
+        & \IfThenElse{\mathsf{min}(G_{\mathsf{top}})\cdot \mathsf{min}(V_{\mathsf{top}})}{X_k}{\bigl( \IfThenElse{G_{\mathsf{top}}^T\cdot V_{\mathsf{top}}}{e_{\mathsf{aggregate}}}{e_{\mathsf{extend}}} \bigr)} \\
+    \end{align*}
+    }
+In the expression $e_{\mathsf{iterate}}$, we basically perform $n^k$ updates to matrix variable $X_k$ (which takes the role of the matrix variable $X$ mentioned before)
+\EDIT{in the following sense: the expressions $e_{\mathsf{extend}}$ or $e_{\mathsf{aggregate}}$ use $X_k$ and \emph{return} an updated $X_k$ for the next iteration.
+We start the evaluation by setting $X_k=e_{\mathsf{start}}$ which encodes line 3 of Algorithm~\ref{alg:eval_code}.
+For all iterations we check whether or not the end of the algorithm has been reached. This happens when both $G_{\mathsf{top}}$ and $V_{\mathsf{top}}$ are equal to $b_1^n$
 and thus $\size(\cG)=\size(\cV)=1$. This is checked by $\mathsf{min}(G_{\mathsf{top}})\cdot \mathsf{min}(V_{\mathsf{top}})$.
-In that case, we stop updating $X_k$ (last summand in expression $e_{\mathsf{iterate}}$). Otherwise, when $1-\mathsf{min}(G_{\mathsf{top}})\cdot \mathsf{min}(V_{\mathsf{top}})$ is $1$, we check whether $\size(\cG)\neq \size(\cV)$ or $\size(\cG)=\size(\cV)$. In the former case, we call expression $e_{\mathsf{extend}}$, which encodes the function $\textsc{Extend}(\cG,\cV,A)$, in the latter case we call expression $e_{\mathsf{aggregate}}$, which encodes function $\textsc{Aggregate}(\cG,\cV)$. These two cases are checked by the indicator functions $1 - G_{\mathsf{top}}^T\cdot V_{\mathsf{top}}$ and $G_{\mathsf{top}}^T\cdot V_{\mathsf{top}}$, respectively. After performing $n^k$ iterations, $e_\Phi^{\geq n_0}$ retrieves entry $(1,\max-2)$ from the value stack column returned by $e_{\mathsf{iterate}}$. It now remains to explain the expressions $e_{\mathsf{start}}$, $e_{\mathsf{extend}}$ and $e_{\mathsf{aggregate}}$.
+In that case, we stop updating $X_k$ in the sense that we return $X_k$ until the end of all iterations.
+}
+
+Otherwise, when \EDIT{$\mathsf{min}(G_{\mathsf{top}})\cdot \mathsf{min}(V_{\mathsf{top}})$ is $0$}, we check whether \EDIT{$\size(\cG)=\size(\cV)$ or $\size(\cG)\neq \size(\cV)$.}
+In the former case \EDIT{(when $G_{\mathsf{top}}^T\cdot V_{\mathsf{top}}$ is $1$)}, we call expression $e_{\mathsf{aggregate}}$, which encodes function $\textsc{Aggregate}(\cG,\cV)$;
+in the latter case \EDIT{(when $G_{\mathsf{top}}^T\cdot V_{\mathsf{top}}$ is $0$)}, we call expression $e_{\mathsf{extend}}$, which encodes the function $\textsc{Extend}(\cG,\cV,A)$.
+After performing $n^k$ iterations, $e_\Phi^{\geq n_0}$ retrieves entry $(1,\max-2)$ from the value stack column returned by $e_{\mathsf{iterate}}$. It now remains to explain the expressions $e_{\mathsf{start}}$, $e_{\mathsf{extend}}$ and $e_{\mathsf{aggregate}}$.
+
+% When all $v_1,\ldots,v_k$ are initially equal to $b_1^n$, we are at ``timestamp'' $0$ and start the evaluation by 
+% calling expression $e_{\mathsf{start}}$ which encodes line 3 of  Algorithm~\ref{alg:eval_code}. This case is determined by the indicator function
+% $ \sprod_{i=1}^k \mathsf{min}(v_i)$. For all subsequent assignments of $v_1,\ldots,v_k$, i.e. when $1- \sprod_{i=1}^k \mathsf{min}(v_i)$ is equal to $1$, and thus for all later ``timestamps'', we check whether or not we reach the end of the algorithm. This happens when both $G_{\mathsf{top}}$ and $V_{\mathsf{top}}$ are equal to $b_1^n$
+% and thus $\size(\cG)=\size(\cV)=1$. This is checked by $\mathsf{min}(G_{\mathsf{top}})\cdot \mathsf{min}(V_{\mathsf{top}})$.
+% In that case, we stop updating $X_k$ (last summand in expression $e_{\mathsf{iterate}}$).
+% Otherwise, when $1-\mathsf{min}(G_{\mathsf{top}})\cdot \mathsf{min}(V_{\mathsf{top}})$ is $1$, we check whether $\size(\cG)\neq \size(\cV)$ or $\size(\cG)=\size(\cV)$. In the former case, we call expression $e_{\mathsf{extend}}$, which encodes the function $\textsc{Extend}(\cG,\cV,A)$, in the latter case we call expression $e_{\mathsf{aggregate}}$, which encodes function $\textsc{Aggregate}(\cG,\cV)$. These two cases are checked by the indicator functions $1 - G_{\mathsf{top}}^T\cdot V_{\mathsf{top}}$ and $G_{\mathsf{top}}^T\cdot V_{\mathsf{top}}$, respectively. After performing $n^k$ iterations, $e_\Phi^{\geq n_0}$ retrieves entry $(1,\max-2)$ from the value stack column returned by $e_{\mathsf{iterate}}$. It now remains to explain the expressions $e_{\mathsf{start}}$, $e_{\mathsf{extend}}$ and $e_{\mathsf{aggregate}}$.
 
 \begin{figure}
 	$$
@@ -1079,9 +1100,11 @@ $\Bigl(V + \bigl( v^T \cdot e_{\mathsf{Next}}\cdot V_{\mathsf{top}} \cdot \textt
 \paragraph{$\blacktriangleright$ The expression $e_{\mathsf{aggregate}}$ simulating {\normalfont\textsc{Aggregate}}}
 To simulate $\textsc{Aggregate}$ we define
 $$
-	e_{\mathsf{aggregate}}\coloneqq e_{\mathsf{pop}}+e_{\mathsf{agg\_plus}}+e_{\mathsf{agg\_prod}}+e_{\mathsf{agg\_not\_last}}+e_{\mathsf{agg\_last}},
-	$$
-where  $e_{\mathsf{pop}}$, $e_{\mathsf{agg\_plus}}$, $e_{\mathsf{agg\_prod}}$, $e_{\mathsf{agg\_not\_last}}$ and $e_{\mathsf{agg\_last}}$ correspond to the different cases in \textsc{Aggregate} (lines 25--26, 27--28, 29--30, and 31--32 in Algorithm~\ref{alg:eval_code}, respectively). More precisely, we define:
+e_{\mathsf{aggregate}}\coloneqq e_{\mathsf{pop}}+e_{\mathsf{agg\_plus}}+e_{\mathsf{agg\_prod}}+e_{\mathsf{agg\_not\_last}}+e_{\mathsf{agg\_last}},
+$$
+where  $e_{\mathsf{pop}}$, $e_{\mathsf{agg\_plus}}$, $e_{\mathsf{agg\_prod}}$, $e_{\mathsf{agg\_not\_last}}$ and $e_{\mathsf{agg\_last}}$ correspond to the different cases in \textsc{Aggregate} (lines 25--26, 27--28, 29--30, and 31--32 in Algorithm~\ref{alg:eval_code}, respectively).
+These expressions are defined as:
+
 %     The $\langfor$ expression equivalent to algorithm \ref{alg:agg_code} is
 %
 % 	% $$\text{AGG}\coloneqq \text{POP} + \text{AGG{\_}PLUS}+\text{AGG{\_}PROD}+\text{IS{\_}NOT{\_}LAST}+\text{IS{\_}LAST}.$$
@@ -1101,17 +1124,136 @@ e_{\mathsf{agg\_not\_last}} &\coloneqq  \texttt{isnotlast}\bigl(G^T \cdot e_{\ma
 &\hspace{3cm}\times \biggl(G_{\mathsf{top}} \cdot \texttt{nextgate}\bigl(G^T \cdot e_{\mathsf{Prev}}\cdot G_{\mathsf{top}},G^T \cdot G_{\mathsf{top}}\bigr)^T + G_{\mathsf{top}}\cdot e_{G_{\mathsf{top}}}^T \biggr) \\
  e_{\mathsf{agg\_last}}&\coloneqq  \Bigl( 1 - \texttt{isnotlast}\bigl(G^T \cdot e_{\mathsf{Prev}}\cdot G_{\mathsf{top}},G^T \cdot G_{\mathsf{top}}\bigr)\Bigr)\times \Bigl(e_{\mathsf{Prev}}\cdot G_{\mathsf{top}} \cdot e_{G_{\mathsf{top}}}^T \Bigr).
     \end{align*}
-We depict the effect of these expressions (always in combination with $e_{\mathsf{pop}}$) on the matrix $X$ in Figure~\ref{fig:langforevalalg2}.
+\EDIT{It is important to note that $e_{\mathsf{agg\_plus}}$ and $e_{\mathsf{agg\_prod}}$ are mutually exclusive, and so are  $e_{\mathsf{agg\_not\_last}}$ and $e_{\mathsf{agg\_last}}$.
+Thus, the following cases are the only possible outputs of $e_{\mathsf{aggregate}}$ in each iteration:
+\begin{itemize}
+    \item $e_{\mathsf{pop}} + e_{\mathsf{agg\_plus}} + e_{\mathsf{agg\_not\_last}}$
+    \item $e_{\mathsf{pop}} + e_{\mathsf{agg\_plus}} + e_{\mathsf{agg\_last}}$
+    \item $e_{\mathsf{pop}} + e_{\mathsf{agg\_prod}} + e_{\mathsf{agg\_not\_last}}$
+    \item $e_{\mathsf{pop}} + e_{\mathsf{agg\_prod}} + e_{\mathsf{agg\_last}}$
+\end{itemize}
+}
+% We depict the effect of these expressions (always in combination with $e_{\mathsf{pop}}$) on the matrix $X$ in Figure~\ref{fig:langforevalalg2}.
+\EDIT{We depict how each of these expressions use $X$ and output \emph{an independent part} of the required updated $X$ in Figure~\ref{fig:langforevalalg2}.}
 For starters, $e_{\mathsf{pop}}$ copies the id stack up position $e_{\mathsf{Prev}}\cdot G_{\mathsf{top}}$ (so pops
 the gate stack) and already moves up the $1$ indicating where the top element of the value stack will be. All other
 entries will be zero. Then, similarly as before, the gate ids stored in $G^T\cdot e_{\mathsf{Prev}}\cdot G_{\mathsf{top}}$ and $G^T\cdot G_{\mathsf{top}}$ are used to distinguish between the different cases. The expressions $e_{\mathsf{agg\_plus}}$ and $e_{\mathsf{agg\_prod}}$ copy the popped value stack (using $\Iden{e_{\mathsf{Prev}}\cdot V_{\mathsf{top}}} \cdot V$) and
 update it additively and multiplicatively, respectively, with the value $V^T \cdot V_{\mathsf{top}}$. Finally, $e_{\mathsf{agg\_not\_last}}$ and $e_{\mathsf{agg\_last}}$ update the top position of the gate stack. That is,
 if we dealt with the last child gate of $G^T\cdot G_{\mathsf{top}}$, we simply move up the $1$, indicating the top element in the gate stack, by means of $e_{\mathsf{Prev}}\cdot G_{\mathsf{top}} \cdot e_{G_{\mathsf{top}}}^T$. Otherwise, $e_{\mathsf{agg\_not\_last}}$ reinstates $G_{\mathsf{top}}\cdot e_{G_{\mathsf{top}}}^T$ (the stack remains of the same size)
 and adds the next gate's id to $G$ in the row identified by $G_{\mathsf{top}}$.
-   
   
 \begin{figure}
-	$$
+    $$
+\underbrace{\left[\begin{smallmatrix}
+    \texttt{id}_1 & v_1 & 0 & 0 \, \\
+    \texttt{id}_2 & v_2 & 0 & 0 \\
+    \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+    \texttt{id}_{j-1} & v_{j-1} & 0 & 0 \\
+    \texttt{id}_j & v_j & 1 & 1 \\
+        0 & 0 & 0 & 0 \\
+    \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+    0 & 0 & 0 & 0
+\end{smallmatrix}\right]}_{X},
+\underbrace{\left[\begin{smallmatrix}
+    \texttt{id}_1 & 0 & 0 & 0 \, \\
+    \texttt{id}_2 & 0 & 0 & 0 \\
+    \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+    \texttt{id}_{j-1} & 0 & 0 & 1 \\
+        0 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0 \\
+    \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+    0 & 0 & 0 & 0
+\end{smallmatrix}\right]}_{e_{\mathsf{pop}}},
+\underbrace{\left[\begin{smallmatrix}
+    0 \cdots 0 & v_1 & 0 & 0 \, \\
+    0 \cdots 0 & v_2 & 0 & 0 \\
+    \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+    0 \cdots 0 & v_{j-1} + v_{j} & 0 & 0 \\
+    0 \cdots 0 & 0 & 0 & 0 \\
+    0 \cdots 0 & 0 & 0 & 0 \\
+    \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+    0 \cdots 0 & 0 & 0 & 0
+\end{smallmatrix}\right]}_{e_{\mathsf{agg\_plus}}},
+\underbrace{\left[\begin{smallmatrix}
+    0 \cdots 0 & v_1 & 0 & 0 \, \\
+    0 \cdots 0 & v_2 & 0 & 0 \\
+    \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+    0 \cdots 0 & v_{j-1}v_{j} & 0 & 0 \\
+    0 \cdots 0 & 0 & 0 & 0 \\
+    0 \cdots 0 & 0 & 0 & 0 \\
+    \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+    0 \cdots 0 & 0 & 0 & 0
+\end{smallmatrix}\right]}_{e_{\mathsf{agg\_prod}}},
+\underbrace{\left[\begin{smallmatrix}
+    0\cdots 0 & 0 & 0 & 0  \, \\
+    0\cdots 0 & 0 & 0 & 0 \\
+    \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+    0\cdots 0 & 0 & 0 & 0 \\
+    \texttt{id}_{j+1} & 0 & 1 & 0 \\
+    0\cdots 0 & 0 & 0 & 0 \\
+    \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+    0\cdots 0 & 0 & 0 & 0
+\end{smallmatrix}\right]}_{e_{\mathsf{agg\_not\_last}}},
+\underbrace{\left[\begin{smallmatrix}
+    0\cdots 0 & 0 & 0 & 0  \, \\
+    0\cdots 0 & 0 & 0 & 0 \\
+    \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+    0\cdots 0 & 0 & 1 & 0 \\
+    0\cdots 0 & 0 & 0 & 0 \\
+    0\cdots 0 & 0 & 0 & 0 \\
+    \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+    0\cdots 0 & 0 & 0 & 0
+\end{smallmatrix}\right]}_{e_{\mathsf{agg\_last}}}
+$$
+
+$$
+\underbrace{\left[\begin{smallmatrix}
+    \texttt{id}_1 & 0 & 0 & 0 \, \\
+    \texttt{id}_2 & 0 & 0 & 0 \\
+    \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+    \texttt{id}_{j-1} & v_{j-1} + v_{j} & 0 & 1 \\
+    \texttt{id}_{j+1} & 0 & 1 & 0 \\
+        0 & 0 & 0 & 0 \\
+    \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+    0 & 0 & 0 & 0
+\end{smallmatrix}\right]}_{e_{\mathsf{pop}}+e_{\mathsf{agg\_plus}}+e_{\mathsf{agg\_not\_last}}},
+\hspace{1em}
+\underbrace{\left[\begin{smallmatrix}
+    \texttt{id}_1 & 0 & 0 & 0 \, \\
+    \texttt{id}_2 & 0 & 0 & 0 \\
+    \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+    \texttt{id}_{j-1} & v_{j-1}v_{j} & 0 & 1 \\
+    \texttt{id}_{j+1} & 0 & 1 & 0 \\
+        0 & 0 & 0 & 0 \\
+    \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+    0 & 0 & 0 & 0
+\end{smallmatrix}\right]}_{e_{\mathsf{pop}}+e_{\mathsf{agg\_prod}}+e_{\mathsf{agg\_not\_last}}},
+\hspace{1em}
+\underbrace{\left[\begin{smallmatrix}
+    \texttt{id}_1 & 0 & 0 & 0 \, \\
+    \texttt{id}_2 & 0 & 0 & 0 \\
+    \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+    \texttt{id}_{j-1} & v_{j-1} + v_{j} & 1 & 1 \\
+        0 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0 \\
+    \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+    0 & 0 & 0 & 0
+\end{smallmatrix}\right]}_{e_{\mathsf{pop}}+e_{\mathsf{agg\_plus}}+e_{\mathsf{agg\_last}}},
+\hspace{1em}
+\underbrace{\left[\begin{smallmatrix}
+    \texttt{id}_1 & 0 & 0 & 0 \, \\
+    \texttt{id}_2 & 0 & 0 & 0 \\
+    \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+    \texttt{id}_{j-1} & v_{j-1}v_{j} & 1 & 1 \\
+        0 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0 \\
+    \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+    0 & 0 & 0 & 0
+\end{smallmatrix}\right]}_{e_{\mathsf{pop}}+e_{\mathsf{agg\_prod}}+e_{\mathsf{agg\_last}}}
+$$
+
+	% $$
+%--
 % \underbrace{\left[\begin{smallmatrix}
 % 	       \texttt{id}_1 & 0 & 1 & 0\,\, \\
 % 	       \vphantom{\texttt{id}_1} 0 & 0 & 0 & 0 \\
@@ -1123,88 +1265,90 @@ and adds the next gate's id to $G$ in the row identified by $G_{\mathsf{top}}$.
 %           \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
 % 			   0 & 0 & 0 & 0
 % 	       \end{smallmatrix}\right]}_{e_{\mathsf{pop}}}
-		       \underbrace{\left[\begin{smallmatrix}
-        \texttt{id}_1 & v_1 & 0 & 0 \, \\
-        \texttt{id}_2 & v_2 & 0 & 0 \\
-        \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
-        \texttt{id}_{j-1} & v_{j-1} & 0 & 0 \\
-        \texttt{id}_j & v_j & 1 & 1 \\
-            0 & 0 & 0 & 0 \\
-        \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
-        0 & 0 & 0 & 0
-    \end{smallmatrix}\right]\mapsto
-	\left[\begin{smallmatrix}
-        \texttt{id}_1 & v_1 & 0 & 0 \\
-        \texttt{id}_2 & v_2 & 0 & 0 \\
-       \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
-        \texttt{id}_{j-1} & v_{j-1}+v_j & 1 & 1 \\
-       \vphantom{\texttt{id}_1} 0 & 0 & 0 & 0 \\
-        0 & 0 & 0 & 0 \\
-         \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
-        0 & 0 & 0 & 0
-    \end{smallmatrix}\right]}_{\text{Result of $e_{\mathsf{pop}}+e_{\mathsf{agg\_plus}}$}}
-		   		       \underbrace{\left[\begin{smallmatrix}
-		           \texttt{id}_1 & v_1 & 0 & 0 \, \\
-		           \texttt{id}_2 & v_2 & 0 & 0 \\
-		           \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
-		           \texttt{id}_{j-1} & v_{j-1} & 0 & 0 \\
-		           \texttt{id}_j & v_j & 1 & 1 \\
-		               0 & 0 & 0 & 0 \\
-		           \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
-		           0 & 0 & 0 & 0
-		       \end{smallmatrix}\right]\mapsto
-		   	\left[\begin{smallmatrix}
-		           \texttt{id}_1 & v_1 & 0 & 0 \\
-		           \texttt{id}_2 & v_2 & 0 & 0 \\
-		          \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
-		           \texttt{id}_{j-1} & v_{j-1}v_j & 1 & 1 \\
-		          \vphantom{\texttt{id}_1} 0 & 0 & 0 & 0 \\
-		           0 & 0 & 0 & 0 \\
-		            \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
-		           0 & 0 & 0 & 0
-		       \end{smallmatrix}\right]}_{\text{Result of $e_{\mathsf{pop}}+e_{\mathsf{agg\_prod}}$}}$$
-$$ \underbrace{\left[\begin{smallmatrix}
-        \texttt{id}_1 & v_1 & 0 & 0 \\
-        \texttt{id}_2 & v_2 & 0 & 0 \\
-          \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
-        \texttt{id}_{j-1} & v_{j-1} & 0 & 0 \\
-        \texttt{id}_j & v_j & 1 & 1 \\
-       	    \vphantom{\texttt{id}_1}  0 & 0 & 0 & 0 \\
-        \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
-        0 & 0 & 0 & 0
-    \end{smallmatrix}\right]\mapsto
-    \left[\begin{smallmatrix}
-        \texttt{id}_1 & v_1 & 0 & 0 \\
-        \texttt{id}_2 & v_2 & 0 & 0 \\
-        \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
-        \texttt{id}_{j-1} & v_{j-1} & 0 & 1 \\
-        \texttt{id}_{j+1} & 0 & 1 & 0 \\
-	    \vphantom{\texttt{id}_1}  0 & 0 & 0 & 0 \\
-         \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
-        0 & 0 & 0 & 0
-    \end{smallmatrix}\right]}_{\text{Result of $e_{\mathsf{pop}}+e_{\mathsf{agg\_not\_last}}$}}
-	\underbrace{\left[\begin{smallmatrix}
-	        \texttt{id}_1 & v_1 & 0 & 0 \\
-	        \texttt{id}_2 & v_2 & 0 & 0 \\
-	          \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
-	        \texttt{id}_{j-1} & v_{j-1} & 0 & 0 \\
-	        \texttt{id}_j & v_j & 1 & 1 \\
-	         \vphantom{\texttt{id}_1}  0 & 0 & 0 & 0 \\
-	        \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
-	        0 & 0 & 0 & 0
-	    \end{smallmatrix}\right]\mapsto
-	    \left[\begin{smallmatrix}
-	        \texttt{id}_1 & v_1 & 0 & 0 \\
-	        \texttt{id}_2 & v_2 & 0 & 0 \\
-	        \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
-	        \texttt{id}_{j-1} & v_{j-1} & 1 & 1 \\
-	       \vphantom{\texttt{id}_1}  0 & 0 & 0 & 0 \\
-		    \vphantom{\texttt{id}_1}  0 & 0 & 0 & 0 \\
-	         \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
-	        0 & 0 & 0 & 0
-	    \end{smallmatrix}\right]}_{\text{Result of $e_{\mathsf{pop}}+e_{\mathsf{agg\_last}}$}}
-	$$
-\caption{Result of updating $X$ by means of the \langfor expressions encoding the different cases in \textsc{Aggregate}.}\label{fig:langforevalalg2}
+%--
+% 		       \underbrace{\left[\begin{smallmatrix}
+%         \texttt{id}_1 & v_1 & 0 & 0 \, \\
+%         \texttt{id}_2 & v_2 & 0 & 0 \\
+%         \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+%         \texttt{id}_{j-1} & v_{j-1} & 0 & 0 \\
+%         \texttt{id}_j & v_j & 1 & 1 \\
+%             0 & 0 & 0 & 0 \\
+%         \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+%         0 & 0 & 0 & 0
+%     \end{smallmatrix}\right]\mapsto
+% 	\left[\begin{smallmatrix}
+%         \texttt{id}_1 & v_1 & 0 & 0 \\
+%         \texttt{id}_2 & v_2 & 0 & 0 \\
+%        \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+%         \texttt{id}_{j-1} & v_{j-1}+v_j & 1 & 1 \\
+%        \vphantom{\texttt{id}_1} 0 & 0 & 0 & 0 \\
+%         0 & 0 & 0 & 0 \\
+%          \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+%         0 & 0 & 0 & 0
+%     \end{smallmatrix}\right]}_{\text{Result of $e_{\mathsf{pop}}+e_{\mathsf{agg\_plus}}$}}
+% 		   		       \underbrace{\left[\begin{smallmatrix}
+% 		           \texttt{id}_1 & v_1 & 0 & 0 \, \\
+% 		           \texttt{id}_2 & v_2 & 0 & 0 \\
+% 		           \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+% 		           \texttt{id}_{j-1} & v_{j-1} & 0 & 0 \\
+% 		           \texttt{id}_j & v_j & 1 & 1 \\
+% 		               0 & 0 & 0 & 0 \\
+% 		           \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+% 		           0 & 0 & 0 & 0
+% 		       \end{smallmatrix}\right]\mapsto
+% 		   	\left[\begin{smallmatrix}
+% 		           \texttt{id}_1 & v_1 & 0 & 0 \\
+% 		           \texttt{id}_2 & v_2 & 0 & 0 \\
+% 		          \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+% 		           \texttt{id}_{j-1} & v_{j-1}v_j & 1 & 1 \\
+% 		          \vphantom{\texttt{id}_1} 0 & 0 & 0 & 0 \\
+% 		           0 & 0 & 0 & 0 \\
+% 		            \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+% 		           0 & 0 & 0 & 0
+% 		       \end{smallmatrix}\right]}_{\text{Result of $e_{\mathsf{pop}}+e_{\mathsf{agg\_prod}}$}}$$
+% $$ \underbrace{\left[\begin{smallmatrix}
+%         \texttt{id}_1 & v_1 & 0 & 0 \\
+%         \texttt{id}_2 & v_2 & 0 & 0 \\
+%           \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+%         \texttt{id}_{j-1} & v_{j-1} & 0 & 0 \\
+%         \texttt{id}_j & v_j & 1 & 1 \\
+%        	    \vphantom{\texttt{id}_1}  0 & 0 & 0 & 0 \\
+%         \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+%         0 & 0 & 0 & 0
+%     \end{smallmatrix}\right]\mapsto
+%     \left[\begin{smallmatrix}
+%         \texttt{id}_1 & v_1 & 0 & 0 \\
+%         \texttt{id}_2 & v_2 & 0 & 0 \\
+%         \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+%         \texttt{id}_{j-1} & v_{j-1} & 0 & 1 \\
+%         \texttt{id}_{j+1} & 0 & 1 & 0 \\
+% 	    \vphantom{\texttt{id}_1}  0 & 0 & 0 & 0 \\
+%          \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+%         0 & 0 & 0 & 0
+%     \end{smallmatrix}\right]}_{\text{Result of \EDIT{$e_{\mathsf{pop}}+e_{\mathsf{agg\_plus}}+e_{\mathsf{agg\_not\_last}} \text{ or } e_{\mathsf{pop}}+e_{\mathsf{agg\_prod}} + e_{\mathsf{agg\_not\_last}}$}}}
+%     \hspace{2em}
+% 	\underbrace{\left[\begin{smallmatrix}
+% 	        \texttt{id}_1 & v_1 & 0 & 0 \\
+% 	        \texttt{id}_2 & v_2 & 0 & 0 \\
+% 	          \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+% 	        \texttt{id}_{j-1} & v_{j-1} & 0 & 0 \\
+% 	        \texttt{id}_j & v_j & 1 & 1 \\
+% 	         \vphantom{\texttt{id}_1}  0 & 0 & 0 & 0 \\
+% 	        \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+% 	        0 & 0 & 0 & 0
+% 	    \end{smallmatrix}\right]\mapsto
+% 	    \left[\begin{smallmatrix}
+% 	        \texttt{id}_1 & v_1 & 0 & 0 \\
+% 	        \texttt{id}_2 & v_2 & 0 & 0 \\
+% 	        \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+% 	        \texttt{id}_{j-1} & v_{j-1} & 1 & 1 \\
+% 	       \vphantom{\texttt{id}_1}  0 & 0 & 0 & 0 \\
+% 		    \vphantom{\texttt{id}_1}  0 & 0 & 0 & 0 \\
+% 	         \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+% 	        0 & 0 & 0 & 0
+% 	    \end{smallmatrix}\right]}_{\text{Result of \EDIT{$e_{\mathsf{pop}}+e_{\mathsf{agg\_plus}}+e_{\mathsf{agg\_not\_last}} \text{ or } e_{\mathsf{pop}}+e_{\mathsf{agg\_prod}}+e_{\mathsf{agg\_last}}$}}}
+	% $$
+\caption{\EDIT{Result of updating $X$ by means of the \langfor expressions encoding the different cases in \textsc{Aggregate}.}}\label{fig:langforevalalg2}
 \end{figure}
 
 \medskip

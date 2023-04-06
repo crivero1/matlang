@@ -2,7 +2,7 @@
 % !TeX spellcheck = en_US
 We conclude the paper by zooming in on some special fragments of \langfor and in which matrices can take values from an arbitrary (commutative) semiring $K$. In particular, in Section~\ref{ss:sumML} we first consider \langsum, in which iterations can only perform
 additive updates, and show that it is equivalent in expressive power to the (positive)
-relational algebra on $K$-relations. We then extend \langsum such that also updates involving pointwise-multiplication (called Hadamard product) are allowed in Section~\ref{subsec:langprod}. The resulting fragment, \langprod, is shown to be equivalent in expressive power to weighted logics. Finally, in Section~\ref{subsec:langlinear}, we consider the fragment \langmprod in which updates involving sum and matrix multiplication, and possibly order information, is allowed. From the results in Section~\ref{sec:queries}, we infer that the latter fragment suffices to compute matrix inversion. An overview of the fragments and their relationships are depicted in Figure~\ref{thefigure}.
+relational algebra on $K$-relations. We then extend \langsum such that also updates involving pointwise-multiplication (called Hadamard product) are allowed in Section~\ref{subsec:langprod}. The resulting fragment, \langprod, is shown to be equivalent in expressive power to weighted logics. Finally, in Section~\ref{subsec:langlinear}, we consider the fragment \langmprod in which updates involving sum and matrix multiplication, and possibly order information, is allowed. From the results in Section~\ref{sec:queries}, we infer that the latter fragment suffices to compute matrix inversion. An overview of the fragments and their relationships are depicted in Figure~\ref{thefigure} \EDIT{on page~\pageref{thefigure}}.
 
 \subsection{Summation \lang and relational algebra}
 \label{ss:sumML}
@@ -14,7 +14,7 @@ relational algebra on $K$-relations. We then extend \langsum such that also upda
 Recall from Section \ref{sec:formatlang} that we introduced a special version of the for-loop that only allows to update the computed matrix by adding to it the result of some expression which depends on the current canonical vector. 
   That is, we defined the operator:
 $$\Sigma v. e \coloneqq  \ffor{v}{X}{X + e},$$
-where $e = e(v)$. We call \langsum the fragment of \langfor consisting of 
+where $e = e(v)$\EDIT{, i.e., it only depends on $v$ and not $X$}. We call \langsum the fragment of \langfor consisting of 
  the $\Sigma$ operator plus the ``core'' operators in \lang, namely, transposition, matrix multiplication and addition, scalar multiplication, and pointwise function applications.
 
 One property of \langsum is that it only allows expressions of polynomial degree. Indeed, one can easily show that \langsum can only create matrix entries that are polynomial in the dimension $n$. More precisely, we can show the following (proof omitted):
@@ -152,7 +152,7 @@ some schema $\Sch=(\Mnam,\size)$ satisfying  $\ttype(e) = \ttype(e')$. Then the 
 $$
 \qhadprod v. \  e \coloneqq  \ffor{v}{X\!=\!e_{\kone}}{X \circ e}.
 $$
-where $e_\kone$ is the \langfor expression for the matrix with the same type as $X$ and all entries equal to the $\kone$-element of $K$ (i.e., we need to initialize $X$ accordingly with the $\kprod$-operator).
+where $e = e(v)$\EDIT{, i.e., it only depends on $v$ and not $X$} and $e_\kone$ is the \langfor expression for the matrix with the same type as $X$ and all entries equal to the $\kone$-element of $K$ (i.e., we need to initialize $X$ accordingly with the $\kprod$-operator).
 We call \langprod  (for ``sum-product \lang''`) the subfragment of \langfor that consists of \langsum \ extended with $\qhadprod v$.
 
 \begin{example}
