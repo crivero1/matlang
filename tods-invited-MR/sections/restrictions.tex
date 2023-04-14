@@ -52,8 +52,8 @@ $$
 \arae & \coloneqq  & R \ \mid \ \arae \cup \arae \ \mid \  \pi_X(\arae) \ \mid \  \sigma_X(\arae) \ \mid \ \rho_f(\arae) \ \mid \ \arae \bowtie \arae,
 \end{array}
 $$
-where $R \in \cR$, $X \subseteq \att$ is finite, and $f: X \rightarrow Y$ is a one-to-one mapping with $Y \subseteq \att$. One can extend the schema $\cR$ to any expression over $\cR$ recursively as follows: $\cR(R)\coloneqq  R$, $\cR(\arae \cup \arae')\coloneqq  \cR(\arae)$, $\cR(\pi_X(\arae))\coloneqq  X$, $\cR(\sigma_X(\arae))\coloneqq  \cR(\arae)$, $\cR(\rho_f(\arae))\coloneqq  X$ where $f:X \rightarrow Y$, and $\cR(\arae \bowtie \arae')\coloneqq  \cR(\arae) \cup \cR(\arae')$ for every expressions $\arae$ and $\arae'$.
-We further assume that any expression $\arae$ satisfies the following syntactic restrictions: $\cR(\arae') = \cR(\arae'')$ whenever $\arae = \arae' \cup \arae''$, $X \subseteq \cR(\arae')$ whenever $\arae = \pi_X(\arae')$ or $\arae = \sigma_X(\arae')$, and $Y = \cR(\arae')$ whenever $\arae = \rho_f(\arae')$ with $f: X \rightarrow Y$.
+where $R \in \cR$, $X \subseteq \att$ is finite, and $f: X \rightarrow Y$ is a one-to-one mapping with $\EDIT{X} \subseteq \att$. One can extend the schema $\cR$ to any expression over $\cR$ recursively as follows: $\cR(R)\coloneqq  R$, $\cR(\arae \cup \arae')\coloneqq  \cR(\arae)$, $\cR(\pi_X(\arae))\coloneqq  X$, $\cR(\sigma_X(\arae))\coloneqq  \cR(\arae)$, $\cR(\rho_f(\arae))\coloneqq \EDIT{Y}$ where $f:X \rightarrow Y$, and $\cR(\arae \bowtie \arae')\coloneqq  \cR(\arae) \cup \cR(\arae')$ for every expressions $\arae$ and $\arae'$.
+We further assume that any expression $\arae$ satisfies the following syntactic restrictions: $\cR(\arae') = \cR(\arae'')$ whenever $\arae = \arae' \cup \arae''$, $X \subseteq \cR(\arae')$ whenever $\arae = \pi_X(\arae')$ or $\arae = \sigma_X(\arae')$, and $\EDIT{X} = \cR(\arae')$ whenever $\arae = \rho_f(\arae')$ with $f: X \rightarrow Y$.
 
 Given an $\mathsf{RA}_{K}^+$ expression $\arae$ and a $K$-instance $\cJ$ of $\cR$, we define the \textit{semantics} $\ssem{\arae}{\cJ}$ as a $K$-relation of $\cR(\arae)$ as follows. For $X \subseteq \att$, let $\operatorname{Eq}_X(t)\coloneqq  \kone$ when $t(a) = t(b)$ for every $a, b \in X$, and $\operatorname{Eq}_X(t)\coloneqq  \kzero$ otherwise. For every tuple $t \in \cR(\arae)$:
 $$
@@ -64,7 +64,7 @@ $$
 \!\!\!\text{if $\arae = \sigma_X(\arae')$, then} & \ssem{\arae}{\cJ}(t)\coloneqq  
 \ssem{\arae'}{\cJ}(t) \kprod \operatorname{Eq}_X(t)  \\
 \!\!\!\text{if $\arae = \rho_f(\arae')$, then} & \ssem{\arae}{\cJ}(t)\coloneqq  
-\ssem{\arae'}{\cJ}(t \circ f)  
+\ssem{\arae'}{\cJ}(\EDIT{f \circ t})  
 \\
 \!\!\!\text{if $\arae = \arae_1 \bowtie \arae_2$, then} & \ssem{\arae}{\cJ}(t)\coloneqq   \ssem{\arae_1}{\cJ}(t[Y]) \kprod  \ssem{\arae_2}{\cJ}(t[Z])
 \end{array}
@@ -72,21 +72,23 @@ $$
 where $Y = \cR(\arae_1)$ and $Z = \cR(\arae_2)$. We note that the $\bigksum$-operation in the semantics of $\pi_X(\arae')$ is well-defined given that the support of $\ssem{\arae'}{\cJ}$ is always finite. 
 
 We are now ready for comparing \langsum with $\mathsf{RA}_{K}^+$. For a fair comparison, we need to extend \langsum from $\RR$ to any semiring. Let $\mtr{K}$ denote the set of all $K$-matrices. 
-Similarly as for \lang\ over $\RR$, given a \lang\ schema $\Sch$, a $K$-instance $\I$ over $\Sch$ is a pair $\I = (\dom,\conc)$, where $\dom : \DD \mapsto \NN$ assigns a value to each size symbol, and $\conc : \Mnam \mapsto \mtr{K}$ assigns a concrete $K$-matrix to each matrix variable. Then it is straightforward to extend the semantics of \lang, \langfor, and \langsum from $(\RR, +, \times, 0, 1)$ to $(K, \ksum, \kprod, \kzero, \kone)$ by switching $+$ with $\ksum$ and $\times$ with $\kprod$. 
+Similarly as for \lang\ over $\RR$, given a \lang\ schema $\Sch$, a $K$-instance $\I$ over $\Sch$ is a pair $\I = (\dom,\conc)$, where $\dom : \DD \EDIT{\to} \NN$ assigns a value to each size symbol, and $\conc : \Mnam \EDIT{\to} \mtr{K}$ assigns a concrete $K$-matrix to each matrix variable. Then it is straightforward to extend the semantics of \lang, \langfor, and \langsum from $(\RR, +, \times, 0, 1)$ to $(K, \ksum, \kprod, \kzero, \kone)$ by switching $+$ with $\ksum$ and $\times$ with $\kprod$. 
 
 The next step for comparing \langsum with $\mathsf{RA}_{K}^+$  is to encode $K$-matrices as $K$-relations.
 Let $\Sch=(\Mnam,\size)$ be a \lang\ schema. On the relational side
 we have for each size symbol $\alpha\in\DD\setminus\{1\}$, attributes $\alpha$, $\row_\alpha$, and $\col_\alpha$ in $\att$. Furthermore, for each $V\in\Mnam$ and $\alpha \in \DD$ we denote
-by $R_V$ and $R_\alpha$ its corresponding relation name, respectively. Then, given $\Sch$ we define the relational schema $\text{Rel}(\Sch)$ such that $\fdom(\text{Rel}(\Sch))\coloneqq   \{R_\alpha \mid \alpha\in\DD\} \cup \{R_V \mid V \in \Mnam\}$ where $\text{Rel}(\Sch)(R_\alpha)\coloneqq  \{\alpha\}$ and:
-\[
-\text{Rel}(\Sch)(R_V)\coloneqq  \begin{cases}
-\lbrace\row_\alpha,\col_\beta \rbrace & \text{ if $ \size(V)=(\alpha,\beta)$} \\
-\lbrace\row_\alpha \rbrace & \text{ if $ \size(V)=(\alpha,1)$} \\
-\lbrace\col_\beta \rbrace  &
-\text{ if $ \size(V)=(1,\beta)$} \\
-\lbrace\rbrace & \text{ if $\size(V)=(1,1)$}.
-\end{cases}
-\]
+by $R_V$ and $R_\alpha$ its corresponding relation name, respectively. Then, given $\Sch$ we define the relational schema $\text{Rel}(\Sch)$ such that $\fdom(\text{Rel}(\Sch))\coloneqq   \{R_\alpha \mid \alpha\in\DD\} \cup \{R_V \mid V \in \Mnam\}$ where $\text{Rel}(\Sch)(R_\alpha)\coloneqq  \{\alpha\}$ and
+\EDIT{$\text{Rel}(\Sch)(R_V)\coloneqq \lbrace\row_\alpha,\col_\beta \rbrace$ where $\size(V)=(\alpha,\beta)$.}
+% \[
+% \text{Rel}(\Sch)(R_V)\coloneqq  \begin{cases}
+% \lbrace\row_\alpha,\col_\beta \rbrace & \text{ if $ \size(V)=(\alpha,\beta)$} \\
+% \lbrace\row_\alpha \rbrace & \text{ if $ \size(V)=(\alpha,1)$} \\
+% \lbrace\col_\beta \rbrace  &
+% \text{ if $ \size(V)=(1,\beta)$} \\
+% \lbrace\rbrace & \text{ if $\size(V)=(1,1)$}.
+% \end{cases}
+% \]
+
 Consider now a matrix instance $\I = (\dom,\conc)$ over $\Sch$.
 Let $V\in\Mnam$ with $\size(V)=(\alpha,\beta)$ and let $\conc(V)$ be its corresponding $K$-matrix of dimension $\dom(\alpha)\times \dom(\beta)$.
 To encode $\I$ as a $K$-instance in $\mathsf{RA}_{K}^+$, we use as data domain $\ddom = \mathbb{N} \setminus \{0\}$. Then we construct the $K$-instance $\text{Rel}(\I)$ such that for each $V\in\Mnam$ we define 
@@ -94,14 +96,18 @@ $R_V^{\text{Rel}(\I)}(t)\coloneqq \conc(V)_{ij}$ whenever $t(\row_\alpha) = i \l
 This is where $R_\alpha^{\text{Rel}(\I)}$ and $R_\beta^{\text{Rel}(\I)}$ are used for.
 We are now ready to state the first connection between \langsum and $\mathsf{RA}_{K}^+$  by using the previous encoding.
 \begin{proposition}\label{prop:sum_to_ara} 
-	For each \langsum expression $e$ over schema $\Sch$ such that $\EDIT{\ttype(e)}=(\alpha,\beta)$ with $\alpha\neq 1\neq\beta$, there exists an $\mathsf{RA}_{K}^+$  expression $\Phi(e)$ over relational schema $\text{Rel}(\Sch)$ such that $\text{Rel}(\Sch)(\Phi(e))=\{\row_\alpha,\row_\beta\}$ and 
+	For each \langsum expression $e$ over schema $\Sch$ such that $\EDIT{\ttype(e)}=(\alpha,\beta)$
+	% with $\alpha\neq 1\neq\beta$,
+	there exists an $\mathsf{RA}_{K}^+$  expression $\Phi(e)$ over relational schema
+	$\text{Rel}(\Sch)$ such that $\text{Rel}(\Sch)(\Phi(e))=\{\EDIT{\row},\EDIT{\col}\}$ and 
 	such that, for any instance $\I$ over~$\Sch$,
 	$$
 	\sem{e}{\I}_{i,j}=\ssem{\Phi(e)}{\text{Rel}(\I)}(t)
 	$$
-	for tuple $t(\mathrm{row}_\alpha)=i$ and $t(\mathrm{col}_\beta)=j$. Similarly for $e$ when $e$ has schema $\EDIT{\ttype(e)}=(\alpha,1)$, $\EDIT{\ttype(e)}=(1,\beta)$ or $\EDIT{\ttype(e)}=(1,1)$, then $\Phi(e)$ has schema $\text{Rel}(\Sch)(\Phi(e))=\{\mathrm{row}_\alpha\}$,
-	$\text{Rel}(\Sch)(\Phi(e))=\{\mathrm{col}_\alpha\}$, or
-	$\text{Rel}(\Sch)(\Phi(e))=\{\}$, respectively.
+	for tuple $t(\EDIT{\row})=i$ and $t(\EDIT{\col})=j$.
+	% Similarly for $e$ when $e$ has schema $\EDIT{\ttype(e)}=(\alpha,1)$, $\EDIT{\ttype(e)}=(1,\beta)$ or $\EDIT{\ttype(e)}=(1,1)$, then $\Phi(e)$ has schema $\text{Rel}(\Sch)(\Phi(e))=\{\mathrm{row}_\alpha\}$,
+	% $\text{Rel}(\Sch)(\Phi(e))=\{\mathrm{col}_\alpha\}$, or
+	% $\text{Rel}(\Sch)(\Phi(e))=\{\}$, respectively.
 \end{proposition}
 
 \input{sections/proofs/sum-to-ara.tex}
