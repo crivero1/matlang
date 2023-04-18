@@ -89,7 +89,9 @@ in the following theorem.
 
 \begin{theorem}
 \label{th-circuits-ml}
-For any uniform arithmetic circuit family $\{\Phi_n\mid n=1,2,\ldots\}$ of logarithmic depth there is a \langfor schema $\Sch$ and an expression $e_\Phi$ using a matrix variable $v$, with $\ttype(v)=(\alpha,1)$ and $\ttype(e_\Phi) = (1,1)$, such that for any input values $a_1,\ldots ,a_n$: 
+For any uniform arithmetic circuit family $\{\Phi_n\mid n=1,2,\ldots\}$ of logarithmic depth there is a \langfor schema $\Sch$ and an expression $e_\Phi$ using
+\EDIT{matrix variables $v$ and $X_1,\ldots,X_k$, with $\ttype(v)=(\alpha,1)$, $\ttype(X_i)=(\alpha,\alpha)$ and $\ttype(e_\Phi) = (1,1)$, such that for any input values $a_1,\ldots ,a_n$: }
+% a matrix variable $v$, with $\ttype(v)=(\alpha,1)$ and $\ttype(e_\Phi) = (1,1)$, such that for any input values $a_1,\ldots ,a_n$: 
 \begin{quote} If $\I = (\dom,\conc)$ is an instance such that $\dom(\alpha) = n$ and $\conc(v) = [a_1 \ldots a_n]^T$,
  then $\sem{e_\Phi}{\I} = \Phi_n(a_1,\ldots ,a_n)$.
 \end{quote}

@@ -32,6 +32,7 @@
 \end{comment}
 
 \answer \TODO
+\thomas{We need to discuss about for-MATLANG expressions of polynomial degree.}
 \bigskip
 
 \begin{comment}
@@ -78,6 +79,17 @@
 \end{comment}
 
 \answer \TODO
+\thomas{The size of the main matrix is $n\times n$. I added it but it looks somewhat off so maybe it adds just noise.}
+\thomas{"In your construction you use square matrices and vectors of the same size as
+the input vector. As a result of this design decision, you must limit the
+construction to circuits of logarithmic depth. For the other direction
+however, you produce circuits of polynomial depth."
+
+This maybe is worth a further discussion because the reviewer is right,
+but it is not a problem because we say afterwards that any function computed by a uniform circuit family of
+polynomial degree (and polynomial depth) can also be computed by uniform circuit family of logarithmic depth,
+}
+\thomas{I believe I do not understand the reviewer's proposal for the refactor of algorithm 1.}
 \bigskip
 
 \begin{comment}
@@ -86,7 +98,7 @@
 	(2) is a Boolean test (i.e., evaluates to a scalar value 0 or 1).
 \end{comment}
 
-\answer Done. The expression that result ina boolean value are now explicitly named.
+\answer Done. The expression that result in a boolean value are now explicitly named.
 \bigskip
 
 \begin{comment}
@@ -240,6 +252,8 @@ With the new comments and updated figure, it should be clear that each subexpres
 \end{comment}
 
 \answer \TODO
+\thomas{(Not yet implemented) The only change needed is to change the domain of identifiers (length of a bit vector describing a gate id) from $\{0,1\}^n$ to, for example, $\{0,1\}^N$.
+Clearly if the circuit $\phi_n$ has polynomial size $O(n^k)$, then $N$ is such that $\mid gates \mid \cdot N\in O(n^k)$.}
 \bigskip
 
 
@@ -249,6 +263,7 @@ With the new comments and updated figure, it should be clear that each subexpres
 \end{comment}
 
 \answer \TODO
+\thomas{Correct, the overload of $n$ yields this mistake. The change of the length of a bit vector describing a gate id name should solve this.}
 \bigskip
 
 
@@ -259,6 +274,7 @@ With the new comments and updated figure, it should be clear that each subexpres
 \end{comment}
 
 \answer \TODO
+\thomas{It is in the appendix statement of the proposition.}
 \bigskip
 
 
@@ -326,6 +342,7 @@ With the new comments and updated figure, it should be clear that each subexpres
 \end{comment}
 
 \answer \TODO
+\thomas{This solves if we use the new names for the squared fragments.}
 \bigskip
 
 \begin{comment}
@@ -394,6 +411,7 @@ line 183: this is ugly to read. Please align at := and at if.
 \end{comment}
 
 \answer \TODO
+\thomas{We need to discuss about for-MATLANG expressions of polynomial degree.}
 \bigskip
 
 \begin{comment}
@@ -419,6 +437,7 @@ line 183: this is ugly to read. Please align at := and at if.
 \end{comment}
 
 \answer \TODO
+\thomas{We need to discuss about for-MATLANG expressions of polynomial degree.}
 \bigskip
 
 \begin{comment}
