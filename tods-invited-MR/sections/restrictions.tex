@@ -76,9 +76,9 @@ Similarly as for \lang\ over $\RR$, given a \lang\ schema $\Sch$, a $K$-instance
 
 The next step for comparing \langsum with $\mathsf{RA}_{K}^+$  is to encode $K$-matrices as $K$-relations.
 Let $\Sch=(\Mnam,\size)$ be a \lang\ schema. On the relational side
-we have for each size symbol $\alpha\in\DD\setminus\{1\}$, attributes $\alpha$, $\row_\alpha$, and $\col_\alpha$ in $\att$. Furthermore, for each $V\in\Mnam$ and $\alpha \in \DD$ we denote
+we have \EDIT{attributes $\{\row,\col\}\in\att$, and for each size symbol $\alpha\in\DD\setminus\{1\}$ an attribute $\alpha\in\att$}. Furthermore, for each $V\in\Mnam$ and $\alpha \in \DD$ we denote
 by $R_V$ and $R_\alpha$ its corresponding relation name, respectively. Then, given $\Sch$ we define the relational schema $\text{Rel}(\Sch)$ such that $\fdom(\text{Rel}(\Sch))\coloneqq   \{R_\alpha \mid \alpha\in\DD\} \cup \{R_V \mid V \in \Mnam\}$ where $\text{Rel}(\Sch)(R_\alpha)\coloneqq  \{\alpha\}$ and
-\EDIT{$\text{Rel}(\Sch)(R_V)\coloneqq \lbrace\row_\alpha,\col_\beta \rbrace$ where $\size(V)=(\alpha,\beta)$.}
+\EDIT{$\text{Rel}(\Sch)(R_V)\coloneqq \lbrace\row,\col \rbrace$ where $\size(V)=(\alpha,\beta)$.}
 % \[
 % \text{Rel}(\Sch)(R_V)\coloneqq  \begin{cases}
 % \lbrace\row_\alpha,\col_\beta \rbrace & \text{ if $ \size(V)=(\alpha,\beta)$} \\
@@ -92,7 +92,7 @@ by $R_V$ and $R_\alpha$ its corresponding relation name, respectively. Then, giv
 Consider now a matrix instance $\I = (\dom,\conc)$ over $\Sch$.
 Let $V\in\Mnam$ with $\size(V)=(\alpha,\beta)$ and let $\conc(V)$ be its corresponding $K$-matrix of dimension $\dom(\alpha)\times \dom(\beta)$.
 To encode $\I$ as a $K$-instance in $\mathsf{RA}_{K}^+$, we use as data domain $\ddom = \mathbb{N} \setminus \{0\}$. Then we construct the $K$-instance $\text{Rel}(\I)$ such that for each $V\in\Mnam$ we define 
-$R_V^{\text{Rel}(\I)}(t)\coloneqq \conc(V)_{ij}$ whenever $t(\row_\alpha) = i \leq \dom(\alpha)$ and $t(\col_\beta) = j \leq \dom(\beta)$, and $\kzero$ otherwise. Furthermore, for each $\alpha \in \DD$ we define $R_\alpha^{\text{Rel}(\I)}(t)\coloneqq \kone$ whenever $t(\alpha) \leq \dom(\alpha)$, and $\kzero$ otherwise. In other words, $R_\alpha$ and $R_\beta$ encodes the active domain of a matrix variable $V$ with $\size(V)=(\alpha,\beta)$. Given that the $\mathsf{RA}_{K}^+$ framework of \cite{GreenKT07} represents the ``absence'' of a tuple in the relation with $\kzero$, we need to separately encode the indexes in a matrix.
+$R_V^{\text{Rel}(\I)}(t)\coloneqq \conc(V)_{ij}$ whenever $t(\EDIT{\row}) = i \leq \dom(\alpha)$ and $t(\EDIT{\col}) = j \leq \dom(\beta)$, and $\kzero$ otherwise. Furthermore, for each $\alpha \in \DD$ we define $R_\alpha^{\text{Rel}(\I)}(t)\coloneqq \kone$ whenever $t(\alpha) \leq \dom(\alpha)$, and $\kzero$ otherwise. In other words, $R_\alpha$ and $R_\beta$ encodes the active domain of a matrix variable $V$ with $\size(V)=(\alpha,\beta)$. Given that the $\mathsf{RA}_{K}^+$ framework of \cite{GreenKT07} represents the ``absence'' of a tuple in the relation with $\kzero$, we need to separately encode the indexes in a matrix.
 This is where $R_\alpha^{\text{Rel}(\I)}$ and $R_\beta^{\text{Rel}(\I)}$ are used for.
 We are now ready to state the first connection between \langsum and $\mathsf{RA}_{K}^+$  by using the previous encoding.
 \begin{proposition}\label{prop:sum_to_ara} 
