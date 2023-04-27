@@ -33,6 +33,7 @@
 
 \answer \TODO
 \thomas{We need to discuss about for-MATLANG expressions of polynomial degree.}
+\cristian{DOMAGOJ: remove theorem 5.6 and the definition of for-Matlang of polynomial degree.}
 \bigskip
 
 \begin{comment}
@@ -90,6 +91,8 @@ but it is not a problem because we say afterwards that any function computed by 
 polynomial degree (and polynomial depth) can also be computed by uniform circuit family of logarithmic depth,
 }
 \thomas{I believe I do not understand the reviewer's proposal for the refactor of algorithm 1.}
+
+\cristian{CRISTIAN: Write a technical and diplomatic answer. }
 \bigskip
 
 \begin{comment}
@@ -99,6 +102,7 @@ polynomial degree (and polynomial depth) can also be computed by uniform circuit
 \end{comment}
 
 \answer Done. The expression that result in a boolean value are now explicitly named.
+
 \bigskip
 
 \begin{comment}
@@ -110,6 +114,7 @@ polynomial degree (and polynomial depth) can also be computed by uniform circuit
 \end{comment}
 
 \answer Done.
+\cristian{FLORIS will improve it.}
 \bigskip
 
 \begin{comment}
@@ -124,6 +129,8 @@ polynomial degree (and polynomial depth) can also be computed by uniform circuit
 
 \thomas{The former is a good idea, but besides replacing using $V_{uv}$ instead
 of $u^t * V * v$, there are no major advantages, while it has major impact in rewriting expressions. Will do if time allows it.}
+\cristian{We CANNOT make this change. It could rather confuses the notation when the vector is used as an index, or as a vector (for example when you sum all cannonical vectors).}
+\cristian{FLORIS will give a diplomatic answer.}
 \bigskip
 
 \begin{comment}
@@ -133,6 +140,7 @@ of $u^t * V * v$, there are no major advantages, while it has major impact in re
 \end{comment}
 
 \answer Done.
+\cristian{DOMAGOJ: Will improve the introduction of this if-then-else. Add brackets.}
 \bigskip
 
 \begin{comment}
@@ -145,6 +153,7 @@ of $u^t * V * v$, there are no major advantages, while it has major impact in re
 
 \answer Done.
 \bigskip
+\cristian{Use Camel case like isLessOrEqual.}
 
 \begin{comment}
 	You seem to mix $\to$ and $\mapsto$ in function specifications in a random way.
@@ -176,6 +185,7 @@ of $u^t * V * v$, there are no major advantages, while it has major impact in re
 \end{comment}
 
 \answer Done.
+\cristian{FLORIS will improve the presentation of the algorithm.}
 \bigskip
 
 \begin{comment}
@@ -193,6 +203,8 @@ of $u^t * V * v$, there are no major advantages, while it has major impact in re
 In the case of $e_{\mathsf{extend}}$ it is straightforward because each case is totally independent of each other.
 The case of $e_{\mathsf{aggregate}}$ is a bit unclear because there are multiple subcases over the sum of the 5 subexpressions.
 With the new comments and updated figure, it should be clear that each subexpression affects specific and independent parts of the matrix that will be returned and thus $e_{\mathsf{aggregate}}$ is indeed a commutative expression in the sense that it does not matter the order in which the subexpressions are computed and summed because they have no common nonzero entries.
+
+\cristian{CRISTIAN: Check this and improve the answer.}
 \bigskip
 
 \begin{comment}
@@ -218,6 +230,8 @@ With the new comments and updated figure, it should be clear that each subexpres
 \end{comment}
 
 \answer It is a good idea if the algorithm is based in deltas, but it is not the case. As It is now depicted clearly, the idea is for each expression to compute independent parts of the matrix that will be outputed as $X_k$ for the next iteration so they can be summed in any order. The change to a delta approach means a refactor over all expression to take into account possible interactions between common entries.
+
+\cristian{CRISTIAN: similar that previous comments about deltas.}
 \bigskip
 
 \begin{comment}
@@ -231,6 +245,7 @@ With the new comments and updated figure, it should be clear that each subexpres
 \end{comment}
 
 \answer Again, it is a good idea if the overall approach was intended as a delta approach.
+\cristian{CRISTIAN}
 \bigskip
 
 \begin{comment}
@@ -244,6 +259,7 @@ With the new comments and updated figure, it should be clear that each subexpres
 \end{comment}
 
 \answer Correct. It is now fixed and done as suggested.
+\cristian{FLORIS: to improve the figures.}
 \bigskip
 
 \begin{comment}
@@ -255,6 +271,7 @@ With the new comments and updated figure, it should be clear that each subexpres
 \thomas{(Not yet implemented) The only change needed is to change the domain of identifiers (length of a bit vector describing a gate id) from $\{0,1\}^n$ to, for example, $\{0,1\}^N$.
 Clearly if the circuit $\phi_n$ has polynomial size $O(n^k)$, then $N$ is such that $\mid gates \mid \cdot N\in O(n^k)$.}
 \bigskip
+\cristian{THOMAS: will change this? Floris said: "Be careful"}
 
 
 \begin{comment}
@@ -264,6 +281,7 @@ Clearly if the circuit $\phi_n$ has polynomial size $O(n^k)$, then $N$ is such t
 
 \answer \TODO
 \thomas{Correct, the overload of $n$ yields this mistake. The change of the length of a bit vector describing a gate id name should solve this.}
+\cristian{CRISTIAN: clarify this.}
 \bigskip
 
 
@@ -275,6 +293,7 @@ Clearly if the circuit $\phi_n$ has polynomial size $O(n^k)$, then $N$ is such t
 
 \answer \TODO
 \thomas{It is in the appendix statement of the proposition.}
+\cristian{THOMAS will move the statement in the appedix to the body.}
 \bigskip
 
 
@@ -289,6 +308,8 @@ Clearly if the circuit $\phi_n$ has polynomial size $O(n^k)$, then $N$ is such t
 \end{comment}
 
 \answer \TODO
+
+\cristian{CRISTIAN}
 \bigskip
 
 \begin{comment}
@@ -303,6 +324,8 @@ Clearly if the circuit $\phi_n$ has polynomial size $O(n^k)$, then $N$ is such t
 \end{comment}
 
 \answer \TODO
+
+\cristian{CRISTIAN}
 \bigskip
 
 \begin{comment}
@@ -311,7 +334,8 @@ Clearly if the circuit $\phi_n$ has polynomial size $O(n^k)$, then $N$ is such t
 	restriction). But no need to waste the space for the proof.
 \end{comment}
 
-\answer \TODO
+\answer \TODO 
+\cristian{FLORIS}
 \bigskip
 
 \begin{comment}
@@ -322,6 +346,8 @@ Clearly if the circuit $\phi_n$ has polynomial size $O(n^k)$, then $N$ is such t
 \end{comment}
 
 \answer \TODO
+
+\cristian{CRISTIAN}
 \bigskip
 
 \begin{comment}
@@ -343,6 +369,7 @@ Clearly if the circuit $\phi_n$ has polynomial size $O(n^k)$, then $N$ is such t
 
 \answer \TODO
 \thomas{This solves if we use the new names for the squared fragments.}
+\cristian{DOMAGOJ: We say at the beginning to keep this simple we use square matrix.}
 \bigskip
 
 \begin{comment}
@@ -355,6 +382,7 @@ Clearly if the circuit $\phi_n$ has polynomial size $O(n^k)$, then $N$ is such t
 \end{comment}
 
 \answer Done.
+\cristian{CRISTIAN: Check it.}
 \bigskip
 
 \begin{comment}
@@ -390,6 +418,7 @@ Clearly if the circuit $\phi_n$ has polynomial size $O(n^k)$, then $N$ is such t
 \end{comment}
 
 \answer Done.
+\cristian{FLORIS}
 \bigskip
 
 \begin{comment}
@@ -412,6 +441,7 @@ line 183: this is ugly to read. Please align at := and at if.
 
 \answer \TODO
 \thomas{We need to discuss about for-MATLANG expressions of polynomial degree.}
+\cristian{CRISTIAN: It is confusing. Clarify this in the paper.}
 \bigskip
 
 \begin{comment}
@@ -438,6 +468,7 @@ line 183: this is ugly to read. Please align at := and at if.
 
 \answer \TODO
 \thomas{We need to discuss about for-MATLANG expressions of polynomial degree.}
+\cristian{DOMAGOJ: this is related with the change about for-matlang of polynomial degree.}
 \bigskip
 
 \begin{comment}
@@ -464,6 +495,7 @@ line 183: this is ugly to read. Please align at := and at if.
 
 \answer \TODO
 \thomas{This solves if we use the new names for the squared fragments.}
+\cristian{CRISTIAN: the expert in figures.}
 \bigskip
 
 
