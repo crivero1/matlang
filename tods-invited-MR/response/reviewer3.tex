@@ -101,7 +101,7 @@ polynomial degree (and polynomial depth) can also be computed by uniform circuit
 	(2) is a Boolean test (i.e., evaluates to a scalar value 0 or 1).
 \end{comment}
 
-\answer Done. The expression that result in a boolean value are now explicitly named.
+\answer Thanks for the suggestion. The expressions that result in a boolean value are now explicitly named ($\mathsf{isLess}$, $\mathsf{isLessOrEqual}$,etc.), whereas the expressions that build matrices or vectors are kept as $e_{name}$.
 
 \bigskip
 
@@ -113,7 +113,7 @@ polynomial degree (and polynomial depth) can also be computed by uniform circuit
 	vectors as values.
 \end{comment}
 
-\answer Done.
+\answer Yes, thanks for noticing. We now mention that uppercase letters always refer to matrices (of any size) and lowercase letters always refer to iterator variables (page 6, line 261 of revised version).
 \cristian{FLORIS will improve it.}
 \bigskip
 
@@ -139,7 +139,7 @@ of $u^t * V * v$, there are no major advantages, while it has major impact in re
 	This is used a lot in the article.
 \end{comment}
 
-\answer Done.
+\answer Yes, it is indeed handy and it is now defined (page 11, line 492 of revised version). Thanks for the suggestion.
 \cristian{DOMAGOJ: Will improve the introduction of this if-then-else. Add brackets.}
 \bigskip
 
@@ -151,19 +151,18 @@ of $u^t * V * v$, there are no major advantages, while it has major impact in re
 	reader that this expression is a Boolean test.
 \end{comment}
 
-\answer Done.
-\bigskip
+\answer Indeed is clearer with the new names: $\mathsf{isLessOrEqual}$ and $\mathsf{isLess}$ (page 9, line 422 and 432 of revised version).
 \cristian{Use Camel case like isLessOrEqual.}
+\bigskip
 
 \begin{comment}
 	You seem to mix $\to$ and $\mapsto$ in function specifications in a random way.
 	Function signatures use $\to$ ($f \colon A \to B$, where $A$ and $B$ are domain and
 	image of $f$), while $\mapsto$ is used for concrete mappings (e.g., $f \colon n
-	\mapsto n^2$). And you should use \verb+\colon+ instead of $:$, because $:$ is treated as
-	a division operator by Latex and thus the spacing is not correct.
+	\mapsto n^2$).
 \end{comment}
 
-\answer Done.
+\answer Thanks for noticing the mixups. They are now corrected, the function signatures (page 32, line 1554) and the concrete mappings in the renaming operator: $\rho_{a\mapsto b}$ (pages 33 and 34).
 
 \bigskip
 
@@ -172,9 +171,8 @@ of $u^t * V * v$, there are no major advantages, while it has major impact in re
 	a division operator by Latex and thus the spacing is not correct.
 \end{comment}
 
-\answer Done.
-
-\thomas{Most problems are with $:=$, so it was replaced by 'coloneqq' command}
+\answer Thanks for the suggestion. The change was made and the formulas look better.
+Most problems are with $:=$, so it was replaced by \verb|\coloneqq| command.
 \bigskip
 
 \begin{comment}
@@ -184,7 +182,7 @@ of $u^t * V * v$, there are no major advantages, while it has major impact in re
 	even complete as the definition of $c_i$ with $i \neq 1$ is missing.
 \end{comment}
 
-\answer Done.
+\answer Good suggestion, the prose can be confusing on its own. A pseudocode has been added (Algorithm 1).
 \cristian{FLORIS will improve the presentation of the algorithm.}
 \bigskip
 
@@ -212,7 +210,7 @@ With the new comments and updated figure, it should be clear that each subexpres
 	remove the outer ``if-then-else''.
 \end{comment}
 
-\answer Done.
+\answer Nice catch. It is now corrected as suggested (now in Algorithm 2).
 \bigskip
 
 \begin{comment}
@@ -381,7 +379,7 @@ Clearly if the circuit $\phi_n$ has polynomial size $O(n^k)$, then $N$ is such t
 	definition. Please stay with the established definition.
 \end{comment}
 
-\answer Done.
+\answer Indeed, now we use $\rho_f$ where $f\colon X\to Y$. And for $a\in X, b\in Y$, we use $\rho_{a\mapsto b}$ to say that attribute with name $a$ will have now name $b$.
 \cristian{CRISTIAN: Check it.}
 \bigskip
 
@@ -392,7 +390,7 @@ Clearly if the circuit $\phi_n$ has polynomial size $O(n^k)$, then $N$ is such t
 	dimension is 1 or not.
 \end{comment}
 
-\answer Done.
+\answer Indeed, thanks for noticing. The proof of Proposition 6.3 is now simplified as suggested (page 33, line 1576 of revised version).
 \bigskip
 
 \begin{comment}
@@ -417,7 +415,9 @@ Clearly if the circuit $\phi_n$ has polynomial size $O(n^k)$, then $N$ is such t
 	does, i.e., that it just computes the same sum as the matrix product.
 \end{comment}
 
-\answer Done.
+\answer Good suggestions. The changes were made accordingly in the proof of Proposition 6.3 (page 33, line 1576 of revised version).
+
+Summary: use $Rel(S)(R_V) := \{row, col\}$ for every matrix $V$; use $R_1$ in the contruction of the relation corresponding to $v$; do not do case distinctions based on sizes; explain what the join does.
 \cristian{FLORIS}
 \bigskip
 
@@ -425,14 +425,14 @@ Clearly if the circuit $\phi_n$ has polynomial size $O(n^k)$, then $N$ is such t
 line 183: this is ugly to read. Please align at := and at if.
 \end{comment}
 
-\answer Done.
+\answer Indeed. It is fixed (page 5, line 199 of revised version).
 \bigskip
 
 \begin{comment}
 	line 216: this also should be aligned.
 \end{comment}
 
-\answer Done.
+\answer Also true. It is fixed (page 5, line 229 of revised version).
 \bigskip
 
 \begin{comment}
@@ -448,14 +448,14 @@ line 183: this is ugly to read. Please align at := and at if.
 	line 1435: please provide a pageref for figure 4 or mention that it is at the very end of the article.
 \end{comment}
 
-\answer Done.
+\answer Good suggestion. The pageref was added (page 31, line 1476 of revised version).
 \bigskip
 
 \begin{comment}
 	line 1443: You have to restrict the expression e, such that it cannot use X. Otherwise Proposition 6.1 is definitely not true.
 \end{comment}
 
-\answer Yes, it is now clarified.
+\answer Yes, it is now clarified (page 31, line 1485 of revised version).
 \bigskip
 
 \begin{comment}
@@ -475,14 +475,14 @@ line 183: this is ugly to read. Please align at := and at if.
 	line 1681: change $Q_1$ to $Q_2$.
 \end{comment}
 
-\answer Done.
+\answer Yes, it is now corrected (page 36, line 1721 of revised version)
 \bigskip
 
 \begin{comment}
 	line 1731: again, X should not be used inside e.
 \end{comment}
 
-\answer Done.
+\answer Yes, it is now clarified (page 37, line 1775 of revised version).
 \bigskip
 
 \begin{comment}

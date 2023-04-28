@@ -56,30 +56,29 @@
 When you introduce the $\min(v)$ expression for the first time (after Proposition 3.4) I would anticipate you will explain how to express it in for-MATLANG in the next section.
 \end{comment}
 
-\answer Done.
-\thomas{Moved the clarifying footnote to just before min(v) is used.}
+\answer Good suggestion, the clarifying footnote has been moved to just before $\min(v)$ is used (page 8, line 354 of revised version).
 \bigskip
 
 \begin{comment}
 	In page 9, definition of $succ(b_i^n,b_j^n)$, I guess you mean $[[succ(u,v)]](I)$, where $I$ maps $u$ and $v$ to $b_i^n$, and $b_j^n$. Similarly for $Prev \cdot b_i^n$.
 \end{comment}
 
-\answer Done.
+\answer Indeed, it is now corrected, but since we renamed $\mathsf{succ}$ to $\mathsf{isLessOrEqual}$ it now says $[[ \mathsf{isLessOrEqual}(u,v)]](\mathcal{I}[u:=b_i^n,v:=b_j^n])$ (page 9, line 427 of revised version).
 \bigskip
 
 \begin{comment}
 	Proposition 4.3: here you use the expression ``when $I$ assigns $V$ to $A$''. In similar claims, like Proposition 4.2, you do not say anything about what $I$ does to $V$, and in Proposition 4.1 you use the function $mat$ to state what is the value of $V$. Please make these equivalence statements more uniform.
 \end{comment}
 
-\answer Done.
+\answer Thanks for noticing. All the statements use now ``when $I$ assigns $V$ to ...''. This was fixed in Proposition 4.1 (page 13, line 621 of revised version) and in Proposition 4.2 (page 14, line 667 of revised version).
 \bigskip
 
 \begin{comment}
 	In different parts of the paper you say ``circuits of bounded degree''. In my view, this usually means that there exists a *constant* that bounds the degree of all circuits in the family, but it is not what you are considering here.
 \end{comment}
 
-\answer Done
-\thomas{Changed to \EDIT{polynomial} degree.}
+\answer Indeed. At some point we started using ``circuits of bounded degree'' to mean that is ``tractable'' (in particular, polynomial). As you say, it is not the usual meaning so we change it to polynomial degree to be precise.
+This has been changed, it happened only once (page 19, line 901 of revised version).
 \cristian{TO DO: extend this answer explaining what happen.}
 \bigskip
 
@@ -87,21 +86,21 @@ When you introduce the $\min(v)$ expression for the first time (after Propositio
 	Line 22 of Algorithm 1: in the comment I guess meant that $getinput(g)$ outputs $i$, and not $A[i]$.
 \end{comment}
 
-\answer Done.
+\answer Indeed. It is now fixed (page 21, line 1004 of revised version).
 \bigskip
 
 \begin{comment}
 	Proposition 5.2 is very long, as it is defining notation in place. I would defined the required notation, such as $vec()$, first, and then give the claim. Moreover, you use $\Sigma$, which has never been defined. Do you mean $\{0,1\}$?
 \end{comment}
 
-\answer Done.
+\answer Good catch, $vec()$ and $\Sigma$ have been properly defined before the statement (page 23, line 1080 of revised version).
 \bigskip
 
 \begin{comment}
 	Proposition 6.3: wherever you use $S(e)$, I guess you mean $type(e)$.
 \end{comment}
 
-\answer Done.
+\answer Yes, it is meant as a shorthand, but it is not precise so it is now fixed everywhere: $\mathcal{S}(e)$ was replaced by $\mathsf{type}_\mathcal{S}(e)$.
 \bigskip
 
 \begin{comment}

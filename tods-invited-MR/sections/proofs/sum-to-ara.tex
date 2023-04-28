@@ -82,7 +82,7 @@ The proof is by induction on the structure of \langsum expressions. In line with
 Let $e$ be a \langsum expression.
 \begin{itemize}
   \item If $e=V$ then $\arae (e)\coloneqq R_V$.
-  \item If $e=v_p$ then $\arae (e)\coloneqq \sigma_{\lbrace \EDIT{\row},\EDIT{\col},\gamma_p\rbrace}\bigl(\rho_{\EDIT{\alpha\to \row}}(R_\alpha)\bowtie \rho_{\EDIT{\alpha\to\gamma_p}}(R_\alpha)\EDIT{\bowtie \rho_{1\to\col}(R_1)}\bigr)$ when  $v_p$ is of type $(\alpha,1)$. It is here that we introduce the attribute $\gamma_p$ associated with iterator variable $v_p$.
+  \item If $e=v_p$ then $\arae (e)\coloneqq \sigma_{\lbrace \EDIT{\row},\EDIT{\col},\gamma_p\rbrace}\bigl(\rho_{\EDIT{\alpha\mapsto \row}}(R_\alpha)\bowtie \rho_{\EDIT{\alpha\mapsto\gamma_p}}(R_\alpha)\EDIT{\bowtie \rho_{1\mapsto\col}(R_1)}\bigr)$ when  $v_p$ is of type $(\alpha,1)$. It is here that we introduce the attribute $\gamma_p$ associated with iterator variable $v_p$.
  We note that 
 $$ \ssem{\arae(v_p)}{\text{Rel}(\I)}(t)=\sem{v_p}{\I[v_p\gets b_{j}]}_{i,1}=(b_j)_{i,1}
 $$
@@ -92,7 +92,7 @@ and this also holds when $t(\mathrm{row}_\alpha)\neq t[\gamma_p]=j$.
 
   \item If $e(v_1,\ldots,v_k)=(e_1(v_1,\ldots,v_k))^T$ %with $\EDIT{\ttype(e_1)}=(\alpha, \beta)$ then
 		\EDIT{then
-		$$\arae(e) \coloneqq \rho_{\row\to\col,\col\to\row}(\arae(e_1)).$$
+		$$\arae(e) \coloneqq \rho_{\row\mapsto\col,\col\mapsto\row}(\arae(e_1)).$$
 		}
 		% \[
 		% \arae(e) \coloneqq 
@@ -113,7 +113,7 @@ and similarly, $e_2$ by $e_2(v_1,v_2,v_3)=(v_1^T\cdot v_1)\times e_2(v_2,v_3)$, 
 		% we have two cases. If $\gamma = 1$ then $\arae (e)\coloneqq \arae (e_1)\Join \arae (e_2)$.
 		% If $\gamma\neq 1$ then
 		\EDIT{then
-			$$\arae (e) \coloneqq  \pi_{\lbrace \row,\col, \gamma_1,\ldots,\gamma_k \rbrace}\left(\rho_{\col\to C}(\arae (e_1))\Join \rho_{\row\to C}(\arae (e_2)) \right),$$
+			$$\arae (e) \coloneqq  \pi_{\lbrace \row,\col, \gamma_1,\ldots,\gamma_k \rbrace}\left(\rho_{\col\mapsto C}(\arae (e_1))\Join \rho_{\row\mapsto C}(\arae (e_2)) \right),$$
 		}
 		% $$
 		% \arae (e) \coloneqq  \pi_{\lbrace \row_{\alpha},\col_{\beta}, \gamma_1,\ldots,\gamma_k \rbrace}\left(\rho_{C\to \col_\gamma}(\arae (e_1))\Join \rho_{C\to \row_\gamma}(\arae (e_2)) \right),
@@ -134,17 +134,17 @@ and similarly, $e_2$ by $e_2(v_1,v_2,v_3)=(v_1^T\cdot v_1)\times e_2(v_2,v_3)$, 
 		Thus, for $t(\row)=i$, $t(C)=k$, with $t(\gamma'_s)=i'_s$ for $s=1,\ldots, \ell$
 		we have
 		$$
-		\ssem{\rho_{\col\to C}(\arae (e_1))}{\text{Rel}(\I)}(t)=\sem{e}{\I[v_1'\gets b_{i'_1},\ldots,v_\ell'\gets b_{i'_\ell}]}_{i,k}
+		\ssem{\rho_{\col\mapsto C}(\arae (e_1))}{\text{Rel}(\I)}(t)=\sem{e}{\I[v_1'\gets b_{i'_1},\ldots,v_\ell'\gets b_{i'_\ell}]}_{i,k}
 		$$
 		and for $t(C)=k$, $t(\col)=j$, with $t(\gamma''_s)=i''_s$ for $s=1,\ldots, m$
 		$$
-		\ssem{\rho_{\row\to C}(\arae (e_2))}{\text{Rel}(\I)}(t)=\sem{e}{\I[v_1''\gets b_{i''_1},\ldots,v_m''\gets b_{i''_m}]}_{k,j}.
+		\ssem{\rho_{\row\mapsto C}(\arae (e_2))}{\text{Rel}(\I)}(t)=\sem{e}{\I[v_1''\gets b_{i''_1},\ldots,v_m''\gets b_{i''_m}]}_{k,j}.
 		$$
 
 		Consequently, for $t(\row)=i$, $t(\col)=j$ and with $t(\gamma_s)=i_s$ for $s=1,\ldots, r$ we have
 		that $\ssem{\arae(e)}{\text{Rel}(\I)}(t)$ is equal to
 		\begin{align*}
-			&\bigksum_{t'\colon t'[\row,\col,i_1,\ldots,i_r]=t} \ssem{\rho_{\col\to C}(\arae (e_1))}{\text{Rel}(\I)}(t')\kprod \ssem{\rho_{\row\to C}(\arae (e_2))}{\text{Rel}(\I)}(t') \\
+			&\bigksum_{t'\colon t'[\row,\col,i_1,\ldots,i_r]=t} \ssem{\rho_{\col\mapsto C}(\arae (e_1))}{\text{Rel}(\I)}(t')\kprod \ssem{\rho_{\row\mapsto C}(\arae (e_2))}{\text{Rel}(\I)}(t') \\
 			&=\bigksum_{k=1,\ldots,\dom(\gamma)} \sem{e}{\I[v_1'\gets b_{i'_1},\ldots,v_\ell'\gets b_{i'_\ell}]}_{i,k}\kprod \sem{e}{\I[v_1''\gets b_{i''_1},\ldots,v_m''\gets b_{i''_m}]}_{k,j}.
 		\end{align*}
 		which corresponds to 
