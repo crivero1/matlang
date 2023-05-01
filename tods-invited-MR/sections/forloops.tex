@@ -258,14 +258,16 @@ we heavily rely on order information in the next sections when computing the inv
 
 
 \subsection{Useful shorthands and simplifications}\label{sec:queries:simp}
+\EDIT{Before providing further examples of algorithms expressible in \langfor, we introduce several \langfor expression macros which are commonly used in linear algebra, programming, and which will be crucial for our constructions throughout the paper.}
 \EDIT{
-\paragraph{Flux control}
-
-The following definition proves to be useful.
-
+\paragraph{Flow control}
+When defining linear algebra algorithms, one of the most common operations is to have an if-then-else block of statements. This can be simulated in \langfor as follows:
+%The following definition proves to be useful.
 $$\IfThenElse{e_1}{e_2}{e_3}\coloneqq e_1\times e_2 + (1-e_1)\times e_3.$$
 
-For example, the expression $e_{\mathsf{getNextMatrix}}(v)$ defined in the previous section can be written as 
+Intuitively, if $e_1$ stores the value 1, then we will use the expression $e_2$, while $e_3$ will be used if $e_1$ stores a zero.
+%
+For example, the expression $e_{\mathsf{getNextMatrix}}(v)$ defined above can be written as:
 $$e_{\mathsf{getNextMatrix}}(v)\coloneqq \ffor{w}{X = e_\mathsf{Id}}{ X \cdot \Big( \IfThenElse{\islessorequal(w,v)}{e_{\mathsf{Next}}}{e_{\mathsf{Id}}} \Big) }.$$
 }
 

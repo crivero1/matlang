@@ -1,0 +1,1532 @@
+% !TeX spellcheck = en_US
+%!TEX root = ../main.tex
+We next explore the expressive power of $\langfor$ in comparison to arithmetic circuits.
+Given that arithmetic circuits capture \EDIT{many} standard linear algebra algorithms~\cite{Raz02,ShpilkaY10},
+they seem a natural candidate for comparison. 
+%
+Intuitively, an arithmetic circuit is similar to a boolean circuit,
+%\cite{aroraB2009}
+except that it has gates computing sums and products, 
+instead of computing disjunctions and conjunctions, and processes elements of $\RR$, 
+instead of boolean values. 
+
+
+A first observation is that in order to connect \langfor to arithmetic circuits, we need a 
+notion of uniformity of such circuits. After all, a \langfor expression can take matrices 
+of arbitrary dimensions as input and we want to avoid having (completely) different circuits
+for each dimension.
+%
+To handle inputs of different sizes, we thus consider a notion of uniform families of arithmetic
+circuits, defined -- as usual -- via a Turing machine generating a description of the circuit for 
+each input size $n$.
+%
+\EDIT{
+The main results we obtain can be summarized as follows:
+\begin{itemize}
+\item First, we show that for any \langfor expression we can construct an equivalent family of arithmetic circuits (Theorem~\ref{th-ml-to-circuits}).
+\item When it comes to the reverse direction, our conjecture is that it does not hold in general. However, we show that if we consider circuit families of polynomial degree, we can always construct an equivalent \langfor expression. This result is presented in Theorem~\ref{th-circuits-ml}, and is the main technical result of this section.
+\item Finally, we discuss how to isolate a fragment of \langfor equivalent to polynomial degree families of arithmetic circuits (Subsection~\ref{subsec:actoformatlang}), and how to extend \langfor with additional operators (Subsection~\ref{subsec:additionalop}).
+\end{itemize}
+}
+
+In order to keep the notation light, we will focus on \langfor schemas over square matrices where 
+each matrix variable has type $(\alpha,\alpha),(\alpha,1),(1,\alpha)$, or $(1,1)$.
+Our results hold without these restrictions as well, however. 
+%
+In what follows, we write $\langfor$ to denote $\langforf{\emptyset}$, i.e. the fragment of 
+our language with no additional pointwise functions. 
+%
+
+\EDIT{
+We begin by recalling the basic definitions about arithmetic circuits.
+}
+
+\subsection{Arithmetic circuits}\label{subsect:ac}
+We first recall the definition of arithmetic circuits~\cite{allender}. 
+%
+An \textit{arithmetic circuit} $\Phi$ over a set $X=\{x_1,\ldots,x_n\}$ of input variables 
+is a directed acyclic labeled graph. The vertices of $\Phi$ are called \textit{gates} and 
+denoted by $g_1,\ldots,g_m$; the edges in $\Phi$ are called \textit{wires}. We denote by 
+$\mathsf{gates}(\Phi)$ the number of gates in $\Phi$ and by $\mathsf{wires}(\Phi)$ the number
+of wires in $\Phi$. The \textit{size} of $\Phi$
+, denoted by $|\Phi|$, 
+is its number of gates and wires. 
+%
+The \textit{children} of a gate $g$ correspond to all gates $g'$ such that $(g,g')$ is a wire. 
+The \textit{parents} of $g$ correspond to all gates $g'$ such that $(g',g)$ is a wire. The
+\textit{in-degree}, or a \textit{fan-in}, of a gate $g$ refers to its number of children, and 
+the \textit{out-degree} to its number of parents. We do not assume any restriction on the 
+in-degree of a gate, and will thus consider circuits with unbounded fan-in. 
+Gates with in-degree $0$ are called \textit{input gates} and are labeled by either a variable 
+in $X$ or a constant $0$ or $1$. All other gates are labeled by either $+$ or $\times$, and 
+are referred to as \textit{sum gates} or \textit{product gates}, respectively.
+Gates with out-degree $0$ are called \textit{output gates}.
+ % When talking about arithmetic circuits, one usually focuses on circuits with $n$ input gates and a single output gate.
+
+
+%
+The \textit{depth} of $\Phi$, denoted
+by $\mathsf{depth}(\Phi)$, is the length of the longest directed path from any of its output 
+gates to any of the input gates. The \textit{degree} of a gate is defined inductively: an input 
+gate has degree~1, a sum gate has a degree equal to the maximum of degrees of its children, 
+and a product gate has a degree equal to the sum of the degrees of its children. 
+
+When talking about arithmetic circuits, one usually focuses on circuits with $n$ input gates and a single output gate. In this case, 
+% When $\Phi$ has a single output gate,
+the \textit{degree} of $\Phi$, denoted by $\mathsf{degree}(\Phi)$, is defined as the degree of its output gate. Furthermore, 
+% If $\Phi$ has a single output gate and its input gates take values from $\RR$, then
+$\Phi$ can then be seen to correspond to a polynomial in $\RR[X]$ in a natural way. The {degree} of $\Phi$ thus equals 
+the degree of the polynomial corresponding to $\Phi$. Finally, if $a_1,\ldots ,a_n$ are values in $\RR$, then 
+the \textit{result of the circuit} on this input is the value computed by the corresponding polynomial, denoted by $\Phi(a_1,\ldots ,a_n)$.
+
+In order to handle inputs of different sizes, we use the notion of uniform circuit families. An \textit{arithmetic circuit family} is a set of arithmetic circuits $\{\Phi_n\mid n=1,2,\ldots\}$ where $\Phi_n$ has $n$ input variables and a single output gate. An arithmetic circuit family is \textit{uniform} if there exists a \logspace-Turing machine,
+which on input $1^n$, returns an encoding of the arithmetic circuit $\Phi_n$ for each $n$.
+We observe that uniform arithmetic circuit families are necessarily of polynomial size, namely, $|\Phi_n| \in \mathcal{O}(n^k)$ for some $k$.
+Another important parameter is the circuit depth. A circuit family is of \textit{logarithmic depth}, whenever $\mathsf{depth}(\Phi_n)\in \mathcal{O}(\log\, n)$, for each $n$. \EDIT{Notice also that each uniform family of circuits is trivially of polynomial depth, due to the aforementioned polynomial size bound.} %We next show that \langfor subsumes uniform arithmetic circuit families that are of logarithmic depth. 
+
+\subsection{From \langfor to circuits}\label{subsec:formatlangtoac}
+
+\EDIT{
+The first thing we show is how to convert any \langfor expression $e$ over some schema $\Sch$ to a uniform family of arithmetic circuits computing precisely the same result depending on the input size	of the matrices in $\Sch$. Notice that circuit families, as defined in Subsection~\ref{subsect:ac} always compute a single output value. 
+} In order to handle  \langfor\ expressions which can produce any matrix, and not just a single value, as their output, we need to consider circuits with multiple output gates. Similarly, we need to encode matrix inputs of a \langfor\ expression in our circuits. We will write $\Phi(A_1,\ldots ,A_k)$, where $\Phi$ is an arithmetic circuit with multiple output gates, and each $A_i$ is a matrix of dimensions $\alpha_i\times \beta_i$, with $\alpha_i,\beta_i \in \{n,1\}$, denoting the input matrices of $\Phi$. 
+% We will also write $\texttt{type}(\Phi)=(\alpha,\beta)$, with $\alpha,\beta\in \{n,1\}$, to denote the size of the output matrix for $\Phi$.
+We call such circuits \textit{arithmetic circuits over matrices}. When $\{\Phi_n\mid n=1,2,\ldots\}$ is a uniform family of arithmetic circuits over matrices, we will assume that the \logspace-Turing machine for generating $\Phi_n$ also gives us the information about how to access a position of each input matrix, and how to access the positions of the output matrix, as is common when handling matrices with arithmetic circuits \cite{Raz02}. We can now show the following.
+
+% The notion of degree is extended to be the sum of the degrees of all the output gates. With this  at hand, we can now show the following result.
+
+\begin{theorem}
+\label{th-ml-to-circuits}
+Let $e$ be a \langfor expression over a schema $\Sch$, and let $V_1,\ldots ,V_k$ be the variables of $e$ such that $\ttype(V_i)\in \{(\alpha,\alpha), (\alpha,1), (1,\alpha), (1,1)\}$. Then there exists a uniform arithmetic circuit family over matrices $\{\Phi_n^e(A_1,\ldots ,A_k)\mid n=1,2,\ldots\}$ such that:
+\begin{quote}
+	For any instance $\I = (\dom,\conc)$ such that $\dom(\alpha) = n$ and $\conc(V_i) = A_i$ it holds that $\sem{e}{\I} = \Phi_n^e(A_1,\ldots ,A_k)$.
+\end{quote}	
+\end{theorem}
+\begin{proof}
+The proof is by a rather straightforward induction on the structure of \langfor expressions and is deferred to the appendix. Whilst inductively 
+creating the circuits, we need to ensure uniformity. Only the case when $e=\ffor{X}{v}e_1(X, v)$ requires a bit of care since it requires the
+composition of circuits. Nevertheless, uniformity can be shown in the same was as the closure of the class of \logspace-functions under composition is shown~\cite{aroraB2009}.
+\end{proof}
+
+\EDIT{
+We remark that the inductive construction of Theorem~\ref{th-ml-to-circuits} does not tell us much about the depth of our circuits. More precisely, the only guarantee we can obtain from Theorem~\ref{th-ml-to-circuits} is that the circuit family constructed in the proof will be of polynomial depth due to uniformity of the family. We next explore what can be said in the reverse direction; namely, whether any uniform circuit family has an equivalent \langfor expression. 
+}
+
+\subsection{From arithmetic circuits to \langfor}\label{subsec:actoformatlang}
+\EDIT{
+When it comes to transforming circuit families to \langfor, our conjecture is that, in general, this is not possible. More precisely, we stipulate the following:
+
+\begin{center}
+\textbf{Conjecture:} There exists a uniform family of arithmetic circuits that is not equivalent to any \langfor expression.
+\end{center}
+
+At this point we have no proof of the conjecture, and leave it for future work. However, we show that an important class of uniform families of arithmetic circuits can be transformed into \langfor expressions. More precisely, we show that any circuit family of logarithmic depth has an equivalent \langfor expression. Recall that a circuit family is of logarithmic depth, whenever $\mathsf{depth}(\Phi_n)\in \mathcal{O}(\log\, n)$, for each $n$. We can now show:
+}
+
+\begin{theorem}
+\label{th-circuits-ml}
+For any uniform arithmetic circuit family $\{\Phi_n\mid n=1,2,\ldots\}$ of logarithmic depth there is a \langfor schema $\Sch$ and an expression $e_\Phi$ using
+\EDIT{matrix variables $v$ and $X_1,\ldots,X_k$, with $\ttype(v)=(\alpha,1)$, $\ttype(X_i)=(\alpha,\alpha)$ and $\ttype(e_\Phi) = (1,1)$, such that for any input values $a_1,\ldots ,a_n$: }
+% a matrix variable $v$, with $\ttype(v)=(\alpha,1)$ and $\ttype(e_\Phi) = (1,1)$, such that for any input values $a_1,\ldots ,a_n$: 
+\begin{quote} If $\I = (\dom,\conc)$ is an instance such that $\dom(\alpha) = n$ and $\conc(v) = [a_1 \ldots a_n]^T$,
+ then $\sem{e_\Phi}{\I} = \Phi_n(a_1,\ldots ,a_n)$.
+\end{quote}
+\end{theorem}
+The expression $e_\Phi$ does not change depending on the input size, meaning that it is uniform in the same sense as the circuit family being generated by a single Turing machine. The different input sizes are handled by the typing mechanism of the language \langfor. 
+
+The proof of Theorem~\ref{th-circuits-ml} goes as follows: First, in
+Section~\ref{subsubsec:eval}, we describe a stack-based evaluation algorithm, \textsc{Evaluate}, for arithmetic circuits $\Phi$. \EDIT{The main purpose of this algorithm is to show that circuit evaluation can be done by storing all the intermediate values needed for the computation into a single matrix.} We then show how to simulate  \textsc{Evaluate} by an expression $e_\Phi$ in \langfor in Section~\ref{subsubsec:simulate}. 
+
+\subsubsection{Evaluation algorithm for arithmetic circuits}\label{subsubsec:eval}
+We start by describing a stack-based evaluation algorithm, \textsc{Evaluate}, for arithmetic circuits based on a depth-first top-down traversal of the circuit. As we will see later on, this algorithm lends itself well to be simulated in \langfor. 
+
+Let $\Phi_n$ be a circuit with $n$ input gates. We assume an ordering on the children of gates.
+% and that there are only variable input gates or input gates with value $1$ ($1$-gates).
+% Indeed, we can prune away input gates with value $0$ in a preprocessing step. 
+We store the values of the input gates in an $n\times 1$ vector $A$, where $A[i]$ denotes the value
+of the $i$th input gate. To evaluate $\Phi_n$ on $A$ we  maintain two stacks: A \textit{gate stack}
+ $\cG$ and a \textit{value stack} $\cV$. In general, for a stack $\mathcal S$ we have the following operations: $\push{\mathcal S}{s}$: pushes $s$ onto $\mathcal S$;
+$\pop{\mathcal S}$: pops the top element;  $\getsize{\mathcal S}$: returns the length of the stack; and
+$\gettop{\mathcal S}$: returns the top element in the stack. We refer to the $i$th element on $\mathcal S$ by $\mathcal S[i]$.
+
+
+\smallskip
+The evaluation algorithm \textsc{Evaluate} works for any arithmetic circuit. The logarithmic depth assumption in Theorem~\ref{th-circuits-ml} is only needed for its simulation in \langfor.
+
+In Algorithm~\ref{alg:eval_code} we show the evaluation algorithm, consisting of three functions:
+\begin{itemize}
+\item $\textsc{Evaluate}(\Phi_n,A)$, the main algorithm; 
+\item $\textsc{Extend}(\cG,\cV,A)$, in charge of creating paths to input gates from the output gate; and 
+\item $\textsc{Aggregate}(\cG,\cV)$, in charge of computing a partial of evaluation of $\Phi_n$ based on the paths considered so far and in charge of initiating the exploration of the next path during the traversal of $\Phi_n$.
+\end{itemize}
+The algorithm, during its execution, ensures that 
+$\cG$ always contains a path to a gate in $\Phi_n$ from the output gate and that all paths are visited in a depth-first left-to-right traversal of $\Phi_n$. Moreover, $\cV$ will hold values of gates stored in $\cG$ based on the paths explored so far.
+
+
+More precisely, $\textsc{Evaluate}(\Phi_n,A)$ starts with empty stacks $\cG$ and $\cV$ (line 2) and then pushes the output
+gate to $\cG$ (line 3) while leaving $\cV$ empty. It then alternates between calls to $\textsc{Extend}(\cG,\cV,A)$ and $\textsc{Aggregate}(\cG,\cV)$ based on whether $\getsize{\cG} = \getsize{\cV}+1$ or $\getsize{\cG} = \getsize{\cV}$, respectively (lines 5--8). Since, initially, $\getsize{\cG}=1$ and $\getsize{\cV}=0$, $\textsc{Extend}(\cG,\cV,A)$ is
+called first.
+ \begin{algorithm}[t]
+  \caption{Stack-based evaluation algorithm for arithmetic circuits}
+ \label{alg:eval_code}
+ \begin{algorithmic}[1]
+ \Function{Evaluate}{$\Phi_n,A$}\Comment{Input: Circuit $\Phi_n$, $ n\times 1$ vector $A$}
+   \State $\cG\coloneqq \emptyset$,$\cV\coloneqq \emptyset$
+    \State $\push{\cG}{\getroot}$ \Comment{$\getroot$: returns output gate of the circuit}
+     \While{$\getsize{\cG}\neq 1$ \textbf{or} $\getsize{\cV}\neq 1$}
+         \If{$\getsize{\cG}\neq \getsize{V}$}
+             \State $(\cG,\cV) \coloneqq  \textsc{Extend}(\cG,\cV,A)$
+         \Else
+             \State $(\cG,\cV)\coloneqq  \textsc{Aggregate}(\cG,\cV)$
+         \EndIf
+     \EndWhile
+     \State \textbf{return} $\gettop{\cV}$
+ \EndFunction
+ \Function{Extend}{$\cG, \cV, A$}\Comment{Always called when $\getsize{\cG} =  \getsize{\cV} + 1$}
+     \If{$\isplus{\gettop{\cG}}$} \Comment{$\isplus{g}$ checks whether $g$ is a $+$-gate}
+         \State $\push{\cV}{0}$
+         \State $\push{\cG}{\getfirst{\gettop{\cG}}}$ \Comment{$\getfirst{g}$ outputs the first child of $g$}
+     \ElsIf{$\isprod{\gettop{\cG}}$} \Comment{$\isprod{g}$ checks whether $g$ is a $\times$-gate}
+         \State $\push{\cV}{1}$
+         \State $\push{\cG}{\getfirst{\gettop{\cG}}}$
+     \ElsIf{$\isone{\gettop{\cG}}$} \Comment{$\isone{g}$ checks whether $g$ is a $1$-gate}
+         \State $\push{\cV}{1}$
+     \ElsIf{$\iszero{\gettop{\cG}}$} \Comment{$\iszero{g}$ checks whether $g$ is a $0$-gate}
+     \State $\push{\cV}{0}$
+     \ElsIf{$\isinput{\gettop{\cG}}$} \Comment{$\isinput{g}$ checks whether $g$ is an input gate}
+         \State $\push{\cV}{A\left[ \getinput{\gettop{\cG}} \right]}$ \Comment{$\getinput{g}$ outputs \EDIT{$i$} if $g$ is the $i$th input}
+     \EndIf
+     \State \textbf{return} $\cG, \cV$
+ \EndFunction
+ \Function{Aggregate}{$\cG, \cV$}\Comment{Always called when $\getsize{\cG} =  \getsize{\cV}$}
+     \State $g \coloneqq  \pop{\cG}$
+     \State $v \coloneqq  \pop{\cV}$
+     \If{$\isplus{\gettop{\cG}}$}
+         \State $\gettop{\cV} \coloneqq  \gettop{\cV} + v$
+     \ElsIf{$\isprod{\gettop{\cG}}$}
+         \State $\gettop{\cV} \coloneqq  \gettop{\cV} \cdot v$
+     \EndIf
+     \If{$\isnotlast{\gettop{\cG}}{g}$} \Comment{$\isnotlast{g}{g'}$ is true if $g'$ is not the last child of $g$}
+         \State $\push{\cG}{\nextgate{\gettop{\cG}}{g}}$ \Comment{$\nextgate{g}{g'}$ returns  next child of $g$ after $g'$}
+     \EndIf
+     \State \textbf{return} $\cG, \cV$
+ \EndFunction
+  \end{algorithmic}
+ \end{algorithm}
+As mentioned,  $\textsc{Extend}(\cG,\cV,A)$ is in charge of pushing gates and values to the stacks corresponding the current visited path and it does so until $\getsize{\cG} = \getsize{\cV}$ is satisfied (line 5). In particular,
+$\textsc{Extend}(\cG,\cV,A)$ checks the type of the current top gate $g=\gettop{\cG}$ in $\cG$ and does the following:
+If $g$ is a $+$-gate (lines 11--13) then it pushes $0$ to $\cV$, and if $g$ is a $\times$-gate (lines 14--16) then it pushes $1$ to $\cV$.
+In both cases, the first child of $g$ is also pushed to $\cG$ ensuring that $\getsize{\cG} = \getsize{\cV}+1$. These actions ensure that
+the following invariant is preserved: if $\getsize{\cG} = \getsize{\cV}+1$ then
+$\cV[i]$ corresponds to the value of gate $\cG[i+1]$ computed so far.
+
+However, when $\textsc{Extend}(\cG,\cV,A)$ detects a $1$-gate (lines 17--18), a $0$-gate (lines 19--20), or an input gate (lines 21--22), it ensures  $\getsize{\cG} = \getsize{\cV}$
+by pushing the value of the input gate to $\cV$. Overall, the following invariant is preserved: if  $\getsize{\cG} = \getsize{\cV}$ then  $\cV[i]$ holds the value of $\cG[i]$ computed so far. Importantly, after detecting an input gate, $\getsize{\cG} = \getsize{\cV}$ results in that $\textsc{Evaluate}(\Phi_n,A)$ switches to $\textsc{Aggregate}(\cG,\cV)$ (line 7). 
+
+The function $\textsc{Aggregate}(\cG,\cV)$ 
+will pop both stacks (lines 25--26) retrieving gate $g$ and value $v$. Recall that $v$ is the value of gate $g$ computed so far (since  $\getsize{\cG} = \getsize{\cV}$) and we now need to pass $v$ to the value $v'$ of the parent  $g'$ of $g$ in the current path. We remark that $g'$ and $v'$  are  the top elements in the stacks.
+Depending on the type of $g'$, $\textsc{Aggregate}(\cG,\cV)$ either adds $v$ to $v'$, in case $g'$ is a $+$-gate (lines 27--28), or multiplies $v$ with $v'$, in case $g'$ is a $\times$-gate (lines 29--30). At this point,
+$\getsize{\cG} = \getsize{\cV}$ and $\cV[i]$ correctly holds the value of the current evaluation of $\cG[i]$. Furthermore, if $g$ was the last child
+of $g'$, then we are done with $g'$ as well, and $\textsc{Aggregate}(\cG,\cV)$ continues popping the stacks. 
+In contrast,
+if $g$ was not the last child of $g'$, to get the correct value of $g'$ we need to continue the exploration of different paths 
+below $g'$. The function $\textsc{Aggregate}(\cG,\cV)$ does this by pushing the next child $g''$ of $g'$ (the one after $g$) to $\cG$ (lines 31--32), resulting in $\getsize{\cG} = \getsize{\cV}+1$. This implies that $\textsc{Evaluate}(\Phi_n,A)$ switches again to $\textsc{Extend}(\cG,\cV,A)$, which in turn will extend the path leading to $g''$, as before. We thus ensure
+that the entire circuit below a gate is evaluated before it is popped from $\cG$. And moreover, $\cV[i]$ corresponds to the value of gate $\cG[i+1]$ when $\getsize{\cG} = \getsize{\cV}+1$ and $\cV[i]$ corresponds to the value of gate $\cG[i]$ when
+ $\getsize{\cG} = \getsize{\cV}$. 
+ 
+ The algorithm terminates when $\textsc{Aggregate}(\cG,\cV)$ can pop all but one of the elements from $\cG$ and $\cV$, resulting in $\getsize{\cG} = \getsize{\cV}=1$. In this case,  $\textsc{Evaluate}(\Phi_n,A)$ stops executing $\textsc{Extend}(\cG,\cV,A)$ and $\textsc{Aggregate}(\cG,\cV)$ (line 4) and returns the top element of $\cV$ (line 9),  which indeed holds the result of evaluating $\Phi_n$ on $A$.
+ 
+%
+%
+%  in which case $\cV[i]$ holds the result of the partial evaluation of $\Phi_n$ on $A$ of gate $\cG[i]$ based on the visited part of $\Phi_n$ so far. Then, the function $\textsc{Aggregate}(\cG,\cV)$ is called on line 8 in
+% Algorithm~\ref{alg:eval_code}. It keeps popping gates and values from the stack, meaning going up in the circuit, updating the values according the type of gate under consideration. It maintains $\getsize{\cG} = \getsize{\cV}$ unless the popped gate was not the last child of the current top gate in $\cG$. In this case,  the next child of the top gate is pushed onto $\cG$, meaning that we start exploring the next path in our traversal of $\Phi_n$. Moreover, this results in
+% $\getsize{\cG} = \getsize{\cV}+1$ and hence $\textsc{Initialize}(\cG,\cV,A)$ is triggered again. The process then continues until in the end, $\getsize{\cG} = \getsize{\cV}=1$ (line 4). We then have that $\gettop{\cV}$ holds the result of the output gate of $\Phi_n$ after visiting all paths and is returned (line 9).
+%
+% Furthermore, when an input gate is reached and pushed on $\cG$, it is guaranteed that
+%  $\getsize{\cG} = \getsize{\cV}$ and that $\cV[i]$ holds the result of the partial evaluation of $\Phi_n$ on $A$ of gate
+%  $\cG[i]$. At any other point in time $\getsize{\cG} = \getsize{\cV} + 1$ and $\cV[i]$ corresponds to the value of $\cG[i+1]$.
+%  The function $\textsc{Initialize}(\cG,\cV,A)$ on line 6 is executed until  $\getsize{\cG} = \getsize{\cV}$ holds.
+%
+%
+% So, when $\getsize{\cG} = \getsize{\cV}$ holds,
+%
+% At the same,  at any point in time, either $\getsize{\cG} = \getsize{\cV}$ or  $\getsize{\cG} = \getsize{\cV} + 1$ holds. If $\getsize{\cG} = \getsize{\cV}$ holds, then $\cV[i]$ is the value that the gate $\cG[i]$ outputs, as the result of the current partial evaluation of $\Phi_n$. In particular, in this case,  $\gettop{\cV}$ is the value of evaluating the circuit in gate $\gettop{\cG}$.
+%
+%     The $Evaluate$ algorithm gives us the output of the circuit. Note that after each iteration it either holds that $\getsize{\cG} =  \getsize{\cV} + 1$ or $\getsize{\cG} =  \getsize{\cV}$. Furthermore, when we start we have $\getsize{\cG}=1$ and $\getsize{\cV}=0$. The condition $\getsize{\cG}= 1$ and $\getsize{\cV}=1$ holds only when we have traversed all the circuit, and the value in $\gettop{\cV}$ is the value that the root of the circuit outputs after its computation.
+%
+%
+% that there are two configuration
+%     During the evaluation algorithm there will be two possible configurations of $\cG$ and $\cV$.
+%
+%     \begin{enumerate}
+%         \item $\getsize{\cG} = \getsize{\cV} + 1$: this means that $\gettop{\cG}$ is a gate that we visit for the first time and we need to initialize its value.
+%
+%         \item $\getsize{\cG} = \getsize{\cV}$: here $\gettop{\cV}$ is the value of evaluating the circuit in gate $\gettop{\cG}$. Therefore, we need to aggregate the value $\gettop{\cV}$ to the parent gate of $g$.
+%     \end{enumerate}
+
+%
+% We first explain the intuition behind the algorithm \textsc{Evaluate} by an example.
+%
+% \begin{example}  Let us consider the following simple circuit $\Phi_4$ computing  $f(a_1,a_2,a_3,a_4)=a_1a_2 +a_3a_4$.
+%     \begin{center}
+%     \begin{tikzpicture}[level distance=0.5cm,
+%     level 1/.style={sibling distance=1.7cm},
+%     level 2/.style={sibling distance=1cm},
+%     every node/.style = {
+%         shape=circle,
+%         draw, scale=0.8,
+%         align=center,
+%         top color=white,
+%         bottom color=white
+%         }
+%     ]
+%     \node {$+$}
+%         child { node {$\times$} edge from parent [->]
+%         child { node {$a_1$} }
+%         child { node { $a_2$} }
+%         }
+%         child { node {$\times$} edge from parent [->]
+%         child { node {$a_3$} }
+%         child { node {$a_4$} }
+%         };
+%     \end{tikzpicture}
+%     \end{center}
+% The idea is to traverse the circuit top down in a depth first search way. For example, in the circuit
+%
+%
+% 	 $f(a_1,a_2,a_3,a_4)=a_1a_2 +a_3a_4$ above, we would initialize the output gate value as $0$ because it is a $+$ gate, so $\cG=\lbrace +\rbrace$, $\cV=\lbrace 0\rbrace$. Then stack the left $\times$ gate to $\cG$, stack its initial value (i.e. $1$) to $\cV$. Now stack $a_1$ to $\cG$ and its value (i.e. $a_1$) to $\cV$. Since we are on an input gate we pop the gate and value pair off of $\cG$ and $\cV$ respectively, aggregate $a_1$ to $\gettop{\cV}$ and continue by stacking the $a_2$ gate to $\cG$. We pop $a_2$ off of $\cV$ (and its gate off of $\cG$) and aggregate its value to $\gettop{\cV}$. We pop and aggregate the value of the left $\times$ gate to $\gettop{\cV}$ (the root value). Then continue with the right $\times$ gate branch similarly.
+%
+% % \begin{figure}[h]
+% {	\footnotesize
+% \begin{tabular}{p{4.5mm}|p{2mm}p{2mm}|p{1mm}p{2mm}|}
+% & $\cG$&  & $\cV$ & \\\cline{2-5}
+% & $\emptyset$ & (0) &  $\emptyset$ & (0)\\\cline{2-5}
+% \textsc{Eval} & $g_{000}$ & (1) & $\emptyset$ & (0)\\\cline{2-5}
+% \textsc{Ini} & $g_{001}$ &(2) & $0$& (1)\\
+%  & $g_{000}$  & & & \\\cline{2-5}
+%  \textsc{Ini} & $g_{010}$ & (3) & 1 &(2)\\
+%  &  $g_{001}$ & & $0$& \\
+%   & $g_{000}$  & & & \\\cline{2-5}
+%  \textsc{Ini} & $g_{010}$ & (3) & $a_1$ &(3)\\
+%  &  $g_{001}$ & & $1$& \\
+%   & $g_{000}$  & & 0 & \\\cline{2-5}
+% \end{tabular}
+% \begin{tabular}{p{4.5mm}|p{2mm}p{2mm}|p{2.2mm}p{2mm}|}
+% & $\cG$&  & $\cV$ & \\\cline{2-5}
+%  \textsc{Agg} & $g_{011}$ & (3) & $a_1$ &(2)\\
+%  &  $g_{001}$ & & $0$ & \\
+%  & $g_{000}$ & & & \\\cline{2-5}
+%  \textsc{Ini} & $g_{011}$ & (3) & $a_2$ &(3)\\
+%  &  $g_{001}$ & & $a_1$ & \\
+%  & $g_{000}$ & & 0 & \\\cline{2-5}
+%  \textsc{Agg} & $g_{001}$ & (2) & $a_1a_2$ &(2)\\
+%  & $g_{000}$ & & 0 & \\\cline{2-5}
+%  \textsc{Agg} & $g_{100}$ & (2) & $a_1a_2$ &(1)\\
+%  & $g_{000}$ & &  & \\\cline{2-5}
+% \end{tabular}
+% \begin{tabular}{p{4.5mm}|p{2mm}p{2mm}|p{1mm}p{2mm}|}
+% & $\cG$&  & $\cV$ & \\\cline{2-5}
+%  \textsc{Ini} & $g_{101}$ & (3) & $1$ &(2)\\
+%  &  $g_{100}$ & & $a_1a_2$ & \\
+%  & $g_{000}$ & & & \\\cline{2-5}
+%  \textsc{Ini} & $g_{101}$ & (3) & $a_3$ &(3)\\
+%  &  $g_{100}$ & & $1$ & \\
+%  & $g_{000}$ & & $a_1a_2$& \\\cline{2-5}
+%  \textsc{Agg} & $g_{111}$ & (3) & $a_3$ &(3)\\
+%  &  $g_{100}$ & & $a_1a_2$ & \\
+%  & $g_{000}$ & & &  \\\cline{2-5}
+%  \multicolumn{5}{c}{}\\
+%  \end{tabular}
+% \begin{tabular}{p{4.5mm}|p{2mm}p{2mm}|p{13mm}p{2mm}|}
+% & $\cG$&  & $\cV$ & \\\cline{2-5}
+%  \textsc{Ini} & $g_{111}$ & (3) & $a_4$ &(3)\\
+%  &  $g_{100}$ & & $a_3$ & \\
+%  & $g_{000}$ & & $a_1a_2$ & \\\cline{2-5}
+%  \textsc{Agg} & $g_{100}$ & (2) & $a_3a_4$ &(2)\\
+%  &  $g_{000}$ & & $a_1a_2$ & \\\cline{2-5}
+%  \textsc{Agg} & $g_{000}$ & (1) & $a_1a_2+a_3a_4$ &(1) \\\cline{2-5}
+%  \multicolumn{5}{c}{}\\
+%   \multicolumn{5}{c}{}\\ \multicolumn{5}{c}{}\\
+%  \multicolumn{5}{c}{}
+%  \end{tabular}}
+% \end{example}
+%%
+%
+% On input $\Phi_n$ and $A$ it
+% starts
+ 
+%  \begin{algorithm}[t]
+%  \caption{Extend}\label{alg:init_code}
+%  \begin{algorithmic}[1]
+%  \Function{Extend}{$\cG, \cV, A$}\Comment{The stacks and input. Here, $\getsize{\cG} =  \getsize{\cV} + 1$}
+%      \If{$\isplus{\gettop{\cG}}$} \Comment{$\isplus{g}$ checks whether $g$ is a $+$-gate}
+%          \State $\push{\cV}{0}$
+%          \State $\push{\cG}{\getfirst{\gettop{\cG}}}$ \Comment{$\getfirst{g}$ outputs the first child of $g$}
+%      \ElsIf{$\isprod{\gettop{\cG}}$} \Comment{$\isprod{g}$ checks whether $g$ is a $\times$-gate}
+%          \State $\push{\cV}{1}$
+%          \State $\push{\cG}{\getfirst{\gettop{\cG}}}$
+%      \ElsIf{$\isone{\gettop{\cG}}$} \Comment{$\isone{g}$ checks whether $g$ is a $1$-gate}
+%          \State $\push{\cV}{1}$
+%      \ElsIf{$\isinput{\gettop{\cG}}$} \Comment{$\isinput{g}$ checks whether $g$ is an input gate}
+%          \State $\push{\cV}{A\left[ \getinput{\gettop{\cG}} \right]}$ \Comment{$\getinput{g}$ outputs $A[i]$ if $g$ is the $i$th input}
+%      \EndIf
+%      \State \textbf{return} $\cG, \cV$
+%  \EndFunction
+%  \end{algorithmic}
+%  \end{algorithm}
+%
+%  \begin{algorithm}[t]
+%  \caption{Aggregate}\label{alg:agg_code}
+%  \begin{algorithmic}[1]
+%  \Function{Aggregate}{$\cG, \cV$}\Comment{Here, $\getsize{\cG} =  \getsize{\cV}$}
+%      \State $g = \pop{\cG}$
+%      \State $v = \pop{\cV}$
+%      \If{$\isplus{\gettop{\cG}}$}
+%          \State $\gettop{\cV} = \gettop{\cV} + v$
+%      \ElsIf{$\isprod{\gettop{\cG}}$}
+%          \State $\gettop{\cV} = \gettop{\cV} \cdot v$
+%      \EndIf
+%      \If{$\isnotlast{\gettop{\cG}}{g}$} \Comment{$\isnotlast{g}{g'}$ is true if $g'$ is not the last child of $g$}
+%          \State $\push{\cG}{\nextgate{\gettop{\cG}}{g}}$ \Comment{$\nextgate{g}{g'}$ returns  next child of $g$ after $g'$.}
+%      \EndIf
+%      \State \textbf{return} $\cG, \cV$
+%  \EndFunction
+%  \end{algorithmic}
+%  \end{algorithm}
+%
+%  At any point in time, the gate stack $\cG$ contains the path from a gate to the output gate that is currently explored.
+%  In the value stack $\cV$ contains
+%
+%
+%   The property that holds during the simulation is that the value in $\cV[i]$ is the value that $\cG[i]$ currently outputs. The algorithm ends with $\cG=\left[ g_{\texttt{root}}\right]$ and $\cV=\left[ v_{\texttt{root}}\right]$ after traversing the circuit, and returns $v_{\texttt{root}}$
+%
+% 
+
+    % We assume the circuit has input gates, $+, \times$-gates and allow constant $1$-gate.
+
+
+   %  For the pseudo-code, we supply ourselves with the following functions:
+   %
+   %  \begin{itemize}
+   %      % \item[--] $\isplus{g}$: true if and only if $g$ is a $+$-gate.
+   %      % \item[--] $\isprod{g}$: true if and only if $g$ is a $\times$-gate.
+   %      % \item[--] $\isone{g}$: true if and only if $g$ is a $1$-gate.
+   %      % \item[--] $\isinput{g}$: true if and only if $g$ is an input gate.
+   %      % \item[--] $\getfirst{g}$: outputs the first child of $g$.
+   %      % \item[--] $\getinput{g}$: outputs $A[i]$ when $g$ is the $i$-th input.
+   %      % \item[--] $\isnotlast{g_1}{g_2}$: true if and only if $g_2$ is not the last child gate of $g_1$.
+   %      % \item[--] $\nextgate{g_1}{g_2}$: outputs the next child gate of $g_1$ after $g_2$.
+   %    %      \item[--] $\getroot$: outputs the root gate of the circuit.
+   %  \end{itemize}
+   %
+   %  % The corresponding $\lbrace 0,1 \rbrace^n\rightarrow\lbrace 0,1 \rbrace^n$ functions are:
+   % %
+   % %  \begin{itemize}
+   % %      \item[--] $\isplus{g}$: $1$ if and only if $g$ is a $+$-gate.
+   % %      \item[--] $\isprod{g}$: $1$ if and only if $g$ is a $\times$-gate.
+   % %      \item[--] $\isone{g}$: $1$ if and only if $g$ is a $1$-gate.
+   % %      \item[--] $\isinput{g}$: $1$ if and only if $g$ is an input gate.
+   % %      \item[--] $\getfirst{g}$: outputs the $\texttt{id}$ of the first child of $g$.
+   % %      \item[--] $\getinput{g}$: outputs canonical vector $b_i$, where the $i$-th input gate of $\Phi_n$ is encoded by $g$.
+   % %      \item[--] $\isnotlast{g_1}{g_2}$: $1$ if and only if $g_2$ is not the last child gate of $g_1$.
+   % %      \item[--] $\nextgate{g_1}{g_2}$: outputs the $\texttt{id}$ of the next child gate of $g_1$ after $g_2$.
+   % %      \item[--] $\getroot$: outputs the $\texttt{id}$ of the root gate of the circuit.
+   % %  \end{itemize}
+   % %
+   % %  The previous functions are all definable by an $L$-transducer and can be defined from the $L$-transducer of $f$. Then, by proposition \ref{prop:transducer}, for each of these functions there is a \langfor expression that simulates them.
+   %
+   %  Now, we give the pseudo-code of the top-down evaluation. We define the functions $Initialize$ (algorithm \ref{alg:init_code}), $Aggregate$ (algorithm \ref{alg:agg_code}) and $Evaluate$ (algorithm \ref{alg:eval_code}). The main algorithm is $Evaluate$.
+ 
+
+
+
+
+\subsubsection{\langfor simulation of algorithm {\normalfont \textsc{Evaluate}}}\label{subsubsec:simulate}
+We next face the challenging task to simulate $\textsc{Evaluate}(\Phi_n,A)$ in \langfor. It is here that the
+assumption that  $\{\Phi_n\mid n=1,2,\ldots\}$ is a uniform arithmetic circuit family of logarithmic depth is crucial.
+For example, such circuits are of polynomial size and hence every gate in $\Phi_n$ can be associated with an $\texttt{id}\in\lbrace 0,1 \rbrace^n$. In the following, when we write $g$ for a gate, we mean the $\texttt{id}$ encoding $g$. We also use these identifiers to impose an
+ordering on gates, as needed for the \textsc{Evaluate} algorithm. 
+
+
+As shown in Algorithm~\ref{alg:eval_code}, \textsc{Evaluate}, \textsc{Extend} and \textsc{Aggregate} use some circuit-related functions:
+\begin{center}
+	\begin{tabular}{lllll}
+		$\isplus{g}$ & $\isprod{g}$ & $\isone{g}$ & $\iszero{g}$ & $\isinput{g}$ \\ $\getfirst{g}$ & $\getinput{g}$ & $\isnotlast{g_1}{g_2}$ &
+		$\nextgate{g_1}{g_2}$ & $\getroot$
+	\end{tabular}
+\end{center}
+all of which are explained in Algorithm~\ref{alg:eval_code}. 
+We need to simulate these functions in \langfor. Instead of writing specific \langfor expressions for each of these
+functions, we rely on a more general simulation result (Proposition~\ref{prop:transducer2} below) concerning general
+functions computable over identifiers in $\{0,1\}^n$.
+
+Indeed, using the identifiers of gates, we can regard circuit-related functions as functions $f_n:(\lbrace 0,1 \rbrace^{n})^\ell\rightarrow\lbrace 0,1 \rbrace^n$, in case they return some gate (identifier) or $f_n:(\lbrace 0,1 \rbrace^{n})^\ell\rightarrow\lbrace 0,1 \rbrace$,
+in case they return some boolean value. Now, given the \logspace-Turing machine for $\{\Phi_n\mid n=1,2,\ldots\}$, it is readily verified that for such
+circuit-related functions $f_n$, there exists a \textit{linear
+space machine} $T$ such that for every $n\geq 0$, and $w_1,\ldots,w_\ell\in\{0,1\}^n$, $T(w_1,\ldots,w_\ell)$ has $f_n(w_1,\ldots,w_\ell)$ on its output tape. We defer the precise definition of linear space machines to the appendix.
+Important here is that such machines and the functions that they compute can be simulated in \langfor.
+Due to space limitations, we defer the lengthy, yet non-trivial, encoding of linear space machines in \langfor to the appendix.
+\EDIT{Let $\mathsf{vec}(w)$ be the $n\times 1$-vector encoding of a word $w\in\{0,1\}^n$}.
+We show there the following:
+
+\begin{proposition} \label{prop:transducer2}
+Let $f=\bigcup_{n\geq 0}f_n:(\{0,1\}^n)^\ell\to \{0,1\}^n$ be a function computable by a linear space machine
+$T$.
+ % $m$ states, $\ell$ input tapes
+% , which consumes
+% $\mathcal{O}(n)$ space and runs in $\mathcal{O}(n^{k-1})$ time on inputs of size $n$.
+There exists (i)~a \langfor  
+schema $\mathcal{S}=(\mathcal{M},\textsf{size})$ where $\mathcal{M}$ contains variables
+$I_1,\ldots,I_\ell$ and $O$ all of size $\alpha\times 1$; and (ii)~a \langfor 
+expression $e_f$ over $\mathcal{S}$ such that for the instance 
+$\I=(\mathcal{D},\textsf{mat})$ over $\mathcal{S}$ with $\mathcal{D}(\alpha)=n$ and 
+$\mathsf{mat}(I_i)=\mathsf{vec}(w_i)\in \mathbb{R}^n$,  for $i\in[\ell]$ and words $w_1,\ldots,w_\ell\in\{0,1\}^n$,
+we have that  $\mathsf{mat}(O)=\mathsf{vec}(f_n(w_1,\ldots,w_\ell))\in\mathbb{R}^n$ 
+after evaluating $e_f$ on $\I$. Similarly, if $f=\bigcup_{n\geq 0}f_n:(\{0,1\}^n)^\ell\to \{0,1\}$, then we have
+ an expression $e_f$ such that $\mathsf{mat}(O)=f_n(w_1,\ldots,w_\ell)\in \mathbb{R}$ where $O$ is now of size $1\times 1$.\qed
+\end{proposition}
+
+In other words, when we represent the binary identifiers of gates as $n\times 1$ vectors, all of the above-mentioned circuit-related functions have a \langfor counterpart that either return again an $n\times 1$ vector, representing a gate, or values $1$ or $0$, representing true and false, respectively. In what follows, we  abuse notation and identify the circuit functions with their \langfor counterparts. For example, $\getfirst{}$ is now a \langfor expression taking an $n\times 1$ binary vector $b$ as input and returning an $n\times 1$ binary vector encoding the \texttt{id} of the first child of the gate with identifier $b$.
+
+%
+% The previous functions are all definable by an $L$-transducer and can be defined from the $L$-transducer of $f$. Then, by proposition \ref{prop:transducer}, for each of these functions there is a \langfor expression that simulates them.
+%
+%  of logarithmic depth. This implies that each we label each gate with an identifier in $\{0,1\}^n$ and can assume an ordering
+% on the children of gates (e.g., lexicographically). We further assume  We will maintain two
+%
+%     Let $\Phi_n$ be a circuit with $n$ input gates and such that it can be computed by a $L-$uniform arithmetic circuit of log-depth. Each gate of the circuit that encodes $f$ has an $\texttt{id}\in\lbrace 0,1 \rbrace^n$. From now on, when we write $g$ for a gate of the circuit, we mean the $\texttt{id}$ encoding $g$.
+
+\medskip
+We now turn our attention to simulating $\textsc{Evaluate}(\Phi_n,A)$ and its functions $\textsc{Extend}(\cG,\cV,A)$ and $\textsc{Aggregate}(\cG,\cV)$. We will use a matrix variable $X$ in which we store all necessary information for the simulation. We split up the simulation in three parts:
+\textbf{(a)}~first we assume that $n$ is large enough such that we have specific bounds for the number of gates, wires
+and depth of $\Phi_n$; \textbf{(b)}~second we deal with small $n$; and \textbf{(c)}~the final expression $e_\Phi$ then combines these two cases.
+
+\bigskip
+\noindent
+\underline{\textbf{(a)} Large $n$.}
+ To simulate the two stacks $\cG$ and $\cV$ we use a matrix variable $X$ that will be instantiated by a matrix (also referred to by $X$) of dimensions $n \times n$, where
+    \begin{itemize}
+        \item columns $1$ to $n-3$ contain binary identifiers of the gates in the stack $\cG$;
+        \item column $n-2$ is the stack of values where $X[1, n-2]$ is the bottom of the stack;
+        \item column $n-1$ will store a canonical vector that marks the top of stack $\cG$; and finally,
+        \item column $n$ will store a canonical vector that marks the top of stack $\cV$.
+    \end{itemize}
+\begin{example}\label{ex:matrixX}
+We illustrate how the matrix $X$ encoding $\cG$ and $\cV$ looks like in case that
+$\getsize{\cG} = \getsize{\cV}$ (leftmost matrix $X$ below) and  when $\getsize{\cG} = \getsize{\cV}+1$ (rightmost matrix $X$ below). We also depict vectors $V$, $G_{\mathsf{top}}$ and $V_{\mathsf{top}}$
+representing the contents of the value stack $\cV$ and the positions of the
+top elements in the gate stack $\cG$ and value stack $\cV$, respectively. The matrix
+$G$ (shown on the right below) has the same dimensions as $X$ and encodes the stack $\cG$.
+\medskip
+    %
+    % If we have $j$ gates in the stack and currently $\getsize{\cG}=\getsize{\cV}$ then $X$ would look like:
+$$ \underbrace{\left[\begin{smallmatrix}
+        \texttt{id}_1 & v_1 & 0 & 0 \\
+        \texttt{id}_2 & v_2 & 0 & 0 \\
+        \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+        \texttt{id}_{j-1} & v_{j-1} & 0 & 0 \\
+        \texttt{id}_j & v_j & 1 & 1 \\
+        0 & 0 & 0 & 0 \\
+     \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+        0 & 0 & 0 & 0
+    \end{smallmatrix}\right]}_{X}  \underbrace{\left[\begin{smallmatrix}
+        \vphantom{\texttt{id}_1}v_1  \\
+        \vphantom{\texttt{id}_1}v_2 \\
+        \vphantom{\int\limits^x}\smash{\vdots} \\
+       \vphantom{\texttt{id}_1} v_{j-1} \\
+      \vphantom{\texttt{id}_1}  v_j \\
+        0 \\
+       \vphantom{\int\limits^x}\smash{\vdots} \\
+        0 
+    \end{smallmatrix}\right]}_{V}
+    \underbrace{\left[\begin{smallmatrix}
+        \vphantom{\texttt{id}_1}0  \\
+       \vphantom{\texttt{id}_1} 0 \\
+        \vphantom{\int\limits^x}\smash{\vdots}   \\
+       \vphantom{\texttt{id}_1} 0 \\
+       \vphantom{\texttt{id}_1} 1 \\
+        0 \\
+       \vphantom{\int\limits^x}\smash{\vdots} \\
+       0 
+    \end{smallmatrix}\right]}_{G_{\mathsf{top}}} 
+     \underbrace{\left[\begin{smallmatrix}
+        \vphantom{\texttt{id}_1} 0  \\
+         \vphantom{\texttt{id}_1}0 \\
+         \vphantom{\int\limits^x}\smash{\vdots}  \\
+        \vphantom{\texttt{id}_1} 0 \\
+         \vphantom{\texttt{id}_1} 1 \\
+         0 \\
+         \vphantom{\int\limits^x}\smash{\vdots} \\
+         0 
+    \end{smallmatrix}\right]}_{V_{\mathsf{top}}} \qquad
+	 \underbrace{\left[\begin{smallmatrix}
+        \texttt{id}_1 & v_1 & 0 & 0 \\
+        \texttt{id}_2 & v_2 & 0 & 0 \\
+       \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+        \texttt{id}_{j-1} & v_{j-1} & 0 & 1 \\
+        \texttt{id}_j & 0 & 1 & 0 \\
+        0 & 0 & 0 & 0 \\
+    \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+        0 & 0 & 0 & 0
+    \end{smallmatrix}\right]}_{X} \underbrace{\left[\begin{smallmatrix}
+        \vphantom{\texttt{id}_1}v_1  \\
+        \vphantom{\texttt{id}_1}v_2 \\
+         \vphantom{\int\limits^x}\smash{\vdots}  \\
+       \vphantom{\texttt{id}_1} v_{j-1} \\
+      \vphantom{\texttt{id}_1}  0 \\
+        0 \\
+       \vphantom{\int\limits^x}\smash{\vdots} \\
+        0 
+    \end{smallmatrix}\right]}_{V}
+    \underbrace{\left[\begin{smallmatrix}
+        \vphantom{\texttt{id}_1}0  \\
+       \vphantom{\texttt{id}_1} 0 \\
+        \vphantom{\int\limits^x}\smash{\vdots}  \\
+       \vphantom{\texttt{id}_1} 0 \\
+       \vphantom{\texttt{id}_1} 1 \\
+        0 \\
+       \vphantom{\int\limits^x}\smash{\vdots} \\
+       0 
+    \end{smallmatrix}\right]}_{G_{\mathsf{top}}}
+     \underbrace{\left[\begin{smallmatrix}
+        \vphantom{\texttt{id}_1} 0  \\
+         \vphantom{\texttt{id}_1}0 \\
+      \vphantom{\int\limits^x}\smash{\vdots}   \\
+        \vphantom{\texttt{id}_1} 1 \\
+         \vphantom{\texttt{id}_1} 0 \\
+         0 \\
+         \vphantom{\int\limits^x}\smash{\vdots} \\
+         0 
+    \end{smallmatrix}\right]}_{V_{\mathsf{top}}}
+		\qquad \underbrace{\left[\begin{smallmatrix}
+	        \texttt{id}_1 & 0 & 0 & 0 \\
+	        \texttt{id}_2 & 0 & 0 & 0\\
+	    \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+	        \texttt{id}_{j-1} & 0 & 0 & 0\\
+	        \texttt{id}_j & 0 & 0 & 0\\
+	        0 & 0 & 0 & 0 \\
+	    \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+	        0 & 0 & 0 & 0
+	    \end{smallmatrix}\right]}_{G}.
+   $$
+Here, the gate identifiers $\texttt{id}_j$ consist of
+ $n-3$ zero/one entries, so they take up $n-3$ columns.\qed
+\end{example}
+
+In order to ensure that the $n\times n$ matrix $X$ is large enough to simulate $\textsc{Evaluate}(\Phi_n,A)$, we consider large enough $n$, i.e. $n\geq n_0$, such that there exists constants $k,k'\in\mathbb{N}$ satisfying: for any $n\geq n_0$ the circuits $\Phi_n$ satisfy the following:
+$$        \log(\mathsf{gates}(\Phi_n)) \leq k\lceil\log(n)\rceil\leq n-3, \quad  \mathsf{depth}(\Phi_n)\leq k' \ceil{\log(n)} \leq n       
+		% \leq k \ceil{\log (n)} \leq n-3
+		 \text{ and }
+   2\times\mathsf{wires}(\Phi_n)\leq n^k.  
+$$
+The first condition implies that we need at most $k\log (n)$ bits to store the \texttt{id} of a gate and that $n-3$ columns suffice to do so.
+The second condition implies that we have sufficiently many rows ($n$) to
+represent the stacks (which are of size at most the depth of the circuit). The third condition ensures that $n^k$ is an upper bound on the number
+of steps required to run $\textsc{Evaluate}(\Phi_n,A)$, since during its execution maximally $2\times\mathsf{wires}(\Phi_n)$ will be traversed.
+% This will be important later on since we will use $k$ nested \texttt{for} loops over vector variables of dimension $n\times 1$ to executes $n^k$ steps.
+We note that
+$n_0$, $k$ and $k'$ exist because $\{\Phi_n\mid n=1,2, \}$ is  uniform arithmetic circuit family of logarithmic depth. 
+From now on, we assume
+that $n\geq n_0$. 
+
+
+% %
+% % $$
+% % we need at most $k\log (n)$ bits to store the $id$ of a gate.
+% % $$
+% % we assume that the circuits $\Phi_n$ we consider
+% % are we have constants $k$ and $k'$ such that
+% %
+% %
+% %     Since $n\geq n_0$, $(\star)$ holds and thus we never use more than $n-3$ bits to encode an $\texttt{id}$. Also, $j\leq n$ given that we never keep more gates than the depth of the tree. As a consequence, we never keep more than $n$ values either.
+% %
+% %  Let $n_0\in\mathbb{N}$ be big enough for ($\star$) to hold and let $n\geq k$. Hence, the number of gates (values) is bounded by $n^k$ and we need $k\log (n)$ bits to encode the id of each gate.
+% %
+% %
+% %
+% %     An important detail is that the $\texttt{ids}$ of the gates are encoded as $\texttt{id}_r000$ for it to have dimension $n$, where $\texttt{id}_r$ is the corresponding binary number in reverse.
+% %
+% %  Let $n^k$ be a polynomial such that the number of wires, $W(n)$ is smaller than $n^k$ for $n$ big enough. Furthermore, we assume that $2W(n)\leq n^k$. We need this because the \langfor simulation of the circuit is in a depth first search way, so $2W(n)$ wires will be traversed.
+% %     Then we have that:
+%     \begin{itemize}
+%         \item the number of gates is bounded by $n^k$.
+%         \item we need at most $k\log (n)$ bits to store the $id$ of a gate.
+%         \item the depth of the circuit is at most $k'\log (n)$ for some $k'$.
+%     \end{itemize}
+%
+%     So, let $n_0$ and $k$ such that $\forall n\geq n_0:$
+
+    % \begin{align*}[right=\empheqrbrace (\star)]
+    % \end{align*}
+
+%     We know $n_0$ and $k$ exist. Let $n\geq n_0$.
+% 	% Towards the end, we will deal with the case when $n<n_0$.
+% %
+% %     Let $g$ be a gate. The children of $g$ are denoted by $g_1,\ldots, g_l$.
+% %% \begin{center}
+% %     \begin{tikzpicture}[level distance=1.5cm,
+% %     level 1/.style={sibling distance=1.5cm},
+% %     every node/.style = {
+% %         shape=circle,
+% %         draw,
+% %         align=center,
+% %         top color=white,
+% %         bottom color=white
+% %         }]
+% %     \node {\( g \)}
+% %         child {node { \( g_1 \) }}
+% %         child {node { \( \cdots \) }}
+% %         child {node { \( g_l \) }};
+% %     \end{tikzpicture}
+% %     \end{center}
+% %
+% %     For example, a circuit that encodes the function $f(a_1,a_2,a_3,a_4)=a_1a_2 +a_3a_4$ is
+% %
+% %     \begin{center}
+% %     \begin{tikzpicture}[level distance=1.5cm,
+% %     level 1/.style={sibling distance=3cm},
+% %     level 2/.style={sibling distance=1.5cm},
+% %     every node/.style = {
+% %         shape=circle,
+% %         draw,
+% %         align=center,
+% %         top color=white,
+% %         bottom color=white
+% %         }
+% %     ]
+% %     \node { \( + \) }
+% %         child { node { \( \times \) }
+% %         child { node { \( a_1 \) } }
+% %         child {node { \( a_2 \) } }
+% %         }
+% %         child { node { \( \times \) }
+% %         child { node { \( a_3 \) } }
+% %         child { node { \( a_4 \) } }
+% %         };
+% %     \end{tikzpicture}
+% %     \end{center}
+% %
+% %     We can simulate the polynomial $x^2+xy$ by doing $f(A)$ where $A=[x \hspace{1ex} x \hspace{1ex} x \hspace{1ex} y]^T$. The main idea is to traverse the circuit top down in a depth first search way and store visited gates in a stack and its corresponding current values in another stack, and aggregate in the iterations according to the gate type.
+%
+%
+%     Next, we show how to encode this algorithm in $\langfor$.
+    %
+    % We make a series of definitions to make the notation more clear. Refer to section \ref{sec:formatlang:design} for more information
+    % about these expressions.
+    %
+    % Let $b_i$ be the $i$-th canonical vector. $\mathsf{Next}$ and $\mathsf{Prev}$ denote the successor and predecessor matrices respectively, such that
+    %
+    % \[
+    %             \mathsf{Next}\cdot b_i=\begin{cases}
+    %             b_{i+1} \text{ if } i\leq n \\
+    %             \mathbf{0} \text{ otherwise }
+    %             \end{cases}
+    % \]
+    %
+    % \[
+    %             \mathsf{Prev}\cdot b_i=\begin{cases}
+    %             b_{i-1} \text{ if } i\geq n \\
+    %             \mathbf{0} \text{ otherwise }
+    %             \end{cases}
+    % \]
+    %
+    % We write expressions $e_{\mathsf{min}}$ for the first canonical vector and $e_{\mathsf{max}}$ for the last canonical vector. For any $i$ we write
+    % \begin{align*}
+    %     e_{\mathsf{min}+\mathsf{i}} &= \mathsf{Next}^i\cdot e_{\mathsf{min}} \\
+    %     e_{\mathsf{max}+\mathsf{i}} &= \mathsf{Prev}^i\cdot e_{\mathsf{max}}
+    % \end{align*}
+    %
+    % We use the extra $\lbrace 0,1 \rbrace^n\rightarrow\lbrace 0,1 \rbrace^n$ functions that have a $\langfor$ translation:
+    %
+    % \[
+    %             \mathsf{min}(e)=\begin{cases}
+    %             1 \text{ if } e=e_{\mathsf{min}} \\
+    %             0 \text{ otherwise }
+    %             \end{cases}
+    % \]
+    %
+    % \[
+    %             \mathsf{max}(e)=\begin{cases}
+    %             1 \text{ if } e=e_{\mathsf{max}} \\
+    %             0 \text{ otherwise }
+    %             \end{cases}
+    % \]
+    %
+    % \[
+    %             \EDIT{\islessorequal}(b_i,b_j)=\begin{cases}
+    %             1 \text{ if } i\leq j \\
+    %             0 \text{ otherwise }
+    %             \end{cases}
+    % \]
+    %
+    % When used in $\langfor$ these functions output $[0]$ and $[1]$.
+
+To simulate $\textsc{Evaluate}(\Phi_n,A)$ we will iterate over $k$ vectors and perform
+$n^k$ iterative updates to the matrix $X$, starting from the matrix $X$ only storing the output gate id and value $1$ in column $n-1$
+(indicating the top of the stack $\cG$) in the first row. After performing the updates, we end up with a matrix $X$ such that $X[1,n-2]$ holds the desired
+evaluation of $\Phi_n$ on $A$. As stated in Theorem~\ref{th-circuits-ml}, we use the vector variable $v$ to encode the input values in $A$, i.e. we consider
+an instance satisfying $\conc(v) = [a_1 \ldots a_n]^T$.  We first describe
+some auxiliary \langfor expressions needed in the simulation before delving into the details of simulating \textsc{Evaluate}, \textsc{Extend} and \textsc{Aggregate}.
+
+\paragraph{$\blacktriangleright$ Some auxiliary expressions.} 
+The desired \langfor expression $e_\Phi$ relies on several other expressions. Indeed, alongside
+the expressions that extract gate information (see Proposition~\ref{prop:transducer2} and surrounding discussion), we also use \langfor expressions that leverage the order on canonical vectors, as explained in Section~\ref{sec:formatlang:design}. 
+
+In particular, we use  $e_{\mathsf{min}+\mathsf{i}}$ and  $e_{\mathsf{max}-\mathsf{i}}$, for $i=0,\ldots,n-1$,
+to obtain the $(1+i)$th and $(n-i)$th canonical vectors, respectively, and also use $e_{\mathsf{Next}}$ and $e_{\mathsf{Prev}}$, expressions that return matrices that allow to
+move from one canonical vector to the next and previous canonical vector, respectively. In addition, we use $\mathsf{min}$, $\mathsf{max}$ and $\EDIT{\islessorequal}$,  expressions returning
+$1$ when their input vector(s) are the first canonical vector, the last canonical vector, and consecutive canonical vectors, respectively, and $0$ otherwise. Given these, we also use the following derived expressions:
+% \vspace{-4ex}
+\begin{gather*}
+   e_{V}\coloneqq e_{\mathsf{max}-2} \quad e_{G_{\mathsf{top}}}\coloneqq e_{\mathsf{max}-1} \quad     e_{V_{\mathsf{top}}}\coloneqq e_{\mathsf{max}} \\ 
+  V_{\mathsf{top}}\coloneqq  X\cdot e_{V_{\mathsf{top}}} \quad  G_{\mathsf{top}} \coloneqq X\cdot e_{G_{\mathsf{top}}}\\
+     V\coloneqq  \Iden{V_{\mathsf{top}}} \cdot X \cdot e_V \quad
+  G \coloneqq  \Iden{G_{\mathsf{top}}}\cdot X \cdot \Iden{e_{\mathsf{max}-3}}\\
+   \Iden{b_i}\coloneqq \ssum v. \, \EDIT{\islessorequal}(v,b_i)\times (v\cdot v^T)  \\
+\pondIden{b_i}{c}\coloneqq \ssum v. \, \EDIT{\IfThenElse{v^T\cdot b_i}{c\times (v\cdot v^T)}{(v\cdot v^T)}}.
+ \end{gather*}
+Here, $e_V$, $e_{G_{\mathsf{top}}}$ and $e_{V_{\mathsf{top}}}$ return the canonical vectors identifying the columns in $X$ for the value stack (column $n-2$) and columns holding the positions of the top elements in the the gate stack (column $n-1$) and value stack (column $n$), respectively.
+
+ Moreover, 
+ $V_{\mathsf{top}}$, $G_{\mathsf{top}}$, $V$ and $G$ evaluate to
+the vectors and matrix shown in Example~\ref{ex:matrixX}. Here,  $V_{\mathsf{top}}$
+selects the $n$th column from $X$, and  $G_{\mathsf{top}}$ selects the $(n-1)$th column. The expression $\Iden{b_i}$ evaluates to the diagonal matrix with diagonal entries $1$ up to position $(i,i)$ and zero otherwise. 
+
+Hence, for $V$, we first make $X$ zero below
+the row corresponding to the canonical vector $V_{\mathsf{top}}$ and then extract its
+$(n-2)$th column. Similarly, for $G$ we make $X$ zero below the row corresponding to
+$G_{\mathsf{top}}$ and also after column $n-3$. The expression $\pondIden{b_i}{c}$ will be used later on and creates the identity matrix with value $c$ on position $(i,i)$. 
+
+In what follows, although gate ids only require $n-3$ values, we represent them in reverse binary notation, followed by three zeroes.
+These three trailing zeroes do not change which gate an id represents. In this way, we can work with vectors of size $n$ throughout.
+
+    % For a canonical vector, let $$.$$ This matrix has ones in the diagonal up to position $i$ marked by $e_{i}$. We define the following sub-matrices of $X$:
+%     \begin{align*}
+%
+%     \end{align*}
+%
+%     % For example, if we are in a step where $\getsize{\cG}=\getsize{\cV} + 1$ then
+%     %
+%     % \[
+%     % X = \begin{bmatrix}
+%     %     \texttt{id}_1 & v_1 & 0 & 0 \\
+%     %     \texttt{id}_2 & v_2 & 0 & 0 \\
+%     %     \vdots & \vdots & \vdots & \vdots \\
+%     %     \texttt{id}_{j-1} & v_{j-1} & 0 & 1 \\
+%     %     \texttt{id}_j & 0 & 1 & 0 \\
+%     %     0 & 0 & 0 & 0 \\
+%     %     \vdots & \vdots & \vdots & \vdots \\
+%     %     0 & 0 & 0 & 0
+%     % \end{bmatrix},
+%    $$ G = \begin{bmatrix}
+%         \texttt{id}_1 & 0 & 0 & 0 \\
+%         \texttt{id}_2 & 0 & 0 & 0\\
+%         \vdots & \vdots & \vdots & \vdots  \\
+%         \texttt{id}_{j-1} & 0 & 0 & 0\\
+%         \texttt{id}_j & 0 & 0 & 0\\
+%         0 & 0 & 0 & 0 \\
+%         \vdots & \vdots & \vdots & \vdots \\
+%         0 & 0 & 0 & 0
+%     \end{bmatrix},$$
+% $$ % V = \begin{bmatrix}
+%     %     v_1  \\
+%     %     v_2 \\
+%     %     \vdots   \\
+%     %     v_{j-1} \\
+%     %     0 \\
+%     %     0 \\
+%     %     \vdots \\
+%     %     0
+%     % \end{bmatrix},
+%     % G_{top} = \begin{bmatrix}
+%     %     0  \\
+%     %     0 \\
+%     %     \vdots   \\
+%     %     0 \\
+%     %     1 \\
+%     %     0 \\
+%     %     \vdots \\
+%     %     0
+%     % \end{bmatrix},
+%     % V_{top} = \begin{bmatrix}
+%     %     0  \\
+%     %     0 \\
+%     %     \vdots   \\
+%     %     1 \\
+%     %     0 \\
+%     %     0 \\
+%     %     \vdots \\
+%     %     0
+%     % \end{bmatrix}
+%     % \]
+
+    % Here, $V$ is a vector encoding the stack of values in $X$ and $G$ is a matrix encoding the stack of gates in $X$.
+    % Note that what is \textit{over} the top of the stacks is always set to zero due to $\Iden{G_{top}}$ and $\Iden{V_{top}}$.
+    % Also, note that $G$ is of the same size as $X$. We sometimes omit the zeroes due to simplicity.
+
+    %
+    % The $Evaluate$ method (algorithm \ref{alg:eval_code}) is defined as follows:
+
+\paragraph{$\blacktriangleright$ The overall expression encoding {\normalfont \textsc{Evaluate}} for $n\geq n_0$}
+We simulate $\textsc{Evaluate}(\Phi_n,A)$ for $n\geq n_0$ by the expression
+$e_{\Phi}^{\geq n_0}\coloneqq  e_{\mathsf{min}}^T\cdot e_{\mathsf{iterate}}\cdot e_{\max -2}$ with
+    % \begin{align*}\allowdisplaybreaks
+	% 	e_{\mathsf{iterate}}&\coloneqq  \ffor{v_1}{X_1} \\
+	% 	& \qquad\ffor{v_2}{X_2=X_1}  \\
+	% 	& \qquad \quad \ffor{v_3}{X_3=X_2}  \cdots\\
+	% 	& \qquad \qquad\quad \ffor{v_k}{X_{k}=X_{k-1}} \Biggl(\Bigl(\bigl( \sprod_{i=1}^k \mathsf{min}(v_i)\bigr) \times e_{\mathsf{start}}\Bigr) + 
+    %     \biggl( \bigl(1- \sprod_{i=1}^k \mathsf{min}(v_i)\bigr)\times{}\\
+    %     &\hspace{0.3em} \biggl( \bigl(1 -\mathsf{min}(G_{\mathsf{top}})\cdot \mathsf{min}(V_{\mathsf{top}})\bigr) \times \Bigl(\bigl( 1 - G_{\mathsf{top}}^T\cdot V_{\mathsf{top}}\bigr) \times e_{\mathsf{extend}} + 
+    %     \bigl(G_{\mathsf{top}}^T\cdot V_{\mathsf{top}}\bigr) \times e_{\mathsf{aggregate}}\Bigl)  \\
+    %     &\hspace{8cm}+\bigl(\mathsf{min}(G_{\mathsf{top}})\cdot \mathsf{min}(V_{\mathsf{top}})\bigr)\times X_k\biggr)\Biggr).
+	%    \end{align*}
+    \EDIT{\begin{align*}\allowdisplaybreaks
+        e_{\mathsf{iterate}}&\coloneqq  \ffor{v_1}{X_1=e_{\mathsf{start}}} \\
+        & \qquad\ffor{v_2}{X_2=X_1}  \\
+        & \qquad \quad \ffor{v_3}{X_3=X_2}  \cdots\\
+        & \qquad \qquad\quad \ffor{v_k}{X_{k}=X_{k-1}}\\
+        & \IfThenElse{\mathsf{min}(G_{\mathsf{top}})\cdot \mathsf{min}(V_{\mathsf{top}})}{X_k}{\bigl( \IfThenElse{G_{\mathsf{top}}^T\cdot V_{\mathsf{top}}}{e_{\mathsf{aggregate}}}{e_{\mathsf{extend}}} \bigr)} \\
+    \end{align*}
+    }
+In the expression $e_{\mathsf{iterate}}$, we basically perform $n^k$ updates to matrix variable $X_k$ (which takes the role of the matrix variable $X$ mentioned before)
+\EDIT{in the following sense: the expressions $e_{\mathsf{extend}}$ or $e_{\mathsf{aggregate}}$ use $X_k$ and \emph{return} an updated $X_k$ for the next iteration.
+We start the evaluation by setting $X_k=e_{\mathsf{start}}$ which encodes line 3 of Algorithm~\ref{alg:eval_code}.
+For all iterations we check whether or not the end of the algorithm has been reached. This happens when both $G_{\mathsf{top}}$ and $V_{\mathsf{top}}$ are equal to $b_1^n$
+and thus $\size(\cG)=\size(\cV)=1$. This is checked by $\mathsf{min}(G_{\mathsf{top}})\cdot \mathsf{min}(V_{\mathsf{top}})$.
+In that case, we stop updating $X_k$ in the sense that we return $X_k$ until the end of all iterations.
+}
+
+Otherwise, when \EDIT{$\mathsf{min}(G_{\mathsf{top}})\cdot \mathsf{min}(V_{\mathsf{top}})$ is $0$}, we check whether \EDIT{$\size(\cG)=\size(\cV)$ or $\size(\cG)\neq \size(\cV)$.}
+In the former case \EDIT{(when $G_{\mathsf{top}}^T\cdot V_{\mathsf{top}}$ is $1$)}, we call expression $e_{\mathsf{aggregate}}$, which encodes function $\textsc{Aggregate}(\cG,\cV)$;
+in the latter case \EDIT{(when $G_{\mathsf{top}}^T\cdot V_{\mathsf{top}}$ is $0$)}, we call expression $e_{\mathsf{extend}}$, which encodes the function $\textsc{Extend}(\cG,\cV,A)$.
+After performing $n^k$ iterations, $e_\Phi^{\geq n_0}$ retrieves entry $(1,\max-2)$ from the value stack column returned by $e_{\mathsf{iterate}}$. It now remains to explain the expressions $e_{\mathsf{start}}$, $e_{\mathsf{extend}}$ and $e_{\mathsf{aggregate}}$.
+
+% When all $v_1,\ldots,v_k$ are initially equal to $b_1^n$, we are at ``timestamp'' $0$ and start the evaluation by 
+% calling expression $e_{\mathsf{start}}$ which encodes line 3 of  Algorithm~\ref{alg:eval_code}. This case is determined by the indicator function
+% $ \sprod_{i=1}^k \mathsf{min}(v_i)$. For all subsequent assignments of $v_1,\ldots,v_k$, i.e. when $1- \sprod_{i=1}^k \mathsf{min}(v_i)$ is equal to $1$, and thus for all later ``timestamps'', we check whether or not we reach the end of the algorithm. This happens when both $G_{\mathsf{top}}$ and $V_{\mathsf{top}}$ are equal to $b_1^n$
+% and thus $\size(\cG)=\size(\cV)=1$. This is checked by $\mathsf{min}(G_{\mathsf{top}})\cdot \mathsf{min}(V_{\mathsf{top}})$.
+% In that case, we stop updating $X_k$ (last summand in expression $e_{\mathsf{iterate}}$).
+% Otherwise, when $1-\mathsf{min}(G_{\mathsf{top}})\cdot \mathsf{min}(V_{\mathsf{top}})$ is $1$, we check whether $\size(\cG)\neq \size(\cV)$ or $\size(\cG)=\size(\cV)$. In the former case, we call expression $e_{\mathsf{extend}}$, which encodes the function $\textsc{Extend}(\cG,\cV,A)$, in the latter case we call expression $e_{\mathsf{aggregate}}$, which encodes function $\textsc{Aggregate}(\cG,\cV)$. These two cases are checked by the indicator functions $1 - G_{\mathsf{top}}^T\cdot V_{\mathsf{top}}$ and $G_{\mathsf{top}}^T\cdot V_{\mathsf{top}}$, respectively. After performing $n^k$ iterations, $e_\Phi^{\geq n_0}$ retrieves entry $(1,\max-2)$ from the value stack column returned by $e_{\mathsf{iterate}}$. It now remains to explain the expressions $e_{\mathsf{start}}$, $e_{\mathsf{extend}}$ and $e_{\mathsf{aggregate}}$.
+
+\begin{figure}
+	$$
+\underbrace{\left[\begin{smallmatrix}
+	       \texttt{id}_1 & 0 & 1 & 0 \\
+	       \vphantom{\texttt{id}_1} 0 & 0 & 0 & 0 \\
+	        \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+	        \vphantom{\texttt{id}_1} 0 & 0 & 0 & 0 \\
+			 \vphantom{\texttt{id}_1}   0 & 0 & 0 & 0 \\
+ 	        \vphantom{\texttt{id}_1} 0 & 0 & 0 & 0 \\
+ 			 \vphantom{\texttt{id}_1}   0 & 0 & 0 & 0 \\
+          \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+			   0 & 0 & 0 & 0
+	       \end{smallmatrix}\right]}_{e_{\mathsf{start}}}
+		       \underbrace{\left[\begin{smallmatrix}
+        \texttt{id}_1 & v_1 & 0 & 0 \, \\
+        \texttt{id}_2 & v_2 & 0 & 0 \\
+        \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+        \texttt{id}_{j-1} & v_{j-1} & 0 & 1 \\
+        \texttt{id}_j & 0 & 1 & 0 \\
+       \vphantom{\texttt{id}_1} 0 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0 \\
+        \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+        0 & 0 & 0 & 0
+    \end{smallmatrix}\right]\mapsto
+	\left[\begin{smallmatrix}
+        \texttt{id}_1 & v_1 & 0 & 0 \\
+        \texttt{id}_2 & v_2 & 0 & 0 \\
+       \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+        \texttt{id}_{j-1} & v_{j-1} & 0 & 0 \\
+        \texttt{id}_j & v_j & 0 & 1 \\
+        \texttt{id}_{j+1} & 0 & 1 & 0 \\
+        0 & 0 & 0 & 0 \\
+         \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+        0 & 0 & 0 & 0
+    \end{smallmatrix}\right]}_{\text{Result of $e_{\mathsf{ext\_plus}}$}}
+		       \underbrace{\left[\begin{smallmatrix}
+        \texttt{id}_1 & v_1 & 0 & 0 \, \\
+        \texttt{id}_2 & v_2 & 0 & 0 \\
+        \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+        \texttt{id}_{j-1} & v_{j-1} & 0 & 1 \\
+        \texttt{id}_j & 0 & 1 & 0 \\
+       \vphantom{\texttt{id}_1} 0 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0 \\
+        \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+        0 & 0 & 0 & 0
+    \end{smallmatrix}\right]\mapsto
+	\left[\begin{smallmatrix}
+        \texttt{id}_1 & v_1 & 0 & 0 \\
+        \texttt{id}_2 & v_2 & 0 & 0 \\
+       \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+        \texttt{id}_{j-1} & v_{j-1} & 0 & 0 \\
+        \texttt{id}_j & v_j & 0 & 1 \\
+        \texttt{id}_{j+1} & 1 & 1 & 0 \\
+        0 & 0 & 0 & 0 \\
+         \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+        0 & 0 & 0 & 0
+    \end{smallmatrix}\right]}_{\text{Result of $e_{\mathsf{ext\_prod}}$}}$$
+$$ \underbrace{\left[\begin{smallmatrix}
+        \texttt{id}_1 & v_1 & 0 & 0 \\
+        \texttt{id}_2 & v_2 & 0 & 0 \\
+          \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+        \texttt{id}_{j-1} & v_{j-1} & 0 & 1 \\
+        \texttt{id}_j & 0 & 1 & 0 \\
+       \vphantom{\texttt{id}_1}  0 & 0 & 0 & 0 \\
+	    \vphantom{\texttt{id}_1}  0 & 0 & 0 & 0 \\
+        \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+        0 & 0 & 0 & 0
+    \end{smallmatrix}\right]\mapsto
+    \left[\begin{smallmatrix}
+        \texttt{id}_1 & v_1 & 0 & 0 \\
+        \texttt{id}_2 & v_2 & 0 & 0 \\
+        \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+        \texttt{id}_{j-1} & v_{j-1} & 0 & 0 \\
+        \texttt{id}_j & 1 & 1 & 1 \\
+       \vphantom{\texttt{id}_1}  0 & 0 & 0 & 0 \\
+	    \vphantom{\texttt{id}_1}  0 & 0 & 0 & 0 \\
+         \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+        0 & 0 & 0 & 0
+    \end{smallmatrix}\right]}_{\text{Result of $e_{\mathsf{ext\_one}}$}}
+\underbrace{\left[\begin{smallmatrix}
+		\texttt{id}_1 & v_1 & 0 & 0 \\
+		\texttt{id}_2 & v_2 & 0 & 0 \\
+		\vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+		\texttt{id}_{j-1} & v_{j-1} & 0 & 1 \\
+		\texttt{id}_j & 0 & 1 & 0 \\
+		\vphantom{\texttt{id}_1}  0 & 0 & 0 & 0 \\
+		\vphantom{\texttt{id}_1}  0 & 0 & 0 & 0 \\
+		\vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+		0 & 0 & 0 & 0
+	\end{smallmatrix}\right]\mapsto
+	\left[\begin{smallmatrix}
+		\texttt{id}_1 & v_1 & 0 & 0 \\
+		\texttt{id}_2 & v_2 & 0 & 0 \\
+		\vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+		\texttt{id}_{j-1} & v_{j-1} & 0 & 0 \\
+		\texttt{id}_j & 0 & 1 & 1 \\
+		\vphantom{\texttt{id}_1}  0 & 0 & 0 & 0 \\
+		\vphantom{\texttt{id}_1}  0 & 0 & 0 & 0 \\
+		\vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+		0 & 0 & 0 & 0
+	\end{smallmatrix}\right]}_{\text{Result of $e_{\mathsf{ext\_zero}}$}}
+	\underbrace{\left[\begin{smallmatrix}
+	        \texttt{id}_1 & v_1 & 0 & 0 \\
+	        \texttt{id}_2 & v_2 & 0 & 0 \\
+	          \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+	        \texttt{id}_{j-1} & v_{j-1} & 0 & 1 \\
+	        \texttt{id}_j & 0 & 1 & 0 \\
+	       \vphantom{\texttt{id}_1}  0 & 0 & 0 & 0 \\
+		    \vphantom{\texttt{id}_1}  0 & 0 & 0 & 0 \\
+	        \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+	        0 & 0 & 0 & 0
+	    \end{smallmatrix}\right]\mapsto
+	    \left[\begin{smallmatrix}
+	        \texttt{id}_1 & v_1 & 0 & 0 \\
+	        \texttt{id}_2 & v_2 & 0 & 0 \\
+	        \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+	        \texttt{id}_{j-1} & v_{j-1} & 0 & 0 \\
+	        \texttt{id}_j & v_j & 1 & 1 \\
+	       \vphantom{\texttt{id}_1}  0 & 0 & 0 & 0 \\
+		    \vphantom{\texttt{id}_1}  0 & 0 & 0 & 0 \\
+	         \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+	        0 & 0 & 0 & 0
+	    \end{smallmatrix}\right]}_{\text{Result of $e_{\mathsf{ext\_input}}$}}
+	$$
+\caption{Result of updating $X$ by means of the \langfor expressions encoding the initialization by \textsc{Evaluate} and the different cases in function  \textsc{Extend}.}\label{fig:langforevalalg1}
+\end{figure}
+
+    %
+    %
+    %
+    %
+    % Note that the $ \texttt{for}$-expression does the evaluation. The final output is in $X[1,max-2]$, we extract this value by multiplying the final result as $e_{\mathsf{min}}^T\cdot [\texttt{for}(\ldots )]\cdot e_{V}$.
+
+\paragraph{$\blacktriangleright$ The initialization expression $e_{\mathsf{start}}$}
+Expression $e_{\mathsf{start}}$ is used to set the matrix $X$ in the initial state, conform to line 3 in Algorithm~\ref{alg:eval_code}. More precisely,
+    % To set the initial state (algorithm \ref{alg:eval_code} line 2) we define the $\langfor$ expressio
+$$e_{\mathsf{start}}\coloneqq e_{\mathsf{min}}\cdot \getroot^T + e_{\mathsf{min}}\cdot e_{G_{\mathsf{top}}}^T.$$
+In other words, it will put the \texttt{id} of the output gate on the first row of $X$ and also sets the $(n-1)$th entry  of the first row to $1$,
+as depicted in Figure~\ref{fig:langforevalalg1}. 
+
+\paragraph{$\blacktriangleright$ The expression $e_{\mathsf{extend}}$ simulating {\normalfont\textsc{Extend}}}
+To simulate $\textsc{Extend}$ we define
+$$
+e_{\mathsf{extend}}\coloneqq e_{\mathsf{ext\_plus}}+e_{\mathsf{ext\_prod}}+e_{\mathsf{ext\_one}}+ e_{\mathsf{ext\_zero}}+e_{\mathsf{ext\_input}},
+$$
+where  $e_{\mathsf{ext\_plus}}$, $e_{\mathsf{ext\_prod}}$, $e_{\mathsf{ext\_one}}$, $e_{\mathsf{ext\_zero}}$ and $e_{\mathsf{ext\_input}}$ correspond to the different cases in \textsc{Extend} (lines 11--13, 14--16, 17--18, 19--20 and 21--22 in Algorithm~\ref{alg:eval_code}, respectively). More precisely, we define:
+    \begin{align*}\allowdisplaybreaks
+      e_{\mathsf{ext\_plus}}&\coloneqq  \texttt{isplus}\bigl(G^T\cdot G_{\mathsf{top}}\bigr)\times \Bigl( G + 
+       e_{\mathsf{Next}}\cdot G_{\mathsf{top}} \cdot \texttt{getfirst}\bigl(G^T\cdot G_{\mathsf{top}}\bigr)^T  +{} \\
+        &\hspace{4cm}e_{\mathsf{Next}}\cdot G_{\mathsf{top}}\cdot e_{G_{\mathsf{top}}}^T +V\cdot e_{V}^T + e_{\mathsf{Next}}\cdot V_{\mathsf{top}}\cdot e_{V_{\mathsf{top}}}^T \Bigr) \\
+  \displaybreak[0]      e_{\mathsf{ext\_prod}}&\coloneqq  \texttt{isprod}\bigl(G^T\cdot G_{\mathsf{top}}\bigr)\times \Bigl(G +
+        e_{\mathsf{Next}}\cdot G_{\mathsf{top}} \cdot \texttt{getfirst}\bigl(G^T\cdot G_{\mathsf{top}}\bigr)^T + {}\\
+        &\hspace{2cm}e_{\mathsf{Next}}\cdot G_{\mathsf{top}}\cdot e_{G_{\mathsf{top}}}^T +(V + e_{\mathsf{Next}}\cdot V_{\mathsf{top}})\cdot e_{V}^T + e_{\mathsf{Next}}\cdot V_{\mathsf{top}}\cdot e_{V_{\mathsf{top}}}^T \Bigr) \\
+        e_{\mathsf{ext\_one}}&\coloneqq  \texttt{isone}\bigl(G^T\cdot G_{\mathsf{top}}\bigr)\times \Bigl(G + G_{\mathsf{top}}\cdot e_{G_{\mathsf{top}}}^T + (V + e_{\mathsf{Next}}\cdot V_{\mathsf{top}})\cdot e_{V}^T + e_{\mathsf{Next}}\cdot V_{\mathsf{top}}\cdot e_{V_{\mathsf{top}}}^T \Bigr) \\
+        e_{\mathsf{ext\_zero}}&\coloneqq  \texttt{iszero}\bigl(G^T\cdot G_{\mathsf{top}}\bigr)\times \Bigl(G + G_{\mathsf{top}}\cdot e_{G_{\mathsf{top}}}^T + V\cdot e_{V}^T + e_{\mathsf{Next}}\cdot V_{\mathsf{top}}\cdot e_{V_{\mathsf{top}}}^T \Bigr) \\
+        e_{\mathsf{ext\_input}}&\coloneqq  \texttt{isinput}\bigl(G^T\cdot G_{\mathsf{top}}\bigr) \times{} \biggl(G + G_{\mathsf{top}}\cdot e_{G_{\mathsf{top}}}^T + \\
+        & \Bigl(V + \bigl( v^T \cdot e_{\mathsf{Next}}\cdot V_{\mathsf{top}} \cdot \texttt{getinput}\bigl(G^T\cdot G_{\mathsf{top}}\bigr)^T \bigr)\Bigr)\cdot e_{V}^T + e_{\mathsf{Next}}\cdot V_{\mathsf{top}}\cdot e_{V_{\mathsf{top}}}^T \biggr).
+    \end{align*} 
+We depict the effect of these expressions on the matrix $X$ in Figure~\ref{fig:langforevalalg1}. In these expressions, $G^T\cdot G_{\mathsf{top}}$ evaluates to the
+current \texttt{id} on the top of the gate stack and is used to determine which case of \textsc{Extend} to consider. For example,
+$\texttt{isplus}\bigl(G^T\cdot G_{\mathsf{top}}\bigr)$ is $1$ if that gate is a $+$-gate, and is $0$ otherwise. So,
+$e_{\mathsf{ext\_plus}}$ has only effect when the top gate is indeed a $+$-gate. We use similar checks in all other expressions. Then, the matrix $G$ (holding the ids on the current gate stack) is additively updated. For example, for a $+$-gate we place the first child's gate \texttt{id} on row $e_{\mathsf{Next}}\cdot G_{\mathsf{top}}$, move the position of the $1$ indicating the top elements in the two stacks one row below using $e_{\mathsf{Next}}\cdot G_{\mathsf{top}}\cdot e_{G_{\mathsf{top}}}^T$ and $e_{\mathsf{Next}}\cdot V_{\mathsf{top}}\cdot e_{V_{\mathsf{top}}}^T$ and copy the value stack by means of $V\cdot e_V^t$. For a $\times$-gate, the only difference is that we need to put $1$ in the value stack by means of $(V+e_{\mathsf{Next}}\cdot V_{\mathsf{top}})\cdot e_V^T$. For $1$-gates or $0$-gates, the difference is that we do not need to advance the $1$ for the gate stack. Finally, input gates are treated as constant gates, except that the corresponding value in $v$ needs to be added to the value stack, which is done using 
+$\Bigl(V + \bigl( v^T \cdot e_{\mathsf{Next}}\cdot V_{\mathsf{top}} \cdot \texttt{getinput}\bigl(G^T\cdot G_{\mathsf{top}}\bigr)^T\Bigr)\cdot e_V^T$.
+ %
+ % of the stack. In INIT${\_}$PLUS we get the current stack $G$, we add $\mathsf{Next}\cdot G_{top} \cdot \getfirst{G^T\cdot G_{top}}^T$ which is an $n\times n$ matrix with the first child of $G^T\cdot G_{top}$ in the next row. Then $\mathsf{Next}\cdot G_{top}\cdot e_{G_{top}}^T$ adds $\mathsf{Next}\cdot G_{top}$ to the $n-1$ column to mark the gate we added as the top. Next, we do the same with the values by adding $V\cdot e_{V} + \mathsf{Next}\cdot V_{top}\cdot e_{V_{top}}^T$.
+
+    %
+    %
+    % For the initialize step, we define the $\langfor$ expressions: INIT${\_}$PLUS (algorithm \ref{alg:init_code}, lines 2, 3, 4), INIT${\_}$PROD (algorithm \ref{alg:init_code}, lines 5, 6, 7), CONST (algorithm \ref{alg:init_code}, lines 8, 9) and INPUT (algorithm \ref{alg:init_code}, lines 10, 11):
+
+ 
+    % Where $v$ is the matrix variable stated in the theorem, the one associated with the input $A$ of the circuit.
+
+    % The $\langfor$ expression equivalent to algorithm \ref{alg:init_code} is $$\text{INIT}\coloneqq \text{INIT{\_}PLUS}+\text{INIT{\_}PROD}+\text{CONST}+\text{INPUT}.$$
+    %
+    % The idea is to return the matrix for the next iteration. Recall that here $\getsize{\cG}=\getsize{\cV} + 1$. So, when the operation is INPUT or CONST, if we start with
+   %
+   %  \[
+   %  \begin{bmatrix}
+   %      \texttt{id}_1 & v_1 & 0 & 0 \\
+   %      \texttt{id}_2 & v_2 & 0 & 0 \\
+   %      \vdots & \vdots & \vdots & \vdots \\
+   %      \texttt{id}_{j-1} & v_{j-1} & 0 & 1 \\
+   %      \texttt{id}_j & 0 & 1 & 0 \\
+   %      0 & 0 & 0 & 0 \\
+   %      \vdots & \vdots & \vdots & \vdots \\
+   %      0 & 0 & 0 & 0
+   %  \end{bmatrix}, \text{ then we return }
+   %  \begin{bmatrix}
+   %      \texttt{id}_1 & v_1 & 0 & 0 \\
+   %      \texttt{id}_2 & v_2 & 0 & 0 \\
+   %      \vdots & \vdots & \vdots & \vdots \\
+   %      \texttt{id}_{j-1} & v_{j-1} & 0 & 0 \\
+   %      \texttt{id}_j & v_j & 1 & 1 \\
+   %      0 & 0 & 0 & 0 \\
+   %      \vdots & \vdots & \vdots & \vdots \\
+   %      0 & 0 & 0 & 0
+   %  \end{bmatrix}.
+   %  \]
+   %
+   %  When the operation is INIT{\_}PLUS or INIT{\_}PROD, if we start with
+   %
+   %  \[
+   %  \begin{bmatrix}
+   %      \texttt{id}_1 & v_1 & 0 & 0 \\
+   %      \texttt{id}_2 & v_2 & 0 & 0 \\
+   %      \vdots & \vdots & \vdots & \vdots \\
+   %      \texttt{id}_{j-1} & v_{j-1} & 0 & 1 \\
+   %      \texttt{id}_j & 0 & 1 & 0 \\
+   %      0 & 0 & 0 & 0 \\
+   %      0 & 0 & 0 & 0 \\
+   %      \vdots & \vdots & \vdots & \vdots \\
+   %      0 & 0 & 0 & 0
+   %  \end{bmatrix}, \text{ then we return }
+   %  \begin{bmatrix}
+   %      \texttt{id}_1 & v_1 & 0 & 0 \\
+   %      \texttt{id}_2 & v_2 & 0 & 0 \\
+   %      \vdots & \vdots & \vdots & \vdots \\
+   %      \texttt{id}_{j-1} & v_{j-1} & 0 & 0 \\
+   %      \texttt{id}_j & v_j & 0 & 1 \\
+   %      \texttt{id}_{j+1} & 0 & 1 & 0 \\
+   %      0 & 0 & 0 & 0 \\
+   %      \vdots & \vdots & \vdots & \vdots \\
+   %      0 & 0 & 0 & 0
+   %  \end{bmatrix}.
+   %  \]
+
+\paragraph{$\blacktriangleright$ The expression $e_{\mathsf{aggregate}}$ simulating {\normalfont\textsc{Aggregate}}}
+To simulate $\textsc{Aggregate}$ we define
+$$
+e_{\mathsf{aggregate}}\coloneqq e_{\mathsf{pop}}+e_{\mathsf{agg\_plus}}+e_{\mathsf{agg\_prod}}+e_{\mathsf{agg\_not\_last}}+e_{\mathsf{agg\_last}},
+$$
+where  $e_{\mathsf{pop}}$, $e_{\mathsf{agg\_plus}}$, $e_{\mathsf{agg\_prod}}$, $e_{\mathsf{agg\_not\_last}}$ and $e_{\mathsf{agg\_last}}$ correspond to the different cases in \textsc{Aggregate} (lines 25--26, 27--28, 29--30, and 31--32 in Algorithm~\ref{alg:eval_code}, respectively).
+These expressions are defined as:
+
+%     The $\langfor$ expression equivalent to algorithm \ref{alg:agg_code} is
+%
+% 	% $$\text{AGG}\coloneqq \text{POP} + \text{AGG{\_}PLUS}+\text{AGG{\_}PROD}+\text{IS{\_}NOT{\_}LAST}+\text{IS{\_}LAST}.$$
+% 	%
+% 	%
+% 	%     For the aggregate expression (algorithm \ref{alg:agg_code}) we do the following. Let cdot v \cdot v^T,$$ namely, it is the identity with $c$ in position $(i,i)$.
+% 	%
+% 	%     We define the expressions: AGG${\_}$PLUS (algorithm \ref{alg:agg_code}, lines 4, 5), AGG${\_}$PROD (algorithm \ref{alg:agg_code}, lines 6, 7),  IS${\_}$NOT${\_}$LAST (algorithm \ref{alg:agg_code}, lines 8, 9), IS${\_}$LAST and POP:
+% where
+    \begin{align*}\allowdisplaybreaks
+        e_{\mathsf{pop}} &\coloneqq  \Iden{e_{\mathsf{Prev}}\cdot G_{\mathsf{top}}}\cdot G + e_{\mathsf{Prev}}\cdot V_{\mathsf{top}}\cdot e_{V_{\mathsf{top}}}^T  \\
+        e_{\mathsf{agg\_plus}}&\coloneqq  \texttt{isplus}\bigl(G^T \cdot e_{\mathsf{Prev}} \cdot G_{\mathsf{top}}\bigr) \times \biggl(\Bigl(\Iden{e_{\mathsf{Prev}}\cdot V_{\mathsf{top}}} \cdot V + \bigl( V^T \cdot V_{\mathsf{top}} \bigr)\cdot \bigl(e_{\mathsf{Prev}}\cdot V_{\mathsf{top}}\bigr)\Bigr) \cdot e_{V}^T \biggr) \\
+        e_{\mathsf{agg\_prod}}&\coloneqq  \isprod{G^T \cdot e_{\mathsf{Prev}} \cdot G_{\mathsf{top}}} \times \biggl(
+				 \pondIden{e_{\mathsf{Prev}}\cdot V_{\mathsf{top}}}{V^T \cdot V_{\mathsf{top}}}\cdot 
+				 \Iden{e_{\mathsf{Prev}}\cdot V_{\mathsf{top}}} \cdot V \cdot e_{V}^T \biggr) \\
+e_{\mathsf{agg\_not\_last}} &\coloneqq  \texttt{isnotlast}\bigl(G^T \cdot e_{\mathsf{Prev}} \cdot G_{\mathsf{top}},G^T \cdot G_{\mathsf{top}}\bigr) \\
+&\hspace{3cm}\times \biggl(G_{\mathsf{top}} \cdot \texttt{nextgate}\bigl(G^T \cdot e_{\mathsf{Prev}}\cdot G_{\mathsf{top}},G^T \cdot G_{\mathsf{top}}\bigr)^T + G_{\mathsf{top}}\cdot e_{G_{\mathsf{top}}}^T \biggr) \\
+ e_{\mathsf{agg\_last}}&\coloneqq  \Bigl( 1 - \texttt{isnotlast}\bigl(G^T \cdot e_{\mathsf{Prev}}\cdot G_{\mathsf{top}},G^T \cdot G_{\mathsf{top}}\bigr)\Bigr)\times \Bigl(e_{\mathsf{Prev}}\cdot G_{\mathsf{top}} \cdot e_{G_{\mathsf{top}}}^T \Bigr).
+    \end{align*}
+\EDIT{It is important to note that $e_{\mathsf{agg\_plus}}$ and $e_{\mathsf{agg\_prod}}$ are mutually exclusive, and so are  $e_{\mathsf{agg\_not\_last}}$ and $e_{\mathsf{agg\_last}}$.
+Thus, the following cases are the only possible outputs of $e_{\mathsf{aggregate}}$ in each iteration:
+\begin{itemize}
+    \item $e_{\mathsf{pop}} + e_{\mathsf{agg\_plus}} + e_{\mathsf{agg\_not\_last}}$
+    \item $e_{\mathsf{pop}} + e_{\mathsf{agg\_plus}} + e_{\mathsf{agg\_last}}$
+    \item $e_{\mathsf{pop}} + e_{\mathsf{agg\_prod}} + e_{\mathsf{agg\_not\_last}}$
+    \item $e_{\mathsf{pop}} + e_{\mathsf{agg\_prod}} + e_{\mathsf{agg\_last}}$
+\end{itemize}
+}
+% We depict the effect of these expressions (always in combination with $e_{\mathsf{pop}}$) on the matrix $X$ in Figure~\ref{fig:langforevalalg2}.
+\EDIT{We depict how each of these expressions use $X$ and output \emph{an independent part} of the required updated $X$ in Figure~\ref{fig:langforevalalg2}.}
+For starters, $e_{\mathsf{pop}}$ copies the id stack up position $e_{\mathsf{Prev}}\cdot G_{\mathsf{top}}$ (so pops
+the gate stack) and already moves up the $1$ indicating where the top element of the value stack will be. All other
+entries will be zero. Then, similarly as before, the gate ids stored in $G^T\cdot e_{\mathsf{Prev}}\cdot G_{\mathsf{top}}$ and $G^T\cdot G_{\mathsf{top}}$ are used to distinguish between the different cases. The expressions $e_{\mathsf{agg\_plus}}$ and $e_{\mathsf{agg\_prod}}$ copy the popped value stack (using $\Iden{e_{\mathsf{Prev}}\cdot V_{\mathsf{top}}} \cdot V$) and
+update it additively and multiplicatively, respectively, with the value $V^T \cdot V_{\mathsf{top}}$. Finally, $e_{\mathsf{agg\_not\_last}}$ and $e_{\mathsf{agg\_last}}$ update the top position of the gate stack. That is,
+if we dealt with the last child gate of $G^T\cdot G_{\mathsf{top}}$, we simply move up the $1$, indicating the top element in the gate stack, by means of $e_{\mathsf{Prev}}\cdot G_{\mathsf{top}} \cdot e_{G_{\mathsf{top}}}^T$. Otherwise, $e_{\mathsf{agg\_not\_last}}$ reinstates $G_{\mathsf{top}}\cdot e_{G_{\mathsf{top}}}^T$ (the stack remains of the same size)
+and adds the next gate's id to $G$ in the row identified by $G_{\mathsf{top}}$.
+  
+\begin{figure}
+    $$
+\underbrace{\left[\begin{smallmatrix}
+    \texttt{id}_1 & v_1 & 0 & 0 \, \\
+    \texttt{id}_2 & v_2 & 0 & 0 \\
+    \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+    \texttt{id}_{j-1} & v_{j-1} & 0 & 0 \\
+    \texttt{id}_j & v_j & 1 & 1 \\
+        0 & 0 & 0 & 0 \\
+    \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+    0 & 0 & 0 & 0
+\end{smallmatrix}\right]}_{X},
+\underbrace{\left[\begin{smallmatrix}
+    \texttt{id}_1 & 0 & 0 & 0 \, \\
+    \texttt{id}_2 & 0 & 0 & 0 \\
+    \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+    \texttt{id}_{j-1} & 0 & 0 & 1 \\
+        0 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0 \\
+    \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+    0 & 0 & 0 & 0
+\end{smallmatrix}\right]}_{e_{\mathsf{pop}}},
+\underbrace{\left[\begin{smallmatrix}
+    0 \cdots 0 & v_1 & 0 & 0 \, \\
+    0 \cdots 0 & v_2 & 0 & 0 \\
+    \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+    0 \cdots 0 & v_{j-1} + v_{j} & 0 & 0 \\
+    0 \cdots 0 & 0 & 0 & 0 \\
+    0 \cdots 0 & 0 & 0 & 0 \\
+    \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+    0 \cdots 0 & 0 & 0 & 0
+\end{smallmatrix}\right]}_{e_{\mathsf{agg\_plus}}},
+\underbrace{\left[\begin{smallmatrix}
+    0 \cdots 0 & v_1 & 0 & 0 \, \\
+    0 \cdots 0 & v_2 & 0 & 0 \\
+    \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+    0 \cdots 0 & v_{j-1}v_{j} & 0 & 0 \\
+    0 \cdots 0 & 0 & 0 & 0 \\
+    0 \cdots 0 & 0 & 0 & 0 \\
+    \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+    0 \cdots 0 & 0 & 0 & 0
+\end{smallmatrix}\right]}_{e_{\mathsf{agg\_prod}}},
+\underbrace{\left[\begin{smallmatrix}
+    0\cdots 0 & 0 & 0 & 0  \, \\
+    0\cdots 0 & 0 & 0 & 0 \\
+    \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+    0\cdots 0 & 0 & 0 & 0 \\
+    \texttt{id}_{j+1} & 0 & 1 & 0 \\
+    0\cdots 0 & 0 & 0 & 0 \\
+    \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+    0\cdots 0 & 0 & 0 & 0
+\end{smallmatrix}\right]}_{e_{\mathsf{agg\_not\_last}}},
+\underbrace{\left[\begin{smallmatrix}
+    0\cdots 0 & 0 & 0 & 0  \, \\
+    0\cdots 0 & 0 & 0 & 0 \\
+    \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+    0\cdots 0 & 0 & 1 & 0 \\
+    0\cdots 0 & 0 & 0 & 0 \\
+    0\cdots 0 & 0 & 0 & 0 \\
+    \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+    0\cdots 0 & 0 & 0 & 0
+\end{smallmatrix}\right]}_{e_{\mathsf{agg\_last}}}
+$$
+
+$$
+\underbrace{\left[\begin{smallmatrix}
+    \texttt{id}_1 & v_1 & 0 & 0 \, \\
+    \texttt{id}_2 & v_2 & 0 & 0 \\
+    \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+    \texttt{id}_{j-1} & v_{j-1} + v_{j} & 0 & 1 \\
+    \texttt{id}_{j+1} & 0 & 1 & 0 \\
+        0 & 0 & 0 & 0 \\
+    \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+    0 & 0 & 0 & 0
+\end{smallmatrix}\right]}_{e_{\mathsf{pop}}+e_{\mathsf{agg\_plus}}+e_{\mathsf{agg\_not\_last}}},
+\hspace{1em}
+\underbrace{\left[\begin{smallmatrix}
+    \texttt{id}_1 & v_1 & 0 & 0 \, \\
+    \texttt{id}_2 & v_2 & 0 & 0 \\
+    \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+    \texttt{id}_{j-1} & v_{j-1}v_{j} & 0 & 1 \\
+    \texttt{id}_{j+1} & 0 & 1 & 0 \\
+        0 & 0 & 0 & 0 \\
+    \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+    0 & 0 & 0 & 0
+\end{smallmatrix}\right]}_{e_{\mathsf{pop}}+e_{\mathsf{agg\_prod}}+e_{\mathsf{agg\_not\_last}}},
+\hspace{1em}
+\underbrace{\left[\begin{smallmatrix}
+    \texttt{id}_1 & 0 & 0 & 0 \, \\
+    \texttt{id}_2 & 0 & 0 & 0 \\
+    \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+    \texttt{id}_{j-1} & v_{j-1} + v_{j} & 1 & 1 \\
+        0 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0 \\
+    \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+    0 & 0 & 0 & 0
+\end{smallmatrix}\right]}_{e_{\mathsf{pop}}+e_{\mathsf{agg\_plus}}+e_{\mathsf{agg\_last}}},
+\hspace{1em}
+\underbrace{\left[\begin{smallmatrix}
+    \texttt{id}_1 & 0 & 0 & 0 \, \\
+    \texttt{id}_2 & 0 & 0 & 0 \\
+    \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+    \texttt{id}_{j-1} & v_{j-1}v_{j} & 1 & 1 \\
+        0 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0 \\
+    \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+    0 & 0 & 0 & 0
+\end{smallmatrix}\right]}_{e_{\mathsf{pop}}+e_{\mathsf{agg\_prod}}+e_{\mathsf{agg\_last}}}
+$$
+
+	% $$
+%--
+% \underbrace{\left[\begin{smallmatrix}
+% 	       \texttt{id}_1 & 0 & 1 & 0\,\, \\
+% 	       \vphantom{\texttt{id}_1} 0 & 0 & 0 & 0 \\
+% 	        \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+% 	        \vphantom{\texttt{id}_1} 0 & 0 & 0 & 0 \\
+% 			 \vphantom{\texttt{id}_1}   0 & 0 & 0 & 0 \\
+%  	        \vphantom{\texttt{id}_1} 0 & 0 & 0 & 0 \\
+%  			 \vphantom{\texttt{id}_1}   0 & 0 & 0 & 0 \\
+%           \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+% 			   0 & 0 & 0 & 0
+% 	       \end{smallmatrix}\right]}_{e_{\mathsf{pop}}}
+%--
+% 		       \underbrace{\left[\begin{smallmatrix}
+%         \texttt{id}_1 & v_1 & 0 & 0 \, \\
+%         \texttt{id}_2 & v_2 & 0 & 0 \\
+%         \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+%         \texttt{id}_{j-1} & v_{j-1} & 0 & 0 \\
+%         \texttt{id}_j & v_j & 1 & 1 \\
+%             0 & 0 & 0 & 0 \\
+%         \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+%         0 & 0 & 0 & 0
+%     \end{smallmatrix}\right]\mapsto
+% 	\left[\begin{smallmatrix}
+%         \texttt{id}_1 & v_1 & 0 & 0 \\
+%         \texttt{id}_2 & v_2 & 0 & 0 \\
+%        \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+%         \texttt{id}_{j-1} & v_{j-1}+v_j & 1 & 1 \\
+%        \vphantom{\texttt{id}_1} 0 & 0 & 0 & 0 \\
+%         0 & 0 & 0 & 0 \\
+%          \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+%         0 & 0 & 0 & 0
+%     \end{smallmatrix}\right]}_{\text{Result of $e_{\mathsf{pop}}+e_{\mathsf{agg\_plus}}$}}
+% 		   		       \underbrace{\left[\begin{smallmatrix}
+% 		           \texttt{id}_1 & v_1 & 0 & 0 \, \\
+% 		           \texttt{id}_2 & v_2 & 0 & 0 \\
+% 		           \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+% 		           \texttt{id}_{j-1} & v_{j-1} & 0 & 0 \\
+% 		           \texttt{id}_j & v_j & 1 & 1 \\
+% 		               0 & 0 & 0 & 0 \\
+% 		           \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+% 		           0 & 0 & 0 & 0
+% 		       \end{smallmatrix}\right]\mapsto
+% 		   	\left[\begin{smallmatrix}
+% 		           \texttt{id}_1 & v_1 & 0 & 0 \\
+% 		           \texttt{id}_2 & v_2 & 0 & 0 \\
+% 		          \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+% 		           \texttt{id}_{j-1} & v_{j-1}v_j & 1 & 1 \\
+% 		          \vphantom{\texttt{id}_1} 0 & 0 & 0 & 0 \\
+% 		           0 & 0 & 0 & 0 \\
+% 		            \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+% 		           0 & 0 & 0 & 0
+% 		       \end{smallmatrix}\right]}_{\text{Result of $e_{\mathsf{pop}}+e_{\mathsf{agg\_prod}}$}}$$
+% $$ \underbrace{\left[\begin{smallmatrix}
+%         \texttt{id}_1 & v_1 & 0 & 0 \\
+%         \texttt{id}_2 & v_2 & 0 & 0 \\
+%           \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+%         \texttt{id}_{j-1} & v_{j-1} & 0 & 0 \\
+%         \texttt{id}_j & v_j & 1 & 1 \\
+%        	    \vphantom{\texttt{id}_1}  0 & 0 & 0 & 0 \\
+%         \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+%         0 & 0 & 0 & 0
+%     \end{smallmatrix}\right]\mapsto
+%     \left[\begin{smallmatrix}
+%         \texttt{id}_1 & v_1 & 0 & 0 \\
+%         \texttt{id}_2 & v_2 & 0 & 0 \\
+%         \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+%         \texttt{id}_{j-1} & v_{j-1} & 0 & 1 \\
+%         \texttt{id}_{j+1} & 0 & 1 & 0 \\
+% 	    \vphantom{\texttt{id}_1}  0 & 0 & 0 & 0 \\
+%          \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+%         0 & 0 & 0 & 0
+%     \end{smallmatrix}\right]}_{\text{Result of \EDIT{$e_{\mathsf{pop}}+e_{\mathsf{agg\_plus}}+e_{\mathsf{agg\_not\_last}} \text{ or } e_{\mathsf{pop}}+e_{\mathsf{agg\_prod}} + e_{\mathsf{agg\_not\_last}}$}}}
+%     \hspace{2em}
+% 	\underbrace{\left[\begin{smallmatrix}
+% 	        \texttt{id}_1 & v_1 & 0 & 0 \\
+% 	        \texttt{id}_2 & v_2 & 0 & 0 \\
+% 	          \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+% 	        \texttt{id}_{j-1} & v_{j-1} & 0 & 0 \\
+% 	        \texttt{id}_j & v_j & 1 & 1 \\
+% 	         \vphantom{\texttt{id}_1}  0 & 0 & 0 & 0 \\
+% 	        \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+% 	        0 & 0 & 0 & 0
+% 	    \end{smallmatrix}\right]\mapsto
+% 	    \left[\begin{smallmatrix}
+% 	        \texttt{id}_1 & v_1 & 0 & 0 \\
+% 	        \texttt{id}_2 & v_2 & 0 & 0 \\
+% 	        \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+% 	        \texttt{id}_{j-1} & v_{j-1} & 1 & 1 \\
+% 	       \vphantom{\texttt{id}_1}  0 & 0 & 0 & 0 \\
+% 		    \vphantom{\texttt{id}_1}  0 & 0 & 0 & 0 \\
+% 	         \vphantom{\int\limits^x}\smash{\vdots} &\vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} & \vphantom{\int\limits^x}\smash{\vdots} \\
+% 	        0 & 0 & 0 & 0
+% 	    \end{smallmatrix}\right]}_{\text{Result of \EDIT{$e_{\mathsf{pop}}+e_{\mathsf{agg\_plus}}+e_{\mathsf{agg\_not\_last}} \text{ or } e_{\mathsf{pop}}+e_{\mathsf{agg\_prod}}+e_{\mathsf{agg\_last}}$}}}
+	% $$
+\caption{\EDIT{Result of updating $X$ by means of the \langfor expressions encoding the different cases in \textsc{Aggregate}.}}\label{fig:langforevalalg2}
+\end{figure}
+
+\medskip
+\noindent
+\underline{\textbf{(b)} Small $n$.}
+We next consider the case when $n<n_0$. We only need to consider a finite number of cases
+$\Phi_i(a_1,\ldots,a_i)$ can have, for $i=1,\ldots,n$, for which we can precompute their values. More precisely,
+we simply define
+$$
+e_\Phi^{<n_0}\coloneqq \sum_{i=0}^{n_0-2} \Phi_{i+1}(a_1,\ldots,a_{i+1})\cdot\bigl(e_{\mathsf{min}+\mathsf{i}}^T\cdot e_{\mathsf{max}}\bigr),
+$$
+such that the right value of $\Phi$ is returned depending on the input size. We use $e_{\mathsf{min}+\mathsf{i}}^T\cdot e_{\mathsf{max}}$ to check the dimension.
+    %
+    % Finally, we need to take care of all $n<n_0$, where $(\star)$ does not necessarily hold. For any $i$, let: $$\text{Eval}[i,A]\coloneqq  \text{ the } 1\times 1 \text{ matrix with the value of the polynomial } \Phi_n(A) \text{ when } n=i.$$
+
+
+\medskip
+\noindent
+\underline{\textbf{(c)} The final expression $e_\Phi$.}
+It remains to combine $e_\Phi^{< n_0}$ and $e_{\Phi}^{\geq n_0}$ into the final expression
+$e_\Phi$. We do this, as follows:
+$$
+e_\Phi\coloneqq e_\Phi^{< n_0} + \Bigl(1 - \sum_{i=0}^{n_0-2} \bigl(e_{\mathsf{min}+\mathsf{i}}^T\cdot e_{\mathsf{max}}\bigr)\Bigr)\cdot e_{\Phi}^{\geq n_0}.
+$$
+such that either $e_{\Phi}^{<n_0}$ or $e_{\Phi}^{\geq n_0}$ is used depending on the input size. 
+This concludes the proof of Theorem~\ref{th-circuits-ml}.
+    % Then we define:
+    % $$
+    % \Phi_n(a_1,\ldots, a_i)=\ssum_{i=0}^{n_0-1}\left( e_{\mathsf{min}+\mathsf{i}}^T\cdot (e_{\mathsf{diag}}(e_{\ones}(v))\cdot e_{\mathsf{max}}) \right) \times \text{EVAL}[i,v] + \left( (\mathsf{Next}^{n_0}\cdot e_{\mathsf{min}})^T\cdot e_{\ones} (v) \right)\times \text{EVAL}[v].
+    % $$
+    % Above, $(e_{\mathsf{min}+\mathsf{i}}^T\cdot e_{\mathsf{max}})$ checks if the dimension is equal to $i$ (we multiply
+    % by the $n\times n$ identity $e_{\mathsf{diag}}(e_{\ones}(v))$ to ensure typing),
+    % and $(\mathsf{Next}^{n_0}\cdot e_{\mathsf{min}})^T\cdot e_{\ones} (e_{\mathsf{min}})$ checks if the
+    % dimension is greater or equal than $n_0$.
+
+
+
+
+
+
+%\subsection{Characterization of the power of \langfor expressions of polynomial degree}\label{subsec:poldegree}
+% \input{sections/proofs/circuit-simulation.tex}
+%
+% \textit{Proof sketch.} The proof of this Theorem, which is the deepest technical result of the paper, depends crucially on two facts: (i) that any polynomial time Turing machine working within linear space and producing linear size output, can be simulated via a \langfor\ expression; and (ii) that evaluating an arithmetic circuit $\Phi_n$ can be done using two stacks of  depth $n$.
+%
+% Evaluating  $\Phi_n$ on input $(a_1,\ldots ,a_n)$ can be done in a depth-first manner by maintaining  two stacks: the gates-stack that tracks the current gate being evaluated, and the values-stack that stores the value that is being computed for this gate. The idea behind having two stacks is that whenever the number of items on the gates-stack is higher by one than the number of items on the values-stack, we know that we are processing a fresh gate, and we have to initialize its current value (to 0 if it is a sum gate, and to 1 if it is a product gate), and push it to the values-stack. We then proceed by processing the children of the head of the gates-stack one by one, and aggregate the results using sum if we are working with a sum gate, and by using product otherwise.
+%
+% In order  to access the information about the gate we are processing (such as whether it is a sum or a product gate, the list of its children, etc.) we use the uniformity of our circuit family. Namely, we know that we can generate the circuit $\Phi_n$ with a \logspace-Turing machine $M_\Phi$ by running it on the input $1^n$. Using this machine, we can in fact compute all the information needed to run the two-stack algorithms described above. For instance, we can construct a \logspace\ machine that checks, given two gates $g_1$ and $g_2$, whether $g_2$ is a child of $g_1$. Similarly, we can construct a machine that, given $g_1$ and $g_2$ tells us whether $g_2$ is the final child of $g_1$, or the one that produces the following child of $g_1$ (according to the ordering given by the machine $M_\Phi$). Defining these machines based on $M_\Phi$ is similar to the algorithm for the composition of two \logspace\ transducers, and is commonly used to evaluate arithmetic circuits \citep{allender}.
+%
+% To simulate the circuit evaluation algorithm that uses two stacks, in \langfor we can use a binary matrix of size $n\times n$, where $n$ is the number of inputs. The idea here is that  the gates-stack corresponds to the first $n-3$ columns of the matrix, with each gate being encoded as a binary number in positions $1,\ldots,n-3$ of a row. The remaining three columns are reserved for the values-stack, the number of elements on the gates stack, and the number of elements on the values stack, respectively. The number of elements is encoded as a canonical vector of size $n$. Here we crucially depend on the fact that the circuit is of logarithmic depth, and therefore the size of the two stacks is bounded by $n$ (apart from the portion before the asymptotic bound kicks-in, which can be hard-coded into the expression $e_\Phi$). Similarly, given that the circuits are of polynomial size, we can assume that gate ids can be encoded into $n-3$ bits.
+%
+% This matrix is then updated in the same way as the two-stack algorithm. It processes gates one by one, and using the successor relation for canonical vectors determines whether we have more elements on the gates stack. In this case, a new value is added to the values stack ($0$ if the gate is a sum gate, and $1$ otherwise), and the process continues. Information about the next child, last child, or input value, are obtained using the expression which simulates the Turing machine generating this data about the circuit (the machines used never produce an output longer than their input). Given that the size of the circuit is polynomial, say $n^k$, we can initialize the matrix with the output gate only, and run the simulation of the two-stack algorithm for $n^k$ steps (by iterating $k$ times over size $n$ canonical vectors). After this, the value in position  $(1,n-2)$ (the top of the values stack) holds the final results.
+
+\EDIT{
+\subsection{Circuit families of polynomial degree and \langfor}\label{subsec:poldegree}
+}
+\EDIT{
+While Theorem~\ref{th-ml-to-circuits} tells us that each \langfor expression has an equivalent circuit family, Theorem~\ref{th-circuits-ml} shows the reverse only for circuit families of logarithmic depth. 
+In order to obtain a one-to-one characterization of the power of \langfor in terms of circuits, we will focus on circuit families of polynomial degree.
+}
+%This class is motivated by results of Valiant et al.~\cite{valiant1981fast} and Allender et al. \cite{AllenderJMV98} in which uniform circuit families of logarithmic depth are tied to circuit families of polynomial degree.
+
+
+A circuit family $\{\Phi_n\mid n=1,2,\ldots\}$ is said to be of \textit{polynomial degree} if $\mathsf{degree}(\Phi_n)\in \mathcal O(p(n))$, for some polynomial $p(n)$. Note that polynomial size circuit families are not necessarily of polynomial degree. However, Valiant et al.~\cite{valiant1981fast} and Allender et al. \cite{AllenderJMV98} showed that any function computed by a uniform circuit family of polynomial degree, can also be computed by a uniform circuit family of logarithmic depth. Here, we say that  a circuit family $\{\Phi_n\mid n=1,2,\ldots\}$ computes a function $f:\bigcup_{n\geq 1} \mathbb{R}^n\mapsto\mathbb{R}$, if for any $a_1,\ldots a_n\in \mathbb{R}$ it holds that $\Phi_n(a_1,\ldots ,a_n) = f(a_1,\ldots ,a_n)$. 
+
+
+% While Theorem \ref{th-circuits-ml} gives us an idea on how to simulate arithmetic circuits, it does not tell us which classes of functions over real numbers can be computed by \langfor expressions. In order to answer this question, we note that arithmetic circuits can be used to compute functions over real numbers. Formally,To make the connection with \langfor\!, we need to look at circuit families of bounded degree.
+
+An easy corollary of Theorem \ref{th-circuits-ml} is that all functions computed by uniform family of circuits of polynomial degree and logarithmic depth can be simulated using \langfor expressions. However, in view of the above results for arithmetic circuits, we can actually drop the restriction on circuit depth.
+We thus obtain:
+% Using this fact, we can conclude the following:
+
+
+\begin{corollary}
+\label{cor-circ-ml}
+For any function $f$ computed by a uniform family of arithmetic circuits of polynomial degree, there is an equivalent \langfor formula $e_f$.
+\end{corollary}
+
+Note that there is nothing special about circuits that have a single output, and both Theorem \ref{th-circuits-ml} and Corollary \ref{cor-circ-ml} also hold for functions  $f:\bigcup_{n\geq 1} \mathbb{R}^n\mapsto\mathbb{R}^{s(n)}$, where $s$ is a polynomial. Namely, in this case, we can assume that circuits for $f$ have multiple output gates, and that the depth reduction procedure of Allender et al. \cite{AllenderJMV98} is carried out for each output gate separately. Similarly, the construction underlying the proof of Theorem~\ref{th-circuits-ml} carries over for each output gate independently, and one can finally compose everything into a single output vector.
+It is also  not difficult to see that the proof of Theorem \ref{th-circuits-ml} can also be extended to support arithmetic circuits over matrices. Corollary \ref{cor-circ-ml} thus remains to hold when $f$ is a function from matrices to matrices.
+
+
+So far, we just rephrased  Theorem \ref{th-circuits-ml} in terms of functions computed by a uniform family of arithmetic circuits of polynomial degree. \EDIT{To show equivalence with this class of circuit family, we introduce  \textit{\langfor expressions of polynomial degree}. Formally, a \langfor expression $e$ is of polynomial degree, if the circuit family constructed in Theorem~\ref{th-ml-to-circuits} for $e$ is of polynomial degree.  All \langfor expressions we considered thus far have polynomial degree. We can now obtain the following characterization.}
+% Co
+% %
+% % the question what functions computed by \langfor expressions, we need to impose one final restriction: than on the degree of an expression.
+% % In particular, we will be interested in \langfor expressions of polynomial degree.
+%
+% Formally, a \langfor expression $e$ is of polynomial degree, whenever there is an equivalent circuit family for $e$ of a polynomial degree.
+% For example, all \langfor expressions seen so far have polynomial degree.
+% With this definition, we can now identify the class of functions for which arithmetic circuits and \langfor formulas are equivalent. This is the main technical contribution of the paper.
+
+
+\begin{theorem}
+\label{th-equivalence}
+Let $f$ be a function with input matrices $A_1,\ldots ,A_k$ of dimensions $\alpha\times \beta$, with $\alpha,\beta \in \{n,1\}$. Then, $f$ is computed by a uniform circuit family over matrices of polynomial degree if and only if there is a \langfor expression of polynomial degree for $f$. 
+\end{theorem}
+
+Note that this result crucially depends on the fact that expressions in \langfor are of polynomial degree.
+Some \langfor expressions, however, are easily seen to produce results which are not polynomial, \EDIT{and can thus not be computed by a family of circuits of polynomial degree}. An example of such an expression is, for instance, $e_{\texttt{exp}} = \ffor{v}{X=A}{X\cdot X}$, over a schema $\Sch$ with $\ttype(v)= (\gamma,1)$, and $\ttype(X)=(1,1)$.
+Over an instance which assigns $n$ to $\gamma$ this expression computes the function $a^{2^n}$, for $A=[a]$.
+Therefore, a natural question to ask then is whether we can determine the degree of a \langfor expression.
+Unfortunately, as we show in the following proposition this question is in fact undecidable.
+
+% Let $e$ be a \langfor expression over a matrix schema $\mathcal{S}=(\mathcal{M},\textsf{size})$ and let $V_1,\ldots, V_k$ be
+% the variables of $e$, each of type $(\alpha,\alpha)$, $(1,\alpha)$, $(\alpha,1)$ or $(1,1)$. We know from Theorem~\ref{th-ml-to-circuits}
+% that there exists a uniform arithmetic circuit family $\{\Phi_n \mid n=1,2,\ldots\}$
+% such that $\sem{e}{\I}=\Phi_n(A_1,\ldots,A_k)$ for any instance $\I$ such that
+% $\mathcal{D}(\alpha)=n$ and $\conc(V_i)=A_i$ for $i=1,\ldots,k$. We are interested in deciding
+% whether there exists such a  uniform arithmetic circuit family $\{\Phi_n \mid n=1,2,\ldots\}$
+% of polynomial degree, i.e., such that $\mathsf{degree}(\Phi_n)=\mathcal{O}(p(n))$ for some polynomial $p(x)$. If such a circuit family exists, we call $e$ of polynomial degree.
+
+\begin{proposition}
+\label{prop-undec}
+Given a \langfor expression $e$, %over a schema $\Sch$,
+ it is undecidable to check whether $e$ is of polynomial degree.
+\end{proposition}
+
+\begin{proof}
+	The proof is by reduction from the halting problem of Turing machines, whose runs we limit to a linear ($n$) number of steps.
+This allows us to use Proposition~\ref{prop:transducer2} to simulate such Turing machines in \langfor. In combination 
+with the expression $e_{\mathsf{exp}}$, given above, we can then ensure that in case the Turing machine halts in $n$ steps, an equivalent constant degree
+``zero'' circuit exists, and otherwise, any equivalent circuit needs to compute $n^{2^n}$, which is impossible using polynomial degree circuits.
+We defer the details to the appendix.
+\end{proof}
+
+\EDIT{
+While our definition of \langfor expressions of polynomial degree is operational, it is tied to a particular algorithm presented in Theorem~\ref{th-ml-to-circuits}. A more satisfying criteria for defining polynomial degree expressions would be via a syntactic condition. While we currently do not know how to define \langfor expressions  of polynomial degree syntactically, we identify one such class in Section \ref{ss:sumML}, called \langsum, and in fact show that this class is powerful enough to capture relational algebra on (binary) $K$-relations. 
+}
+
+
+\subsection{Supporting additional operators}\label{subsec:additionalop}
+The equivalence of \langfor and arithmetic circuits we proved above assumes that circuits can only use sum and product gates. 
+% (note that even without the sum and the product function, \langfor\ can simulate these operations via matrix sum/product).
+However, both arithmetic circuits and expressions in $\langfor$ can be allowed to use a multitude of functions over $\RR$. The most natural addition to the set of functions is the division operator ($f_/$), which is crucially needed in many linear algebra algorithms, such as, for instance, Gaussian elimination, or $LU$ decomposition (recall Proposition \ref{prop:gauss}).
+Interestingly, Theorem~\ref{th-equivalence} remains to hold when division is considered, mainly due to a surprising result which shows that (almost all) divisions can in fact be removed from arithmetic circuits which allow sum, product, and division gates \cite{allender}.
+
+More precisely, in \cite{strassen1973vermeidung,borodin1982fast,kaltofen1988greatest} it was shown that for any function of the form $f = g/h$, where $g$ and $h$ are relatively prime polynomials of degree $d$, if $f$ is computed by an arithmetic circuit of size $s$, then both $g$ and $h$ can be computed by a circuit whose size is polynomial in $s + d$. Furthermore, one can postpone the division without affecting the final result, and this, in essence, tells us that division can be eliminated (pushed to the top of the circuit), and we can work with sum-product circuits instead. The degree of a circuit for $f$ can then be defined as the maximum of degrees of circuits for $g$ and $h$. Given this fact, we can again use the depth reduction procedure of Allender et al. \cite{AllenderJMV98}, and extend Theorem~\ref{th-equivalence} to circuits with division.
+\begin{corollary}
+\label{cor-division}
+Let $f$ be a function taking as its input matrices $A_1,\ldots ,A_k$ of dimensions $\alpha\times \beta$, with $\alpha,\beta \in \{n,1\}$. Then, $f$ is computed by a uniform circuit family over matrices of polynomial degree that allows divisions if and only if there is a $\langforf{f_/}$ expression of polynomial degree for $f$.
+\end{corollary}
+
+An interesting line of future work here is to see which additional functions can be added to arithmetic circuits and \langfor expressions, in order to preserve their equivalence. Note that this will crucially depend on the fact that these functions have to allow the depth reduction of \cite{AllenderJMV98} in order to be supported.
