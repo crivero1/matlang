@@ -82,13 +82,13 @@ The proof is by induction on the structure of \langsum expressions. In line with
 Let $e$ be a \langsum expression.
 \begin{itemize}
   \item If $e=V$ then $\arae (e)\coloneqq R_V$.
-  \item If $e=v_p$ then $\arae (e)\coloneqq \sigma_{\lbrace \EDIT{\row},\EDIT{\col},\gamma_p\rbrace}\bigl(\rho_{\EDIT{\alpha\mapsto \row}}(R_\alpha)\bowtie \rho_{\EDIT{\alpha\mapsto\gamma_p}}(R_\alpha)\EDIT{\bowtie \rho_{1\mapsto\col}(R_1)}\bigr)$ when  $v_p$ is of type $(\alpha,1)$. It is here that we introduce the attribute $\gamma_p$ associated with iterator variable $v_p$.
+  \item If $e=v_p$ then $\arae (e)\coloneqq \sigma_{\lbrace \EDIT{\row},\gamma_p\rbrace}\bigl(\rho_{\EDIT{\alpha\mapsto \row}}(R_\alpha)\bowtie \rho_{\EDIT{\alpha\mapsto\gamma_p}}(R_\alpha)\bigr) \EDIT{\bowtie \rho_{1\mapsto\col}(R_1)} $ when  $v_p$ is of type $(\alpha,1)$. It is here that we introduce the attribute $\gamma_p$ associated with iterator variable $v_p$.
  We note that 
 $$ \ssem{\arae(v_p)}{\text{Rel}(\I)}(t)=\sem{v_p}{\I[v_p\gets b_{j}]}_{i,1}=(b_j)_{i,1}
 $$
-for $t(\EDIT{\row})=i$, \EDIT{$t(\col)=1$} and $t[\gamma_p]=j$. Indeed, $(b_j)_{i,1}=\kone$ if $j=i$
-and this holds when $t(\mathrm{row}_\alpha)=t[\gamma_p]=j$, and $(b_j)_{i,1}=\kzero$ if $j\neq i$
-and this also holds when $t(\mathrm{row}_\alpha)\neq t[\gamma_p]=j$.
+for $t(\EDIT{\row})=i$, \EDIT{$t(\col)=1$} and $t(\gamma_p)=j$. Indeed, $(b_j)_{i,1}=\kone$ if $j=i$
+and this holds when $t(\EDIT{\mathrm{row}})=t(\gamma_p)=j$, and $(b_j)_{i,1}=\kzero$ if $j\neq i$
+and this also holds when $t(\EDIT{\mathrm{row}})\neq t(\gamma_p)=j$.
 
   \item If $e(v_1,\ldots,v_k)=(e_1(v_1,\ldots,v_k))^T$ %with $\EDIT{\ttype(e_1)}=(\alpha, \beta)$ then
 		\EDIT{then
