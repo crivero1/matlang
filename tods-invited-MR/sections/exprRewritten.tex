@@ -445,7 +445,7 @@ that the entire circuit below a gate is evaluated before it is popped from $\cG$
 \subsubsection{\langfor simulation of algorithm {\normalfont \textsc{Evaluate}}}\label{subsubsec:simulate}
 We next face the challenging task to simulate $\textsc{Evaluate}(\Phi_n,A)$ in \langfor. It is here that the
 assumption that  $\{\Phi_n\mid n=1,2,\ldots\}$ is a uniform arithmetic circuit family of logarithmic depth is crucial.
-For example, such circuits are of polynomial size and hence every gate in $\Phi_n$ can be associated with an $\texttt{id}\in\lbrace 0,1 \rbrace^n$. In the following, when we write $g$ for a gate, we mean the $\texttt{id}$ encoding $g$. We also use these identifiers to impose an
+For example, such circuits are of polynomial size and hence every gate in $\Phi_n$ can be associated with an $\texttt{id}\in\lbrace 0,1 \rbrace^{\EDIT{d}}$ \EDIT{with $d=k\lceil\log(n)\rceil$ for some $k$}. In the following, when we write $g$ for a gate, we mean the $\texttt{id}$ encoding $g$. We also use these identifiers to impose an
 ordering on gates, as needed for the \textsc{Evaluate} algorithm. 
 
 
@@ -459,33 +459,52 @@ As shown in Algorithm~\ref{alg:eval_code}, \textsc{Evaluate}, \textsc{Extend} an
 all of which are explained in Algorithm~\ref{alg:eval_code}. 
 We need to simulate these functions in \langfor. Instead of writing specific \langfor expressions for each of these
 functions, we rely on a more general simulation result (Proposition~\ref{prop:transducer2} below) concerning general
-functions computable over identifiers in $\{0,1\}^n$.
+functions computable over identifiers in $\{0,1\}^{\EDIT{d}}$.
 
-Indeed, using the identifiers of gates, we can regard circuit-related functions as functions $f_n:(\lbrace 0,1 \rbrace^{n})^\ell\rightarrow\lbrace 0,1 \rbrace^n$, in case they return some gate (identifier) or $f_n:(\lbrace 0,1 \rbrace^{n})^\ell\rightarrow\lbrace 0,1 \rbrace$,
+Indeed, using the identifiers of gates, we can regard circuit-related functions as functions $f_\EDIT{d}:(\lbrace 0,1 \rbrace^{\EDIT{d}})^\ell\rightarrow\lbrace 0,1 \rbrace^\EDIT{d}$, in case they return some gate (identifier) or $f_\EDIT{d}:(\lbrace 0,1 \rbrace^{\EDIT{d}})^\ell\rightarrow\lbrace 0,1 \rbrace$,
 in case they return some boolean value. Now, given the \logspace-Turing machine for $\{\Phi_n\mid n=1,2,\ldots\}$, it is readily verified that for such
-circuit-related functions $f_n$, there exists a \textit{linear
-space machine} $T$ such that for every $n\geq 0$, and $w_1,\ldots,w_\ell\in\{0,1\}^n$, $T(w_1,\ldots,w_\ell)$ has $f_n(w_1,\ldots,w_\ell)$ on its output tape. We defer the precise definition of linear space machines to the appendix.
+circuit-related functions $f_\EDIT{d}$ \EDIT{with $d=k\lceil\log(n)\rceil$ for some $k$}, there exists a \textit{linear
+space machine} $T$ such that for every $\EDIT{d}\geq 0$, and $w_1,\ldots,w_\ell\in\{0,1\}^\EDIT{d}$, $T(w_1,\ldots,w_\ell)$ has $f_\EDIT{d}(w_1,\ldots,w_\ell)$ on its output tape. We defer the precise definition of linear space machines to the appendix.
 Important here is that such machines and the functions that they compute can be simulated in \langfor.
 Due to space limitations, we defer the lengthy, yet non-trivial, encoding of linear space machines in \langfor to the appendix.
-\EDIT{Let $\mathsf{vec}(w)$ be the $n\times 1$-vector encoding of a word $w\in\{0,1\}^n$}.
+\EDIT{Let $\mathsf{vec}(w)$ be the $\EDIT{d}\times 1$-vector encoding of a word $w\in\{0,1\}^\EDIT{d}$}.
 We show there the following:
 
+% \begin{proposition} \label{prop:transducer2}
+% Let $f=\bigcup_{n\geq 0}f_n:(\{0,1\}^n)^\ell\to \{0,1\}^n$ be a function computable by a linear space machine
+% $T$.
+%  % $m$ states, $\ell$ input tapes
+% % , which consumes
+% % $\mathcal{O}(n)$ space and runs in $\mathcal{O}(n^{k-1})$ time on inputs of size $n$.
+% There exists (i)~a \langfor  
+% schema $\mathcal{S}=(\mathcal{M},\textsf{size})$ where $\mathcal{M}$ contains variables
+% $I_1,\ldots,I_\ell$ and $O$ all of size $\alpha\times 1$; and (ii)~a \langfor 
+% expression $e_f$ over $\mathcal{S}$ such that for the instance 
+% $\I=(\mathcal{D},\textsf{mat})$ over $\mathcal{S}$ with $\mathcal{D}(\alpha)=n$ and 
+% $\mathsf{mat}(I_i)=\mathsf{vec}(w_i)\in \mathbb{R}^n$,  for $i\in[\ell]$ and words $w_1,\ldots,w_\ell\in\{0,1\}^n$,
+% we have that  $\mathsf{mat}(O)=\mathsf{vec}(f_n(w_1,\ldots,w_\ell))\in\mathbb{R}^n$ 
+% after evaluating $e_f$ on $\I$. Similarly, if $f=\bigcup_{n\geq 0}f_n:(\{0,1\}^n)^\ell\to \{0,1\}$, then we have
+%  an expression $e_f$ such that $\mathsf{mat}(O)=f_n(w_1,\ldots,w_\ell)\in \mathbb{R}$ where $O$ is now of size $1\times 1$.\qed
+% \end{proposition}
+
 \begin{proposition} \label{prop:transducer2}
-Let $f=\bigcup_{n\geq 0}f_n:(\{0,1\}^n)^\ell\to \{0,1\}^n$ be a function computable by a linear space machine
-$T$.
- % $m$ states, $\ell$ input tapes
-% , which consumes
-% $\mathcal{O}(n)$ space and runs in $\mathcal{O}(n^{k-1})$ time on inputs of size $n$.
-There exists (i)~a \langfor  
-schema $\mathcal{S}=(\mathcal{M},\textsf{size})$ where $\mathcal{M}$ contains variables
-$I_1,\ldots,I_\ell$ and $O$ all of size $\alpha\times 1$; and (ii)~a \langfor 
-expression $e_f$ over $\mathcal{S}$ such that for the instance 
-$\I=(\mathcal{D},\textsf{mat})$ over $\mathcal{S}$ with $\mathcal{D}(\alpha)=n$ and 
-$\mathsf{mat}(I_i)=\mathsf{vec}(w_i)\in \mathbb{R}^n$,  for $i\in[\ell]$ and words $w_1,\ldots,w_\ell\in\{0,1\}^n$,
-we have that  $\mathsf{mat}(O)=\mathsf{vec}(f_n(w_1,\ldots,w_\ell))\in\mathbb{R}^n$ 
-after evaluating $e_f$ on $\I$. Similarly, if $f=\bigcup_{n\geq 0}f_n:(\{0,1\}^n)^\ell\to \{0,1\}$, then we have
- an expression $e_f$ such that $\mathsf{mat}(O)=f_n(w_1,\ldots,w_\ell)\in \mathbb{R}$ where $O$ is now of size $1\times 1$.\qed
+	\EDIT{For $\Sigma = \{0,1\}$ let $f=\bigcup_{\EDIT{d}\geq 0}f_\EDIT{d}:(\Sigma^\EDIT{d})^\ell\to \Sigma^\EDIT{d}$ be a linear space input-ouput function 
+	computed by a linear space  machine $T$ with $m$ states, $\ell$ input tapes, $s$ work tapes, and runs in $\mathcal{O}(\EDIT{d}^{k-1})$ time on inputs of size $\EDIT{d}$. 
+	Then there exists (i)~a \langfor 
+	schema $\mathcal{S}=(\mathcal{M},\textsf{size})$ where $\mathcal{M}$ contains matrix 
+	variables
+	$Q_1,\ldots,Q_m$, $R_1,\ldots,R_\ell$, $H_1,\ldots,H_\ell$, $W_1,\ldots,W_s$, $H_{W_1},\ldots,H_{W_s}$, $v_1,\ldots,v_{k}$  
+	with $\mathsf{size}(V)=\alpha\times 1$ for all $V\in\mathcal{M}$; and (ii)~a \langfor 
+	expression $e_f$ over $\mathcal{S}$ such that for the instance 
+	$\I=(\mathcal{D},\textsf{mat})$ over $\mathcal{S}$ with $\mathcal{D}(\alpha)=\EDIT{d}$ and 
+	$\mathsf{mat}(R_i)=\mathsf{vec}(w_i)\in \mathbb{R}^\EDIT{d}$, for $i\in[\ell]$, such that $\mathsf{vec}(w_i)$ is the $\EDIT{d}\times 1$-vector 
+	encoding the word $w_i\in\Sigma^\EDIT{d}$, and all other matrix variables instantiated with the zero vector in $\mathbb{R}^\EDIT{d}$,  we have that  $\mathsf{mat}(W_1)=\mathsf{vec}(f_\EDIT{d}(w_1,\ldots,w_\ell))\in\mathbb{R}^\EDIT{d}$ 
+	after evaluating $e_f$ on~$\I$. We have a similar result for functions $f=\bigcup_{\EDIT{d}\geq 0}f_\EDIT{d}:(\Sigma^\EDIT{d})^\ell\to \Sigma$.\qed}
 \end{proposition}
+
+\EDIT{In order to encode every circuit information within the same matrix, we make the following assumption:
+given a circuit $\Phi_n$ from a uniform arithmetic circuit family of logarithmic depth, each gate identifier of $\Phi_n$ is of size $n$ instead of $d=k\lceil\log(n)\rceil$.
+This is without loss of generality since circuit $\Phi_n$ has polynomial size and thus there exists $k$ such that $\log(\mathsf{gates}(\Phi_n)) \leq k\lceil\log(n)\rceil\leq n$.}
 
 In other words, when we represent the binary identifiers of gates as $n\times 1$ vectors, all of the above-mentioned circuit-related functions have a \langfor counterpart that either return again an $n\times 1$ vector, representing a gate, or values $1$ or $0$, representing true and false, respectively. In what follows, we  abuse notation and identify the circuit functions with their \langfor counterparts. For example, $\getfirst{}$ is now a \langfor expression taking an $n\times 1$ binary vector $b$ as input and returning an $n\times 1$ binary vector encoding the \texttt{id} of the first child of the gate with identifier $b$.
 
@@ -886,7 +905,8 @@ $e_{\Phi}^{\geq n_0}\coloneqq  e_{\mathsf{min}}^T\cdot e_{\mathsf{iterate}}\cdot
         & \qquad\ffor{v_2}{X_2=X_1}  \\
         & \qquad \quad \ffor{v_3}{X_3=X_2}  \cdots\\
         & \qquad \qquad\quad \ffor{v_k}{X_{k}=X_{k-1}}\\
-        & \IfThenElse{\mathsf{min}(G_{\mathsf{top}})\cdot \mathsf{min}(V_{\mathsf{top}})}{X_k}{\bigl( \IfThenElse{G_{\mathsf{top}}^T\cdot V_{\mathsf{top}}}{e_{\mathsf{aggregate}}}{e_{\mathsf{extend}}} \bigr)} \\
+        & \IfThenNoElse{\mathsf{min}(G_{\mathsf{top}})\cdot \mathsf{min}(V_{\mathsf{top}})}{X_k}\mid\\
+        & \qquad \lbrace \hspace{1ex}\IfThenElse{G_{\mathsf{top}}^T\cdot V_{\mathsf{top}}}{e_{\mathsf{aggregate}}}{e_{\mathsf{extend}}\hspace{1ex}\rbrace} \\
     \end{align*}
     }
 In the expression $e_{\mathsf{iterate}}$, we basically perform $n^k$ updates to matrix variable $X_k$ (which takes the role of the matrix variable $X$ mentioned before)

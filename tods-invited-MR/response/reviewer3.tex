@@ -267,11 +267,15 @@ With the new comments and updated figure, it should be clear that each subexpres
 	(1) arity of the circuit, (2) size of the matrices, and (3) length of a bit vector describing a gate id.
 \end{comment}
 
-\answer \TODO
-\thomas{(Not yet implemented) The only change needed is to change the domain of identifiers (length of a bit vector describing a gate id) from $\{0,1\}^n$ to, for example, $\{0,1\}^N$.
-Clearly if the circuit $\phi_n$ has polynomial size $O(n^k)$, then $N$ is such that $\mid gates \mid \cdot N\in O(n^k)$.}
+\answer It is confusing but somewhat necessary to encode all the information of the circuit $\Phi_n$ into one
+matrix of dimensions $n\times n$. To make the explanation more precise, now given a circuit $\Phi_n$ of logarithmic depth
+(and polynomial size), every gate of $\Phi_n$ is associated with an id
+such that $\texttt{id}\in\lbrace 0,1 \rbrace^{d}$, with $d=k\lceil\log(n)\rceil$ for some $k$.
+Then we assume that this $\texttt{id}$ is of size $n$ without loss of generality since circuit $\Phi_n$ has polynomial size and thus there exists $k$ such that
+$\log(\mathsf{gates}(\Phi_n)) \leq k\lceil\log(n)\rceil\leq n$.
 \bigskip
 \cristian{THOMAS: will change this? Floris said: "Be careful"}
+\thomas{I think it is ok now.}
 
 
 \begin{comment}
@@ -279,9 +283,11 @@ Clearly if the circuit $\phi_n$ has polynomial size $O(n^k)$, then $N$ is such t
 	circuit of exponential size.
 \end{comment}
 
-\answer \TODO
-\thomas{Correct, the overload of $n$ yields this mistake. The change of the length of a bit vector describing a gate id name should solve this.}
+\answer Indeed, now each $\texttt{id}$ of a gate is of size $d=k\lceil\log(n)\rceil$ and then it is assumed to be of size $n$ without loss of generality
+since if circuit $\Phi_n$ has polynomial size then there exists $k$ such that
+$\log(\mathsf{gates}(\Phi_n)) \leq k\lceil\log(n)\rceil\leq n$.
 \cristian{CRISTIAN: clarify this.}
+\thomas{I think it is ok now.}
 \bigskip
 
 
@@ -292,8 +298,8 @@ Clearly if the circuit $\phi_n$ has polynomial size $O(n^k)$, then $N$ is such t
 \end{comment}
 
 \answer \TODO
-\thomas{It is in the appendix statement of the proposition.}
 \cristian{THOMAS will move the statement in the appedix to the body.}
+\thomas{Full statement added}
 \bigskip
 
 

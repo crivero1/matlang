@@ -201,7 +201,8 @@
 \newcommand{\ones}{\mathbf{1}}
 \newcommand{\diag}{\textsf{diag}}
 \newcommand{\apply}[1]{\texttt{apply}[#1]}
-\newcommand{\IfThenElse}[3]{\mathsf{if}\hspace{1ex}#1\hspace{1ex}\mathsf{then}\hspace{1ex}#2\hspace{1ex}\mathsf{else}\hspace{1ex}#3\hspace{1ex}}
+\newcommand{\IfThenElse}[3]{\mathsf{if}\hspace{1ex}\lbrace\hspace{1ex}#1\hspace{1ex}\rbrace\hspace{1ex}\mathsf{then}\hspace{1ex}\lbrace\hspace{1ex}#2\hspace{1ex}\rbrace\hspace{1ex}\mathsf{else}\hspace{1ex}\lbrace\hspace{1ex}#3\hspace{1ex}\rbrace}
+\newcommand{\IfThenNoElse}[3]{\mathsf{if}\hspace{1ex}\lbrace\hspace{1ex}#1\hspace{1ex}\rbrace\hspace{1ex}\mathsf{then}\hspace{1ex}\lbrace\hspace{1ex}#2\hspace{1ex}\rbrace\hspace{1ex}\mathsf{else}}
 
 \newcommand{\I}{\mathcal{I}}
 \newcommand{\Voc}{\mathcal{S}}
@@ -239,8 +240,8 @@
 \newcommand{\lleq}[2]{\texttt{leq}(#1,#2)}
 \newcommand{\mmin}[1]{\texttt{min}(#1)}
 
-\newcommand{\isless}{\mathsf{isless}}
-\newcommand{\islessorequal}{\mathsf{islessorequal}}
+\newcommand{\isless}{\mathsf{isLess}}
+\newcommand{\islessorequal}{\mathsf{isLessOrEqual}}
 
 \newcommand{\ccol}[2]{\texttt{col(}#1,#2\texttt{)}}
 \newcommand{\red}[2]{\texttt{reduce(}#1,#2\texttt{)}}
