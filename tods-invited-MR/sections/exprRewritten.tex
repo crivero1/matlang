@@ -114,11 +114,13 @@ We remark that the inductive construction of Theorem~\ref{th-ml-to-circuits} doe
 }
 
 \subsection{From arithmetic circuits to \langfor}\label{subsec:actoformatlang}
+\cristian{About the conjecture below, do we have any evidence? Why is this true? I don't see why is this possible. If we don't have any argument, I would leave it as an open problem.}
 \EDIT{
 When it comes to transforming circuit families to \langfor, our conjecture is that, in general, this is not possible. More precisely, we stipulate the following:
 
 \begin{center}
-\textbf{Conjecture:} There exists a uniform family of arithmetic circuits that is not equivalent to any \langfor expression.
+\textbf{Conjecture:} There exists a uniform family of arithmetic circuits \\
+that is not equivalent to any \langfor expression.
 \end{center}
 
 At this point we have no proof of the conjecture, and leave it for future work. However, we show that an important class of uniform families of arithmetic circuits can be transformed into \langfor expressions. More precisely, we show that any circuit family of logarithmic depth has an equivalent \langfor expression. Recall that a circuit family is of logarithmic depth, whenever $\mathsf{depth}(\Phi_n)\in \mathcal{O}(\log\, n)$, for each $n$. We can now show:
@@ -1486,7 +1488,7 @@ We thus obtain:
 For any function $f$ computed by a uniform family of arithmetic circuits of polynomial degree, there is an equivalent \langfor formula $e_f$.
 \end{corollary}
 
-Note that there is nothing special about circuits that have a single output, and both Theorem \ref{th-circuits-ml} and Corollary \ref{cor-circ-ml} also hold for functions  $f:\bigcup_{n\geq 1} \mathbb{R}^n\mapsto\mathbb{R}^{s(n)}$, where $s$ is a polynomial. Namely, in this case, we can assume that circuits for $f$ have multiple output gates, and that the depth reduction procedure of Allender et al. \cite{AllenderJMV98} is carried out for each output gate separately. Similarly, the construction underlying the proof of Theorem~\ref{th-circuits-ml} carries over for each output gate independently, and one can finally compose everything into a single output vector.
+Note that there is nothing special about circuits that have a single output, and both Theorem~\ref{th-circuits-ml} and Corollary~\ref{cor-circ-ml} also hold for functions  $f:\bigcup_{n\geq 1} \mathbb{R}^n\mapsto\mathbb{R}^{s(n)}$, where $s$ is a polynomial. Namely, in this case, we can assume that circuits for $f$ have multiple output gates, and that the depth reduction procedure of Allender et al. \cite{AllenderJMV98} is carried out for each output gate separately. Similarly, the construction underlying the proof of Theorem~\ref{th-circuits-ml} carries over for each output gate independently, and one can finally compose everything into a single output vector.
 It is also  not difficult to see that the proof of Theorem \ref{th-circuits-ml} can also be extended to support arithmetic circuits over matrices. Corollary \ref{cor-circ-ml} thus remains to hold when $f$ is a function from matrices to matrices.
 
 
