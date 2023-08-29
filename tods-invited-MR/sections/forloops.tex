@@ -3,10 +3,10 @@
 
 To extend \lang\ with recursion, we take inspiration from classical linear algebra algorithms, such as those described in \cite{num}. Many of these algorithms are based on \textit{for-loops} in which the termination condition for each loop is determined by the matrix dimensions. We have seen how the transitive closure of a matrix can be computed using for-loops in the Introduction. Here we add this ability to \lang, and show that the resulting language, called $\langfor,$ can compute properties outside of the scope of \lang. We show more advanced examples, such as Gaussian elimination and matrix inversion, later in the paper. 
 
-\EDIT{For illustrative purposes, we will assume that $\Mvar$ consists of uppercase letters
-denoted by $A,B,C,X,V_1,V_2,\ldots$ that refer to matrices, and
-lowercase letters denoted by $x,y,u,w,v_1,v_2,\ldots$
-that refer to \emph{iterator variables}, which we introduce next.}
+\EDIT{For the variables in $\Mvar$ we use uppercase letters
+$A,B,C,\allowbreak X,\allowbreak V_1,V_2,\ldots$ for variables that can be instantiated by any matrix, vector or scalar, and we use 
+lowercase letters $x,y,u,w,v_1,v_2,\ldots$
+for \emph{iterator variables} that can only be instantiated with canonical vectors, which will be introduced shortly.}
 
 \subsection{Syntax and semantics of \langfor}\label{ss:fML} The syntax of \langfor is defined just as for \lang but with an extra rule in the grammar:
 \medskip

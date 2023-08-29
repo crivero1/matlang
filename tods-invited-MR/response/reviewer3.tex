@@ -119,6 +119,7 @@ polynomial degree (and polynomial depth) can also be computed by uniform circuit
 
 \answer Yes, thanks for noticing. We now mention that uppercase letters always refer to matrices (of any size) and lowercase letters always refer to iterator variables (page 6, line 261 of revised version).
 \cristian{FLORIS will improve it.}
+\floris{Done.}
 \bigskip
 
 \begin{comment}
@@ -129,12 +130,16 @@ polynomial degree (and polynomial depth) can also be computed by uniform circuit
 	notation would be just syntactic sugar.
 \end{comment}
 
-\answer \TODO (maybe not).
+\answer 
+We agree that this change may make some expressions more easy to interpret. It may also cause confusion, however, making the reader interpret $v_i$ as the $i$th canonical vector, instead of the $i$th iterator variable ranging over canonical
+vectors. We do adopt your suggestion in some example expressions already but did not implement the suggested change consistently in the revision.
+
 
 \thomas{The former is a good idea, but besides replacing using $V_{uv}$ instead
 of $u^t * V * v$, there are no major advantages, while it has major impact in rewriting expressions. Will do if time allows it.}
 \cristian{We CANNOT make this change. It could rather confuses the notation when the vector is used as an index, or as a vector (for example when you sum all cannonical vectors).}
 \cristian{FLORIS will give a diplomatic answer.}
+\floris{DONE}
 \bigskip
 
 \begin{comment}
@@ -346,8 +351,9 @@ $\log(\mathsf{gates}(\Phi_n)) \leq k\lceil\log(n)\rceil\leq n$.
 	restriction). But no need to waste the space for the proof.
 \end{comment}
 
-\answer \TODO 
-\cristian{FLORIS}
+\answer The ``small $n$'' case only requires a couple of lines so it only takes up a very small amount of space. We feel that it is a nicer for the reader to see the entire analysis, rather than having a restriction in the statement of the proposition, which also needs additional explanation. We therefore left the ``small $n$'' case in the proof.
+
+ \cristian{FLORIS}\floris{DONE}
 \bigskip
 
 \begin{comment}
@@ -435,6 +441,7 @@ $\log(\mathsf{gates}(\Phi_n)) \leq k\lceil\log(n)\rceil\leq n$.
 
 Summary: use $Rel(S)(R_V) := \{row, col\}$ for every matrix $V$; use $R_1$ in the contruction of the relation corresponding to $v$; do not do case distinctions based on sizes; explain what the join does.
 \cristian{FLORIS}
+
 \bigskip
 
 \begin{comment}
