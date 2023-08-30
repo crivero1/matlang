@@ -145,12 +145,13 @@ and similarly, $e_2$ by $e_2(v_1,v_2,v_3)=(v_1^T\cdot v_1)\times e_2(v_2,v_3)$, 
 		that $\ssem{\arae(e)}{\text{Rel}(\I)}(t)$ is equal to
 		\begin{align*}
 			&\bigksum_{t'\colon t'[\row,\col,i_1,\ldots,i_r]=t} \ssem{\rho_{\col\mapsto C}(\arae (e_1))}{\text{Rel}(\I)}(t')\kprod \ssem{\rho_{\row\mapsto C}(\arae (e_2))}{\text{Rel}(\I)}(t') \\
-			&=\bigksum_{k=1,\ldots,\dom(\gamma)} \sem{e}{\I[v_1'\gets b_{i'_1},\ldots,v_\ell'\gets b_{i'_\ell}]}_{i,k}\kprod \sem{e}{\I[v_1''\gets b_{i''_1},\ldots,v_m''\gets b_{i''_m}]}_{k,j}.
+			&=\bigksum_{k=1,\ldots,\dom(\gamma)} \sem{e}{\I[v_1'\gets b_{i'_1},\ldots,v_\ell'\gets b_{i'_\ell}]}_{i,k}\kprod \sem{e}{\I[v_1''\gets b_{i''_1},\ldots,v_m''\gets b_{i''_m}]}_{k,j}
 		\end{align*}
 		which corresponds to 
 		$$
-		\sem{e_1\cdot e_2}{\I[v_1\gets b_{i_1},\ldots,v_r\gets b_{i_r}]}_{i,j}.
+		\sem{e_1\cdot e_2}{\I[v_1\gets b_{i_1},\ldots,v_r\gets b_{i_r}]}_{i,j},
 		$$
+		as desired.
 		}
   \item If $e(v_1,\ldots,v_{p-1},v_{p+1},\ldots,v_k)=\ssum v_p. \, e_1(v_1,\ldots,v_k)$ where $\EDIT{\ttype(e_1)}=(\alpha,\beta)$ and $\EDIT{\ttype(v_p)}=(\gamma_p,1)$. Then we define
 		$$
@@ -166,9 +167,9 @@ and similarly, $e_2$ by $e_2(v_1,v_2,v_3)=(v_1^T\cdot v_1)\times e_2(v_2,v_3)$, 
 		\ssem{\arae(e)}{\text{Rel}(\I)}(t)\coloneqq \bigksum_{i_p=1,\ldots,\dom(\gamma)} \sem{e_1}{\I[v_1\gets b_{i_1},\ldots,v_{p}\gets b_{i_p},\ldots v_k\gets b_{i_k}]}_{i,j},$$
 		which precisely corresponds to 
 		$$
-		\sem{\ssum v_p. e_1(v_1,\ldots,v_k)}{\I[v_1\gets b_{i_1},\ldots,v_{p-1}\gets b_{i_{p-1}},v_{p+1}\gets b_{i_{p+1}},\ldots,v_k\gets b_{i_k}]}_{i,j}.
+		\sem{\ssum v_p. e_1(v_1,\ldots,v_k)}{\I[v_1\gets b_{i_1},\ldots,v_{p-1}\gets b_{i_{p-1}},v_{p+1}\gets b_{i_{p+1}},\ldots,v_k\gets b_{i_k}]}_{i,j},
 		$$
-
+as desired.
 \end{itemize}
 % Expressions of type $(\alpha,1)$, $(1,\beta)$ or $(1,1)$  can be dealt with in a similar way.
 \end{proof}
