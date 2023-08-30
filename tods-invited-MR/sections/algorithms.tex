@@ -121,6 +121,8 @@ $A_i\coloneqq  \red{A_{i-1}\cdot A}{b_i}\cdot A=T_i\cdot T_{i-1}\cdots T_1\cdot 
 Maybe using the same routine to output $U$ and $L$ is a bit confusing when compared to the correctedness proof,
 were we calculate them separately.
 Should we break the function $\textsc{LU}(A)$ and have two separate pseudocodes for computing $U$ and $L$?
+
+I am good with how it is now or with the separation.
 }
 
 In order to construct $e_L(V)$, we will use the fact that $e_U(A)=T_n\cdot\cdots\cdot T_1\cdot A$ with $L^{-1}=T_n\cdot\cdots\cdot T_1$, and that each $T_i$ can easily be inverted. For this, let
