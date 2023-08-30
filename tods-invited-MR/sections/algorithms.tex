@@ -53,11 +53,13 @@ We next show how to implement the described functions in \langfor. The following
         \Function{\textsc{LU}}{$A$}\Comment{Input: $n\times n$ matrix $A$}
             \State{$A_0\coloneqq A$}
             \State{$T_0\coloneqq I$}
+            \State{$L_0^{-1}\coloneqq I$}
             \For{$i=1,2,\ldots,n$}
-                \State{\hspace{-2ex}$A_i\coloneqq T_{i-1}\cdot A_{i-1}$}
-				\State{\hspace{-2ex}$T_i\coloneqq$\textsc{GetReduceMatrix}$(A_i,i)$}
-                \State{\hspace{-2ex}$L^{-1}_i\coloneqq T_i\cdot T_{i-1}$}
+                \State{\hspace{-2ex}$T_i\coloneqq$\textsc{GetReduceMatrix}$(A_{i-1},i)$}
+                \State{\hspace{-2ex}$A_i\coloneqq T_{i}\cdot A_{i-1}$}
+                \State{\hspace{-2ex}$L^{-1}_i\coloneqq T_i\cdot L_{i-1}^{-1}$}
 				\floris{something seems off shouldn't this be $T_i\cdot L_{i-1}^{-1}$ but then $L_0^{-1}$ needs to be defined as well?}
+                \thomas{You are right. I did that now.}
 			% \State{\Comment{Note that $L_i^{-1}=T_i\cdot\cdots\cdot T_1$}}
             \EndFor
             \State{$L\coloneqq (-1)\times L^{-1}_n + 2\times I$ }
@@ -112,7 +114,14 @@ $$
 e_{U}(V) \coloneqq    \left( \initf{e_{\mathsf{Id}}}{y}{X}{\red{X\cdot V}{y}\cdot X} \right) \cdot V.
 $$
 That is, when $V$ is assigned $A$, $X$ will be initially $A_0\coloneqq  e_{\mathsf{Id}}$, and then
-$A_i\coloneqq  \red{A_{i-1}\cdot A}{b_i}\cdot A=T_i\cdot T_{i-1}\cdots T_1\cdot A$, as desired. \floris{I am confused how this relates to $A_i$ in the pseudo-code?}
+$A_i\coloneqq  \red{A_{i-1}\cdot A}{b_i}\cdot A=T_i\cdot T_{i-1}\cdots T_1\cdot A$, as desired.
+\floris{I am confused how this relates to $A_i$ in the pseudo-code?}
+\thomas{Yes there was an index problem, I think it is fixed now.
+
+Maybe using the same routine to output $U$ and $L$ is a bit confusing when compared to the correctedness proof,
+were we calculate them separately.
+Should we break the function $\textsc{LU}(A)$ and have two separate pseudocodes for computing $U$ and $L$?
+}
 
 In order to construct $e_L(V)$, we will use the fact that $e_U(A)=T_n\cdot\cdots\cdot T_1\cdot A$ with $L^{-1}=T_n\cdot\cdots\cdot T_1$, and that each $T_i$ can easily be inverted. For this, let
     $$
