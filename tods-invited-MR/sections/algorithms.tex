@@ -15,31 +15,36 @@ A lower-upper (LU) decomposition factors a matrix $A$ as the product of a lower 
 This decomposition, and more generally LU decomposition with row pivoting (PLU),  underlies many linear algebra algorithms and 
 we next show that \langfor can compute these decompositions.
 
-The LU decomposition \EDIT{(cfr.~Algorithm~\ref{alg:lu})} can be seen as a matrix form of Gaussian elimination in which the columns of $A$
-are reduced, one by one, to obtain the matrix $U$. The reduction of columns of $A$ is achieved
+\EDIT{The LU decomposition (cfr.~Algorithm~\ref{alg:lu}) of a matrix $A$ can be seen as a matrix form of Gaussian elimination in which the columns of $A$
+are reduced, one by one, to obtain the matrix $U$. Alongside, the matrix $L$ will be computed. The reduction of columns of $A$ is achieved
 as follows. Consider the first column $[A_{11},\ldots,A_{n1}]^T$ of $A$ and  define 
 $c_1 \coloneqq   [0, \alpha_{21},\ldots, \alpha_{n1}]^T$ 
 with $\alpha_{j1} \coloneqq   -\frac{A_{j1}}{A_{11}}$. Let $T_1\coloneqq  I+ c_1\cdot b_1^T$ and consider
-$T_1\cdot A$. That is, the $j$th row of $T_1\cdot A$ is obtained by multiplying the first row of $A$ by $\alpha_{j1}$ and adding it to the $j$th row of $A$. As a result, the first column of $T_1\cdot A$ is equal to $[A_{11},0,\ldots,0]^T$, i.e., 
-all of its entries below the diagonal are zero.  One then iteratively performs a similar computation, using the matrix $T_i\coloneqq  I+c_i\cdot b_i^T$, where $c_i$ now depends on the $i$th column in $T_{i-1}\cdots T_1\cdot A$. 
-The vector $c_i$ has zero entries up to position $i$. In 
-Algorithm~\ref{alg:lu}, the function \textsc{GetReduceMatrix}$(A_i,i)$ describes in detail how $c_i$  (lines 4--6) and $T_i$ (lines 7--8) are computed.  This function is only successful when the denominators used in the definition of the vectors $c_i$ are non-zero. When this is the case we call a matrix $A$ \textit{LU-factorizable} \cite{num}. We assume that $A$ satisfies this property and deal with the general case later on.
+$A_1\coloneqq T_1\cdot A$. That is, the $j$th row of $A_1$ is obtained by multiplying the first row of $A$ by $\alpha_{j1}$ and adding it to the $j$th row of $A$. As a result, the first column of $A_1$ is equal to $[A_{11},0,\ldots,0]^T$, i.e., 
+all of its entries below the diagonal are zero.  One then iteratively performs a similar computation, using the matrix $T_i\coloneqq  I+c_i\cdot b_i^T$, where $c_i$ now depends on the $i$th column in $A_{i-1}=T_{i-1}\cdots T_1\cdot A$. 
+The vector $c_i$ has zero entries up to position $i$ and $A_i$ is upper triangular in its first $i$ columns. In the function \textsc{GetReduceMatrix}$(A_i,i)$ in  Algorithm~\ref{alg:lu} we describe in detail how $c_i$  (lines 4--6) and $T_i$ (lines 7--8) are computed.  We note that this function is only successful when the denominators used in the definition of the vectors $c_i$ (line 6) are non-zero. When this is the case we call a matrix $A$ \textit{LU-factorizable} \cite{num}. We assume for now that $A$ satisfies this property and deal with the general case later on.}
 
 
-The function $\textsc{LU}(A)$ is in charge of computing the matrix $A_i\coloneqq T_i\cdot T_{i-1}\cdots T_1\cdot A$ (line 5) which is upper triangular in its first $i$ columns. At the end of this process, $U\coloneqq T_n\cdots T_1\cdot A$ (line 11) and $U$ is the desired upper triangular matrix.
-Also, $\textsc{LU}(A)$ computes the matrices $L_i^{-1}\coloneqq T_i\cdots T_1$ (lines 7) which is lower triangule in its first columns. We observe that $T_n=I$ and 
-it is easily verified that each $T_i$ is invertible. We have, more explicitly,
+\EDIT{At the end of this process, $U\coloneqq A_n=T_n\cdots T_1\cdot A$ 
+is the desired upper triangular matrix. The function $\textsc{LU}(A)$ 
+ in  Algorithm~\ref{alg:lu} is in charge of computing the matrices $A_i\coloneqq T_i\cdot T_{i-1}\cdots T_1\cdot A$ (line 6)  and $U$ (line 9).
+Also, $\textsc{LU}(A)$ computes the desired lower triangular matrix $L$.
+It does so by first computing the matrices $L_i^{-1}\coloneqq T_i\cdots T_1$ (line 7) which are lower triangular in their first $i$ columns. We define
+ $L^{-1}$ as $L_{n}^{-1}$ and then compute the inverse matrix $L$ thereof.
+We use the following trick. It is readily verified that (note that $T_n=I$):
+% We observe that $T_n=I$ and
+% it is easily verified that each $T_i$ is invertible. We have, more explicitly,
     \begin{align*}
     L^{-1}_n&=(I+c_1\cdot b_1^T)\cdots (I+c_{n-1}\cdot  b_{n-1}^T)
     =I+c_1\cdot b_1^T+\cdots +c_{n-1}\cdot b_{n-1}^T,
     \end{align*}
-and therefore,    
+and therefore its inverse is,    
     \begin{align*}
     L_n&=(I-c_1\cdot b_1^T)\cdots (I-c_{n-1}\cdot b_{n-1}^T) =I-c_1\cdot b_1^T-\cdots - c_{n-1}\cdot b_{n-1}^T.
     \end{align*}
 So, once we have $L_n^{-1}$ we can get	also obtain $L_n$ by computing
-$L_n\coloneqq (-1)\times L_n^{-1} + 2\times I$ (line 9). The matrix $L\coloneqq L_n$ is the desired
-lower triangular matrix satisfying $A=L\cdot U$.
+$L_n\coloneqq (-1)\times L_n^{-1} + 2\times I$ (line 8). The matrix $L\coloneqq L_n$ is the desired
+lower triangular matrix satisfying $A=L\cdot U$.}
 
  % \EDIT{The above process is precisely what is computed by the functions \textsc{LU}$(A)$ in Algorithm~\ref{alg:lu} and calls to the function \textsc{GetReduceMatrix}$(A_i,i)$ computing $T_i$.}
   
@@ -52,14 +57,12 @@ We next show how to implement the described functions in \langfor. The following
     \begin{algorithmic}[1]
         \Function{\textsc{LU}}{$A$}\Comment{Input: $n\times n$ matrix $A$}
             \State{$A_0\coloneqq A$}
-            \State{$T_0\coloneqq I$}
+            % \State{$T_0\coloneqq I$}
             \State{$L_0^{-1}\coloneqq I$}
             \For{$i=1,2,\ldots,n$}
                 \State{\hspace{-2ex}$T_i\coloneqq$\textsc{GetReduceMatrix}$(A_{i-1},i)$}
                 \State{\hspace{-2ex}$A_i\coloneqq T_{i}\cdot A_{i-1}$}
                 \State{\hspace{-2ex}$L^{-1}_i\coloneqq T_i\cdot L_{i-1}^{-1}$}
-				\floris{something seems off shouldn't this be $T_i\cdot L_{i-1}^{-1}$ but then $L_0^{-1}$ needs to be defined as well?}
-                \thomas{You are right. I did that now.}
 			% \State{\Comment{Note that $L_i^{-1}=T_i\cdot\cdots\cdot T_1$}}
             \EndFor
             \State{$L\coloneqq (-1)\times L^{-1}_n + 2\times I$ }
@@ -76,8 +79,8 @@ We next show how to implement the described functions in \langfor. The following
 	\State{\Comment{Input: $n\times n$ matrix $A$, $i=1,\ldots,n$}}	%
 	\State{}
 	\State{$c_i\coloneqq [\alpha_{1i}:=0,\alpha_{2i}:=0,\ldots,\alpha_{ni}:=0]^T$}
-            \For{$j=i+1,\ldots,n$}
-                \State{ $\alpha_{j,i} \coloneqq -\dfrac{A_{ji}}{A_{ii}}$}
+            \For{$j=i+1,\ldots,n$} \Comment{Update $c_i$}
+                \State{$\alpha_{j,i} \coloneqq -\dfrac{A_{ji}}{A_{ii}}$}
 				\Comment{(Assuming  $A_{ii}\neq 0$)}
                 % \State{$T^{(i)}_{ij}\coloneqq A_{ij}+c_{j}A_{ii}$}
             \EndFor
@@ -113,23 +116,23 @@ the expression:
 $$
 e_{U}(V) \coloneqq    \left( \initf{e_{\mathsf{Id}}}{y}{X}{\red{X\cdot V}{y}\cdot X} \right) \cdot V.
 $$
-That is, when $V$ is assigned $A$, $X$ will be initially $A_0\coloneqq  e_{\mathsf{Id}}$, and then
-$A_i\coloneqq  \red{A_{i-1}\cdot A}{b_i}\cdot A=T_i\cdot T_{i-1}\cdots T_1\cdot A$, as desired.
-\floris{I am confused how this relates to $A_i$ in the pseudo-code?}
-\thomas{Yes there was an index problem, I think it is fixed now.
-
-Maybe using the same routine to output $U$ and $L$ is a bit confusing when compared to the correctedness proof,
-were we calculate them separately.
-Should we break the function $\textsc{LU}(A)$ and have two separate pseudocodes for computing $U$ and $L$?
-
-I am good with how it is now or with the separation.
-}
-
-In order to construct $e_L(V)$, we will use the fact that $e_U(A)=T_n\cdot\cdots\cdot T_1\cdot A$ with $L^{-1}=T_n\cdot\cdots\cdot T_1$, and that each $T_i$ can easily be inverted. For this, let
+That is, when $V$ is assigned $A$, $X$ will be initially $X_0\coloneqq  e_{\mathsf{Id}}$, and then
+$X_i\coloneqq  \red{X_{i-1}\cdot A}{b_i}\cdot A=T_i\cdot T_{i-1}\cdots T_1\cdot A$, which is equal to $A_i$, as desired.
+% \floris{I am confused how this relates to $A_i$ in the pseudo-code?}
+% \thomas{Yes there was an index problem, I think it is fixed now.
+%
+% Maybe using the same routine to output $U$ and $L$ is a bit confusing when compared to the correctedness proof,
+% were we calculate them separately.
+% Should we break the function $\textsc{LU}(A)$ and have two separate pseudocodes for computing $U$ and $L$?
+%
+% I am good with how it is now or with the separation.
+% }
+In order to construct $e_L(V)$, we will use the fact that $e_U(A)=T_n\cdot\cdots\cdot T_1\cdot A$ with $L^{-1}=T_n\cdot\cdots\cdot T_1$, and the trick to invert $L^{-1}$ described earlier. We thus consider 
     $$
     e_{L^{-1}}(V) \coloneqq    \initf{e_{\mathsf{Id}}}{y}{X}{\red{X\cdot V}{y}\cdot X}.
     $$
-    such that	$e_{\mathsf{U}}(V)=  e_{L^{-1}}(V) \cdot V$.%  It now suffices to observe that, since $T_n=I$,
+    such that	$e_{\mathsf{U}}(V)=  e_{L^{-1}}(V) \cdot V$.
+	%  It now suffices to observe that, since $T_n=I$,
 %     \begin{align*}
 %     L^{-1}&=(I-c_1\cdot b_1^T)\cdots (I-c_{n-1}\cdot  b_{n-1}^T)
 %     =I-c_1\cdot b_1^T-\cdots - c_{n-1}\cdot b_{n-1}^T,
@@ -141,11 +144,11 @@ In order to construct $e_L(V)$, we will use the fact that $e_U(A)=T_n\cdot\cdots
 %     As a consequence, to obtain $L$ from $L^{-1}$ we just need to multiply every entry below the diagonal by $-1$. Since both  $L$ and $L^{-1}$ are lower triangular, this can done
 %     by computing $L=-1\times L^{-1} + 2\times I$.
 %Translated into \langfor, this means that we can define
-It then remains to consider
+ It then remains to consider
     $$
     e_{L}(V) \coloneqq    -1\times e_{L^{-1}}(V) + 2\times e_{\mathsf{Id}},
     $$
-which, as we have described above, suffices to inver $L^{-1}$. This concludes the proof of the proposition.    
+which suffices to invert $L^{-1}$. This concludes the proof of the proposition.    
 \end{proof}
 
 
